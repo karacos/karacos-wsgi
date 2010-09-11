@@ -41,12 +41,11 @@ class Middleware(object):
         session_id = ""
         try:
             cookie = Cookie.SimpleCookie(request.headers['cookie'])
-            print "cookie found"
+            self.log.debug("COOKIE FOUND : [%s]" % cookie )
             assert 'karacos.session' in cookie  
             session_id = cookie['karacos.session'].value
             self.log.info("Found 'karacos.session' in cookie : %s" % session_id)
         except:
-            print "setting cookie"
             session_id = "%s" % uuid4().hex
             self.log.info("Created 'karacos.session' in cookie : %s" % session_id)
         environ['karacos.session'] = Session(id=session_id)
