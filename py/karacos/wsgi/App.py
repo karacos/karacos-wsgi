@@ -14,11 +14,14 @@ class Dispatcher(object):
     KaraCos Application Entry point
     '''
     
+    def __init__(self):
+        self.log = karacos.core.log.getLogger(self)
+    
     def __call__(self, environ, start_response):
         # Gets KaraCos request/response objects.
         
-        
-        response = Response()
+        self.check_session()
+        response = karacos.serving.response
         response.body = "Mon appli"
         
         response.body = """ %s
@@ -28,3 +31,12 @@ class Dispatcher(object):
         </form>
         """ % response.body
         return response
+
+    def check_session(self):
+       
+        session = karacos.serving.get_session()
+        if session != None:
+            self.log.debug("session fould, HTTP detected...")
+            
+        else:
+            self.log.debug("session NOT fould")

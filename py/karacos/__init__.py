@@ -6,3 +6,5 @@ print "karacos.homedir = %s" % homedir
 import core
 import http
 import wsgi
+
+serving = http._Serving()

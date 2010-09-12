@@ -24,13 +24,17 @@ class SessionMeta(type):
         session_id = "%s" % kw['id']
         self.log.debug("sessions in type '%s.%s' : [%s] " % (self.__module__,self.__name__,self.sessions) )
         if kw['id'] in self.sessions.keys():
-            self.log.info("Session '%s' FOUND" % session_id )
+            self.log.debug("Session FOUND '%s'" % session_id )
             instance = self.sessions[session_id]
         else:
-            self.log.info("Session '%s' NOT FOUND" % session_id)
+            self.log.debug("Session NOT FOUND '%s'" % session_id)
             instance = type.__call__(self,*args, **kw)
             self.sessions[session_id] = instance
+        if 'serving' in dir(karacos):
+            self.log.debug("karacos.serving object found")
+            karacos.serving.set_session(instance)
         return instance        
+
 
 class Session(dict):
     '''
@@ -47,4 +51,4 @@ class Session(dict):
         dict.__init__(self)
         self.id = id
         self.log = karacos.core.log.getLogger(self)
-        self.log.info("NEW SESSION CREATED '%s'" % self.id)
+        self.log.debug("NEW SESSION CREATED '%s'" % self.id)
