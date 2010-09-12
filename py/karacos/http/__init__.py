@@ -5,6 +5,26 @@ import threading
 
 import karacos
 
+class Redirect(karacos.core.Exception):
+    """
+    HTTP redirect Exception
+    """
+    def __init__(self,url,code=302):
+        """
+        """
+
+class HTTPError(karacos.core.Exception):
+    """
+    """
+    def __init__(self,status=500,message=""):
+        """
+        """
+    
+def isaction(func):
+    """
+    Decorator for object exposed actions
+    """
+      
 class _Serving(threading.local):
     """
     Class for served objects

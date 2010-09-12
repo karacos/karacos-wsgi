@@ -48,5 +48,5 @@ logging.setLoggerClass(Logger)
 def getLogger(instance):
     return logging.getLogger("%s.%s" % (instance.__class__.__module__,instance.__class__.__name__))
 
-logging.config.fileConfig("%s/conf/logging.conf" % karacos.homedir)
+logging.config.fileConfig("%s/logging.conf" % karacos._confdir)
 

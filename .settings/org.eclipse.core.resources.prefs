@@ -1,3 +1,7 @@
-#Sat Sep 11 15:53:04 CEST 2010
+#Sun Sep 12 16:32:17 CEST 2010
 eclipse.preferences.version=1
+encoding//lib/couchdb/__init__.py=utf-8
+encoding//lib/couchdb/client.py=utf-8
+encoding//lib/couchdb/http.py=utf-8
+encoding//lib/couchdb/json.py=utf-8
 encoding//lib/wsgioauth/consumer.py=utf-8
