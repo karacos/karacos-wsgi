@@ -10,6 +10,7 @@ import Cookie
 from uuid import uuid4
 import webob
 import inspect
+import sys
 
 class Dispatcher(object):
     '''
@@ -44,13 +45,15 @@ class Dispatcher(object):
             </form>
             % response.unicode_body"""
         except Exception, e:
-             self.process_error(e)
+            self.log.log_exc(sys.exc_info(),'warn')
+            self.process_error(e)
         return response
     
     def process_error(self,e):
         """
         Process error
         """
+        
     
     def check_session(self):
        
@@ -80,5 +83,10 @@ class Dispatcher(object):
         assert 'method' in resource.keys(), _("Can't process resource_method with no method")
         args_spec = inspect.getargspec(resource['method'].func)
         self.log.debug("Parameters for method '%s' are '%s'" % (resource['method'].func.func_name,args_spec))
-        
-        
+        self.log.debug("%s"%dir(args_spec))
+        if args_spec.args == ['self']:
+            self.log.debug("Instance method with no parameters, running method and returning result")
+            resource['method'](resource['object'])
+        else:
+            self.log.debug("Found more than 'self' parameter in method")
+            

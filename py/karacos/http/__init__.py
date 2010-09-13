@@ -5,20 +5,23 @@ import threading
 
 import karacos
 
-class Redirect(karacos.core.Exception):
-    """
-    HTTP redirect Exception
-    """
-    def __init__(self,url,code=302):
-        """
-        """
-
 class HTTPError(karacos.core.Exception):
     """
     """
     def __init__(self,status=500,message=""):
         """
         """
+        karacos.core.Exception.__init__(self,value=message)
+
+class Redirect(HTTPError):
+    """
+    HTTP redirect Exception
+    """
+    def __init__(self,url,code=302):
+        """
+        """
+        HTTPError.__init__(self,status=code,message=url)
+
     
 def isaction(func):
     """

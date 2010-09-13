@@ -159,9 +159,9 @@ class Document(couchdb.client.Document):
         return karacos.webdb.actions[type(self)]
     
     @karacos.http.isaction
-    def get_user_actions_forms(self):
+    def _get_user_actions_forms(self):
         """
-        Returns user authorised actions for this object (Core component of KcAuth)
+        Returns user authorized actions for this object (Core component of KcAuth)
         """
         user=None
         assert issubclass(self.__metaclass__,karacos.db['WebMeta']), "Only WebTypes can handle method with 1 arg"

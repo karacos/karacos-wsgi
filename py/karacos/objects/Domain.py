@@ -259,6 +259,10 @@ class Domain(karacos.db['Parent']):
                 input_encoding='utf-8',output_encoding='utf-8')
         self.log.debug("END Domain __init__")
     
+    @karacos._db.isaction
+    def get_user_actions_forms(self):
+        return self._get_user_actions_forms()
+    
     def _get_users_node(self):
         self._update_item()
         if '__users_node__' not in dir(self):
@@ -907,16 +911,22 @@ class Domain(karacos.db['Parent']):
                     if arg in result['object'].get_web_childrens_for_id().keys():
                         result['object'] = result['object'].db[result.__childrens__[arg]]
                     else:
+                        self.log.debug("testing for '%s' in %s" % (arg,dir(result['object'])))
                         if arg not in dir(result['object']):
                             if isinstance(result['object'], karacos.db['Parent']):
                                 raise HTTPError(404, "Resource unavailable")
                         else:
-                            obj = eval("result['object'].%s" % arg)
-                            self.log.debug("Evaluated in dir(%s) '%s'" % (result['object']['name'],obj))
+                            evalstr = str("result['object'].%s" % arg)
+                            self.log.debug('Evaluating "%s" in [%s]' % (evalstr,result['object']))
+                            obj = eval(evalstr)
+                            self.log.debug("Evaluated '%s' in 'dir(%s)' : '%s'" % (arg,result['object']['name'],obj))
                             if inspect.ismethod(obj):
-                                result['method'] = obj
-                                result['args'] = args[countargs:]
-                                break
+                                if 'isaction' in dir(obj):
+                                    if obj.isaction:
+                                        result['method'] = obj
+                                        result['args'] = args[countargs:]
+                                        break
+                                raise HTTPError(404, "Resource unavailable")
                             else:
                                 raise HTTPError(404, "Resource unavailable")
         
