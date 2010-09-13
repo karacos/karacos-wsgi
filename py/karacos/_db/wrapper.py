@@ -138,14 +138,14 @@ class DataBase(couchdb.client.Database):
         """
         self.log.debug("SET CONTENT = %s" % content)
         try:
-            resp, data = self.resource.get(id)
+            aaa,resp, data = self.resource.get(id)
             document = couchdb.client.Document(data)
             if self.cache[id].rev != document.rev:
                 raise karacos._db.Exception("document update conflict")
         except:
             "Resource doesn't exist"
 #        content = unicode(karacos.json.dumps(content))
-        resp,data = self.resource.put_json(id, body=content)
+        aaa,resp,data = self.resource.put_json(id, body=content)
         content.update({'_id': data['id'], '_rev': data['rev']})
         if id in self.cache:
             del self.cache[id]

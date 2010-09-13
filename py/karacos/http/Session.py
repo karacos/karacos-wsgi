@@ -49,6 +49,27 @@ class Session(dict):
         '''
         assert id != None
         dict.__init__(self)
+        self['username'] = 'anonymous'
         self.id = id
         self.log = karacos.core.log.getLogger(self)
         self.log.debug("NEW SESSION CREATED '%s'" % self.id)
+    
+    def get_user_auth(self):
+        """
+        Returns user auth for current session
+        """
+    
+    def get_karacos_domain(self):
+        """
+        Returns karacos domain for current session
+        """
+        if __domain__ not in dir(self):
+            self.probe_domain()
+            
+    def probe_domain(self):
+        """
+        If no domain can be found, use sysdomain
+        """
+        if karacos.serving.get_request() == None:
+            self.__domain__ = karacos.db['Domain'].get_by_name('sysdomain')
+            

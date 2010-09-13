@@ -178,17 +178,10 @@ class Domain(karacos.db['Parent']):
         #karacos.Db.server.create(unicode(data['name']))
         doc_id = "%s" % uuid4().hex
         log.debug("BASE doc_id : %s" % doc_id)
-        username = ""
         session = karacos.serving.get_session()
-        if session != None:
-            if 'username' not in session:
-                session['username'] = 'anonymous'
-            username = session['username']
-        else:
-            username = 'system'
-        
+        username = session['username']
         if username == 'anonymous':
-            raise "Domain creation not allowed for anonymous"
+            raise karacos.core.Exception("Domain creation not allowed for anonymous")
         
         result = { 'name': data['name'],
                    'fqdn': data['fqdn'],
@@ -213,11 +206,9 @@ class Domain(karacos.db['Parent']):
         karacos.db.sysdb[doc_id] = result
         self.log.debug("Retrieving BASE doc_id : %s" % doc_id)
         result = karacos.db.sysdb[doc_id]
-        # TODO: tout ce process semble bien bancal
         admin = result._create_user(username='admin@%s' % result['name'],password='demo')
         anonymous = result._create_user(username='anonymous@%s' % result['name'])
         result['ACL'][admin.get_auth_id()] = result._get_adm_actions()
-        # Les deux lignes precedendes sont commentees a cause d'une recursion 
         result['ACL'][anonymous.get_auth_id()] = ['get_user_actions','login']
         
         
@@ -264,8 +255,7 @@ class Domain(karacos.db['Parent']):
         if '__users_node__' not in dir(self):
             if 'KC_usersNode' not in self.__childrens__:
                 if len(self._get_child_by_name('KC_usersNode')) == 0:
-                    owner = KaraCos._Auth.objects.DummyUser('system')
-                    KaraCos.Db.Node.create(base=None, parent=self,data={'name':'KC_usersNode'},owner=owner)
+                    karacos.db['Node'].create(base=None, parent=self,data={'name':'KC_usersNode'})
                     self.save()
             self.__users_node__ = self.get_child_by_name('KC_usersNode')
         return self.__users_node__
@@ -274,8 +264,7 @@ class Domain(karacos.db['Parent']):
         self._update_item()
         if '__groups_node__' not in dir(self):
             if 'KC_groupsNode' not in self.__childrens__:
-                owner = KaraCos._Auth.objects.DummyUser('system')
-                KaraCos.Db.Node.create(base=None, parent=self,data={'name':'KC_groupsNode'},owner=owner)
+                karacos.db['Node'].create(base=None, parent=self,data={'name':'KC_groupsNode'})
                 self.save()
             self.__groups_node__ = self.__childrens__['KC_groupsNode']
         return self.__groups_node__
@@ -387,20 +376,18 @@ class Domain(karacos.db['Parent']):
         assert username != None
         pwdValue = None
         if password != None:
-            pwdValue = "%s" % KaraCos.Db.User.hash_pwd(password)
+            pwdValue = "%s" % karacos.db['User'].hash_pwd(password)
         #assert username not in self.users, "User already eist in that domain"
         base = None
         if hasbase:
-            base = KaraCos.Db.BaseObject.create('%s_user_%s' % (self['name'],username))
+            base = karacos.db['Base'].create('%s_user_%s' % (self['name'],username))
         user = {'name':username,
                 'password': pwdValue,
                 'type': 'User',
                 'groups': [],
                 }
-        owner = KaraCos._Auth.objects.DummyUser('system')
-        return KaraCos.Db.Node.create(parent=self._get_users_node(),base=base,data=user,owner=owner)
-        #KaraCos.Db.Domain.create_user(domain=self,data=data,base=base)
-        #self.authdoc['users'][user['name']] = user.id
+        result = karacos.db['Node'].create(parent=self._get_users_node(),base=base,data=user)
+        return result
     
     def get_sessuserid(self):
         return '%s.user' % self['name']

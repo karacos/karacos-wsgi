@@ -29,7 +29,9 @@ class _Serving(threading.local):
     """
     Class for served objects
     """
-    
+    def __init__(self,*args,**kw):
+        threading.local.__init__(self,*args,**kw)
+        self.log = karacos.core.log.getLogger(self)
     def set_request(self,request):
         if 'serving' in dir(karacos):
             karacos.serving.request = request
@@ -57,5 +59,11 @@ class _Serving(threading.local):
         """
         """
         if 'serving' in dir(karacos):
-            if 'session' in dir(karacos.serving):
-                return karacos.serving.session
+            if 'session' not in dir(karacos.serving):
+                self.log.debug("session not found, getting session for 'system_thread'")
+                # AT this point, if middleware didn't add session,
+                # it's not a request, it-s a system thhread.
+                session_id = "system_thread"
+                karacos.serving.session = Session(session_id)
+                karacos.serving.session['username'] = "system"
+            return karacos.serving.session
