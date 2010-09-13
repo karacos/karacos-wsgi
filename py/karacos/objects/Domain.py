@@ -916,6 +916,8 @@ class Domain(karacos.db['Parent']):
                             if isinstance(result['object'], karacos.db['Parent']):
                                 raise HTTPError(404, "Resource unavailable")
                         else:
+                            if arg not in result['object'].get_user_actions(self.get_user_auth()) :
+                                raise HTTPError(403, "Unauthorized resource")
                             evalstr = str("result['object'].%s" % arg)
                             self.log.debug('Evaluating "%s" in [%s]' % (evalstr,result['object']))
                             obj = eval(evalstr)
@@ -926,10 +928,7 @@ class Domain(karacos.db['Parent']):
                                         result['method'] = obj
                                         result['args'] = args[countargs:]
                                         break
-                                raise HTTPError(404, "Resource unavailable")
-                            else:
-                                raise HTTPError(404, "Resource unavailable")
-        
+                            raise HTTPError(404, "Resource unavailable")
         self.log.debug("lookup_object result is [%s]" % result)
         return result
                     

@@ -25,6 +25,7 @@ class Middleware(object):
             db_name = "kc2_sysdomain_%s" % uuid4().hex
             base = karacos.db['Base'].create(db_name)
             karacos.db['Domain'].create(data={'name':'sysdomain', 'fqdn': 'localhost:61080'}, base=base)
+    
     def __call__(self, environ, start_response):
         """
         """

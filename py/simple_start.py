@@ -23,5 +23,5 @@ if __name__ == '__main__':
     wsgirefsrv.start()
     app = App.Dispatcher()
     while 1:
-        app.check_session()
+        #app.check_session()
         time.sleep(5)
