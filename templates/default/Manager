@@ -1,0 +1,24 @@
+<%inherit file="/default/include/names"/>
+
+% if result:
+	${result}
+	% if 'datatype' in result:
+	  % if result['datatype'] == 'workflowitems':
+	  	<table>
+	  	% for item in result['data']:
+	  		<tr><th>
+	  		% if item['type'] == 'CommentWfItem':
+		  		<a href="${item.__comment__._get_action_url()}">${item._get_title()}</a>
+	  		% else:
+		  		${item._get_title()}
+	  		% endif
+	  		</th></tr>
+	  		<tr><td>${item._get_description()}</td></tr>
+	  		${instance._get_action_for_item(item)}
+	  		<tr><td>${self.form.show_action(instance._get_action_for_item(item))}
+	  		</td></tr>
+	  	% endfor
+	  	</table>
+	  % endif
+	% endif
+% endif

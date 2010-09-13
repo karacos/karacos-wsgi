@@ -1,0 +1,18 @@
+<%page cached="False"/>
+
+<%namespace name="site">
+<%def name="page(instance,result)">
+
+			<%include file="${instance.get_site_template_uri()}"/>
+</%def>
+</%namespace>
+
+<%!
+	try:
+		if result == None:
+			result = False
+	except:
+		result = False
+%>
+<!-- Generated default/system -->
+${site.page(instance,result)}

@@ -39,8 +39,8 @@ class KcDocMeta(type):
         """
         
         self.log = karacos.core.log.getLogger(self)
-        self.log.info("KcDoMeta :  for %s" % (name))
-        self.log.debug("KcDocument :  parents of class : %s { %s }" % (parents,dir(parents)))
+        self.log.info("__init__ for '%s'" % (name))
+        self.log.debug("parents of class '%s' [%s] [%s]" % (name,parents,dir(parents)))
         if self not in karacos.webdb.actions.keys():
             karacos.webdb.actions[self] = []
         if couchdb.client.Document not in parents:
@@ -56,7 +56,7 @@ class KcDocMeta(type):
     def __call__(self,*args, **kw):
         """
         """
-        self.log.debug("KcDocMeta.__call__  BEGIN ")
+        self.log.debug("__call__  begin")
         instance = type.__call__(self, *args, **kw)
         
         return instance
@@ -216,15 +216,15 @@ class Document(couchdb.client.Document):
     
     
     def save(self):
-        #self = self.parent.db[self.id]
-        db = self.parent.db
+        #self = self.__parent__.db[self.id]
+        db = self.__parent__.db
         id = self.id
         self['last_modification_date'] = datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
         db[id] = self
 #        self = db[id]
 
     def _update_item(self):
-        db = self.parent.db
+        db = self.__parent__.db
         db.refresh_item(self)
     
     def basic_validations(self):

@@ -63,7 +63,7 @@ class _Serving(threading.local):
                 self.log.debug("session not found, getting session for 'system_thread'")
                 # AT this point, if middleware didn't add session,
                 # it's not a request, it-s a system thhread.
-                session_id = "system_thread"
-                karacos.serving.session = Session(session_id)
+                session_id = 'system_thread'
+                karacos.serving.session = Session(id=session_id)
                 karacos.serving.session['username'] = "system"
             return karacos.serving.session

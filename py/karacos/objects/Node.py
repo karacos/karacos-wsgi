@@ -54,7 +54,7 @@ class Node(karacos.db['Child']):
             base = parent.base
         username = karacos.serving.get_session()['username']
         result = { 'parent_id': parent['_id'],
-                   'parent_db': parent.parent.base.id,
+                   'parent_db': parent.__parent__.base.id,
                    'base_id': base.id,
                    'creator_id': username, 
                    'owner_id': username
@@ -84,7 +84,7 @@ class Node(karacos.db['Child']):
         assert isinstance(data['base_id'],basestring)
         
         karacos.db['Child'].__init__(self,*args, **kw)
-        self.__domain__ = self.parent.__domain__
+        self.__domain__ = self.__parent__.__domain__
     
     def _add_attachment(self, att_file=None):
         self._update_item()
@@ -120,7 +120,7 @@ class Node(karacos.db['Child']):
         """
         #self.base = KaraCos.Db.sysdb[self['_id']]
         #KaraCos.Db.sysdb.delete(self.base)
-        #self = self.parent.db[self['_id']]
+        #self = self.__parent__.db[self['_id']]
         self.log.debug(" Object delete : %s" % self)
         
         for child in self.__childrens__:
@@ -128,7 +128,7 @@ class Node(karacos.db['Child']):
                 self.get_child_by_name(child).delete()
             except Exception, e:
                 self.log.log_exc(sys.exc_info(),'error')
-        if self['base_id'] != self.parent['base_id']:
+        if self['base_id'] != self.__parent__['base_id']:
             self.base.delete()
         
         del self.__parent__.base.db[self['_id']]

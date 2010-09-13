@@ -1,0 +1,121 @@
+<% import KaraCos %>
+<% myresult = None %>
+
+% try:
+	% if isinstance(result,dict):
+		% if result['status'] == 'success':
+			% if 'datatype' in result:
+				% if result['datatype'] == 'UsersList':
+					<table>
+					<tr><th class="top" scope="col">User</th><th class="top" scope="col">Action</th></tr>
+					% for user in result['data'].values():
+						<% json_user = KaraCos.json.dumps(user) %>
+						<tr><td>${user['name']}</td><td><div class="set_user_settings_button" data='${json_user}' >Modifier<div></td></tr>
+					% endfor
+					</table>
+					<div id="form_user_settings" title="">
+						<form method="POST" action="${instance._get_action_url()}">
+							<input id="user_field_name" type="hidden" name="name" value=""/>
+							User site skin : <input id="user_field_CUSTOM_SITE_SKIN" type="text" name="CUSTOM_SITE_SKIN" value=""/><br/>
+							User site base : <input id="user_field_CUSTOM_SITE_BASE" type="text" name="CUSTOM_SITE_BASE" value=""/><br/>
+							New password : <input id="user_field_password" type="password" name="password" value=""/><br/>
+							Confirmation : <input id="user_field_password_confirm" type="password" name="password_confirm" value=""/><br/>
+							<input type="hidden" name="method" value="modify_user"/>
+							<p><input type='submit' class='button' value='Modifier'/></p>
+							<br/>
+						</form>
+					</div>
+					<script>
+					$('#form_user_settings').dialog({
+						autoOpen: false,
+						width: 520,
+						
+						/*
+						buttons: {
+						  "Ok": function() { 
+									$(this).dialog("close"); 
+								}, 
+							"Cancel": function() { 
+								$(this).dialog("close"); 
+							} 
+						
+						} */
+					});
+					$('.set_user_settings_button').click(function(e){
+						e.preventDefault();
+						user = $.secureEvalJSON($(this).attr('data'));
+						$('#user_field_CUSTOM_SITE_SKIN').attr('value',user['CUSTOM_SITE_SKIN']);
+						$('#user_field_CUSTOM_SITE_BASE').attr('value',user['CUSTOM_SITE_BASE']);
+						$('#user_field_name').attr('value',user['name']);
+						$('#form_user_settings').dialog('open');
+					});
+					</script>
+				% elif result['datatype'] == 'GroupsList':
+					<table>
+					<tr><th class="top" scope="col">Group</th><th class="top" scope="col">Action</th></tr>
+					% for group in result['data'].values():
+						<% json_group = KaraCos.json.dumps(group) %>
+						<tr><td>${group['name']}</td><td><div class="set_group_settings_button" data='${json_group}' >Modifier</div>
+								<div class="list_users_group_settings_button" data='${json_group}' >Liste users</div></td></tr>
+					% endfor
+					</table>
+					<div id="form_group_list_user" title="">
+						
+					</div>
+					<div id="form_group_settings" title="">
+						<form method="POST" action="${instance._get_action_url()}/modify_group">
+							<br/>
+						</form>
+					</div>
+					<script>
+					$('#form_group_settings').dialog({
+						autoOpen: false,
+						width: 520,
+						
+						buttons: {
+						  "Ok": function() { 
+									$(this).dialog("close"); 
+								}, 
+							"Cancel": function() { 
+								$(this).dialog("close"); 
+							} 
+						
+						}
+					});
+					$('#form_group_list_user').dialog({
+						autoOpen: false,
+						width: 520,
+						
+						buttons: {
+						  "Ok": function() { 
+									$(this).dialog("close"); 
+								}, 
+							"Cancel": function() { 
+								$(this).dialog("close"); 
+							} 
+						
+						}
+					});
+					$('.set_group_settings_button').click(function(e){
+						e.preventDefault();
+						group = $.secureEvalJSON($(this).attr('data'));
+						$('#form_group_settings').dialog('open');
+					});
+					
+					$('.list_users_group_settings_button').click(function(e){
+						e.preventDefault();
+						group = $.secureEvalJSON($(this).attr('data'));
+						for (user in group['users']) {
+							$('#form_group_list_user').append(user + "<br/>");
+						}
+						$('#form_group_list_user').dialog('open');
+					});
+					</script>
+				% endif
+			% endif
+		% endif ## result['status'] == 'success':
+	%endif
+	
+% except :
+	exception
+% endtry

@@ -1,0 +1,13 @@
+<p>Bonjour,</p>
+    <blockquote><p>Vous recevez ce message car votre adresse mail a ete enregistree sur notre site<br/>
+    Afin de compl&eacute;ter votre inscription, merci de cliquer sur 
+    <a href="http://${domain['fqdn']}/?method=validate_user&email=${user['name']}&validation=${user['validation']}">ce lien</a>. Si
+    <a href="http://${domain['fqdn']}/?method=validate_user&email=${user['name']}&validation=${user['validation']}">ce lien</a> ne fonctionne pas,
+    recopiez l'adresse suivante dans la barre d'adresses de votre navigateur :</p>
+    <PRE>http://${domain['fqdn']}/?method=validate_user&email=${user['name']}&validation=${user['validation']}
+    </PRE>
+    <p>Si vous n'avez pas sollicit&eacute; ce message, c'est que votre adresse a &eacute;t&eacute; saisie par un tiers dans
+    le formulaire d'inscription sur notre site : http://${domain['fqdn']}/</p>
+    <p>L'equipe Traderzic vous remercie</p>
+    </blockquote>
+                        

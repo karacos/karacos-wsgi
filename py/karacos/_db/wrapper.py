@@ -75,6 +75,7 @@ class DataBase(couchdb.client.Database):
         :param id: the document ID
         """
         resp, data = self.resource.head(id)
+        self.log.info("COUCHDB COMMAND 'DELETE' [%s]" % id)
         self.resource.delete(id, rev=resp['etag'].strip('"'))
         del self.cache[id]
     
@@ -83,7 +84,8 @@ class DataBase(couchdb.client.Database):
             del self.cache[id] 
     
     def refresh_item(self,item):
-        resp, data = self.resource.get(item.id)
+        self.log.info("COUCHDB COMMAND 'GET' [%s]" % item.id)
+        aaa, resp, data = self.resource.get_json(item.id)
         item.update(data)
     
     def __getitem__(self, id):
@@ -93,9 +95,11 @@ class DataBase(couchdb.client.Database):
         :return: a `Row` object representing the requested document
         :rtype: `Document`
         """
-        if id in self.cache:
+        if id in self.cache.keys():
+            self.log.debug("'%s' found in cache, serving memory object" % id)
             return self.cache[id]
         else:
+            self.log.info("COUCHDB COMMAND 'GET' [%s]" % id)
             aaa,resp, data = self.resource.get_json(id)
             self.cache[id] = data
             #KaraCos._Db.log.debug("BASE GET ITEM DATA : %s" %data)
@@ -103,26 +107,26 @@ class DataBase(couchdb.client.Database):
             hasDocument = type = WebType = False
             assert isinstance(data,dict)
             if 'type' in data:
-                assert isinstance(data['type'],basestring), "Type must be a String"
+                assert isinstance(data['type'],basestring), "type must be a String"
                 if data['type'] in karacos.db.keys():
                     type = True
             if 'WebType' in data:
-                assert isinstance(data['WebType'],basestring), "Type must be a String"  
-                
+                assert isinstance(data['WebType'],basestring), "WebType must be a String"  
                 if data['WebType'] in karacos.webdb.keys():
                     WebType = True
                 
 
             if type and not WebType:
-                self.log.info("BASE GET ITEM type : %s BEGIN" % data['type'])
+                self.log.debug("type and not webtype, instanciating in '%s'" % data['type'])
                 #KaraCos._Db.log.info("BASE GET ITEM type : %s BEGIN" % data)
                 document = karacos.db[data['type']](data=data,base=self)
                 hasDocument = True
             if type and WebType:
-                self.log.info("BASE GET WEB ITEM type : %s BEGIN" % data['WebType'])
+                self.log.debug("type and WebType, instanciating in '%s'" % data['WebType'])
                 document = karacos.webdb[data['WebType']](data=data,base=self)
                 hasDocument = True
             if not hasDocument:
+                self.log.debug("Type not found or no type found, instanciating Document with data '%s'" % data)
                 document = couchdb.client.Document(data)
             #KaraCos._Db.log.debug("BASE GET ITEM RESULT : %s" %document)
             self.cache[id] = document
@@ -136,18 +140,33 @@ class DataBase(couchdb.client.Database):
                         new documents, or a `Row` object for existing
                         documents
         """
-        self.log.debug("SET CONTENT = %s" % content)
-        try:
-            aaa,resp, data = self.resource.get(id)
+        self.log.debug("start __setitem__ '%s'[%s]" % (id,content))
+        try: 
+            self.log.info("COUCHDB COMMAND 'GET' [%s]" % id)
+            aaa,resp, data = self.resource.get_json(id)
             document = couchdb.client.Document(data)
             if self.cache[id].rev != document.rev:
                 raise karacos._db.Exception("document update conflict")
+            self.log.debug("Resource exists, processing update in couchdb")
         except:
-            "Resource doesn't exist"
+            self.log.debug("Resource doesn't exists, processing creation in couchdb")
 #        content = unicode(karacos.json.dumps(content))
+        self.log.info("COUCHDB COMMAND 'PUT' [%s]" % id)
         aaa,resp,data = self.resource.put_json(id, body=content)
         content.update({'_id': data['id'], '_rev': data['rev']})
         if id in self.cache:
             del self.cache[id]
+            
+    def view(self, name, wrapper=None, **options):
+        """
+        Cop/coll for view method.
+        do i have to create views cache ?
+        """
+        self.log.debug('Processing View [%s]' % name)
+        if not name.startswith('_'):
+            design, name = name.split('/', 1)
+            name = '/'.join(['_design', design, '_view', name])
+        return couchdb.client.PermanentView(self.resource(*name.split('/')), name,
+                             wrapper=wrapper)(**options)
         
     

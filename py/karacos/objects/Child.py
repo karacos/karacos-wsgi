@@ -49,10 +49,10 @@ class ChildMeta(karacos.db['ParentMeta']):
             parent = parentbase.db[kw['data']['parent_id']]
             kw['parent'] = parent
         instance = karacos.db['ParentMeta'].__call__(self, *args, **kw)
-        assert isinstance(instance.base,karacos.db['BaseObject']), "'instance.base' attribute is not BaseObject"
-        assert 'parent' in dir(instance), "'parent' attribute not found"
-        assert 'db' in dir(instance.parent), " parent's 'db' attribute not found"
-        assert isinstance(instance.parent.db,couchdb.Database), "parent.db is not a couchdb Database object"
+        assert isinstance(instance.base,karacos.db['Base']), "'instance.base' attribute is not BaseObject"
+        assert '__parent__' in dir(instance), "'parent' attribute not found"
+        assert 'db' in dir(instance.__parent__), " parent's 'db' attribute not found"
+        assert isinstance(instance.__parent__.db,couchdb.Database), "parent.db is not a couchdb Database object"
         self.log.debug("END ChildMeta.__call__ ")
         return instance
 
@@ -67,7 +67,7 @@ class Child(karacos.db['Parent']):
         """
         self.log.info("BEGIN Child.__init__ ")
         assert isinstance(self,karacos.db['Child']), "Icompatible type, instance is : %s, should be karacos.db['Child']" % type(self)
-        assert type(self) != ChildObject, "This type cannot be instanciated directly"
+        assert type(self) != Child, "This type cannot be instanciated directly"
         self.__parent__ = None
         assert 'parent' in kw
         self.__parent__ = kw['parent']
@@ -79,8 +79,8 @@ class Child(karacos.db['Parent']):
         karacos.db['Parent'].__init__(self,*args, **kw)
         """
         if parent != None:
-            assert isinstance(parent,KaraCos.Db.ParentObject), "Incompatible value type : %s is not a KaraCos.Db.ParentObject" % type(parent)
-            self.parent = parent
+            assert isinstance(parent,KaraCos.Db.__parent__Object), "Incompatible value type : %s is not a KaraCos.Db.__parent__Object" % type(parent)
+            self.__parent__ = parent
             self['parent_id'] = parent['_id']
             if self.base == None:
                 self.db = parent.db
@@ -91,13 +91,13 @@ class Child(karacos.db['Parent']):
         self._update_item()
         assert isinstance(name,basestring), "error, incorrect name"
         assert name != "", "name must be a string"
-        assert name not in self.parent.__dict__, "error, reserved name" # TODO: test exposed and action methods, this is assertion for web view, not for pyapi
-        assert name not in self.parent.__childrens__, "error, Node with that name exist"
-        del self.parent.__childrens__[self['name']]
+        assert name not in self.__parent__.__dict__, "error, reserved name" # TODO: test exposed and action methods, this is assertion for web view, not for pyapi
+        assert name not in self.__parent__.__childrens__, "error, Node with that name exist"
+        del self.__parent__.__childrens__[self['name']]
         self['name'] = name
-        self.parent.__childrens__[self['name']] = self['id']
+        self.__parent__.__childrens__[self['name']] = self['id']
         self.save()
-        self.parent.save()
+        self.__parent__.save()
     
         
         

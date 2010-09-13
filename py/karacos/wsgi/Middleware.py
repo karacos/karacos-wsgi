@@ -22,7 +22,7 @@ class Middleware(object):
         self.application = application
         self.log = karacos.core.log.getLogger(self)
         if not karacos.db['Domain'].exist_with_name('sysdomain'):
-            db_name = "%s" % uuid4().hex
+            db_name = "kc2_sysdomain_%s" % uuid4().hex
             base = karacos.db['Base'].create(db_name)
             karacos.db['Domain'].create(data={'name':'sysdomain', 'fqdn': 'localhost:61080'}, base=base)
     def __call__(self, environ, start_response):

@@ -1,0 +1,14 @@
+<% import karacos %>
+<% acturl = instance._get_action_url() %>
+
+% if not isinstance(instance,karacos.db['Domain']):
+	<div class="subcontent-unit-noborder-orange">
+	  <div class="round-noborder-topleft"></div><div class="round-noborder-topright"></div>
+	  <h1 class="orange">Operations</h1>
+		<ul>
+		% for action in instance.get_user_actions(instance.__domain__.get_user_auth()):
+		  <li><a href="${acturl}/${action}">${action}</a></li>
+		% endfor
+		</ul>
+	</div>
+% endif

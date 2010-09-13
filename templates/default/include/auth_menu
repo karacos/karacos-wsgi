@@ -1,0 +1,31 @@
+<% acturl = instance.__domain__._get_action_url() %>
+
+% if 'login' in instance.__domain__.get_user_actions(instance.__domain__.get_user_auth()):
+	<h2>Vous n'etes pas connecte</h2>
+	<div class="loginform">
+          <form method="post" action="${acturl}"> 
+            <p><input type="hidden" name="method" value="login" /></p>
+            <fieldset>
+              <p><label for="email" class="top">Email :</label><br />
+                <input type="text" name="email" id="username_1" tabindex="1" class="field" onkeypress="return webLoginEnter(document.loginfrm.password);" value="" /></p>
+    	      <p><label for="password" class="top">Mot de passe :</label><br />
+                <input type="password" name="password" id="password_1" tabindex="2" class="field" onkeypress="return webLoginEnter(document.loginfrm.cmdweblogin);" value="" /></p>
+    	      <p><input type="submit" class="button" value="Se connecter"  /></p>
+	          <p><a href="#" onclick="webLoginShowForm(2);return false;" id="forgotpsswd_1">Mot de passe oublie ?</a></p>
+	        </fieldset>
+          </form>
+        </div>
+% else:
+	<% name = "" %>
+	% if 'pseudo' in instance.__domain__.get_user_auth():
+		<% greet = 'Bonjour %s' % instance.__domain__.get_user_auth()['pseudo'] %>
+	%else:
+		<% greet = instance.__domain__.get_user_auth()['name'] %>
+	% endif
+	<h2>${greet}</h2>
+	<dl class="nav3-grid">
+		% for action in instance.__domain__.get_user_actions(instance.__domain__.get_user_auth()):
+          <dt><a href="${acturl}${action}">${action}</a></dt>
+        % endfor
+        </dl>
+% endif

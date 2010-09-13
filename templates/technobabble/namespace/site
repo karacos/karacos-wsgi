@@ -1,0 +1,70 @@
+<%namespace name="form" file="/technobabble/namespace/form"/>
+
+<%def name="show_content(action,instance,result)">
+	% if action:
+		
+		<div class="column1-unit">
+		 ${form.show_action(action)}
+		 </div>
+	    
+	% else:
+		<%include file="${instance.get_instance_template_uri()}"/>
+	% endif
+</%def>
+
+<%def name="show_menu(instance)">
+	<div id="navcontainer">
+		<ul id="navlist">
+		
+		<!-- put your navigation links and text here -->
+		
+		<li><a href="/">home</a></li>
+		<% childrens = instance.__domain__.get_web_childrens_for_id() %>
+		% for child in childrens.keys():
+			<li><a href="${instance.__domain__._get_action_url()}${childrens[child]}/">${childrens[child]}</a></li>
+		% endfor
+		<li><a href="http://validator.w3.org/check?uri=referer">xhtml</a></li>
+		
+		<!-- end navigation -->
+		
+		</ul>
+	</div>
+</%def>
+
+<%def name="head(instance)">
+	
+	<!-- change this to the title you want to appear in browser title bar -->
+	<meta name="robots" content="index,follow" />
+	<title>
+	% if 'title' in instance:
+		${instance['title']}
+	% else:
+		${instance['name']}
+	% endif
+	</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="author" content="" />
+	% if 'description' in instance:
+  	<meta name="description" content="${instance['description']}" />
+  % else:
+  	<meta name="description" content="${instance['name']}" />
+  % endif
+  % if 'keywords' in instance:
+  	<meta name="keywords" content="${instance['keywords']}" />
+  % else:
+    <meta name="keywords" content="${instance['name']}" />
+  % endif
+	<link rel="stylesheet" href="/_browser/themes/technobabble/style.css" type="text/css" />
+	% if 'head_bloc' in instance.__domain__:
+		${instance.__domain__['head_bloc']}
+	% endif
+</%def>
+
+<%def name="footer(instance)">
+<div id="footer"><br />
+    <a href="http://www.dream-logic.com">Web Design by dreamLogic</a>
+    % if 'foot_bloc' in instance.__domain__:
+		${instance.__domain__['foot_bloc']}
+	% endif
+    </div>
+</%def>

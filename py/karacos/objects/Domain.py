@@ -23,8 +23,11 @@ Created on 28 nov. 2009
 @author: nico
 '''
 from logging import getLogger
+from karacos.http import HTTPError
+import inspect
 log = getLogger(__name__)
 from mako.template import Template
+from mako.lookup import TemplateLookup
 from uuid import uuid4
 import os, datetime, sys, traceback
 import karacos
@@ -102,7 +105,7 @@ class Domain(karacos.db['Parent']):
         '''
             function(doc) {
             if (doc.type == "Domain" && doc.fqdn == "%s" && !("_deleted" in doc && doc._deleted == True))
-              emit(doc._id, doc.name);
+              emit(doc._id, doc);
         }
         '''
     
@@ -173,7 +176,7 @@ class Domain(karacos.db['Parent']):
         
         result = None
         assert not Domain.exist_with_name(data['name']), "Base already exist with the same name"
-        assert not Domain.exist_with_fqdn(data['name']), "Base already exist with the same name"
+        assert not Domain.exist_with_fqdn(data['fqdn']), "Base already exist with the same name"
         
         #karacos.Db.server.create(unicode(data['name']))
         doc_id = "%s" % uuid4().hex
@@ -204,7 +207,7 @@ class Domain(karacos.db['Parent']):
         if 'WebType' not in result:
             result['WebType'] = 'Domain'
         karacos.db.sysdb[doc_id] = result
-        self.log.debug("Retrieving BASE doc_id : %s" % doc_id)
+        log.debug("Retrieving BASE doc_id : %s" % doc_id)
         result = karacos.db.sysdb[doc_id]
         admin = result._create_user(username='admin@%s' % result['name'],password='demo')
         anonymous = result._create_user(username='anonymous@%s' % result['name'])
@@ -219,6 +222,7 @@ class Domain(karacos.db['Parent']):
 
       
     def __init__(self,*args, **kw):
+        self.log = karacos.core.log.getLogger(self)
         self.log.debug("BEGIN Domain __init__")# : %s" % data.items())
         assert 'data' in kw
         data = kw['data']
@@ -233,22 +237,27 @@ class Domain(karacos.db['Parent']):
         self.__parent__.db = karacos.db.sysdb
         if 'childrens' not in self:
             self['childrens'] = {}
+            self.save()
         self.log.debug("END : domain.__init__ : %s" % self)
-        if karacos.config.get('system','mode') == 'dev':
-            self._self = self
-        self.save()
+        if karacos.config.has_section('system'):
+            if karacos.config.has_option('system', 'mode'):
+                if karacos.config.get('system','mode') == 'dev':
+                    self._self = self
+        if 'lookup' not in self.__dict__:
+            self.log.info("Creating template lookup for %s" % self['name'])
+            default_template_dir = os.path.join(karacos.homedir,'templates')
+            module_dir = os.path.join(karacos._srvdir,'temp','pytemplates')
+            if not os.path.exists(module_dir):
+                os.makedirs(module_dir)
+            templatesdirs = [default_template_dir]
+            if 'templatesdirs' in self:
+                for templatedir in self['templatesdirs']:
+                    templatesdirs.append(templatedir)
+            self.lookup =  TemplateLookup(directories=templatesdirs,
+                #default_filters=['decode.utf8'], 
+                module_directory=module_dir,filesystem_checks=False,
+                input_encoding='utf-8',output_encoding='utf-8')
         self.log.debug("END Domain __init__")
-        """ is a SOURCE of PROBLEMS at Domain's creation
-        if '_attachments' not in self:
-            self.log.info("%s , %s" % (self.id,self.rev))
-            mfzip = file(os.path.join(KaraCos.__path__[0],'_Core','themes','multiflex37.zip'))
-            self.parent.db.put_attachment(self, mfzip.read(), 'multiflex37.zip')#, 'image/png')
-            self._update_item()
-        if 'multiflex37.zip' not in self['_attachments']:
-            mfzip = file(os.path.join(KaraCos.__path__[0],'_Core','themes','multiflex37.zip'))
-            self.parent.db.put_attachment(self, mfzip.read(), 'multiflex37.zip')#, 'image/png')
-            self._update_item()
-        """
     
     def _get_users_node(self):
         self._update_item()
@@ -396,6 +405,8 @@ class Domain(karacos.db['Parent']):
         user_name = None
         self.log.info("START %s.get_user_auth" % self['name'])
         
+        return karacos.serving.get_session().get_user_auth()
+        """
         if 'session' in dir(cherrypy):
         
             sessuserid = self.get_sessuserid()
@@ -417,7 +428,7 @@ class Domain(karacos.db['Parent']):
             return self.get_user_by_name(user_name)
         else:
             return self._get_anonymous_user()
-        
+        """
     
     def is_user_authenticated(self):
         """
@@ -616,32 +627,25 @@ class Domain(karacos.db['Parent']):
         """
         Returns this domain anonymous user
         """
-        self._update_item()
-        #if self
+        #self._update_item()
         self.log.info("START %s._get_anonymous_user" % self['name'])
         result = ""
-        if 'session' not in dir(cherrypy):
-                
-            result = KaraCos._Auth.objects.DummyUser('system')
-        else:
-            if self.get_sessuserid() in cherrypy.session:
-                if '__anonymous__' not in dir(self):
-                    user = None
-                    group = None
-                    name = 'anonymous@%s' % self['name']
-                    if len(self._get_user_by_name(name)) == 0:
-                        user = self._create_user(username=name)
-                        user['pseudo'] = _('anonyme')
-                        user.save()
-                        if not self.group_exist(name):
-                            group = self._create_group(name)
-                        group.add_user(user)
-                        self._get_everyone_group().add_user(user)
-                    self.__anonymous__ = self.get_user_by_name(name)
-                    #self.__anonymous__ = user
-                result = self.__anonymous__
-            else:
-                result = KaraCos._Auth.objects.DummyUser('system')
+
+        if '__anonymous__' not in dir(self):
+            user = None
+            group = None
+            name = 'anonymous@%s' % self['name']
+            if len(self._get_user_by_name(name)) == 0:
+                user = self._create_user(username=name)
+                user['pseudo'] = _('anonymous')
+                user.save()
+                if not self.group_exist(name):
+                    group = self._create_group(name)
+                group.add_user(user)
+                self._get_everyone_group().add_user(user)
+            self.__anonymous__ = self.get_user_by_name(name)
+            #self.__anonymous__ = user
+        result = self.__anonymous__
         return result
         
 
@@ -864,8 +868,7 @@ class Domain(karacos.db['Parent']):
                 'type': 'Group',
                 'users': {},
                 }
-        owner = KaraCos._Auth.objects.DummyUser('system')
-        return KaraCos.Db.Node.create(parent=self._get_groups_node(),base=base,data=group,owner=owner)
+        return KaraCos.Db.Node.create(parent=self._get_groups_node(),base=base,data=group)
         #self.authdoc['groups'][group['name']] = group.id
 
     
@@ -886,7 +889,43 @@ class Domain(karacos.db['Parent']):
         del KaraCos.Db.sysdb[self['_id']]
         del self
     
-    #@cherrypy.expose()
+    def lookup_resource(self,urlpath):
+        """
+        returns a record with object and args
+        """
+        countargs = 0
+        result = {'object': self }
+        #cirrentobj = self
+        self.log.debug("lookup_object for path : %s" % urlpath)
+        args = urlpath.split("/")
+        self.log.debug("lookup_object argssplit '%s'" % args)
+        for arg in args :
+            countargs=countargs+1
+            self.log.debug("lookup_object (for) arg '%s'" % arg)
+            if arg != '' and arg != '_self':
+                if isinstance(result['object'],karacos.db['Document']):
+                    if arg in result['object'].get_web_childrens_for_id().keys():
+                        result['object'] = result['object'].db[result.__childrens__[arg]]
+                    else:
+                        if arg not in dir(result['object']):
+                            if isinstance(result['object'], karacos.db['Parent']):
+                                raise HTTPError(404, "Resource unavailable")
+                        else:
+                            obj = eval("result['object'].%s" % arg)
+                            self.log.debug("Evaluated in dir(%s) '%s'" % (result['object']['name'],obj))
+                            if inspect.ismethod(obj):
+                                result['method'] = obj
+                                result['args'] = args[countargs:]
+                                break
+                            else:
+                                raise HTTPError(404, "Resource unavailable")
+        
+        self.log.debug("lookup_object result is [%s]" % result)
+        return result
+                    
+                    
+        #  return self
+    
     def default(self,*args,**kw):
         """
         """

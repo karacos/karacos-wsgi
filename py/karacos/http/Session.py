@@ -58,18 +58,38 @@ class Session(dict):
         """
         Returns user auth for current session
         """
+        domain = self.get_karacos_domain()
+        result = None
+        if self['username'] == 'anonymous':
+            result = domain._get_anonymous_user()
+        else:
+            result = domain.get_user_by_name(self['username'])
+        self.log.debug("result type '%s', data [%s]" % (result.__class__.__name__, result))
+        return result
+        
     
     def get_karacos_domain(self):
         """
         Returns karacos domain for current session
         """
-        if __domain__ not in dir(self):
+        if '__domain__' not in dir(self):
             self.probe_domain()
+        return self.__domain__
             
     def probe_domain(self):
         """
         If no domain can be found, use sysdomain
         """
         if karacos.serving.get_request() == None:
+            assert self.id == 'system_thread', _("Not in HTTP, session should be 'system_thread'")
             self.__domain__ = karacos.db['Domain'].get_by_name('sysdomain')
-            
+        else:
+            request = karacos.serving.get_request()
+            self.log.debug("Probing domain from request [%s]" % request)
+            requested_fqdn = request.headers['Host']
+            self.log.debug("Requesting domain '%s' in sysdb" % requested_fqdn)
+            if karacos.db['Domain'].exist_with_fqdn(requested_fqdn):
+                self.__domain__ = karacos.db['Domain'].get_by_fqdn(requested_fqdn)
+            else:
+                self.log.debug("Domain with fqdn '%s' not found in sysdb, using sysdomain" % requested_fqdn)
+                self.__domain__ = karacos.db['Domain'].get_by_name('sysdomain')

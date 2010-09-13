@@ -1,0 +1,52 @@
+<%inherit file="/default/include/names"/>
+<%!
+	import KaraCos
+%>
+
+% if result:
+	% if 'datatype' in result:
+		% if result['datatype'] == 'DomainsList':
+			<table>
+					<tr><th class="top" scope="col">Domain</th><th class="top" scope="col">Action</th></tr>
+					% for domain in result['data'].values():
+						<% json_domain = KaraCos.json.dumps(domain) %>
+						<tr><td>${domain['name']}</td><td><div class="set_domain_settings_button" data='${json_domain}' >Modifier</div></td></tr>
+					% endfor
+					</table>
+					<div id="form_domain_settings" title="">
+						<form method="POST" action="${instance._get_action_url()}">
+							<input id="domain_field_name" type="hidden" name="name" value=""/>
+							FQDN : <input id="domain_field_fqdn" type="text" name="fqdn" value=""/><br/>
+							<input type="hidden" name="method" value="edit_domain"/>
+							<p><input type='submit' class='button' value='Modifier'/></p>
+							<br/>
+						</form>
+					</div>
+					<script>
+					$('#form_domain_settings').dialog({
+						autoOpen: false,
+						width: 520,
+						
+						/*
+						buttons: {
+						  "Ok": function() { 
+									$(this).dialog("close"); 
+								}, 
+							"Cancel": function() { 
+								$(this).dialog("close"); 
+							} 
+						
+						} */
+					});
+					$('.set_domain_settings_button').click(function(e){
+						e.preventDefault();
+						domain = $.secureEvalJSON($(this).attr('data'));
+						$('#domain_field_fqdn').attr('value',domain['fqdn']);
+						$('#domain_field_name').attr('value',domain['name']);
+						$('#form_domain_settings').dialog('open');
+					});
+					</script>
+			
+		% endif
+	% endif
+% endif
