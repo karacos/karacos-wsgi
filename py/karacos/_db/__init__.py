@@ -48,8 +48,6 @@ def isaction(func):
                 
                 result['doc'] = wrapped_function.__doc__
                 result['acturl'] = instance._get_action_url()
-                #if KaraCos.conf['system']['mode'] == 'dev':
-                #    result['acturl'] = './_self/'
                 return result
             
             if args[0] == "get_action":
@@ -57,20 +55,7 @@ def isaction(func):
                 
             instance = args[0]
             log.info("Wrapper : %s , %s , %s , %s" % (func.__name__,instance['name'],args,kwds))
-            
-            
-        #    func.isaction = True
-            #KaraCos._Db.actions[kctype].append(func.__name__)
-            returnData = False
-            if karacos.serving.get_session() != None:
-                if func.__name__ in instance.get_user_actions(instance.__domain__.get_user_auth()):
-                    returnData = True
-            if returnData:
-                return func(*args, **kwds)
-            else:
-                raise karacos.http.HTTPError(status=403,message=_("Ressource non autorisee"))
-                return  {}#'status':'failure', 'message':_('Unauthorised Method'),
-#                    'errors':{}} 
+            return func(*args, **kwds)
         
         wrapper.func = func
         if 'label' in dir(func):
@@ -80,12 +65,10 @@ def isaction(func):
         elif 'form' in dir(func):
             wrapper.form = func.form
         wrapper.__doc__ = _(func.__doc__)
+
         def get_action(currentparent):
             return wrapper('get_action',wrapper,currentparent)
         
         wrapper.get_action = get_action
         wrapper.isaction = True
-        
-        
-        
         return wrapper

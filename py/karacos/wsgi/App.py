@@ -24,7 +24,10 @@ class Dispatcher(object):
         # Gets KaraCos request/response objects.
         try:
             request = karacos.serving.get_request()
+            request.__args__ = []
+            request.__kwds__ = {}
             response = karacos.serving.get_response()
+            response.__method__ = None
             response.__instance__ = None
             response.__result__ = None
             response.__action__ = None
@@ -61,7 +64,6 @@ class Dispatcher(object):
         """
         """
         self.log.debug("process_request %s" % dir(request.params))
-        request.__kwds__ = {}
         self.log.debug(request.headers['Content-Type'])
         if request.headers['Content-Type'].find("application/json")<0:
             #c pas du json
@@ -77,12 +79,13 @@ class Dispatcher(object):
                 raise HTTPError(status=400, message="Bad request")
             else:
                 self.process_json_params(request,response)
+        self.process_action(request, response)
         if 'text/html' in request.accept or 'application/xhtml+xml' in request.accept:
-            request.__render_method__ = self.render_html
+            response.__render_method__ = self.render_html
         elif 'application/json' in request.accept:
-            request.__render_method__ = self.render_json
+            response.__render_method__ = self.render_json
         elif 'application/xml' in request.accept:
-            request.__render_method__ = self.render_xml
+            response.__render_method__ = self.render_xml
     
     def process_http_params(self,request,response):
         """
@@ -90,12 +93,16 @@ class Dispatcher(object):
         for name, value in request.params.items():
             request.__kwds__[name] = value
         if 'method' in request.__kwds__:
-            if response.__result__ != None or response.__action__ != None:
+            if response.__method__ != None:
                 raise HTTPError(status=400, message="Bad request")
             else:
                 method = "%s" % request.__kwds__['method']
                 del request.__kwds__['method']
-                response.__result__ = response.__instance__.get_action(method)(*(),**request.__kwds__)
+                self.process_method_params(response.__instance__.get_action(method))
+                self.ckeck_method_params(method, request, response)
+                response.__result__ = response.__instance__.get_action(method)(*request.__args__,**request.__kwds__)
+
+    
     def process_json_params(self,request,response):
         """
         """
@@ -116,7 +123,18 @@ class Dispatcher(object):
        
         session = karacos.serving.get_session()
         self.log.debug("session fould, [%s] " % session)
-        
+    
+    def process_action(self,request, response):
+        """
+        Process actionMethod for getting some result
+        """
+        if response.__method__ == None:
+            response.__result__ = response.__instance__.get_user_actions_forms()
+        else:
+            if response.__args_spec__.args == ['self']:
+                self.log.info("Method %s takes no arguments" % (response.__method__.func.__name))
+                assert request.__kwds__ == [] and request.__args__ == [], "No argument accepted for %s" % response.__method__.func.__name
+    
     def process_resource(self,resource):
         """
         Process resource
@@ -124,24 +142,24 @@ class Dispatcher(object):
         self.log.debug("process_resource_html START")
         response = karacos.serving.get_response()
         request = karacos.serving.get_request()
-        request.args = None
         response.__instance__ = resource['object']
         if 'args' in resource:
             request.__args__ = resource['args']    
         if 'method' not in resource.keys():
             self.log.debug("Resource is only instance")
         else:
-            self.log.debug("Lookup returned instance '%s' and method '%s'" % (resource['object']['name'],resource['method'].func.func_name))
-            self.process_resource_method(resource)
-            #response.body = template.render(instance=resource['object'])
-    
-    def process_resource_method(self,resource):
+            self.process_method_params(resource['method'])
+            
+    def process_method_params(self,method):
         response = karacos.serving.get_response()
-        assert 'method' in resource.keys(), _("Can't process resource_method with no method")
-        args_spec = inspect.getargspec(resource['method'].func)
-        self.log.debug("Parameters for method '%s' are '%s'" % (resource['method'].func.func_name,args_spec))
-        if args_spec.args == ['self']:
-            self.log.debug("Instance method with no parameters, running method and returning result")
-            response.__result__ = resource['method'](resource['object'])
-        else:
-            self.log.debug("Found more than 'self' parameter in method")            
+        request = karacos.serving.get_request()
+        request.__method__ = method
+        request.__args_spec__ = inspect.getargspec(method.func)
+        self.log.debug("Parameters for method '%s' are '%s'" % (method.func.func_name,request.__args_spec__))
+    
+    def ckeck_method_params(self,method,request):
+        """
+        """
+        given = len(request.__args__) + len(request.__kwds__)
+        assert given == len(request.__args_spec__), "Invalid number of parameter '%s', '%s' expected" % (given,len(request.__args_spec__))
+        assert len(request.__kwds__) == len(request.__args_spec__.defaults), "Invalid number of named parameters"

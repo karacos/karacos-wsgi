@@ -158,7 +158,7 @@ class Document(couchdb.client.Document):
         """
         return karacos.webdb.actions[type(self)]
     
-    @karacos.http.isaction
+    
     def _get_user_actions_forms(self):
         """
         Returns user authorized actions for this object (Core component of KcAuth)
