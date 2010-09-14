@@ -11,6 +11,7 @@ from uuid import uuid4
 import webob
 import inspect
 import sys
+from karacos.lib import static
 
 class Dispatcher(object):
     '''
@@ -35,9 +36,12 @@ class Dispatcher(object):
             session = karacos.serving.get_session()
             domain = session.get_karacos_domain()
             resource = domain.lookup_resource(request.path) # Gives App the resource to process
+            if 'staticfile' in resource:
+                self.log.debug("serving static resource %s" % resource['staticfile'])
+                static.serve_file(resource['staticfile'])
+                return response
             self.process_resource(resource)
             self.process_request(request,response)
-            
             if 'text/html' in request.accept or 'application/xhtml+xml' in request.accept:
                 self.render_html(response)
             elif 'application/json' in request.accept:
@@ -45,15 +49,29 @@ class Dispatcher(object):
             elif 'application/xml' in request.accept:
                 self.render_xml(response)
             self.log.debug(request.path)
-        except Exception, e:
+        
+        except BaseException, e:
             self.log.log_exc(sys.exc_info(),'warn')
             self.process_error(e)
+        
         return response
     
     def process_error(self,e):
         """
         Process error
         """
+        response = karacos.serving.get_response()
+        session = karacos.serving.get_session()
+        domain = session.get_karacos_domain()
+        template = domain.lookup.get_template('system') 
+        if isinstance(e, HTTPError):
+            response.body = template.render(instance = domain,
+                                            result = {'status': 'failure',
+                                                      'message': e.get_message()})
+        else:
+            response.body = template.render(instance = domain,
+                                            result = {'status': 'failure',
+                                                      'message': "%s,%s" % (e.args,sys.exc_info())})
     
     def process_request(self,request,response):
         """
@@ -108,7 +126,14 @@ class Dispatcher(object):
     def render_html(self, response):
         """
         """
-        response.body = """<pre>
+        session = karacos.serving.get_session()
+        domain = session.get_karacos_domain()
+        template = domain.lookup.get_template('system') 
+        
+        response.body = template.render(instance = response.__instance__,
+                                        result = response.__result__,
+                                        action = response.__action__) 
+        """<pre>
         response.__instance__ : %s 
         response.__action__   :%s
         response.__result__   : %s </pre>""" % (
@@ -116,6 +141,7 @@ class Dispatcher(object):
                 karacos.json.dumps(response.__action__),
                 karacos.json.dumps(response.__result__),
         )
+        
         
     def render_json(self, response):
         """
@@ -139,7 +165,7 @@ class Dispatcher(object):
             given = len(request.__args__) + len(request.__kwds__)
             
             if request.__args_spec__.args == ['self']:
-                self.log.info("Method %s takes no arguments" % (request.__method__.func.__name))
+                self.log.info("Method %s takes no arguments" % (request.__method__.func.__name__))
                 if given != 0:
                     raise HTTPError(status=400, message="Bad request, no argument accepted for %s" % request.__method__.func.__name)
             if self.ckeck_method_params(request.__method__, request):
@@ -179,9 +205,18 @@ class Dispatcher(object):
         self.log.debug("check_method_params BEGIN")
         try:
             given = len(request.__args__) + len(request.__kwds__) + 1 # +1 stands for ungiven 'self' param
-            expected = len(request.__args_spec__.args)
+            expected = 0
+            try:
+                expected = len(request.__args_spec__.args)
+            except:
+                expected = 0
+            defaults_expected = 0
+            try:
+                defaults_expected = len(request.__args_spec__.defaults)
+            except:
+                defaults_expected = 0
             assert given == expected, "Invalid number of parameter '%s', '%s' expected" % (given,len(request.__args_spec__))
-            assert len(request.__kwds__) == len(request.__args_spec__.defaults), "Invalid number of named parameters"
+            assert len(request.__kwds__) == defaults_expected, "Invalid number of named parameters"
             return True
         except AssertionError,e:
             self.log.log_exc(sys.exc_info(),'info')

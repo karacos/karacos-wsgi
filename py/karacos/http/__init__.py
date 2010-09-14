@@ -12,6 +12,10 @@ class HTTPError(karacos.core.Exception):
         """
         """
         karacos.core.Exception.__init__(self,value=message)
+        self.status = status
+    
+    def get_message(self):
+        return "[%s] - %s" % (self.status, self.__str__())
 
 class Redirect(HTTPError):
     """
@@ -22,7 +26,13 @@ class Redirect(HTTPError):
         """
         HTTPError.__init__(self,status=code,message=url)
 
-    
+class NotFound(HTTPError):
+    """
+    """
+    def __init__(self,message="Resource not found"):
+        """
+        """
+        HTTPError.__init__(self,status=404,message=message)
 def isaction(func):
     """
     Decorator for object exposed actions

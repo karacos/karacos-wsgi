@@ -245,7 +245,7 @@ class Domain(karacos.db['Parent']):
                     self._self = self
         if 'lookup' not in self.__dict__:
             self.log.info("Creating template lookup for %s" % self['name'])
-            default_template_dir = os.path.join(karacos.homedir,'templates')
+            default_template_dir = os.path.join(karacos.homedir,'resources','templates')
             module_dir = os.path.join(karacos._srvdir,'temp','pytemplates')
             if not os.path.exists(module_dir):
                 os.makedirs(module_dir)
@@ -257,6 +257,15 @@ class Domain(karacos.db['Parent']):
                 #default_filters=['decode.utf8'], 
                 module_directory=module_dir,filesystem_checks=False,
                 input_encoding='utf-8',output_encoding='utf-8')
+        if 'staticdirs' not in self.__dict__:
+            default_static_dir = os.path.join(karacos.homedir,'resources','static')
+            if 'staticdirs' not in self:
+                self['staticdirs'] = {'_browser':default_static_dir}
+                self.save()
+            if self['staticdirs']['_browser'] != default_static_dir:
+                self['staticdirs']['_browser'] = default_static_dir
+                self.save()
+            self.staticdirs = self['staticdirs'] 
         self.log.debug("END Domain __init__")
     
     @karacos._db.isaction
@@ -525,7 +534,7 @@ class Domain(karacos.db['Parent']):
     
     def __batch_set_user_password__(self,username,password):
         user = self.get_user_by_name(username)
-        user['password'] = "%s" % KaraCos.Db.User.hash_pwd(password)
+        user['password'] = "%s" % karacos.db['User'].hash_pwd(password)
         user.save()
     
     @karacos._db.isaction
@@ -538,8 +547,8 @@ class Domain(karacos.db['Parent']):
         assert isinstance(confirm,basestring), "Parameter name must be string"
         result = None
         try:
-            old_passwordhash = "%s" % KaraCos.Db.User.hash_pwd(old_password)
-            passwordhash = "%s" % KaraCos.Db.User.hash_pwd(password)
+            old_passwordhash = "%s" % karacos.db['User'].hash_pwd(old_password)
+            passwordhash = "%s" % karacos.db['User'].hash_pwd(password)
             user = self.get_user_auth()
             if user['password'] == old_passwordhash:
                 user['password'] = passwordhash
@@ -568,7 +577,7 @@ class Domain(karacos.db['Parent']):
         try:
             assert name != None
             assert type != None
-            assert issubclass(KaraCos.Db.__dict__[type],KaraCos.Db.WebNode),_("Type incorrect")
+            assert issubclass(karacos.db[type],KaraCos.Db.WebNode),_("Type incorrect")
             data = {'name':name}
             node = self._create_child_node(data=data, type=type, base=base)
             return {'status':'success', 'message': _("Node cree avec succes"), 'data':node}
@@ -683,7 +692,7 @@ class Domain(karacos.db['Parent']):
 
     @karacos._db.isaction
     def set_ACL(self, ACL=None):
-        self['ACL'] = json.loads(ACL)
+        self['ACL'] = karacos.json.loads(ACL)
         self.save()
     def _set_ACL_form(self):
         return {'title': _("Modifier l'ACL"),
@@ -700,7 +709,7 @@ class Domain(karacos.db['Parent']):
     
     @karacos._db.isaction
     def set_ACL_default_update(self, ACL=None):
-        self['ACL_default_update'] = json.loads(ACL)
+        self['ACL_default_update'] = karacos.json.loads(ACL)
         self.save()
         
     def _set_ACL_default_update_form(self):
@@ -896,7 +905,14 @@ class Domain(karacos.db['Parent']):
                         self.log.debug("testing for '%s' in %s" % (arg,dir(result['object'])))
                         if arg not in dir(result['object']):
                             if isinstance(result['object'], karacos.db['Parent']):
-                                raise HTTPError(404, "Resource unavailable")
+                                self.log.info("Checking '%s' in '%s'")
+                                if arg not in self['staticdirs'].keys():
+                                    raise karacos.http.NotFound()
+                                
+                                self.log.debug("serving static resource for url '%s'" % urlpath)
+                                resourcename = urlpath[urlpath.index(arg)+len(arg)+1:]
+                                self.log.debug("Resource name is : '%s' and served from dir '%s'" % (resourcename,self['staticdirs'][arg]) )
+                                return {'object': self,  'staticfile': os.path.join(self['staticdirs'][arg] , resourcename) }
                         else:
                             if arg not in result['object'].get_user_actions(self.get_user_auth()) :
                                 raise HTTPError(403, "Unauthorized resource")

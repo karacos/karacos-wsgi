@@ -1,0 +1,31 @@
+To create editor instances, other than the usual CKEditor core script, you need to load the jQuery Adapter file in the page, in the following order:
+
+<script type="text/javascript" src="/ckeditor/ckeditor.js"></script> 
+<script type="text/javascript" src="/ckeditor/adapters/jquery.js"></script>
+
+At this point, any textarea, p or div element can be transformed into a rich text editor by simply using the ckeditor() method:
+
+$( 'textarea.editor' ).ckeditor();
+
+jQuery chaining can also be used:
+
+$( '.section-x' ) 
+    .find( 'textarea.editor' ) 
+        .ckeditor() 
+    .end() 
+    .find( 'a' ) 
+        .addClass( 'mylink' ) 
+    .end();
+
+The ckeditor() is the main method in the jQuery adapter. It accepts two optional parameters:
+
+   1. A callback function to be execute when the editor is ready;
+   2. Configuration options specific to the created editor instance.
+
+The configurations options are passed through a simple object containing properties, each one related to a specific editor setting.
+
+$('.jquery_ckeditor') 
+    .ckeditor( function() { /* callback code */ }, { skin : 'office2003' } );
+
+The "this" reference inside the callback function points to the the CKEDITOR.editor object representing the editor instance.
+Code interaction with editor instances
