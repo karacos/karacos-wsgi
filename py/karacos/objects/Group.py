@@ -37,6 +37,11 @@ class Group(karacos.db['Node']):
     
     __metaclass__ = karacos.db['AuthMeta']
     
+    @staticmethod
+    def create(parent=None, base=None,data=None,owner=None):
+        result = karacos.db['Node'].create(parent=parent,base=base,data=data,owner=owner)
+        return result
+    
     def __init__(self,parent=None,data=None,base=None):
         """
         

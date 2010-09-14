@@ -1,5 +1,3 @@
-import log
-import apps
 class Exception(Exception):
     """
     Base exception class for Db
@@ -8,3 +6,8 @@ class Exception(Exception):
         self.parameter = value
     def __str__(self):
         return repr(self.parameter)
+
+
+import log
+import apps
+import mail

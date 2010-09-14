@@ -395,15 +395,11 @@ class Domain(karacos.db['Parent']):
         """
         """
         self.log.info("BEGIN %s.create_user" % self['name'])
-        #if self.authdoc == None:
-        #    self.authdoc = KaraCos.Db.DomainAuthDoc(domain=self)
-        assert len(self._get_user_by_name(username)) == 0
-         #assert username not in self._get_users_node().__childrens__, "User exist with that name"
+        assert len(self._get_user_by_name(username)) == 0, "User exist with that name"
         assert username != None
         pwdValue = None
         if password != None:
             pwdValue = "%s" % karacos.db['User'].hash_pwd(password)
-        #assert username not in self.users, "User already eist in that domain"
         base = None
         if hasbase:
             base = karacos.db['Base'].create('%s_user_%s' % (self['name'],username))
@@ -414,7 +410,7 @@ class Domain(karacos.db['Parent']):
                 }
         users_node = self._get_users_node()
         assert users_node != None 
-        result = karacos.db['Node'].create(parent=users_node,base=base,data=user)
+        result = karacos.db['User'].create(parent=users_node,base=base,data=user)
         return result
     
     def get_sessuserid(self):
@@ -601,7 +597,7 @@ class Domain(karacos.db['Parent']):
         """
         """
         user = None
-        if True: # KaraCos._Core.mail.valid_email(email):
+        if karacos.core.mail.valid_email(email):
             try:
                 user = self.authenticate(email,password)
             except karacos._db.Exception, e:
@@ -613,11 +609,14 @@ class Domain(karacos.db['Parent']):
                     'errors':{'email':_('This is not a valid mail address')}}
             
         return {'status':'success', 'message':_("Authentification r&eacute;ussie"),'data':user}
-    login.label = _('S\'authentifier')
+    login.label = _("S'authentifier")
+    login.form = {'title': _("Connexion au site"),
+         'submit': _('Se connecter'),
+         'fields': [{'name':'email', 'title':_('Adresse email'),'dataType': 'TEXT'},
+                    {'name':'password', 'title':_('Mod de passe'),'dataType': 'PASSWORD'}]}
 
-        
-        
-        
+
+
     def _get_anonymous_user(self):
         """
         Returns this domain anonymous user
@@ -858,12 +857,12 @@ class Domain(karacos.db['Parent']):
         #assert username not in self.users, "User already eist in that domain"
         base = None
         if hasbase:
-            base = KaraCos.Db.BaseObject.create('%s_group_%s' % (self['name'],groupname))
+            base = karacos.db['Base'].create('%s_group_%s' % (self['name'],groupname))
         group = {'name':groupname,
                 'type': 'Group',
                 'users': {},
                 }
-        return KaraCos.Db.Node.create(parent=self._get_groups_node(),base=base,data=group)
+        return karacos.db['Group'].create(parent=self._get_groups_node(),base=base,data=group)
         #self.authdoc['groups'][group['name']] = group.id
 
     

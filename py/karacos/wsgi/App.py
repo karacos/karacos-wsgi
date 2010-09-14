@@ -10,8 +10,9 @@ import Cookie
 from uuid import uuid4
 import webob
 import inspect
-import sys
+import sys, traceback
 from karacos.lib import static
+from karacos.http.jsonrpc import *
 
 class Dispatcher(object):
     '''
@@ -120,6 +121,77 @@ class Dispatcher(object):
     def process_json_params(self,request,response):
         """
         """
+        data = None
+        request = karacos.serving.get_request()
+        try:
+            if request.body != None:
+                data = json.loads(request.body)
+            else:
+                response.__result__ = dict(error = {
+                    'origin': ErrorOrigin.Server, 
+                    'code' : ErrorCode.ParameterMismatch,
+                    'message': 'Error empty request body'
+                })
+                return
+        except ValueError, e:
+            response.__result__ = dict(error = {
+                'origin': ErrorOrigin.Server, 
+                'code' : ErrorCode.IllegalService,
+                'message': 'Error decoding JSON request: %s' % e
+            })
+            return
+        #return self.process_json(response.__instance__,d) 
+        keys = data.keys()
+            
+        for required_key in ('id', 'method','params'):
+            if not required_key in keys:
+                response.__result__ = dict(error = {
+                    'origin': ErrorOrigin.Server, 
+                    'code' : ErrorCode.ParameterMismatch,
+                    'message': 'Request does not contain %s!' % required_key
+                })
+                return # self._get_json_response(error = err, id=0)
+        rpcid = data['id']
+        try:
+            if isinstance(data['params'],dict):
+                request.__kwds__ = data['params']
+            elif isinstance(data['params'],list):
+                
+                if len(data['params']) > 0 and isinstance(data['params'][-1],dict):
+                    request.__kwds__ = data['params'][-1]
+                    del data['params'][-1]
+                request.__args__ = tuple(data['params'])
+            rpcmethod = str(data['method']) #json returns unicode
+            if rpcmethod in response.__instance__.get_user_actions(response.__instance__.__domain__.get_user_auth()):
+                request.__method__ = response.__instance__.get_action(rpcmethod)
+                return
+            else:
+                if rpcmethod in response.__instance__.get_actions():
+                    response.__result__ = dict(error =  {
+                        'origin': ErrorOrigin.PermissionDenied, 
+                        'code' : ErrorCode.Unknown,
+                        'message': 'Error processing JSON request: %s' % e,
+                        'trace': traceback.format_exc().splitlines()
+                    })
+                    return # self._get_json_response(error = err, id = rpcid)
+                else:
+                    response.__result__ = dict(error = {
+                        'origin': ErrorOrigin.MethodNotFound, 
+                        'code' : ErrorCode.Unknown,
+                        'message': 'Error processing JSON request: %s' % e,
+                        'trace': traceback.format_exc().splitlines()
+                    })
+                    return
+        except Exception, e:
+            #something else went wrong - application error
+            response.__result__ = dict(error = {
+                'origin': ErrorOrigin.Application, 
+                'code' : ErrorCode.Unknown,
+                'message': 'Error processing JSON request: %s' % e,
+                'trace': traceback.format_exc().splitlines()
+            })
+            return #self._get_json_response(error = err, id = rpcid)
+        
     def process_xml_params(self,request,response):
         """
         """
@@ -146,6 +218,10 @@ class Dispatcher(object):
     def render_json(self, response):
         """
         """
+        body = karacos.json.dumps(response.__result__)
+        response.body = body
+        response.headers['Content-Type'] = 'application/json'
+        response.headers['Content-Length'] = len(body)
         
     def render_xml(self,response):
         """
@@ -159,6 +235,9 @@ class Dispatcher(object):
         """
         Process actionMethod for getting some result
         """
+        if response.__result__ != None:
+            # Nothing to process, result already exist
+            return
         if request.__method__ == None:
             response.__result__ = response.__instance__.get_user_actions_forms()
         else:

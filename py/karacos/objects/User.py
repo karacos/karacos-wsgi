@@ -31,7 +31,12 @@ class User(karacos.db['Node']):
     Un user.
     parametres : domaine, name, base=None
     """
-    
+    __metaclass__ = karacos.db['AuthMeta']
+
+    @staticmethod
+    def create(parent=None, base=None,data=None,owner=None):
+        result = karacos.db['Node'].create(parent=parent,base=base,data=data,owner=owner)
+        return result
     
     @staticmethod
     def hash_pwd(password):
@@ -42,16 +47,10 @@ class User(karacos.db['Node']):
         m.update(password)
         return m.hexdigest()
     
-    __metaclass__ = karacos.db['AuthMeta']
-    
-    #parent = None
-    
     def __init__(self, *args, **kw):
         """
-        
         """
         assert 'parent' in kw
-        #assert isinstance(kw['parent'],KaraCos.Db.Domain), "Icompatible type, parent has to be KaraCos.Db.Domain"
         parent = kw['parent']
         karacos.db['Node'].__init__(self,*args, **kw)
         
