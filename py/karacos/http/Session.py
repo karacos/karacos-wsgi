@@ -54,16 +54,26 @@ class Session(dict):
         self.log = karacos.core.log.getLogger(self)
         self.log.debug("NEW SESSION CREATED '%s'" % self.id)
     
+    def set_user(self,user):
+        self.log.debug("set_user %s" % user)
+        assert isinstance(user, karacos.db['User'])
+        self.user = user
+        self['username'] = self.user['name']
+    
     def get_user_auth(self):
         """
         Returns user auth for current session
         """
         domain = self.get_karacos_domain()
         result = None
+        if 'user' in dir(self):
+            if self.user != None:
+                return self.user
         if self['username'] == 'anonymous':
             result = domain._get_anonymous_user()
         else:
             result = domain.get_user_by_name(self['username'])
+            self.user = result
         self.log.debug("result type '%s', data [%s]" % (result.__class__.__name__, result))
         return result
         

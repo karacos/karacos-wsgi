@@ -265,9 +265,13 @@ class Domain(karacos.db['Parent']):
     
     def _get_users_node(self):
         self._update_item()
+        self.log.debug("_get_users_node : creating user_node")
         if '__users_node__' not in dir(self):
+            self.log.debug("__users_node__ not found")
             if 'KC_usersNode' not in self.__childrens__:
+                self.log.debug("KC_usersNode not found")
                 if len(self._get_child_by_name('KC_usersNode')) == 0:
+                    self.log.debug("creating user_node")
                     karacos.db['Node'].create(base=None, parent=self,data={'name':'KC_usersNode'})
                     self.save()
             self.__users_node__ = self.get_child_by_name('KC_usersNode')
@@ -399,40 +403,18 @@ class Domain(karacos.db['Parent']):
                 'type': 'User',
                 'groups': [],
                 }
-        result = karacos.db['Node'].create(parent=self._get_users_node(),base=base,data=user)
+        users_node = self._get_users_node()
+        assert users_node != None 
+        result = karacos.db['Node'].create(parent=users_node,base=base,data=user)
         return result
     
     def get_sessuserid(self):
         return '%s.user' % self['name']
     
     def get_user_auth(self):
-        user_name = None
         self.log.info("START %s.get_user_auth" % self['name'])
-        
         return karacos.serving.get_session().get_user_auth()
-        """
-        if 'session' in dir(cherrypy):
         
-            sessuserid = self.get_sessuserid()
-            self.log.info("%s.get_user_auth: cherrypy session found" % self['name'])
-            if sessuserid not in cherrypy.session:
-                cherrypy.session[sessuserid] = ""
-                cherrypy.session[sessuserid] = self._get_anonymous_user()['name']
-            else:
-                if cherrypy.session[sessuserid] == "" or cherrypy.session[sessuserid] == 'system':
-                    cherrypy.session[sessuserid] = self._get_anonymous_user()['name']
-            user_name = cherrypy.session.get(sessuserid)
-        else:
-            user_name='system'
-        if str(user_name) != 'system' and user_name != "":
-            self.log.info("%s.get_user_auth user name is %s" % (self['name'],user_name))
-            
-            self.log.debug("%s.get_user_auth returning user %s" % (self['name'],self.get_user_by_name(user_name)))
-            
-            return self.get_user_by_name(user_name)
-        else:
-            return self._get_anonymous_user()
-        """
     
     def is_user_authenticated(self):
         """
@@ -461,13 +443,13 @@ class Domain(karacos.db['Parent']):
     logout.label = _('Se d&eacute;connecter')
     
     def _get_user_base_settings_form(self):
-        user = self.__domain__.get_user_auth()
+        user = self.get_user_auth()
         if 'CUSTOM_SITE_BASE' not in user:
             user['CUSTOM_SITE_BASE'] = self.get_site_theme_base()
         if 'CUSTOM_SITE_SKIN' not in user:
             user['CUSTOM_SITE_SKIN'] = self.get_site_template_uri()
         user.save()
-        user = self.__domain__.get_user_auth()
+        user = self.get_user_auth()
         
         form = {'title':'Parametres utilisateur',
                 'submit':'modifier',
@@ -484,7 +466,7 @@ class Domain(karacos.db['Parent']):
         assert 'CUSTOM_SITE_SKIN' in kw
         assert 'CUSTOM_SITE_BASE' in kw
         
-        user = self.__domain__.get_user_auth()
+        user = self.get_user_auth()
         user['CUSTOM_SITE_SKIN'] = kw['CUSTOM_SITE_SKIN']
         user['CUSTOM_SITE_BASE'] = kw['CUSTOM_SITE_BASE']
         user.save()
@@ -529,16 +511,16 @@ class Domain(karacos.db['Parent']):
         assert isinstance(password,basestring), "Parameter name must be string"
         result = None
         try:
-            passwordhash = "%s" % KaraCos.Db.User.hash_pwd(password)
+            passwordhash = "%s" % karacos.db['User'].hash_pwd(password)
             user = self.get_user_by_name(username)
+            assert user != None, _("User not found in domain")
             if user['password'] == passwordhash:
-                sessuserid = self.get_sessuserid()
-                cherrypy.session[sessuserid] = user['name']
+                karacos.serving.get_session().set_user(user)
                 return user
         except Exception, e:
             self.log.log_exc(sys.exc_info(),'error')
             raise karacos._db.Exception, e
-        raise KaraCos.Exception("Authentication error")
+        raise karacos.core.Exception("Authentication error")
     
     
     def __batch_set_user_password__(self,username,password):
@@ -706,7 +688,7 @@ class Domain(karacos.db['Parent']):
     def _set_ACL_form(self):
         return {'title': _("Modifier l'ACL"),
          'submit': _('Modifier'),
-         'fields': [{'name':'ACL', 'title':'ACL','dataType': 'TEXT','formType': 'TEXTAREA', 'value': json.dumps(self['ACL'])}]}
+         'fields': [{'name':'ACL', 'title':'ACL','dataType': 'TEXT','formType': 'TEXTAREA', 'value': karacos.json.dumps(self['ACL'])}]}
     set_ACL.label = "Edit ACL"
     set_ACL.get_form = _set_ACL_form
     
@@ -931,77 +913,3 @@ class Domain(karacos.db['Parent']):
                             raise HTTPError(404, "Resource unavailable")
         self.log.debug("lookup_object result is [%s]" % result)
         return result
-                    
-                    
-        #  return self
-    
-    def default(self,*args,**kw):
-        """
-        """
-        if cherrypy.request.headers['Host'] != self.__domain__['fqdn']:
-            if self.__domain__['name'] != 'sysdomain':
-                raise cherrypy.HTTPRedirect('http://%s'%self.__domain__['fqdn'],301)
-        currentparent = self
-        countargs = 0
-        forward = ''
-        if 'forward' in cherrypy.session:
-            forward = cherrypy.session['forward']
-        for arg in args:
-            if unicode(arg) in currentparent.get_web_childrens().values():
-                currentparent = currentparent.__childrens__[arg]
-                countargs=countargs+1
-            else:
-                if arg in dir(currentparent):
-                    argObject = eval("currentparent.%s" % arg)
-                    self.log.info("Domain dispatcher : arg in dir : %s" % dir(argObject))
-                    if isinstance(argObject,type(currentparent.get_web_childrens)):
-                        if 'isaction' in dir(argObject):
-                            if argObject.isaction:
-                                if 'request' in dir(cherrypy):
-                                    if cherrypy.request.method == 'GET':
-                                        if forward != '': #"" Un GET est un forward
-                                            del cherrypy.session['forward']
-                                        if len(kw.keys()) < 1:
-                                            if cherrypy.request.headers['Accept'].find("html")>=0:
-                                                template = currentparent.__domain__.lookup.get_template('/system')                                                   
-                                                return template.render(instance=currentparent, action=argObject.get_action(currentparent))
-                                            if cherrypy.request.headers['Accept'].find("application/json")>=0:
-                                                return json.dumps(argObject.get_action(currentparent))
-                                            if cherrypy.request.headers['Accept'].find("application/xml")>=0:
-                                                ""  # Gestion XML
-                                            template = currentparent.__domain__.lookup.get_template('/system')
-                                            return template.render(instance=currentparent, action=argObject.get_action(currentparent))
-                                    else:
-                                        result = argObject(args[countargs:],kw)
-                                        if forward != '':
-                                            del cherrypy.session['forward']
-                                            raise cherrypy.HTTPRedirect(forward,301)
-                                        else:
-                                            return result
-                                            
-                        elif 'exposed' in dir(argObject):
-                            if argObject.exposed:
-                                countargs=countargs+1
-                                result = argObject(*args[countargs:],**kw)
-                                return result
-                        else:
-                            raise KaraCos.HTTPError(status=404,message=_("Ressource incorrecte"),domain=self)
-                    else:
-                        countargs=countargs+1
-                        self.log.info("len(args) =%s, countargs = %s" %(len(args), countargs))
-                        
-                    #    if u'index' in currentparent.get_user_actions(self.get_user_auth()):
-                    #        return currentparent.index(*args[countargs:],**kw)
-                    #    else:
-                    #        raise cherrypy.HTTPError(status=403,message=_("Ressource non autorisee"))
-                else:
-                    raise KaraCos.HTTPError(status=404,message=_("Ressource introuvable"),domain=self)
-        ####
-            self.log.info("currentparent : %s" % currentparent)#.get_user_actions(self.get_user_auth()))    
-            if u'index' in unicode(currentparent.get_user_actions(self.get_user_auth())):
-                #countargs=countargs+1
-                if countargs == len(args):
-                    return currentparent.index(*args[countargs:],**kw)
-            else:
-                raise KaraCos.HTTPError(status=403,message=_("Ressource non autorisee"),domain=self)
-        ## for ## 

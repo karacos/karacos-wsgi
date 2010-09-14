@@ -26,8 +26,9 @@ class Dispatcher(object):
             request = karacos.serving.get_request()
             request.__args__ = []
             request.__kwds__ = {}
+            request.__method__ = None
+            request.__args_spec__ = None
             response = karacos.serving.get_response()
-            response.__method__ = None
             response.__instance__ = None
             response.__result__ = None
             response.__action__ = None
@@ -37,19 +38,13 @@ class Dispatcher(object):
             self.process_resource(resource)
             self.process_request(request,response)
             
-            #request = webob.Request(environ)
-            #request.path()
+            if 'text/html' in request.accept or 'application/xhtml+xml' in request.accept:
+                self.render_html(response)
+            elif 'application/json' in request.accept:
+                self.render_json(response)
+            elif 'application/xml' in request.accept:
+                self.render_xml(response)
             self.log.debug(request.path)
-            """ %s
-            
-            "Bienvenue %s" % karacos.serving.get_session().get_user_auth()['name']
-            
-            response.unicode_body = 
-            <form method="POST" action=".">
-            <input type="text" name="a"/>
-            <input type="submit" name="ok" value="ok"/>
-            </form>
-            % response.unicode_body"""
         except Exception, e:
             self.log.log_exc(sys.exc_info(),'warn')
             self.process_error(e)
@@ -80,28 +75,29 @@ class Dispatcher(object):
             else:
                 self.process_json_params(request,response)
         self.process_action(request, response)
-        if 'text/html' in request.accept or 'application/xhtml+xml' in request.accept:
-            response.__render_method__ = self.render_html
-        elif 'application/json' in request.accept:
-            response.__render_method__ = self.render_json
-        elif 'application/xml' in request.accept:
-            response.__render_method__ = self.render_xml
+        
     
     def process_http_params(self,request,response):
         """
         """
+        method = ""
         for name, value in request.params.items():
             request.__kwds__[name] = value
         if 'method' in request.__kwds__:
-            if response.__method__ != None:
+            if request.__method__ != None:
                 raise HTTPError(status=400, message="Bad request")
             else:
                 method = "%s" % request.__kwds__['method']
+                request.__method__ = response.__instance__.get_action(method)
                 del request.__kwds__['method']
-                self.process_method_params(response.__instance__.get_action(method))
-                self.ckeck_method_params(method, request, response)
-                response.__result__ = response.__instance__.get_action(method)(*request.__args__,**request.__kwds__)
-
+        else:
+            if request.__method__ == None:
+                if not (len(request.__kwds__) == 0 and len(request.__args__) == 0):
+                    raise HTTPError(status=400, message="Bad request")
+        if request.__method__ != None:
+            self.process_method_params(request.__method__)
+            self.ckeck_method_params(method, request)
+        
     
     def process_json_params(self,request,response):
         """
@@ -112,6 +108,15 @@ class Dispatcher(object):
     def render_html(self, response):
         """
         """
+        response.body = """<pre>
+        response.__instance__ : %s 
+        response.__action__   :%s
+        response.__result__   : %s </pre>""" % (
+                karacos.json.dumps(response.__instance__),
+                karacos.json.dumps(response.__action__),
+                karacos.json.dumps(response.__result__),
+        )
+        
     def render_json(self, response):
         """
         """
@@ -128,12 +133,22 @@ class Dispatcher(object):
         """
         Process actionMethod for getting some result
         """
-        if response.__method__ == None:
+        if request.__method__ == None:
             response.__result__ = response.__instance__.get_user_actions_forms()
         else:
-            if response.__args_spec__.args == ['self']:
-                self.log.info("Method %s takes no arguments" % (response.__method__.func.__name))
-                assert request.__kwds__ == [] and request.__args__ == [], "No argument accepted for %s" % response.__method__.func.__name
+            given = len(request.__args__) + len(request.__kwds__)
+            
+            if request.__args_spec__.args == ['self']:
+                self.log.info("Method %s takes no arguments" % (request.__method__.func.__name))
+                if given != 0:
+                    raise HTTPError(status=400, message="Bad request, no argument accepted for %s" % request.__method__.func.__name)
+            if self.ckeck_method_params(request.__method__, request):
+                response.__result__ = request.__method__(*request.__args__,**request.__kwds__)
+            else:
+                if given == 0:
+                    response.__action__ = request.__method__.get_action(response.__instance__)
+                else:
+                    raise HTTPError(status=400, message="Bad request, invalid parameter number")
     
     def process_resource(self,resource):
         """
@@ -151,7 +166,7 @@ class Dispatcher(object):
             self.process_method_params(resource['method'])
             
     def process_method_params(self,method):
-        response = karacos.serving.get_response()
+        self.log.debug("process_method_params BEGIN")
         request = karacos.serving.get_request()
         request.__method__ = method
         request.__args_spec__ = inspect.getargspec(method.func)
@@ -159,7 +174,15 @@ class Dispatcher(object):
     
     def ckeck_method_params(self,method,request):
         """
+        Check if correct parameters are passed to method
         """
-        given = len(request.__args__) + len(request.__kwds__)
-        assert given == len(request.__args_spec__), "Invalid number of parameter '%s', '%s' expected" % (given,len(request.__args_spec__))
-        assert len(request.__kwds__) == len(request.__args_spec__.defaults), "Invalid number of named parameters"
+        self.log.debug("check_method_params BEGIN")
+        try:
+            given = len(request.__args__) + len(request.__kwds__) + 1 # +1 stands for ungiven 'self' param
+            expected = len(request.__args_spec__.args)
+            assert given == expected, "Invalid number of parameter '%s', '%s' expected" % (given,len(request.__args_spec__))
+            assert len(request.__kwds__) == len(request.__args_spec__.defaults), "Invalid number of named parameters"
+            return True
+        except AssertionError,e:
+            self.log.log_exc(sys.exc_info(),'info')
+            return False
