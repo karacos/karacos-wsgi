@@ -7,5 +7,6 @@
 <pydev_pathproperty name="org.python.pydev.PROJECT_SOURCE_PATH">
 <path>/karacos2-wsgi/lib</path>
 <path>/karacos2-wsgi/py</path>
+<path>/karacos2-wsgi/apps</path>
 </pydev_pathproperty>
 </pydev_project>

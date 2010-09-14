@@ -1,5 +1,5 @@
 import log
-
+import apps
 class Exception(Exception):
     """
     Base exception class for Db

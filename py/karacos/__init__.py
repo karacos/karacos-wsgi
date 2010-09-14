@@ -57,5 +57,7 @@ else:
 
 import wsgi
 
+apps = core.apps.InitApps()
+
 serving = http._Serving()
 
