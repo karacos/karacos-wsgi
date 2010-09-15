@@ -25,12 +25,12 @@ class Redirect(HTTPError):
         """
         """
         self.location = url
-        HTTPError.__init__(self,status=code,message=url)
+        HTTPError.__init__(self,status=code,message="Resource moved")
 
-class DataRequired(HTTPError):
+class DataRequired(Redirect):
     action = None
     instance = None
-    def __init__(self,value,message,forward,instance,action):
+    def __init__(self,instance,method):
         """
         value
         message
@@ -39,15 +39,24 @@ class DataRequired(HTTPError):
         action: callable(self)
         """
         self.instance = instance
-        self.action = action
-        HTTPError.__init__(self,value,message,forward)
+        assert method.func.__name__ in dir(instance)
+        self.method = method
+        forward = ""
+        if isinstance(instance, karacos.db['Domain']):
+            forward = "http://%s/%s" % (karacos.serving.get_request().headers['Host'],method.func.__name__)
+        else:
+            assert isinstance(instance, karacos.db['WebNode'])
+            forward = "http://%s/%s/%s" % (karacos.serving.get_request().headers['Host'],
+                                            instance._get_action_url(),
+                                            method.func.__name__)
+        Redirect.__init__(self,url=forward)
 
 
 class WebAuthRequired(DataRequired):
     action = None
-    def __init__(self,value,forward,domain):
+    def __init__(self,domain):
         assert isinstance(domain,karacos.db['Domain'])
-        DataRequired.__init__(self,value,_("Autentification demandee"),forward,domain,domain.login)
+        DataRequired.__init__(self,domain,domain.login)
     
 class NotFound(HTTPError):
     """

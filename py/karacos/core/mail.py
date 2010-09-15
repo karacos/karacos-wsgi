@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 __license__ = 'AGPL'
-import cherrypy
+
 import smtplib
 import karacos
 import random
@@ -34,9 +34,10 @@ def send_mail(destmail, msg):
     """
     """
     try:
-        server = smtplib.SMTP(karacos.config['mail']['smtp_server'],karacos.config['mail']['smtp_server_port'])
+        server = smtplib.SMTP(karacos.config.get('mail','smtp_server'),
+                              karacos.config.get('mail','smtp_server_port'))
         server.ehlo()
-        server.sendmail(karacos.config['mail']['from_addr'], destmail, msg)
+        server.sendmail(karacos.config.get('mail','from_addr'), destmail, msg)
         print "mail sent"
     except Exception,e:
         import sys

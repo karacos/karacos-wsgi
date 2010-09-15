@@ -71,12 +71,17 @@ class Dispatcher(object):
             response.body = template.render(instance = domain,
                                             result = {'status': 'failure',
                                                       'message': e.get_message()})
-        if isinstance(e, Redirect):
-            response.headers['Location'] = e.location
+            if isinstance(e, Redirect):
+                response.headers['Location'] = e.location
+            if isinstance(e,DataRequired):
+                response.body = template.render(instance = e.instance,
+                                                result = None,
+                                                action = e.method.get_action(e.instance))
         else:
             response.body = template.render(instance = domain,
                                             result = {'status': 'failure',
-                                                      'message': "%s,%s,%s" % (exceptionType, exceptionValue,traceback.format_tb(exceptionTraceback))})
+                                                      'message': exceptionValue,
+                                                      'data' : "%s,%s,%s" % (exceptionType, exceptionValue,traceback.format_tb(exceptionTraceback))})
     
     def process_request(self,request,response):
         """
