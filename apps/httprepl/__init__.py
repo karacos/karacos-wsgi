@@ -136,7 +136,7 @@ class HTTPREPLController(karacos.db['WebNode']):
         #assert isinstance(parent.__domain__,KaraCos.Db.MDomain)
         if 'WebType' not in data:
             data['WebType'] = 'HTTPREPLController'
-        return karacos.db['WebNode'].create(parent=parent,base=base,data=data,owner=owner)
+        return karacos.db['WebNode'].create(parent=parent,base=base,data=data)
     
     def __init__(self,parent=None,base=None,data=None):
         karacos.db['WebNode'].__init__(self,parent=parent,base=base,data=data)

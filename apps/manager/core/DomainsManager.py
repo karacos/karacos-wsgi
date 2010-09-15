@@ -22,19 +22,21 @@ Created on 22 jun. 2010
 
 @author: nico
 '''
+from uuid import uuid4
 import karacos
+import sys
 
 class DomainsManager(karacos.db['WebNode']):
     def __init__(self,parent=None,base=None,data=None):
         karacos.db['WebNode'].__init__(self,parent=parent,base=base,data=data)
         
     @staticmethod
-    def create(parent=None, base=None,data=None,owner=None):
+    def create(parent=None, base=None,data=None):
         assert isinstance(data,dict)
         #assert isinstance(parent.__domain__,KaraCos.Db.SysDomain)
         if 'WebType' not in data:
             data['WebType'] = 'DomainsManager'
-        return karacos.db['WebNode'].create(parent=parent,base=base,data=data,owner=owner)
+        return karacos.db['WebNode'].create(parent=parent,base=base,data=data)
     
     @staticmethod
     @karacos._db.ViewsProcessor.is_static_view('javascript')
@@ -67,9 +69,11 @@ class DomainsManager(karacos.db['WebNode']):
         """
         assert type in karacos.db
         assert issubclass(karacos.db[type],karacos.db['Domain'])
-        base = karacos.db['Base'].get_by_name('%s_db' % name)
-        if base == None:
-            base = karacos.db['Base'].create('%s_db' % name)
+        if karacos.db['Domain'].exist_with_fqdn(fqdn) or karacos.db['Domain'].exist_with_name(name):
+            self.log.info("Domain exist with given fqdn or name, creation aborted")
+            return
+        _db_name = 'kc2_%s_%s' % (name, uuid4().hex)
+        base = karacos.db['Base'].create(_db_name)
         domainvalue  = {}
         domainvalue['name'] = name
         domainvalue['fqdn'] = fqdn
@@ -80,7 +84,8 @@ class DomainsManager(karacos.db['WebNode']):
             domain = karacos.db[type].create(base=base,data=domainvalue)
             self.log.info("MANAGER domain creation OK")
         except:
-            self.log.info("MANAGER domain creation exception")
+            self.log.log_exc(sys.exc_info())
+            self.log.error("MANAGER domain creation exception")
     
     @karacos._db.isaction
     def create_domain(self,name=None, fqdn=None,type=None):

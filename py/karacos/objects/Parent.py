@@ -360,7 +360,6 @@ class Parent(KcDocument):
                 base_name = "base_%s" % uuid4().hex
                 base = karacos.db['Base'].create(base_name.lower())
         kw['base'] = base
-        kw['owner'] = self.__domain__.get_user_auth()
         kw['parent'] = self
         self._update_item()
         node = karacos.db[type].create(*args, **kw)

@@ -7,9 +7,12 @@ import os, sys
 import karacos
 import ConfigParser
 _appsdirs = [os.path.join(karacos.homedir,'apps'), os.path.join(karacos._srvdir,'deploy')]
+
 def listApps():
     _apps = {}
     for _appsdir in _appsdirs:
+        if not os.path.exists(_appsdir):
+            os.makedirs(_appsdir)
         for dir in os.listdir(_appsdir):
             if os.path.exists(os.path.join(_appsdir,dir,'__init__.py')):
                 _apps[dir] = _appsdir

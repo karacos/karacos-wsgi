@@ -34,7 +34,7 @@ class WorkFlowItem(karacos.db['Node']):
         karacos.db['Node'].__init__(self,parent=parent,base=base,data=data)
     
     @staticmethod
-    def create(parent=None, base=None,data=None,owner=None):
+    def create(parent=None, base=None,data=None):
         assert 'type' in data, "Abstract WokrFlowItem must be implemented in subclass" 
         assert isinstance(data,dict)
         assert isinstance(parent,karacos.db['Manager'])
@@ -45,7 +45,7 @@ class WorkFlowItem(karacos.db['Node']):
         if 'active' not in data:
             data['active'] = True
         data['iswkf'] = True
-        return karacos.db['Node'].create(parent=parent,base=base,data=data,owner=owner)
+        return karacos.db['Node'].create(parent=parent,base=base,data=data)
     
     def _is_valid_for_user(self):
         authref = self._get_validation_authref()

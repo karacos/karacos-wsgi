@@ -30,7 +30,7 @@ class SysDomain(karacos.db['Domain']):
         karacos.db['Domain'].__init__(self,*args, **kw)
     
     @staticmethod
-    def create(parent=None, base=None,data=None):
+    def create(base=None,data=None):
         assert isinstance(data,dict)
         if 'WebType' not in data:
             data['WebType'] = 'SysDomain'

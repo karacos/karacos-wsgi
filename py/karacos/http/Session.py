@@ -84,6 +84,13 @@ class Session(dict):
         """
         if '__domain__' not in dir(self):
             self.probe_domain()
+        request = karacos.serving.get_request()
+        if request.headers['Host'] != self.__domain__['fqdn']:
+            self.probe_domain()
+            if request.headers['Host'] == self.__domain__['fqdn']:
+                self.log.info("probe domain changed current kc domain, resetting auth")
+                self.user = None
+                self['username'] = 'anonymous'
         return self.__domain__
             
     def probe_domain(self):

@@ -38,8 +38,8 @@ class Group(karacos.db['Node']):
     __metaclass__ = karacos.db['AuthMeta']
     
     @staticmethod
-    def create(parent=None, base=None,data=None,owner=None):
-        result = karacos.db['Node'].create(parent=parent,base=base,data=data,owner=owner)
+    def create(parent=None, base=None,data=None):
+        result = karacos.db['Node'].create(parent=parent,base=base,data=data)
         return result
     
     def __init__(self,parent=None,data=None,base=None):
@@ -48,7 +48,7 @@ class Group(karacos.db['Node']):
         """
         #assert isinstance(parent,KaraCos.Db.Domain), "Icompatible type, parent has to be KaraCos.Db.Domain"
         
-        KaraCos.Db.Node.__init__(self,parent=parent,base=base,data=data)
+        karacos.db['Node'].__init__(self,parent=parent,base=base,data=data)
         
     def get_auth_id(self):
         """

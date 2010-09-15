@@ -209,12 +209,12 @@ class Domain(karacos.db['Parent']):
         karacos.db.sysdb[doc_id] = result
         log.debug("Retrieving BASE doc_id : %s" % doc_id)
         result = karacos.db.sysdb[doc_id]
+        result._update_item()
         admin = result._create_user(username='admin@%s' % result['name'],password='demo')
         anonymous = result._create_user(username='anonymous@%s' % result['name'])
+        result._update_item()
         result['ACL'][admin.get_auth_id()] = result._get_adm_actions()
         result['ACL'][anonymous.get_auth_id()] = ['get_user_actions','login']
-        
-        
         result.save()
         result.log.info("END Domain.create : result type : %s", type(result) )
         return result
@@ -895,12 +895,12 @@ class Domain(karacos.db['Parent']):
             if arg != '' and arg != '_self':
                 if isinstance(result['object'],karacos.db['Document']):
                     if arg in result['object'].get_web_childrens_for_id().keys():
-                        result['object'] = result['object'].db[result.__childrens__[arg]]
+                        self.log.debug("lookup '%s' in web childrens is [%s]" % (arg,result['object'].__childrens__[arg]))
+                        result['object'] = result['object'].__childrens__[arg]
                     else:
                         self.log.debug("testing for '%s' in %s" % (arg,dir(result['object'])))
                         if arg not in dir(result['object']):
                             if isinstance(result['object'], karacos.db['Parent']):
-                                self.log.info("Checking '%s' in '%s'")
                                 if arg not in self['staticdirs'].keys():
                                     raise karacos.http.NotFound()
                                 

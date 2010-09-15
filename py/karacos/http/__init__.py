@@ -24,8 +24,31 @@ class Redirect(HTTPError):
     def __init__(self,url,code=302):
         """
         """
+        self.location = url
         HTTPError.__init__(self,status=code,message=url)
 
+class DataRequired(HTTPError):
+    action = None
+    instance = None
+    def __init__(self,value,message,forward,instance,action):
+        """
+        value
+        message
+        forward : String url forward, back to 
+        instance: instance for performing action
+        action: callable(self)
+        """
+        self.instance = instance
+        self.action = action
+        HTTPError.__init__(self,value,message,forward)
+
+
+class WebAuthRequired(DataRequired):
+    action = None
+    def __init__(self,value,forward,domain):
+        assert isinstance(domain,karacos.db['Domain'])
+        DataRequired.__init__(self,value,_("Autentification demandee"),forward,domain,domain.login)
+    
 class NotFound(HTTPError):
     """
     """

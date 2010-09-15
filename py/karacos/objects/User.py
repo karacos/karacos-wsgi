@@ -34,8 +34,8 @@ class User(karacos.db['Node']):
     __metaclass__ = karacos.db['AuthMeta']
 
     @staticmethod
-    def create(parent=None, base=None,data=None,owner=None):
-        result = karacos.db['Node'].create(parent=parent,base=base,data=data,owner=owner)
+    def create(parent=None, base=None,data=None):
+        result = karacos.db['Node'].create(parent=parent,base=base,data=data)
         return result
     
     @staticmethod

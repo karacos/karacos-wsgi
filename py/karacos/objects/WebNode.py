@@ -80,6 +80,9 @@ class WebNode(karacos.db['Node']):
         self.__domain__ = parent.__domain__
         karacos.db['Node'].__init__(self,parent=parent,base=base,data=data)
     
+    @karacos._db.isaction
+    def get_user_actions_forms(self):
+        return self._get_user_actions_forms()
 
     @karacos._db.isaction
     def index(self):
@@ -112,14 +115,14 @@ class WebNode(karacos.db['Node']):
         result = ''
         while not isinstance(instance,karacos.db['Domain']):
             result = '%s/%s' % (instance['name'],result)
-            instance = instance.parent
+            instance = instance.__parent__
         return result[:-1] # strop off trailing / added
     
     def get_site_template_uri(self):
         instance = self
         result = ''
         while 'site_template_uri' not in instance.__dict__ and not isinstance(instance,karacos.db['Domain']):
-            instance = instance.parent
+            instance = instance.__parent__
         if isinstance(instance,karacos.db['Domain']):
             return self.__domain__.get_site_template_uri()
         return instance.site_template_uri
@@ -141,7 +144,12 @@ class WebNode(karacos.db['Node']):
         except Exception, e:
             return {'status':'failure', 'message' : '%s' % e,
                         'trace': traceback.format_exc().splitlines() }
-    create_child_node.form = {}
+    create_child_node.form = {'title': _("Creer un element"),
+         'submit': _('Creer'),
+         'fields': [{'name':'name', 'title':_('Nom de la resource'),'dataType': 'TEXT'},
+                    {'name':'type', 'title':_("Type d'objet"),'dataType': 'TEXT'},
+                    {'name':'base', 'title':_('Base'),'dataType': 'TEXT'},
+                 ] }
     create_child_node.label = _("Creer un noeud")
     
     @karacos._db.isaction
@@ -158,7 +166,7 @@ class WebNode(karacos.db['Node']):
             name=args[0]
             if '_attachments' in self:
                 if name in self['_attachments']:
-                    res = self.parent.db.get_attachment(self.id, name)
+                    res = self.__parent__.db.get_attachment(self.id, name)
                     response = cherrypy.response
                     response.headers['Content-Type'] = self['_attachments'][name]['content_type']
                     response.headers['Content-Length'] = self['_attachments'][name]['length']

@@ -67,9 +67,12 @@ class Dispatcher(object):
         domain = session.get_karacos_domain()
         template = domain.lookup.get_template('system') 
         if isinstance(e, HTTPError):
+            response.status = e.status
             response.body = template.render(instance = domain,
                                             result = {'status': 'failure',
                                                       'message': e.get_message()})
+        if isinstance(e, Redirect):
+            response.headers['Location'] = e.location
         else:
             response.body = template.render(instance = domain,
                                             result = {'status': 'failure',
@@ -244,7 +247,9 @@ class Dispatcher(object):
         else:
             given = len(request.__args__) + len(request.__kwds__)
             
-            if request.__args_spec__.args == ['self']:
+            if (request.__args_spec__.args == ['self']
+                and request.__args_spec__.varargs == None
+                and request.__args_spec__.keywords == None):
                 self.log.info("Method %s takes no arguments" % (request.__method__.func.__name__))
                 if given != 0:
                     raise HTTPError(status=400, message="Bad request, no argument accepted for %s" % request.__method__.func.__name)
@@ -290,13 +295,19 @@ class Dispatcher(object):
                 expected = len(request.__args_spec__.args)
             except:
                 expected = 0
+            
             defaults_expected = 0
             try:
                 defaults_expected = len(request.__args_spec__.defaults)
             except:
                 defaults_expected = 0
-            assert given == expected, "Invalid number of parameter '%s', '%s' expected" % (given,len(request.__args_spec__))
-            assert len(request.__kwds__) == defaults_expected, "Invalid number of named parameters"
+            if (request.__args_spec__.varargs != None
+                 or request.__args_spec__.keywords != None):
+                expected += 1
+            assert given >= expected, "Invalid number of parameter '%s', '%s' expected" % (given,len(request.__args_spec__))
+            if (request.__args_spec__.varargs == None
+                 and request.__args_spec__.keywords == None):
+                assert len(request.__kwds__) == defaults_expected, "Invalid number of named parameters"
             return True
         except AssertionError,e:
             self.log.log_exc(sys.exc_info(),'info')

@@ -1,6 +1,6 @@
 <%inherit file="/default/include/names"/>
 <%!
-	import KaraCos
+	import karacos
 %>
 
 % if result:
@@ -9,7 +9,7 @@
 			<table>
 					<tr><th class="top" scope="col">Domain</th><th class="top" scope="col">Action</th></tr>
 					% for domain in result['data'].values():
-						<% json_domain = KaraCos.json.dumps(domain) %>
+						<% json_domain = karacos.json.dumps(domain) %>
 						<tr><td>${domain['name']}</td><td><div class="set_domain_settings_button" data='${json_domain}' >Modifier</div></td></tr>
 					% endfor
 					</table>

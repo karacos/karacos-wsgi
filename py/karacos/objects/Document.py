@@ -146,9 +146,7 @@ class Document(couchdb.client.Document):
         if karacos.config.get('system','mode') == 'dev':
             acturl = '/_self%s' % acturl
         if karacos.serving.get_request().headers['Host'] != self.__domain__['fqdn']:
-            if self.__domain__['name'] == 'sysdomain':
-                acturl = '/%s%s' % (self.__domain__['name'],acturl)
-            else:
+            if not self.__domain__['name'] == 'sysdomain':
                 raise karacos.http.Redirect('http://%s%s'%(self.__domain__['fqdn'],acturl),301)
         return acturl
     
