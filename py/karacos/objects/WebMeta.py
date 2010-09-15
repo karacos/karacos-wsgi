@@ -44,7 +44,7 @@ class WebMeta(karacos.db['AuthMeta']):
         """
         self.log = karacos.core.log.getLogger(self)
         self.log.info("WebMeta :  for %s  " % name)
-        karacos.db['AuthMeta'].__init__(self, name, parents, dict)
+        karacos.db['KcDocMeta'].__init__(self, name, parents, dict)
         karacos.webdb[name] = self
             
     def __call__(self, *args, **kw):

@@ -53,14 +53,15 @@ class Dispatcher(object):
         
         except BaseException, e:
             self.log.log_exc(sys.exc_info(),'warn')
-            self.process_error(e)
+            self.process_error(e,sys.exc_info())
         
         return response
     
-    def process_error(self,e):
+    def process_error(self,e,exc_info):
         """
         Process error
         """
+        exceptionType, exceptionValue,exceptionTraceback = exc_info
         response = karacos.serving.get_response()
         session = karacos.serving.get_session()
         domain = session.get_karacos_domain()
@@ -72,7 +73,7 @@ class Dispatcher(object):
         else:
             response.body = template.render(instance = domain,
                                             result = {'status': 'failure',
-                                                      'message': "%s,%s" % (e.args,sys.exc_info())})
+                                                      'message': "%s,%s,%s" % (exceptionType, exceptionValue,traceback.format_tb(exceptionTraceback))})
     
     def process_request(self,request,response):
         """

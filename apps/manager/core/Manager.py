@@ -7,13 +7,13 @@ from uuid import uuid4
 
 import karacos
 
-class Manager(karacos.db['Node']):
+class Manager(karacos.db['WebNode']):
     """
     Class for managing Domains
     is a placeholder for workflow data and managment nodes
     """
     def __init__(self,parent=None,base=None,data=None):
-        karacos.db['Node'].__init__(self,parent=parent,base=base,data=data)
+        karacos.db['WebNode'].__init__(self,parent=parent,base=base,data=data)
     
     @staticmethod
     def _get_manager():
@@ -24,11 +24,11 @@ class Manager(karacos.db['Node']):
     @staticmethod
     def create(parent=None, base=None,data=None,owner=None):
         assert isinstance(data,dict)
-        assert isinstance(parent, KaraCos.Db.Domain)
+        assert isinstance(parent, karacos.db['Domain'])
         data['name'] = "manager"
         if 'WebType' not in data:
             data['WebType'] = 'Manager'
-        return karacos.db['Node'].create(parent=parent,base=base,data=data,owner=owner)
+        return karacos.db['WebNode'].create(parent=parent,base=base,data=data)
     
     @karacos._db.ViewsProcessor.isview('self','javascript')
     def __get_workflow_item_for_node__(self,ref_db,ref_id):

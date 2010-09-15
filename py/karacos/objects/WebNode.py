@@ -45,14 +45,14 @@ class WebNode(karacos.db['Node']):
         return {'status':'success', 'message':_("adm actions reset"),'data':''}
     
     @staticmethod
-    def create(parent=None, base=None,data=None,owner=None):
+    def create(parent=None, base=None,data=None):
         assert isinstance(data,dict)
         if 'WebType' not in data:
             data['WebType'] = 'WebNode'
         if 'type' not in data:
             data['type'] = 'WebNode'
         assert 'name' in data
-        result = karacos.db['Node'].create(parent=parent,base=base,data=data,owner=owner)
+        result = karacos.db['Node'].create(parent=parent,base=base,data=data)
         # parent.get_child_by_name(data['name'])
         fullaccess = []
         result.log.info("Actions for %s : %s" % (result['name'],result.get_actions()))
@@ -79,8 +79,8 @@ class WebNode(karacos.db['Node']):
         assert isinstance(parent.__domain__,karacos.db['Domain']), "domain is %s, should be Domain" % parent.__domain__.__class__
         self.__domain__ = parent.__domain__
         karacos.db['Node'].__init__(self,parent=parent,base=base,data=data)
-        if karacos.config['system']['mode'] == 'dev':
-            self._self = self
+    
+
     @karacos._db.isaction
     def index(self):
         """

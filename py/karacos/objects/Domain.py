@@ -573,7 +573,7 @@ class Domain(karacos.db['Parent']):
         try:
             assert name != None
             assert type != None
-            assert issubclass(karacos.db[type],KaraCos.Db.WebNode),_("Type incorrect")
+            assert issubclass(karacos.db[type],karacos.db['WebNode']),_("Type incorrect")
             data = {'name':name}
             node = self._create_child_node(data=data, type=type, base=base)
             return {'status':'success', 'message': _("Node cree avec succes"), 'data':node}
@@ -581,16 +581,12 @@ class Domain(karacos.db['Parent']):
             return {'status':'failure', 'message' : '%s' % e,
                         'trace': traceback.format_exc().splitlines() }
     create_child_node.label = _("Creer un noeud")
-        
-    """
-    @karacos._db.isaction
-    def login_or_register(self):
-        pass
-    login_or_register.form = {'title': _("Connexion au domaine"),
-         'submit': _('S\'authentifier'),
-                              }
-    login_or_register.label = _("Entrez dans le domaine")
-    """
+    create_child_node.form = {'title': _("Creer un element"),
+         'submit': _('Creer'),
+         'fields': [{'name':'name', 'title':_('Nom de la resource'),'dataType': 'TEXT'},
+                    {'name':'type', 'title':_("Type d'objet"),'dataType': 'TEXT'},
+                    {'name':'base', 'title':_('Base'),'dataType': 'TEXT'},
+                 ] }
     
     @karacos._db.isaction
     def login(self,email=None,password=None):
