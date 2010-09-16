@@ -34,6 +34,7 @@ class Dispatcher(object):
             response.__instance__ = None
             response.__result__ = None
             response.__action__ = None
+            self.log.debug("Response object has body '%s'" % response.body)
             session = karacos.serving.get_session()
             domain = session.get_karacos_domain()
             resource = domain.lookup_resource(request.path) # Gives App the resource to process
@@ -43,12 +44,7 @@ class Dispatcher(object):
                 return response
             self.process_resource(resource)
             self.process_request(request,response)
-            if 'text/html' in request.accept or 'application/xhtml+xml' in request.accept:
-                self.render_html(response)
-            elif 'application/json' in request.accept:
-                self.render_json(response)
-            elif 'application/xml' in request.accept:
-                self.render_xml(response)
+            self.render(request, response)
             self.log.debug(request.path)
         
         except BaseException, e:
@@ -56,7 +52,17 @@ class Dispatcher(object):
             self.process_error(e,sys.exc_info())
         
         return response
-    
+    def render(self,request, response):
+        
+        self.log.debug("RENDER : Response object has body '%s'" % response.body[:200])
+        if response.body == '':
+            if 'text/html' in request.accept or 'application/xhtml+xml' in request.accept:
+                self.render_html(response)
+            elif 'application/json' in request.accept:
+                self.render_json(response)
+            elif 'application/xml' in request.accept:
+                self.render_xml(response)
+
     def process_error(self,e,exc_info):
         """
         Process error
@@ -160,6 +166,8 @@ class Dispatcher(object):
                     'message': 'Request does not contain %s!' % required_key
                 })
                 return # self._get_json_response(error = err, id=0)
+        # TODO: RPC id request...
+        # READ json-rpc carefully and correct implementation
         rpcid = data['id']
         try:
             if isinstance(data['params'],dict):
@@ -213,17 +221,9 @@ class Dispatcher(object):
         
         response.body = template.render(instance = response.__instance__,
                                         result = response.__result__,
-                                        action = response.__action__) 
-        """<pre>
-        response.__instance__ : %s 
-        response.__action__   :%s
-        response.__result__   : %s </pre>""" % (
-                karacos.json.dumps(response.__instance__),
-                karacos.json.dumps(response.__action__),
-                karacos.json.dumps(response.__result__),
-        )
-        
-        
+                                        action = response.__action__)
+    
+    
     def render_json(self, response):
         """
         """
