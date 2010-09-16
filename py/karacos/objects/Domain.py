@@ -831,20 +831,18 @@ class Domain(karacos.db['Parent']):
         
     
     def get_site_template_uri(self):
-        if 'site_template_uri' not in self.__dict__:
-            if 'site_template_uri' not in self:
-                try:
-                    self.site_template_uri = '%s/site' % self.get_site_theme_base()
-                    template = self.lookup.get_template(self.site_template_uri)
-                except:
-                    self.site_template_uri = '/default/site'
-            else:
-                self.site_template_uri = self['site_template_uri']
+        if 'site_template_uri' not in self:
+            try:
+                self['site_template_uri'] = '%s/site' % self.get_site_theme_base()
+                template = self.lookup.get_template(self.site_template_uri)
+            except:
+                self['site_template_uri'] = '/default/site'
+            self.save()
         user = self.get_user_auth()
         if 'CUSTOM_SITE_SKIN' in user:
             return user['CUSTOM_SITE_SKIN']
         else:
-            return self.site_template_uri
+            return self['site_template_uri']
          
     def _create_group(self,groupname,hasbase=False):
         """

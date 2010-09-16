@@ -248,7 +248,7 @@ class Dispatcher(object):
             # Nothing to process, result already exist
             return
         if request.__method__ == None:
-            response.__result__ = response.__instance__.get_user_actions_forms()
+            response.__result__ = None
         else:
             given = len(request.__args__) + len(request.__kwds__)
             
