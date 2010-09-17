@@ -13,6 +13,7 @@ import inspect
 import sys, traceback
 from karacos.lib import static
 from karacos.http.jsonrpc import *
+import cStringIO
 
 class Dispatcher(object):
     '''
@@ -31,9 +32,7 @@ class Dispatcher(object):
             request.__method__ = None
             request.__args_spec__ = None
             response = karacos.serving.get_response()
-            response.__instance__ = None
-            response.__result__ = None
-            response.__action__ = None
+            
             self.log.debug("Response object has body '%s'" % response.body)
             session = karacos.serving.get_session()
             domain = session.get_karacos_domain()
@@ -53,14 +52,18 @@ class Dispatcher(object):
         
         return response
     def render(self,request, response):
-        
+        session = karacos.serving.get_session()
         self.log.debug("RENDER : Response object has body '%s'" % response.body[:200])
+        if response.__result__ != None and response.__action__ == None:
+            if len(session['backlinks']) > 0:
+                raise Redirect(session['backlinks'].pop(), 302, _("Action processing redirect backlink"))
         if response.body == '':
-            if 'text/html' in request.accept or 'application/xhtml+xml' in request.accept:
+            if (request.headers['Accept'].find('text/html') >= 0 or
+                request.headers['Accept'].find('application/xhtml+xml') >= 0):
                 self.render_html(response)
-            elif 'application/json' in request.accept:
+            elif request.headers['Accept'].find('application/json') >= 0 :
                 self.render_json(response)
-            elif 'application/xml' in request.accept:
+            elif request.headers['Accept'].find('application/xml') >= 0:
                 self.render_xml(response)
 
     def process_error(self,e,exc_info):
@@ -83,6 +86,8 @@ class Dispatcher(object):
                 response.body = template.render(instance = e.instance,
                                                 result = None,
                                                 action = e.method.get_action(e.instance))
+                if e.backlink != None:
+                    session['backlinks'].append(e.backlink)
         else:
             response.body = template.render(instance = domain,
                                             result = {'status': 'failure',
@@ -94,6 +99,16 @@ class Dispatcher(object):
         """
         self.log.debug("process_request %s" % dir(request.params))
         self.log.debug(request.headers['Content-Type'])
+        
+        
+        if (request.headers['Accept'].find('text/html') >= 0 or
+                request.headers['Accept'].find('application/xhtml+xml') >= 0):
+            self.process_http_params(request,response)
+        elif request.headers['Accept'].find('application/json') >= 0:
+            self.process_json_params(request,response)
+        elif request.headers['Accept'].find('application/xml') >= 0:
+            self.process_xml_params(request,response)
+        """
         if request.headers['Content-Type'].find("application/json")<0:
             #c pas du json
             if request.headers['Content-Type'].find("application/xml")<0:
@@ -108,12 +123,15 @@ class Dispatcher(object):
                 raise HTTPError(status=400, message="Bad request")
             else:
                 self.process_json_params(request,response)
+        """
+        
         self.process_action(request, response)
         
     
     def process_http_params(self,request,response):
         """
         """
+        self.log.debug("process_http_params START")
         method = ""
         for name, value in request.params.items():
             request.__kwds__[name] = value
@@ -138,10 +156,18 @@ class Dispatcher(object):
         """
         data = None
         request = karacos.serving.get_request()
+        body = ''
+        if isinstance(request.body_file, cStringIO.InputType):
+            body = request.body_file.read()
+        self.log.debug("process_json_params START with body [%s]" % body)
         try:
-            if request.body != None:
-                data = json.loads(request.body)
+            if (body != None and
+                '%s' % body != ''):
+                self.log.debug("process_json_params decoding json with body [%s]" % body)
+                data = karacos.json.loads(body)
             else:
+                if request.method == 'GET':
+                    return
                 response.__result__ = dict(error = {
                     'origin': ErrorOrigin.Server, 
                     'code' : ErrorCode.ParameterMismatch,
@@ -227,10 +253,14 @@ class Dispatcher(object):
     def render_json(self, response):
         """
         """
-        body = karacos.json.dumps(response.__result__)
+        self.log.debug("render_json START")
+        if response.__result__ == None and response.__action__ != None :
+            body = karacos.json.dumps(response.__action__)
+        if response.__result__ != None and response.__action__ == None :
+            body = karacos.json.dumps(response.__result__)
         response.body = body
         response.headers['Content-Type'] = 'application/json'
-        response.headers['Content-Length'] = len(body)
+        response.headers['Content-Length'] = "%s" % len(body)
         
     def render_xml(self,response):
         """
@@ -270,7 +300,7 @@ class Dispatcher(object):
         """
         Process resource
         """
-        self.log.debug("process_resource_html START")
+        self.log.debug("process_resource START")
         response = karacos.serving.get_response()
         request = karacos.serving.get_request()
         response.__instance__ = resource['object']
@@ -315,5 +345,5 @@ class Dispatcher(object):
                 assert len(request.__kwds__) == defaults_expected, "Invalid number of named parameters"
             return True
         except AssertionError,e:
-            self.log.log_exc(sys.exc_info(),'info')
+            self.log.log_exc(sys.exc_info(),'debug')
             return False

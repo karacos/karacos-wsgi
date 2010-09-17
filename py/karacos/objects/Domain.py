@@ -25,6 +25,7 @@ Created on 28 nov. 2009
 from logging import getLogger
 from karacos.http import HTTPError
 import inspect
+import urllib2
 log = getLogger(__name__)
 from mako.template import Template
 from mako.lookup import TemplateLookup
@@ -441,9 +442,7 @@ class Domain(karacos.db['Parent']):
     def logout(self):
         """
         """
-        sessuserid = self.get_sessuserid()
-        cherrypy.session[sessuserid] = self._get_anonymous_user()['name']
-        user_name = cherrypy.session.get(sessuserid)
+        karacos.serving.get_session().invalidate()
         return {'status':'success', 'message':_("D&eacute;connexion r&eacute;ussie"),'data':user_name}
     logout.label = _('Se d&eacute;connecter')
     
@@ -515,17 +514,7 @@ class Domain(karacos.db['Parent']):
         assert isinstance(username,basestring), "Parameter name must be string"
         assert isinstance(password,basestring), "Parameter name must be string"
         result = None
-        try:
-            passwordhash = "%s" % karacos.db['User'].hash_pwd(password)
-            user = self.get_user_by_name(username)
-            assert user != None, _("User not found in domain")
-            if user['password'] == passwordhash:
-                karacos.serving.get_session().set_user(user)
-                return user
-        except Exception, e:
-            self.log.log_exc(sys.exc_info(),'error')
-            raise karacos._db.Exception, e
-        raise karacos.core.Exception("Authentication error")
+        return karacos.serving.get_session().authenticate(username,password)
     
     
     def __batch_set_user_password__(self,username,password):
@@ -767,7 +756,7 @@ class Domain(karacos.db['Parent']):
             forward = trac_node['items'][id]['forward']
             trac_node['items'][id]['count'] = trac_node['items'][id]['count'] + 1
             trac_node.save()
-        raise cherrypy.HTTPRedirect(forward,301)
+        raise karacos.http.Redirect(forward,301)
     
     @karacos._db.isaction
     def _t(self,id):
@@ -887,7 +876,8 @@ class Domain(karacos.db['Parent']):
         self.log.debug("lookup_object for path : %s" % urlpath)
         args = urlpath.split("/")
         self.log.debug("lookup_object argssplit '%s'" % args)
-        for arg in args :
+        for arg_quote in args :
+            arg = urllib2.unquote(arg_quote)
             countargs=countargs+1
             self.log.debug("lookup_object (for) arg '%s'" % arg)
             if arg != '' and arg != '_self':

@@ -11,6 +11,8 @@ class HTTPError(karacos.core.Exception):
     def __init__(self,status=500,message=""):
         """
         """
+        if message == None:
+            message = _("Unknow error")
         karacos.core.Exception.__init__(self,value=message)
         self.status = status
     
@@ -21,16 +23,18 @@ class Redirect(HTTPError):
     """
     HTTP redirect Exception
     """
-    def __init__(self,url,code=302):
+    def __init__(self,url,code=302,message=None):
         """
         """
+        if message == None:
+            message = _("Resource moved")
         self.location = url
-        HTTPError.__init__(self,status=code,message="Resource moved")
+        HTTPError.__init__(self,status=code,message=message)
 
 class DataRequired(Redirect):
     action = None
     instance = None
-    def __init__(self,instance,method):
+    def __init__(self,instance,method,backlink=None,message=None):
         """
         value
         message
@@ -38,6 +42,8 @@ class DataRequired(Redirect):
         instance: instance for performing action
         action: callable(self)
         """
+        if message == None:
+            message = _("Data is required")
         self.instance = instance
         assert method.func.__name__ in dir(instance)
         self.method = method
@@ -49,14 +55,17 @@ class DataRequired(Redirect):
             forward = "http://%s/%s/%s" % (karacos.serving.get_request().headers['Host'],
                                             instance._get_action_url(),
                                             method.func.__name__)
-        Redirect.__init__(self,url=forward)
+        Redirect.__init__(self,url=forward, message=message)
+        self.backlink = backlink
 
 
 class WebAuthRequired(DataRequired):
     action = None
-    def __init__(self,domain):
+    def __init__(self,domain,backlink=None,message=None):
+        if message == None :
+            message = _("Authentication required")
         assert isinstance(domain,karacos.db['Domain'])
-        DataRequired.__init__(self,domain,domain.login)
+        DataRequired.__init__(self,domain,domain.login,backlink=backlink,message=message)
     
 class NotFound(HTTPError):
     """

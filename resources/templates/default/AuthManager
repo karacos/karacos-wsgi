@@ -1,4 +1,4 @@
-<% import KaraCos %>
+<% import karacos %>
 <% myresult = None %>
 
 % try:
@@ -9,7 +9,7 @@
 					<table>
 					<tr><th class="top" scope="col">User</th><th class="top" scope="col">Action</th></tr>
 					% for user in result['data'].values():
-						<% json_user = KaraCos.json.dumps(user) %>
+						<% json_user = karacos.json.dumps(user) %>
 						<tr><td>${user['name']}</td><td><div class="set_user_settings_button" data='${json_user}' >Modifier<div></td></tr>
 					% endfor
 					</table>
@@ -54,7 +54,7 @@
 					<table>
 					<tr><th class="top" scope="col">Group</th><th class="top" scope="col">Action</th></tr>
 					% for group in result['data'].values():
-						<% json_group = KaraCos.json.dumps(group) %>
+						<% json_group = karacos.json.dumps(group) %>
 						<tr><td>${group['name']}</td><td><div class="set_group_settings_button" data='${json_group}' >Modifier</div>
 								<div class="list_users_group_settings_button" data='${json_group}' >Liste users</div></td></tr>
 					% endfor

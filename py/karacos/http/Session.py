@@ -4,6 +4,7 @@ Created on 10 sept. 2010
 @author: nico
 '''
 import karacos
+import sys
 
 class SessionMeta(type):
     
@@ -50,6 +51,7 @@ class Session(dict):
         assert id != None
         dict.__init__(self)
         self['username'] = 'anonymous'
+        self['backlinks'] = []
         self.id = id
         self.log = karacos.core.log.getLogger(self)
         self.log.debug("NEW SESSION CREATED '%s'" % self.id)
@@ -76,7 +78,33 @@ class Session(dict):
             self.user = result
         self.log.debug("result type '%s', data [%s]" % (result.__class__.__name__, result))
         return result
+    
+    def invalidate(self):
+        """
+        Invalidate session
+        """
+        self.user = None
+        self['username'] = 'anonymous'
+    
+    def authenticate(self,username,password):
+        assert self['username'] == 'anonymous'
+        try:
+            passwordhash = "%s" % karacos.db['User'].hash_pwd(password)
+            user = self.get_karacos_domain().get_user_by_name(username)
+            assert user != None, _("User not found in domain")
+            if user['password'] == passwordhash:
+                self.set_user(user)
+                return user
+        except Exception, e:
+            self.log.log_exc(sys.exc_info(),'error')
+            raise karacos._db.Exception, e
+        raise karacos.core.Exception("Authentication error")
         
+    
+    def is_authenticated(self):
+        if self['username'] == 'anonymous':
+            return False
+        return True
     
     def get_karacos_domain(self):
         """
