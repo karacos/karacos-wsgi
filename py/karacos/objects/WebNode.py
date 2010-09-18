@@ -154,6 +154,7 @@ class WebNode(karacos.db['Node']):
     
     @karacos._db.isaction
     def _att(self,*args,**kw):
+        response = karacos.serving.get_response()
         if len(args) == 0:
             if '_attachments' in self:
                 # TODO templating
@@ -161,29 +162,29 @@ class WebNode(karacos.db['Node']):
                 for file in self['_attachments']:
                     res = '%s<li><a href="%s/_att/%s">%s</a></li>' % (res,self._get_action_url(),file,file)
                 res = '%s</ul>' % res
-                return res
+                response.body = '%s' % res
+                return
         else:
             name=args[0]
             if '_attachments' in self:
                 if name in self['_attachments']:
                     res = self.__parent__.db.get_attachment(self.id, name)
-                    response = cherrypy.response
-                    response.headers['Content-Type'] = self['_attachments'][name]['content_type']
-                    response.headers['Content-Length'] = self['_attachments'][name]['length']
-                    response.body = res
-                    return response.body
+                    response.headers['Content-Type'] = '%s' % self['_attachments'][name]['content_type']
+                    response.headers['Content-Length'] = '%s' % self['_attachments'][name]['length']
+                    response.body = '%s' % res.read()
+                    return
         
-        raise cherrypy.HTTPError(status=404,message=_("Ressource introuvable"))
+        raise karacos.http.HTTPError(status=404,message=_("Ressource introuvable"))
     
     @karacos._db.isaction
     def set_ACL(self, ACL=None):
-        self['ACL'] = json.loads(ACL)
+        self['ACL'] = karacos.json.loads(ACL)
         self.save()
     
     def _set_ACL_form(self):
         return {'title': _("Modifier l'ACL"),
          'submit': _('Modifier'),
-         'fields': [{'name':'ACL', 'title':'ACL','dataType': 'TEXT','formType': 'TEXTAREA', 'value': json.dumps(self['ACL'])}]}
+         'fields': [{'name':'ACL', 'title':'ACL','dataType': 'TEXT','formType': 'TEXTAREA', 'value': karacos.json.dumps(self['ACL'])}]}
     set_ACL.label = "Edit ACL"
     set_ACL.get_form = _set_ACL_form
     def _publish_node(self):

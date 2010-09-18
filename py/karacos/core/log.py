@@ -43,10 +43,13 @@ class Logger(logging.getLoggerClass()):
 import logging.config
 logging.setLoggerClass(Logger)
 
+logger = logging.getLogger("karacos.core.log")
 
 
 def getLogger(instance):
-    return logging.getLogger("%s.%s" % (instance.__class__.__module__,instance.__class__.__name__))
+    loggername = "%s.%s" % (instance.__class__.__module__,instance.__class__.__name__)
+    logger.info("Getting logger for '%s'" % loggername)
+    return logging.getLogger(loggername)
 
 logging.config.fileConfig("%s/logging.conf" % karacos._confdir)
 

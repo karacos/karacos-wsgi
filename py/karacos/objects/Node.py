@@ -73,7 +73,6 @@ class Node(karacos.db['Child']):
     def __init__(self, *args, **kw):
         """
         """
-        self.log.debug("Node.__init__ ")
         data = None
         if 'data' in kw:
             data = kw['data']
@@ -84,6 +83,7 @@ class Node(karacos.db['Child']):
         assert isinstance(data['base_id'],basestring)
         
         karacos.db['Child'].__init__(self,*args, **kw)
+        self.log.debug("Node.__init__ ")
         self.__domain__ = self.__parent__.__domain__
     
     def _add_attachment(self, att_file=None):

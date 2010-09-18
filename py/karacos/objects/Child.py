@@ -28,7 +28,8 @@ import couchdb
 import karacos
 
 KcDocument = karacos.db['Document']
-
+import logging
+log = logging.getLogger("%s.ChildMeta" % __name__)
 
 class ChildMeta(karacos.db['ParentMeta']):
     """
@@ -39,13 +40,13 @@ class ChildMeta(karacos.db['ParentMeta']):
         """
         A l'appel du constructeur
         """
-        self.log.debug("BEGIN ChildMeta.__call__ ")
+        log.debug("BEGIN ChildMeta.__call__ ")
         assert 'data' in kw
         assert 'parent_id' in kw['data']
         assert 'parent_db' in kw['data']
         if 'parent' not in kw:
             parentbase = karacos.db.sysdb[kw['data']['parent_db']]
-            self.log.debug("ChildMeta.__call__ parentbase = %s",parentbase)
+            log.debug("ChildMeta.__call__ parentbase = %s",parentbase)
             parent = parentbase.db[kw['data']['parent_id']]
             kw['parent'] = parent
         instance = karacos.db['ParentMeta'].__call__(self, *args, **kw)
@@ -53,7 +54,7 @@ class ChildMeta(karacos.db['ParentMeta']):
         assert '__parent__' in dir(instance), "'parent' attribute not found"
         assert 'db' in dir(instance.__parent__), " parent's 'db' attribute not found"
         assert isinstance(instance.__parent__.db,couchdb.Database), "parent.db is not a couchdb Database object"
-        self.log.debug("END ChildMeta.__call__ ")
+        log.debug("END ChildMeta.__call__ ")
         return instance
 
 karacos.db['ChildMeta'] = ChildMeta
@@ -65,7 +66,6 @@ class Child(karacos.db['Parent']):
     def __init__(self,*args, **kw):
         """
         """
-        self.log.info("BEGIN Child.__init__ ")
         assert isinstance(self,karacos.db['Child']), "Icompatible type, instance is : %s, should be karacos.db['Child']" % type(self)
         assert type(self) != Child, "This type cannot be instanciated directly"
         self.__parent__ = None
@@ -77,6 +77,7 @@ class Child(karacos.db['Parent']):
         self.db = self.base.db
         kw['base'] = self.base
         karacos.db['Parent'].__init__(self,*args, **kw)
+        self.log.info("BEGIN Child.__init__ ")
         """
         if parent != None:
             assert isinstance(parent,KaraCos.Db.__parent__Object), "Incompatible value type : %s is not a KaraCos.Db.__parent__Object" % type(parent)

@@ -29,6 +29,8 @@ import datetime
 import sys
 import couchdb.client
 
+import logging
+log = logging.getLogger("%s.KcDocMeta" % __name__)
 class KcDocMeta(type):
     """
     Metaclasse pour Document KaraCos
@@ -38,9 +40,8 @@ class KcDocMeta(type):
         Appele lors de la construction d'un type
         """
         
-        self.log = karacos.core.log.getLogger(self)
-        self.log.info("__init__ for '%s'" % (name))
-        self.log.debug("parents of class '%s' [%s] [%s]" % (name,parents,dir(parents)))
+        log.info("__init__ for '%s'" % (name))
+        log.debug("parents of class '%s' [%s] [%s]" % (name,parents,dir(parents)))
         if self not in karacos.webdb.actions.keys():
             karacos.webdb.actions[self] = []
         if couchdb.client.Document not in parents:
@@ -56,7 +57,7 @@ class KcDocMeta(type):
     def __call__(self,*args, **kw):
         """
         """
-        self.log.debug("__call__  begin")
+        log.debug("__call__  begin")
         instance = type.__call__(self, *args, **kw)
         
         return instance
@@ -70,7 +71,7 @@ class KcDocMeta(type):
                 if attrname not in karacos.webdb.actions[self]:
                     karacos.webdb.actions[self].append(attrname)
         except:
-            self.log.log_exc(sys.exc_info(),'error')
+            log.log_exc(sys.exc_info(),'error')
         
         
 karacos.db['KcDocMeta'] = KcDocMeta
@@ -110,6 +111,7 @@ class Document(couchdb.client.Document):
         """
         assert isinstance(data,dict), "Value must be a dict"
         couchdb.client.Document.__init__(self,data.items())
+        self.log = karacos.core.log.getLogger(self)
         if 'creator_id' not in self:
             self['creator_id'] = 'system'
         if 'owner_id' not in self:

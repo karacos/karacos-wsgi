@@ -25,7 +25,8 @@ Created on 7 janv. 2010
 '''
 
 import karacos
-
+import logging
+log = logging.getLogger(__name__)
 
 class AuthMeta(karacos.db['ChildMeta']):
     """
@@ -35,9 +36,9 @@ class AuthMeta(karacos.db['ChildMeta']):
         """
         A l'appel du constructeur
         """
-        self.log.info("BEGIN AuthMeta.__call__ ")
+        log.info("BEGIN AuthMeta.__call__ ")
         instance = karacos.db['ChildMeta'].__call__(self, *args, **kw)
-        self.log.info("END AuthMeta.__call__ ")
+        log.info("END AuthMeta.__call__ ")
         return instance
     
     

@@ -140,6 +140,7 @@ class Base(KcDocument):
     
     
     def __init__(self,*args, **kw):
+        self.log = karacos.core.log.getLogger(self)
         data = None
         if 'data' in kw:
             data = kw['data']

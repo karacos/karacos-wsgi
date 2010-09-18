@@ -31,6 +31,8 @@ import karacos
 import StringIO
 import os, traceback, sys
 from mako.lookup import TemplateLookup
+import logging
+log = logging.getLogger(__name__)
 
 class WebMeta(karacos.db['AuthMeta']):
     """
@@ -42,8 +44,7 @@ class WebMeta(karacos.db['AuthMeta']):
         """
         Appele lors de la construction d'un type
         """
-        self.log = karacos.core.log.getLogger(self)
-        self.log.info("WebMeta :  for %s  " % name)
+        log.info("WebMeta :  for %s  " % name)
         karacos.db['KcDocMeta'].__init__(self, name, parents, dict)
         karacos.webdb[name] = self
             
@@ -53,7 +54,7 @@ class WebMeta(karacos.db['AuthMeta']):
         Method called at instance creation.
         
         """
-        self.log.info("BEGIN WebMeta.__call__ ")
+        log.info("BEGIN WebMeta.__call__ ")
         assert 'data' in kw
         assert 'type' in kw['data']
         if kw['data']['type'] == 'WebNode':

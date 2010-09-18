@@ -43,15 +43,19 @@
 			% for child in childrens.keys():
 			<ul>
 				<li><a href="${instance.__domain__._get_action_url()}${childrens[child]}/">${childrens[child]}</a>
-				 <% childNode = instance.__domain__.__childrens__[child] %>
-					% if childNode != None:
-						<ul>
-						<% childChildrens = childNode.get_web_childrens_for_id() %>
-						% for childChild in childChildrens:
-							<li><a href="${instance.__domain__._get_action_url()}${childrens[child]}/${childChildrens[childChild]}/">${childChildrens[childChild]}</a></li>
-						% endfor
-						</ul>
-					% endif
+				 % try:
+					 <% childNode = instance.__domain__.__childrens__[child] %>
+						% if childNode != None:
+							<ul>
+							<% childChildrens = childNode.get_web_childrens_for_id() %>
+							% for childChild in childChildrens:
+								<li><a href="${instance.__domain__._get_action_url()}${childrens[child]}/${childChildrens[childChild]}/">${childChildrens[childChild]}</a></li>
+							% endfor
+							</ul>
+						% endif
+					%except:
+						
+					%endtry
 				</li>
 			</ul>
 			% endfor

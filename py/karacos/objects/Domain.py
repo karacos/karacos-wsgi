@@ -443,7 +443,7 @@ class Domain(karacos.db['Parent']):
         """
         """
         karacos.serving.get_session().invalidate()
-        return {'status':'success', 'message':_("D&eacute;connexion r&eacute;ussie"),'data':user_name}
+        return {'status':'success', 'message':_("D&eacute;connexion r&eacute;ussie")}
     logout.label = _('Se d&eacute;connecter')
     
     def _get_user_base_settings_form(self):

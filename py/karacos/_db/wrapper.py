@@ -74,7 +74,7 @@ class DataBase(couchdb.client.Database):
 
         :param id: the document ID
         """
-        resp, data = self.resource.head(id)
+        aaa,resp, data = self.resource.head(id)
         self.log.info("COUCHDB COMMAND 'DELETE' [%s]" % id)
         self.resource.delete(id, rev=resp['etag'].strip('"'))
         del self.cache[id]

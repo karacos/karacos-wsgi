@@ -22,13 +22,15 @@ Created on 2 dec. 2009
 
 @author: nico
 '''
+from uuid import uuid4
 __author__ = "Nicolas Karageuzian"
 import couchdb
 import karacos
 import sys, datetime
 KcDocument = karacos.db['Document']
 import simplejson as json
-
+import logging
+log = logging.getLogger("%s.ParentMeta" % __name__)
 class ParentMeta(karacos.db['KcDocMeta']):
     """
     metaclass of a parentObject
@@ -39,9 +41,9 @@ class ParentMeta(karacos.db['KcDocMeta']):
         A l'appel du constructeur
         le type doit avoir une base (KcDocument) et un objet db (objet couchdb)
         """
-        self.log.debug("begin __call__")
+        log.debug("begin __call__")
         instance = karacos.db['KcDocMeta'].__call__(self, *args, **kw)
-        instance.log.debug("__call__ dir(instance):'%s'" % dir(instance))
+        log.debug("__call__ dir(instance):'%s'" % dir(instance))
         assert "db" in dir(instance), "'db' attribute not found"
         assert isinstance(instance.db, couchdb.Database), "db is not a couchdb Database object"
         assert 'base' in dir(instance), "'base' attribute not found"
@@ -53,8 +55,8 @@ class ParentMeta(karacos.db['KcDocMeta']):
                 #Sauvegarde objet modifie
                 instance.__parent__.db[instance['_id']] = instance
             except:
-                self.log.log_exc(sys.exc_info(), 'warn')
-        self.log.debug("end __call__")
+                log.log_exc(sys.exc_info(), 'warn')
+        log.debug("end __call__")
         return instance
             
 karacos.db['ParentMeta'] = ParentMeta
@@ -110,7 +112,6 @@ class Parent(KcDocument):
     __childrens__ = None
 
     def __init__(self, *args, **kw):
-        self.log.debug("Parent.__init__ START")
         assert isinstance(self, karacos.db['Parent']), "Icompatible type, instance is : %s, should be karacos.db['Parent']" % type(self)
         assert type(self) != Parent, "This type cannot be instanciated directly"
         assert 'data' in kw
@@ -143,6 +144,7 @@ class Parent(KcDocument):
 
         
         karacos.db['Document'].__init__(self, data=data)
+        self.log.debug("Parent.__init__")
         self.__childrens__ = Childrens(self)
         self.log.debug("Parent.__init__ END: %s" % self.__dict__)
         
@@ -354,11 +356,16 @@ class Parent(KcDocument):
         assert type in karacos.db.keys(), _("Type n'existe pas")
         assert issubclass(karacos.db[type], karacos.db['Child']), _("Type incorrect")
         assert data['name'] not in self.__childrens__, _("Node existe avec ce nom")
-        base = self.base
+        base = None
         if 'base' in kw:
-            if base == "true":
+            base = kw['base']
+            if base == "true" or base == "True" or base == True:
                 base_name = "base_%s" % uuid4().hex
                 base = karacos.db['Base'].create(base_name.lower())
+            else:
+                base = self.base
+        else:
+            base = self.base
         kw['base'] = base
         kw['parent'] = self
         self._update_item()
