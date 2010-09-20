@@ -232,10 +232,10 @@ class Domain(karacos.db['Parent']):
         base = karacos.db['Base'].get_by_id(data['base_id'])
         self.__domain__ = self
         karacos.db['Parent'].__init__(self,data=data,base=base)
-        self['ACL']['user.admin@%s' % self['name']] = self._get_adm_actions()
         self.__parent__ = karacos.container()
         self.__parent__.base = karacos.db.sysbase
         self.__parent__.db = karacos.db.sysdb
+        self['ACL']['user.admin@%s' % self['name']] = self._get_adm_actions()
         if 'childrens' not in self:
             self['childrens'] = {}
             self.save()
