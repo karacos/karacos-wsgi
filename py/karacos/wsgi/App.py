@@ -137,7 +137,7 @@ class Dispatcher(object):
             request.__kwds__[name] = value
         if 'method' in request.__kwds__:
             if request.__method__ != None:
-                raise HTTPError(status=400, message="Bad request")
+                raise HTTPError(status=400, message="Bad request, method found before !")
             else:
                 method = "%s" % request.__kwds__['method']
                 request.__method__ = response.__instance__.get_action(method)
@@ -145,7 +145,7 @@ class Dispatcher(object):
         else:
             if request.__method__ == None:
                 if not (len(request.__kwds__) == 0 and len(request.__args__) == 0):
-                    raise HTTPError(status=400, message="Bad request")
+                    raise HTTPError(status=400, message="Bad request, args without method")
         if request.__method__ != None:
             self.process_method_params(request.__method__)
             self.ckeck_method_params(method, request)
