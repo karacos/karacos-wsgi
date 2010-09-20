@@ -21,7 +21,17 @@ __builtins__['kc_props'] = kc_props
 import simplejson as json
 
 # TODO: handles server definition
-_srvdir = os.path.join(homedir,'server','default')
+if 'KC_SERVER_NAME' not in os.environ:
+    os.environ['KC_SERVER_NAME'] = 'default'
+if os.environ['KC_SERVER_NAME'] == None or os.environ['KC_SERVER_NAME'] =='':
+    os.environ['KC_SERVER_NAME'] = 'default'
+    
+_srvdir = os.path.join(homedir,'server',os.environ['KC_SERVER_NAME'])
+if not os.path.exists(_srvdir):
+    print "%s isn't a server directory, aborting start" % os.environ['KC_SERVER_NAME']
+    import sys
+    sys.exit()
+    
 _confdir = os.path.join(_srvdir,'conf')
 print "Reading config from %s" % os.path.join(_confdir,'karacos.conf')
 config = ConfigParser.RawConfigParser()
