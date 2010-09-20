@@ -5,6 +5,7 @@ Created on 10 sept. 2010
 '''
 import karacos
 import sys
+import os
 
 class SessionMeta(type):
     
@@ -14,6 +15,9 @@ class SessionMeta(type):
         """
         self.sessions = dict()
         self.log = karacos.core.log.getLogger(self)
+        self.filedir = os.path.join(karacos._srvdir,'temp',self.__name__)
+        if not os.path.exists(self.filedir):
+            os.makedirs(self.filedir)
         self.log.info("Created type '%s.%s' and sessions container" % (self.__module__,self.__name__))
         
     def __call__(self,*args, **kw):
@@ -34,6 +38,16 @@ class SessionMeta(type):
         if 'serving' in dir(karacos):
             self.log.debug("karacos.serving object found")
             karacos.serving.set_session(instance)
+        if os.path.exists(instance.filename):
+            file = open(instance.filename,"r")
+            data = karacos.json.loads(file.read())
+            file.close()
+            instance.update(data)
+        else:
+            file = open(instance.filename,"w")
+            file.write(karacos.json.dumps(instance,skipkeys=True))
+            file.flush()
+            file.close()
         return instance        
 
 
@@ -43,18 +57,42 @@ class Session(dict):
     '''
     
     __metaclass__ = SessionMeta
-
+    
     def __init__(self, id=None):
         '''
         Constructor
         '''
         assert id != None
         dict.__init__(self)
-        self['username'] = 'anonymous'
-        self['backlinks'] = []
         self.id = id
         self.log = karacos.core.log.getLogger(self)
+        self.filename = os.path.join(self.filedir,"%s" % id)
+        self['username'] = 'anonymous'
+        self['backlinks'] = []
         self.log.debug("NEW SESSION CREATED '%s'" % self.id)
+    
+    def __getitem__(self, key):
+        file = open(self.filename,"r")
+        data = karacos.json.loads(file.read())
+        file.close()
+        self.update(data)
+        return dict.__getitem__(self,key)
+    
+    def __setitem__(self, key, item):
+        ""
+        dict.__setitem__(self,key,item)
+        file = open(self.filename,"w")
+        file.write(karacos.json.dumps(self,skipkeys=True))
+        file.flush()
+        file.close()
+    
+    def __delitem__(self, key):
+        ""
+        dict.__delitem__(self, key)
+        file = open(self.filename,"w")
+        file.write(karacos.json.dumps(self,skipkeys=True))
+        file.flush()
+        file.close()
     
     def set_user(self,user):
         self.log.debug("set_user %s" % user)
