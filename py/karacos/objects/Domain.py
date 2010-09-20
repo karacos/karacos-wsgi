@@ -297,6 +297,7 @@ class Domain(karacos.db['Parent']):
         return self.__groups_node__
     
     def _get_adm_actions(self):
+        self._update_item()
         if '__adm_actions__' not in dir(self):
             self.__adm_actions__ = []
             for action in self.get_actions():
@@ -305,7 +306,7 @@ class Domain(karacos.db['Parent']):
         return self.__adm_actions__
     
     def _get_confirmed_group(self):
-        
+        self._update_item()
         if '__confirmed_group__' not in dir(self):
             name = 'confirmed@%s' % self['name']
             if name not in self._get_groups_node().__childrens__:
@@ -315,7 +316,7 @@ class Domain(karacos.db['Parent']):
         return self.__confirmed_group__ 
      
     def _get_registered_group(self):
-        
+        self._update_item()
         if '__registered_group__' not in dir(self):
             name = 'registered@%s' % self['name']
             if name not in self._get_groups_node().__childrens__:
@@ -325,7 +326,7 @@ class Domain(karacos.db['Parent']):
         return self.__registered_group__
     
     def _get_everyone_group(self):
-        
+        self._update_item()
         if '__everyone_group__' not in dir(self):
             name = 'everyone@%s' % self['name']
             if name not in self._get_groups_node().__childrens__:
@@ -336,17 +337,21 @@ class Domain(karacos.db['Parent']):
     
     @karacos._db.isaction
     def set_name(self,name):
+        self._update_item()
         self['name'] = name
-
+        self.save()
     @karacos._db.isaction
     def set_fqdn(self,fqdn):
+        self._update_item()
         self['fqdn'] = fqdn
+        self.save()
     set_fqdn.label = _("Changer le nom de domaine")
     
     def validate(self):
         """
         Validate object Data
         """
+        self._update_item()
         KaraCos.Db.KcDocument.basic_validations(self)
         self.base.validate()
         
@@ -367,6 +372,7 @@ class Domain(karacos.db['Parent']):
     def user_exist(self,username):
         """
         """
+        self._update_item()
         assert isinstance(username,basestring), "Parameter name must be string"
         if username in self._get_users_node().__childrens__:
             return True
@@ -376,6 +382,7 @@ class Domain(karacos.db['Parent']):
     def get_user_by_name(self,username):
         """
         """
+        self._update_item()
         self.log.debug("BEGIN Domain.get_user_by_name : %s" % username)
         assert isinstance(username,basestring), "Parameter name must be string"
         result = None
@@ -395,6 +402,7 @@ class Domain(karacos.db['Parent']):
     def _create_user(self,username=None,password=None,hasbase=False):
         """
         """
+        self._update_item()
         self.log.info("BEGIN %s.create_user" % self['name'])
         assert len(self._get_user_by_name(username)) == 0, "User exist with that name"
         assert username != None
@@ -415,9 +423,11 @@ class Domain(karacos.db['Parent']):
         return result
     
     def get_sessuserid(self):
+        self._update_item()
         return '%s.user' % self['name']
     
     def get_user_auth(self):
+        self._update_item()
         self.log.info("START %s.get_user_auth" % self['name'])
         return karacos.serving.get_session().get_user_auth()
         
@@ -425,6 +435,7 @@ class Domain(karacos.db['Parent']):
     def is_user_authenticated(self):
         """
         """
+        self._update_item()
         if self.get_user_auth() == self._get_anonymous_user():
             return False
         else:
@@ -559,6 +570,7 @@ class Domain(karacos.db['Parent']):
         Creates a child Node.
         As an web exposed Method, this will only allow to create WebNode derived objects
         """
+        self._update_item()
         try:
             assert name != None
             assert type != None
@@ -581,6 +593,7 @@ class Domain(karacos.db['Parent']):
     def login(self,email=None,password=None):
         """
         """
+        self._update_item()
         user = None
         if karacos.core.mail.valid_email(email):
             try:
@@ -606,6 +619,7 @@ class Domain(karacos.db['Parent']):
         """
         Returns this domain anonymous user
         """
+        self._update_item()
         #self._update_item()
         self.log.info("START %s._get_anonymous_user" % self['name'])
         result = ""
@@ -640,6 +654,7 @@ class Domain(karacos.db['Parent']):
     def group_exist(self,groupname):
         """
         """
+        self._update_item()
         assert isinstance(groupname,basestring), "Parameter name must be string"
         
         groups = self._get_group_by_name(groupname)
@@ -656,6 +671,7 @@ class Domain(karacos.db['Parent']):
     def get_group_by_name(self,groupname):
         """
         """
+        self._update_item()
         self.log.debug("BEGIN get_group_by_name : %s" % groupname)
         assert isinstance(groupname,basestring), "Parameter name must be string"
         result = None
@@ -676,6 +692,7 @@ class Domain(karacos.db['Parent']):
 
     @karacos._db.isaction
     def set_ACL(self, ACL=None):
+        self._update_item()
         self['ACL'] = karacos.json.loads(ACL)
         self.save()
     def _set_ACL_form(self):
@@ -686,6 +703,7 @@ class Domain(karacos.db['Parent']):
     set_ACL.get_form = _set_ACL_form
     
     def _get_ACL_default_update(self):
+        self._update_item()
         if 'ACL_default_update' not in self:
             self['ACL_default_update'] = {}
             self.save()
@@ -693,10 +711,12 @@ class Domain(karacos.db['Parent']):
     
     @karacos._db.isaction
     def set_ACL_default_update(self, ACL=None):
+        self._update_item()
         self['ACL_default_update'] = karacos.json.loads(ACL)
         self.save()
         
     def _set_ACL_default_update_form(self):
+        self._update_item()
         if 'ACL_default_update' not in self:
             self['ACL_default_update'] = {}
             self.save()
@@ -707,6 +727,7 @@ class Domain(karacos.db['Parent']):
 
     @karacos._db.isaction
     def set_web_domain_type(self, webtype=None):
+        self._update_item()
         self['WebType'] = webtype
         self.save()
     set_web_domain_type.form = {'title': _("Changer le theme"),
@@ -716,6 +737,7 @@ class Domain(karacos.db['Parent']):
 
     @karacos._db.isaction
     def set_site_theme_base(self, site_theme_base=None):
+        self._update_item()
         self['site_theme_base'] = site_theme_base
         self.save()
     set_site_theme_base.form = {'title': _("Changer le theme"),
@@ -724,6 +746,7 @@ class Domain(karacos.db['Parent']):
     set_site_theme_base.label = "Set site template"
     
     def get_site_theme_base(self):
+        self._update_item()
         result = "/default"
         if 'site_theme_base' in self:
             result = self['site_theme_base']
@@ -734,6 +757,7 @@ class Domain(karacos.db['Parent']):
         return result
     
     def _get_trac_node(self):
+        self._update_item()
         if '__trac__' not in self.__dict__:
             if "_tracking" not in self.__childrens__:
                 self._create_child_node(data={'name':'_tracking'}, type='Node')
@@ -741,11 +765,13 @@ class Domain(karacos.db['Parent']):
         return self.__trac__
     
     def get_manager_node(self):
+        self._update_item()
         if 'manager' not in self.__childrens__:
             self._create_child_node(data={'name':'manager'}, type='Manager')
         return self.__childrens__['manager']
     
     def _trac(self,id=None):
+        self._update_item()
         assert isinstance(id,basestring)
         trac_node = self._get_trac_node()
         forward = '/'
@@ -769,6 +795,7 @@ class Domain(karacos.db['Parent']):
     
     @karacos._db.isaction
     def create_tracking_item(self,id=None,forward=None,description=None):
+        self._update_item()
         trac_node = self._get_trac_node()
         if 'items' not in trac_node:
             trac_node['items'] = {}
@@ -787,10 +814,12 @@ class Domain(karacos.db['Parent']):
     
     @karacos._db.isaction
     def view_tracking(self):
+        self._update_item()
         return {'status':'succes','data' : json.dumps(self._get_trac_node()['items'])}
     
     @karacos._db.isaction
     def set_site_template_uri(self, site_template_uri=None):
+        self._update_item()
         self['site_template_uri'] = site_template_uri
         self.save()
     set_site_template_uri.form = {'title': _("Changer le template site"),
@@ -799,6 +828,7 @@ class Domain(karacos.db['Parent']):
     set_site_template_uri.label = "Set site template"
     
     def get_instance_template_uri(self):
+        self._update_item()
         uri = ""
         try:
             uri = "%s/%s" % (self.get_site_theme_base(),self['WebType'])
@@ -820,6 +850,7 @@ class Domain(karacos.db['Parent']):
         
     
     def get_site_template_uri(self):
+        self._update_item()
         if 'site_template_uri' not in self:
             try:
                 self['site_template_uri'] = '%s/site' % self.get_site_theme_base()
@@ -836,6 +867,7 @@ class Domain(karacos.db['Parent']):
     def _create_group(self,groupname,hasbase=False):
         """
         """
+        self._update_item()
         assert groupname != None
         #assert username not in self.users, "User already eist in that domain"
         base = None
@@ -853,6 +885,7 @@ class Domain(karacos.db['Parent']):
     def delete(self):
         """
         """
+        self._update_item()
         #self.base = KaraCos.Db.sysdb[self['_id']]
         #KaraCos.Db.sysdb.delete(self.base)
         #self = self.parent.db[self['_id']]
@@ -870,6 +903,7 @@ class Domain(karacos.db['Parent']):
         """
         returns a record with object and args
         """
+        self._update_item()
         countargs = 0
         result = {'object': self }
         #cirrentobj = self
