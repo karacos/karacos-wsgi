@@ -26,7 +26,7 @@ Created on 12 dec. 2009
 #from pkg_resources import StringIO
 __author__="Nicolas Karageuzian"
 __contributors__ = ["Cyril Gratecos"]
-import cherrypy, types
+import types
 import karacos
 import StringIO
 import os, traceback, sys

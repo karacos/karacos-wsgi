@@ -47,7 +47,7 @@ class ViewsProcessorMeta(type):
         return ViewsProcessorMeta._processors[base_name]
 
 
-class ViewsProcessor():
+class ViewsProcessor(object):
     """
     Handles permanent views for a database
     """

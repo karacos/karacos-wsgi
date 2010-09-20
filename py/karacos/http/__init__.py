@@ -122,4 +122,3 @@ class _Serving(threading.local):
                 karacos.serving.session['username'] = "system"
             return karacos.serving.session
 
-import json

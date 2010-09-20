@@ -24,7 +24,6 @@ Created on 24 nov. 2009
 '''
 import karacos
 import new
-import simplejson as json
 import datetime
 import sys
 import couchdb.client
@@ -231,13 +230,13 @@ class Document(couchdb.client.Document):
         """
         validate Core Data
         """
-        json.dumps(self)
         assert 'creation_date' in self, "valueError: 'creation_date' : dict entry not found"
         try:
+            self.log.warn(self['creation_date'])
             datetime.datetime.strptime(self['creation_date'],'%Y-%m-%dT%H:%M:%S')
         except:
             self.log.log_exc(sys.exc_info(),'debug')
-            raise self.Exception, "valueError: 'creation_date' : date format not recognised"
+            raise karacos.core.Exception, "valueError: 'creation_date' : date format not recognised"
         assert 'last_modification_date' in self, "valueError: 'last_modification_date' : dict entry not found"
         try:
             datetime.datetime.strptime(self['last_modification_date'],'%Y-%m-%dT%H:%M:%S')

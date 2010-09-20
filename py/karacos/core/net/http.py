@@ -28,7 +28,7 @@ class HTTPSConnection(httplib.HTTPSConnection):
         else:
             httplib.HTTPSConnection.connect(self)
 
-class UrlHandler():
+class UrlHandler(object):
     http_timeout = 15
     proxy_host = None
     proxy_port = None
