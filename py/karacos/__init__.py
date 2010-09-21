@@ -50,6 +50,13 @@ if config.has_section('system'):
 db = container()
 db.server_url = "http://localhost:5984"
 db.sysdb_name = "karacos2_sysdb"
+if config.has_section('db'):
+    if config.has_option('db', 'server'):
+        db.server_url = config.get('db', 'server')
+        log.info("DB Server found in conf : '%s'" % db.server_url)
+    if config.has_option('db', 'sysdb_name'):
+        db.sysdb_name = config.get('db', 'sysdb_name')
+        log.info("DB name found in conf : '%s'" % db.sysdb_name)
 db.server = None
 db.sysdb = None
 webdb = container()
