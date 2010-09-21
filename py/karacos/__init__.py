@@ -72,9 +72,10 @@ if base == None:
 else:
     db.sysbase = base
 
+apps = core.apps.InitApps()
+serving = http._Serving()
+
 import wsgi
 
-apps = core.apps.InitApps()
 
-serving = http._Serving()
 
