@@ -501,7 +501,7 @@ class Domain(karacos.db['Parent']):
                 'submit':'Modifier',
                 'fields':[
                     {'name':'title', 'title':_('Titre'), 'dataType': 'TEXT', 'value': self['title']},
-                    {'name':'head_bloc', 'title':_('Head bloc'), 'dataType': 'TEXT', 'value': self['title']},
+                    {'name':'head_bloc', 'title':_('Head bloc'), 'dataType': 'TEXT', 'value': self['head_bloc'], 'formType': 'TEXTAREA'},
                     {'name':'content', 'title':_('Contenu'), 'dataType': 'TEXT', 'formType': 'WYSIWYG', 'value': self['content']}
                         ]}
         
