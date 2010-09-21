@@ -493,25 +493,30 @@ class Domain(karacos.db['Parent']):
             self['content'] = ''
         if 'title' not in self:
             self['title'] = ''
+        if 'head_bloc' not in self:
+            self['head_bloc'] = ''
+        
         self.save()
         form = {'title':'Modifier le contenu de la page',
                 'submit':'Modifier',
                 'fields':[
                     {'name':'title', 'title':_('Titre'), 'dataType': 'TEXT', 'value': self['title']},
+                    {'name':'head_bloc', 'title':_('Head bloc'), 'dataType': 'TEXT', 'value': self['title']},
                     {'name':'content', 'title':_('Contenu'), 'dataType': 'TEXT', 'formType': 'WYSIWYG', 'value': self['content']}
                         ]}
         
         return form
     
     @karacos._db.isaction
-    def edit_content(self,title=None,content=None):
+    def edit_content(self,title=None,content=None,head_bloc=None):
         """
         Basic content modification for domain
         """
         self._update_item()
-        self.log.info("EDIT CONTENT %s" % {title:content})
+        self.log.debug("EDIT CONTENT %s" % {title:content})
         self['content'] = content
         self['title'] = title
+        self['head_bloc'] = head_bloc
         self.save()
         return {'status':'success', 'message':_("Contenu modifi&eacute;"),'data':{}}
     edit_content.get_form = _get_edit_content_form
