@@ -1,8 +1,9 @@
 #!/bin/sh
+set -x
 SCRIPTDIR=`dirname $0`
 echo $SCRIPTDIR
 cd $SCRIPTDIR
-
+KARACOS_HOME=`pwd`
 if [ $# -gt 1 ]; then
   echo "Usage: $0 <server_name>"
   exit
@@ -37,5 +38,9 @@ else
 	echo "$instance doesnt exist in $KARACOS_HOME/servers"
 fi
 
+. $(pwd)/server/$instance/conf/uwsgi.env
 
-/usr/local/sbin/uwsgi --ini $(pwd)/server/$instance/conf/wsgi.ini --python-path $(pwd)/lib/ --python-path $(pwd)/py/ -d $(pwd)/server/$instance/log/sysout.log
+/usr/local/sbin/uwsgi -w karacos.wsgi --env KC_SERVER_NAME=$instance \
+ $UWSGI_PARAMS \
+ -d $(pwd)/server/$instance/log/sysout.log
+#--master true --processes 4\
