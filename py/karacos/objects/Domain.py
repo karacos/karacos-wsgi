@@ -23,7 +23,7 @@ Created on 28 nov. 2009
 @author: nico
 '''
 from logging import getLogger
-from karacos.http import HTTPError
+from karacos.http import HTTPError, NotFound
 import inspect
 import urllib2
 log = getLogger(__name__)
@@ -929,7 +929,7 @@ class Domain(karacos.db['Parent']):
                         if arg not in dir(result['object']):
                             if isinstance(result['object'], karacos.db['Parent']):
                                 if arg not in self['staticdirs'].keys():
-                                    raise karacos.http.NotFound()
+                                    raise karacos.http.NotFound(message=_("Ressource introuvable '%s'") % arg)
                                 
                                 self.log.debug("serving static resource for url '%s'" % urlpath)
                                 resourcename = urlpath[urlpath.index(arg)+len(arg)+1:]
@@ -948,6 +948,6 @@ class Domain(karacos.db['Parent']):
                                         result['method'] = obj
                                         result['args'] = args[countargs:]
                                         break
-                            raise HTTPError(404, "Resource unavailable")
+                            raise NotFound(message=_("Ressource introuvable '%s'") % arg)
         self.log.debug("lookup_object result is [%s]" % result)
         return result
