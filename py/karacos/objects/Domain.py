@@ -923,7 +923,7 @@ class Domain(karacos.db['Parent']):
                 if isinstance(result['object'],karacos.db['Document']):
                     if arg in result['object'].get_web_childrens_for_id().keys():
                         self.log.debug("lookup '%s' in web childrens is [%s]" % (arg,result['object'].__childrens__[arg]))
-                        result['object'] = result['object'].__childrens__[arg]
+                        result['object'] = result['object'].db[result['object']['childrens'][arg]]
                     else:
                         self.log.debug("testing for '%s' in %s" % (arg,dir(result['object'])))
                         if arg not in dir(result['object']):
