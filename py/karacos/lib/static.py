@@ -75,10 +75,7 @@ def serve_file(path, content_type=None, disposition=None, name=None):
     #   this way CP won't load the whole file in memory
     c_len = st.st_size
     bodyfile = open(path, 'rb')
-    response.headers['Content-Length'] = "%s" % c_len
-    response.body = "%s" % bodyfile.read()
     # HTTP/1.0 didn't have Range/Accept-Ranges headers, or the 206 code
-    """
     if request.environ['SERVER_PROTOCOL'] == 'HTTP/1.1':
         response.headers["Accept-Ranges"] = "bytes"
         r = http.get_ranges(request.headers.get('Range'), c_len)
@@ -110,7 +107,7 @@ def serve_file(path, content_type=None, disposition=None, name=None):
                 if response.headers.has_key("Content-Length"):
                     # Delete Content-Length header so finalize() recalcs it.
                     del response.headers["Content-Length"]
-                
+                """
                 def file_ranges():
                     # Apache compatibility:
                     yield "\r\n"
@@ -129,14 +126,16 @@ def serve_file(path, content_type=None, disposition=None, name=None):
                     
                     # Apache compatibility:
                     yield "\r\n"
-                response.body = file_ranges()
+                    """
+                for start, stop in r:
+                    bodyfile.seek(start)
+                    response.body = bodyfile.read(stop-start)
         else:
             response.headers['Content-Length'] = "%s" % c_len
             response.body = "%s" % bodyfile.read()
     else:
         response.headers['Content-Length'] = "%s" % c_len
         response.body = "%s" % bodyfile.read()
-    """
 
 def serve_download(path, name=None):
     """Serve 'path' as an application/x-download attachment."""

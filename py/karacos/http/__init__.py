@@ -28,7 +28,7 @@ class Redirect(HTTPError):
         """
         if message == None:
             message = _("Resource moved")
-        self.location = url
+        self.location = str(url)
         HTTPError.__init__(self,status=code,message=message)
 
 class DataRequired(Redirect):

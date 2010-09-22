@@ -95,7 +95,7 @@ class Node(karacos.db['Child']):
         new_file.close()
         return {"status":"success", "message": "%s has been successfully writen" % att_file.filename }
     def get_att_dir(self):
-        att_dirname = os.path.join(karacos._srvdir,'temp','_atts',self.id)
+        att_dirname = os.path.join(karacos._srvdir,'_atts',self.id)
         if not os.path.exists(att_dirname):
             os.makedirs(att_dirname)
         return att_dirname

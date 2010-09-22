@@ -35,8 +35,10 @@ class Middleware(object):
         self.check_session(environ)
         
         self.application(environ, start_response)
-        
-        return karacos.serving.response(environ, start_response)
+
+        response = karacos.serving.get_response()
+        self.log.debug("%s" % response.headers)
+        return response(environ, start_response)
 
     def check_session(self,environ):
         """

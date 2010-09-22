@@ -81,7 +81,9 @@ class Dispatcher(object):
                                             result = {'status': 'failure',
                                                       'message': e.get_message()})
             if isinstance(e, Redirect):
-                response.headers['Location'] = e.location
+                response.headers['Location'] = '%s' % e.location
+                for k in response.headers.keys():
+                    response.headers[k] = '%s' % response.headers[k]
             if isinstance(e,DataRequired):
                 response.body = template.render(instance = e.instance,
                                                 result = None,

@@ -157,8 +157,8 @@ class WebNode(karacos.db['Node']):
     def _serve_att(self,name):
         att_filename = os.path.join(self.get_att_dir(),name)
         if os.path.exists(att_filename):
-            static.serve_file(att_filename)
-            return
+            att_url = '/_atts/%s/%s' % (self.id, name)
+            raise karacos.http.Redirect(url=att_url, code=301)
         raise karacos.http.NotFound(message=_("Ressource introuvable '%s'") % name)
     @karacos._db.isaction
     def _att(self,*args,**kw):

@@ -1,3 +1,4 @@
 *.pyc
 server/default/log/*
 server/default/temp
+server/default/_atts

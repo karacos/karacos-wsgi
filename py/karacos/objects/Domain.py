@@ -259,13 +259,22 @@ class Domain(karacos.db['Parent']):
                 module_directory=module_dir,filesystem_checks=False,
                 input_encoding='utf-8',output_encoding='utf-8')
         if 'staticdirs' not in self.__dict__:
+            atts_dir = os.path.join(karacos._srvdir,'_atts')
+            if not os.path.exists(atts_dir):
+                os.makedirs(atts_dir)
             default_static_dir = os.path.join(karacos.homedir,'resources','static')
             if 'staticdirs' not in self:
-                self['staticdirs'] = {'_browser':default_static_dir}
+                self['staticdirs'] = {'_browser':default_static_dir,
+                                      '_atts': atts_dir}
                 self.save()
             if self['staticdirs']['_browser'] != default_static_dir:
                 self['staticdirs']['_browser'] = default_static_dir
                 self.save()
+            if '_atts' not in self['staticdirs']:
+                self['staticdirs']['_atts'] = atts_dir
+            if self['staticdirs']['_atts'] != atts_dir:
+                self['staticdirs']['_atts'] = atts_dir
+            self.save()
             self.staticdirs = self['staticdirs'] 
         self.log.debug("END Domain __init__")
     
