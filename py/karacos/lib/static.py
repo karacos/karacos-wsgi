@@ -75,8 +75,10 @@ def serve_file(path, content_type=None, disposition=None, name=None):
     #   this way CP won't load the whole file in memory
     c_len = st.st_size
     bodyfile = open(path, 'rb')
-    
+    response.headers['Content-Length'] = "%s" % c_len
+    response.body = "%s" % bodyfile.read()
     # HTTP/1.0 didn't have Range/Accept-Ranges headers, or the 206 code
+    """
     if request.environ['SERVER_PROTOCOL'] == 'HTTP/1.1':
         response.headers["Accept-Ranges"] = "bytes"
         r = http.get_ranges(request.headers.get('Range'), c_len)
@@ -134,6 +136,7 @@ def serve_file(path, content_type=None, disposition=None, name=None):
     else:
         response.headers['Content-Length'] = "%s" % c_len
         response.body = "%s" % bodyfile.read()
+    """
 
 def serve_download(path, name=None):
     """Serve 'path' as an application/x-download attachment."""
