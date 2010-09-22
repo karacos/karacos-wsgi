@@ -22,6 +22,8 @@
 Created on 12 dec. 2009
 @author: nico
 '''
+import os
+from karacos.lib import static
 
 __author__="Nicolas Karageuzian"
 __contributors__ = []
@@ -152,29 +154,26 @@ class WebNode(karacos.db['Node']):
                  ] }
     create_child_node.label = _("Creer un noeud")
     
+    def _serve_att(self,name):
+        att_filename = os.path.join(self.get_att_dir(),name)
+        if os.path.exists(att_filename):
+            static.serve_file(att_filename)
+            return
+        raise karacos.http.NotFound(message=_("Ressource introuvable '%s'") % name)
     @karacos._db.isaction
     def _att(self,*args,**kw):
         response = karacos.serving.get_response()
         if len(args) == 0:
-            if '_attachments' in self:
-                # TODO templating
-                res = '<ul>'
-                for file in self['_attachments']:
-                    res = '%s<li><a href="%s/_att/%s">%s</a></li>' % (res,self._get_action_url(),file,file)
-                res = '%s</ul>' % res
-                response.body = '%s' % res
-                return
+            # TODO templating
+            res = '<ul>'
+            for file in os.listdir(self.get_att_dir()):
+                res = '%s<li><a href="%s/_att/%s">%s</a></li>' % (res,self._get_action_url(),file,file)
+            res = '%s</ul>' % res
+            response.body = '%s' % res
+            return
         else:
             name=args[0]
-            if '_attachments' in self:
-                if name in self['_attachments']:
-                    res = self.__parent__.db.get_attachment(self.id, name)
-                    response.headers['Content-Type'] = '%s' % self['_attachments'][name]['content_type']
-                    response.headers['Content-Length'] = '%s' % self['_attachments'][name]['length']
-                    response.body = '%s' % res.read()
-                    return
-        
-        raise karacos.http.HTTPError(status=404,message=_("Ressource introuvable"))
+            self._serve_att(name)
     
     @karacos._db.isaction
     def set_ACL(self, ACL=None):

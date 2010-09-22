@@ -96,7 +96,8 @@ def serve_file(path, content_type=None, disposition=None, name=None):
                                                        (start, stop - 1, c_len))
                 response.headers['Content-Length'] = "%s" % r_len
                 bodyfile.seek(start)
-                response.body = file_generator_limited(bodyfile, r_len)
+                
+                response.body = "%s" % bodyfile.read(r_len)
             else:
                 # Return a multipart/byteranges response.
                 response.status = "206 Partial Content"
@@ -129,10 +130,10 @@ def serve_file(path, content_type=None, disposition=None, name=None):
                 response.body = file_ranges()
         else:
             response.headers['Content-Length'] = "%s" % c_len
-            response.body = bodyfile.read()
+            response.body = "%s" % bodyfile.read()
     else:
         response.headers['Content-Length'] = "%s" % c_len
-        response.body = bodyfile.read()
+        response.body = "%s" % bodyfile.read()
 
 def serve_download(path, name=None):
     """Serve 'path' as an application/x-download attachment."""

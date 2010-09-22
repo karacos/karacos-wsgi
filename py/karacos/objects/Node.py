@@ -23,6 +23,7 @@ Created on 3 dec. 2009
 @author: nico
 '''
 from logging import getLogger
+import os
 log = getLogger(__name__)
 import karacos
 
@@ -87,11 +88,17 @@ class Node(karacos.db['Child']):
         self.__domain__ = self.__parent__.__domain__
     
     def _add_attachment(self, att_file=None):
-        self._update_item()
-        self.__parent__.db.put_attachment(self, att_file.file.read(), unicode(att_file.filename))
-        self._update_item()
-        return {"status":"success", "message": "%s"}
-    
+        new_file_name = os.path.join(self.get_att_dir(),att_file.filename)
+        new_file = open(new_file_name,'w')
+        new_file.write(att_file.file.read())
+        new_file.flush()
+        new_file.close()
+        return {"status":"success", "message": "%s has been successfully writen" % att_file.filename }
+    def get_att_dir(self):
+        att_dirname = os.path.join(karacos._srvdir,'temp','_atts',self.id)
+        if not os.path.exists(att_dirname):
+            os.makedirs(att_dirname)
+        return att_dirname
     @karacos._db.isaction
     def add_attachment(self, att_file=None):
         #size = 0
