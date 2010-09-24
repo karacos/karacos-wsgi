@@ -157,10 +157,11 @@ class Dispatcher(object):
         """
         """
         data = None
-        request = karacos.serving.get_request()
-        body = ''
-        if isinstance(request.body_file, cStringIO.InputType):
-            body = request.body_file.read()
+        #body = ''
+        #self.log.debug("request environ [%s]" % request.body_file)
+        #if isinstance(request.body_file, socket._fileobject):
+        #    self.log.debug("request body is cStringIO")
+        body = request.body
         self.log.debug("process_json_params START with body [%s]" % body)
         try:
             if (body != None and
@@ -197,6 +198,7 @@ class Dispatcher(object):
         # TODO: RPC id request...
         # READ json-rpc carefully and correct implementation
         rpcid = data['id']
+        self.log.info("Processing JSON for method %s" % data['method'])
         try:
             if isinstance(data['params'],dict):
                 request.__kwds__ = data['params']
@@ -209,6 +211,8 @@ class Dispatcher(object):
             rpcmethod = str(data['method']) #json returns unicode
             if rpcmethod in response.__instance__.get_user_actions(response.__instance__.__domain__.get_user_auth()):
                 request.__method__ = response.__instance__.get_action(rpcmethod)
+                self.process_method_params(request.__method__)
+                self.ckeck_method_params(rpcmethod, request)
                 return
             else:
                 if rpcmethod in response.__instance__.get_actions():
