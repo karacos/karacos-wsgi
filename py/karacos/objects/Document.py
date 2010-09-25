@@ -177,6 +177,8 @@ class Document(couchdb.client.Document):
                          'acturl': self._get_action_url()}
             if 'form' in dir(self.get_action(action)):
                 actresult['form'] = self.get_action(action).form
+            elif 'get_form' in dir(self.get_action(action)):
+                actresult['form'] = self.get_action(action).get_form(self)
             if 'label' in dir(self.get_action(action)):
                 actresult['label'] = self.get_action(action).label
             result['actions'].append(actresult)

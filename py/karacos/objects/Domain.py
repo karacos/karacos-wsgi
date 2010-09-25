@@ -235,10 +235,13 @@ class Domain(karacos.db['Parent']):
         self.__parent__ = karacos.container()
         self.__parent__.base = karacos.db.sysbase
         self.__parent__.db = karacos.db.sysdb
+        if 'get_user_actions_forms' not in self['ACL']['user.anonymous@%s' % self['name']]:
+            self['ACL']['user.anonymous@%s' % self['name']].append('get_user_actions_forms')
+            self.save()
         self['ACL']['user.admin@%s' % self['name']] = self._get_adm_actions()
         if 'childrens' not in self:
             self['childrens'] = {}
-            self.save()
+        self.save()
         self.log.debug("END : domain.__init__ : %s" % self)
         if karacos.config.has_section('system'):
             if karacos.config.has_option('system', 'mode'):
