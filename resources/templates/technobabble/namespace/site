@@ -1,5 +1,9 @@
 <%namespace name="form" file="/technobabble/namespace/form"/>
 
+<% user_auth = instance.__domain__.get_user_auth() %>
+<% isstaff = 'group.staff@%s' % instance.__domain__['name'] in user_auth['groups'] %>
+
+
 <%def name="show_content(action,instance,result)">
 	% if action:
 		

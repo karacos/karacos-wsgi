@@ -739,7 +739,7 @@ class Domain(karacos.db['Parent']):
             self.save()
         return {'title': _("Modifier l'ACL par defaut pour les objets du domaine"),
          'submit': _('Modifier'),
-         'fields': [{'name':'ACL', 'title':'ACL','dataType': 'TEXT','formType': 'TEXTAREA', 'value': json.dumps(self['ACL_default_update'])}]}
+         'fields': [{'name':'ACL', 'title':'ACL','dataType': 'TEXT','formType': 'TEXTAREA', 'value': karacos.json.dumps(self['ACL_default_update'])}]}
     set_ACL_default_update.get_form = _set_ACL_default_update_form
 
     @karacos._db.isaction
@@ -760,7 +760,7 @@ class Domain(karacos.db['Parent']):
     set_site_theme_base.form = {'title': _("Changer le theme"),
          'submit': _('Changer'),
          'fields': [{'name':'site_theme_base', 'title':'theme base','dataType': 'TEXT'}]}
-    set_site_theme_base.label = "Set site template"
+    set_site_theme_base.label = "Set theme base"
     
     def get_site_theme_base(self):
         self._update_item()
@@ -842,7 +842,7 @@ class Domain(karacos.db['Parent']):
     set_site_template_uri.form = {'title': _("Changer le template site"),
          'submit': _('Changer'),
          'fields': [{'name':'site_template_uri', 'title':'template_uri','dataType': 'TEXT'}]}
-    set_site_template_uri.label = "Set site template"
+    set_site_template_uri.label = "Set template"
     
     def get_instance_template_uri(self):
         self._update_item()

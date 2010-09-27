@@ -199,9 +199,12 @@ class Dispatcher(object):
         # READ json-rpc carefully and correct implementation
         rpcid = data['id']
         self.log.info("Processing JSON for method %s" % data['method'])
+        
         try:
             if isinstance(data['params'],dict):
-                request.__kwds__ = data['params']
+                for k in data['params'].keys():
+                    request.__kwds__[str(k)] =  data['params'][k] # set keys to str instead of unicode
+
             elif isinstance(data['params'],list):
                 
                 if len(data['params']) > 0 and isinstance(data['params'][-1],dict):

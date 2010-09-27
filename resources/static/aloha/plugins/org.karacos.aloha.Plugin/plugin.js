@@ -19,7 +19,6 @@ KaraCos.Plugin.init=function(){
 	if (that.settings['instance_url'] == undefined) {
 		that.settings['instance_url'] = '';
 	}
-	that.is_json_init_ok = false;
 	url_href = that.settings['instance_url'] + "/get_user_actions_forms";
 	$.ajax({ url: url_href,
     	dataType: "json",
