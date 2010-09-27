@@ -10,13 +10,19 @@
 					<tr><th class="top" scope="col">Domain</th><th class="top" scope="col">Action</th></tr>
 					% for domain in result['data'].values():
 						<% json_domain = karacos.json.dumps(domain) %>
-						<tr><td>${domain['name']}</td><td><div class="set_domain_settings_button" data='${json_domain}' >Modifier</div></td></tr>
+						<tr><td>${domain['name']}</td><td><div id='${domain.id}' class="set_domain_settings_button">Modifier</div></td></tr>
+						<script language="javascript">
+						jQuery.data($('#${domain.id}')[0], "domaindata", ${json_domain});
+						</script>
 					% endfor
 					</table>
 					<div id="form_domain_settings" title="">
 						<form method="POST" action="${instance._get_action_url()}">
 							<input id="domain_field_name" type="hidden" name="name" value=""/>
 							FQDN : <input id="domain_field_fqdn" type="text" name="fqdn" value=""/><br/>
+							Type : <input id="domain_field_type" type="text" name="type" value=""/><br/>
+							Template : <input id="domain_field_site_template" type="text" name="site_template" value=""/><br/>
+							Theme : <input id="domain_field_site_theme_base" type="text" name="site_theme_base" value=""/><br/>
 							<input type="hidden" name="method" value="edit_domain"/>
 							<p><input type='submit' class='button' value='Modifier'/></p>
 							<br/>
@@ -40,9 +46,12 @@
 					});
 					$('.set_domain_settings_button').click(function(e){
 						e.preventDefault();
-						domain = $.secureEvalJSON($(this).attr('data'));
+						domain = jQuery.data(this,'domaindata');
 						$('#domain_field_fqdn').attr('value',domain['fqdn']);
 						$('#domain_field_name').attr('value',domain['name']);
+						$('#domain_field_type').attr('value',domain['type']);
+						$('#domain_field_site_template').attr('value',domain['site_template']);
+						$('#domain_field_site_theme_base').attr('value',domain['site_theme_base']);
 						$('#form_domain_settings').dialog('open');
 					});
 					</script>

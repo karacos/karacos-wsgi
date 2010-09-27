@@ -48,17 +48,22 @@ class DomainsManager(karacos.db['WebNode']):
         }
         '''
     
-    def _edit_domain(self,name=None, fqdn=None):
+    def _edit_domain(self,name=None, fqdn=None,type=None,site_template=None,
+                     site_theme_base=None):
         domain = karacos.db['Domain'].get_by_name(name)
         domain._update_item()
         domain['fqdn'] = fqdn
-        
+        domain['site_theme_base'] = site_theme_base
+        domain['site_template_uri'] = site_template
+        domain['WebType'] = type
         domain.save()
         
         
     @karacos._db.isaction
-    def edit_domain(self,name=None, fqdn=None):
-        return self._edit_domain(name, fqdn)
+    def edit_domain(self,name=None, fqdn=None,type=None,site_template=None,
+                    site_theme_base=None):
+        return self._edit_domain(name=name, fqdn=fqdn, type=type,site_template=site_template,
+                                 site_theme_base=site_theme_base)
     
     
         #assert 

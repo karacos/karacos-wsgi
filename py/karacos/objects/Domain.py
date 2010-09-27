@@ -767,10 +767,9 @@ class Domain(karacos.db['Parent']):
         result = "/default"
         if 'site_theme_base' in self:
             result = self['site_theme_base']
-        if len(self._get_user_by_name("anonymous@%s" % self['name'])) == 1:
-            user = self.get_user_auth()
-            if 'CUSTOM_SITE_BASE' in user:
-                result = user['CUSTOM_SITE_BASE']
+        user = self.get_user_auth()
+        if 'CUSTOM_SITE_BASE' in user:
+            result = user['CUSTOM_SITE_BASE']
         return result
     
     def _get_trac_node(self):

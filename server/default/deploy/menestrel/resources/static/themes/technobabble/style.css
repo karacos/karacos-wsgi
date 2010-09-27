@@ -12,7 +12,7 @@ A:visited{ color:#275A78; text-decoration:none; }
 A:visited:hover{ color:#333333; text-decoration:underline; }
 
 #header{
-background:url('/_browser/themes/technobabble/headerbg.gif') no-repeat #F4DDB1 top left;
+background:url('/m_design/themes/technobabble/headerbg.gif') no-repeat #F4DDB1 top left;
 width:282px;
 height:439px;
 margin-left:0;

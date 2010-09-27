@@ -1,10 +1,8 @@
 <%namespace name="form" file="/technobabble/namespace/form"/>
 
-<% user_auth = instance.__domain__.get_user_auth() %>
-<% isstaff = 'group.staff@%s' % instance.__domain__['name'] in user_auth['groups'] %>
-
 
 <%def name="show_content(action,instance,result)">
+<div id="dialog_window"></div>
 	% if action:
 		
 		<div class="column1-unit">
@@ -12,7 +10,9 @@
 		 </div>
 	    
 	% else:
+	<!-- Including ${instance.get_instance_template_uri()} -->
 		<%include file="${instance.get_instance_template_uri()}"/>
+	<!-- end include -->
 	% endif
 </%def>
 
@@ -58,7 +58,20 @@
   % else:
     <meta name="keywords" content="${instance['name']}" />
   % endif
-	<link rel="stylesheet" href="/_browser/themes/technobabble/style.css" type="text/css" />
+  <link rel="stylesheet" href="/_browser/jquery-ui/themes/base/jquery.ui.all.css" type="text/css" />
+  <link rel="stylesheet" href="/m_design/themes/technobabble/style.css" type="text/css" />
+  <script>GENTICS_Aloha_base="/_browser/aloha/";</script>
+	<script type="text/javascript" src="/_browser/aloha/core/include.js"></script>
+	<script type="text/javascript" src="/_browser/js/jquery-ui-1.8.custom.min.js"></script>
+	<script type="text/javascript" src="/_browser/js/karacos-forms.js"></script>
+	<script type="text/javascript" src="/_browser/aloha/plugins/com.gentics.aloha.plugins.Format/plugin.js"></script>
+	<script type="text/javascript" src="/_browser/aloha/plugins/com.gentics.aloha.plugins.Table/plugin.js"></script>
+	<script type="text/javascript" src="/_browser/aloha/plugins/com.gentics.aloha.plugins.List/plugin.js"></script>
+	<script type="text/javascript" src="/_browser/aloha/plugins/com.gentics.aloha.plugins.Link/plugin.js"></script>
+	##<script type="text/javascript" src="/_browser/aloha/plugins/com.gentics.aloha.plugins.HighlightEditables/plugin.js"></script>
+	##<script type="text/javascript" src="/_browser/aloha/plugins/com.gentics.aloha.plugins.TOC/plugin.js"></script>
+	
+	<script type="text/javascript" src="/_browser/aloha/plugins/org.karacos.aloha.Plugin/plugin.js"></script>
 	% if 'head_bloc' in instance.__domain__:
 		${instance.__domain__['head_bloc']}
 	% endif
