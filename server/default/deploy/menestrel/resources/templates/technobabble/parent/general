@@ -1,5 +1,0 @@
-<%namespace name="form" file="/technobabble/namespace/form" inheritable="True"/>
-<%namespace name="head" file="/technobabble/namespace/head" inheritable="True"/>
-<%namespace name="site" file="/technobabble/namespace/site" inheritable="True"/>
-
-${next.body()}
