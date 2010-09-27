@@ -19,70 +19,74 @@ KaraCos.Plugin.init=function(){
 	if (that.settings['instance_url'] == undefined) {
 		that.settings['instance_url'] = '';
 	}
+	that.is_json_init_ok = false;
 	url_href = that.settings['instance_url'] + "/get_user_actions_forms";
 	$.ajax({ url: url_href,
     	dataType: "json",
     	context: document.body,
+    	async: false, // plugin init should wait for success b4 continuing
         success: function(data) {
-			console.log(data);
+			GENTICS.Aloha.Log.info(that,data);
 			that.user_actions = [];
 			that.edit_page = false;
 			if (data['status'] == "success") {
-				console.log("successful result");
+				GENTICS.Aloha.Log.info(that,"successful result");
 				that.rsdata = data['data'];
-				len = that.rsdata.actions.length;
-				for (var i=0 ; i<len; ++i) {
-					that.user_actions[i] = that.rsdata.actions[i].action;
-					if (that.rsdata.actions[i].action == that.settings['edit_content_action']) {
-						that.edit_page = true;
-					} else {
-						if (that.rsdata.actions[i].label) {
-							var actionButton=new GENTICS.Aloha.ui.Button({label:that.rsdata.actions[i].label,
-								formdata: that.rsdata.actions[i],
-								onclick:function(){ // When a button is clicked :
-								if (this.formdata.form) {
-									formdata = this.formdata.form;
-									$.kc_write_kc_action(formdata,$('#dialog_window'));
-									$('#dialog_window').dialog('open');	
-								}
-							}}); //actionbutton
-							
-							console.log("processing action button creation " + that.rsdata.actions[i].label );
-							GENTICS.Aloha.Ribbon.addButton(actionButton);
-							GENTICS.Aloha.Ribbon.toolbar.show();
-						}
-					}
-				} // for
-				if (that.edit_page) {
-					url_href = that.settings['instance_url'] + "/" + that.settings['edit_content_action'];
-					$.ajax({ url: url_href,
-						dataType: "json",
-						context: document.body,
-						success: function(data) {
-						len = data.form.fields.length
-						for (var i=0 ; i<len; ++i) {
-							field = data.form.fields[i];
-							fieldvalue = "";
-							if (field.value) {
-								fieldvalue = field.value;
-							}
-							that.pagedata[field.name] = fieldvalue;
-						}
-						var editMore=new GENTICS.Aloha.ui.Button({label:that.i18n("editMore"),
-							onclick:function(){that.editMore()}});
-						GENTICS.Aloha.Ribbon.addButton(editMore);
-						var saveButton=new GENTICS.Aloha.ui.Button({label:that.i18n("save"),
-							onclick:function(){that.save()}});
-						GENTICS.Aloha.Ribbon.addButton(saveButton);
-						GENTICS.Aloha.Ribbon.toolbar.show();
-					}, // success edit_content
-					}); // $.ajax for edit_content
-				} // if edit_page
-			} // if data.status == "success"
-			console.log(that);
-			
-		}, // success on get_user_actions_forms
+				}
+			},// success on get_user_actions_forms
 	}); // $.ajax for get_user_actions_forms
+	if (that.rsdata) {
+		len = that.rsdata.actions.length;
+		for (var i=0 ; i<len; ++i) {
+			that.user_actions[i] = that.rsdata.actions[i].action;
+			if (that.rsdata.actions[i].action == that.settings['edit_content_action']) {
+				that.edit_page = true;
+				that.edit_page_action = that.rsdata.actions[i];
+			} else {
+				if (that.rsdata.actions[i].label) {
+					var actionButton=new GENTICS.Aloha.ui.Button({label:that.rsdata.actions[i].label,
+						onclick:function(){ // When a button is clicked :
+						if (this.actiondata.form) {
+							$.kc_write_kc_action(this.actiondata,$('#dialog_window'));
+							$('#dialog_window').dialog('open');	
+						}
+					}}); // actionbutton
+					actionButton.actiondata = that.rsdata.actions[i];
+					GENTICS.Aloha.Log.info(that,"processing action button creation " + that.rsdata.actions[i].label );
+					GENTICS.Aloha.Ribbon.addButton(actionButton);
+					// actionButton.show();
+				}
+			}
+			// GENTICS.Aloha.Ribbon.toolbar.render();
+			// GENTICS.Aloha.Ribbon.toolbar.show();
+		} // for
+		if (that.edit_page) {
+				console.log(that.edit_page_action);
+				len = that.edit_page_action.form.fields.length;
+				for (var i=0 ; i<len; ++i) {
+					field = that.edit_page_action.form.fields[i];
+					fieldvalue = "";
+					if (field.value) {
+						fieldvalue = field.value;
+					}
+					that.pagedata[field.name] = fieldvalue;
+				}
+				var editMore=new GENTICS.Aloha.ui.Button({label:that.i18n("editMore"),
+					onclick:function(){that.editMore()}});
+				GENTICS.Aloha.Ribbon.addButton(editMore);
+				// editMore.show();
+				// GENTICS.Aloha.Ribbon.toolbar.render();
+				// GENTICS.Aloha.Ribbon.toolbar.show();
+				var saveButton=new GENTICS.Aloha.ui.Button({label:that.i18n("save"),
+					onclick:function(){that.save()}});
+				GENTICS.Aloha.Ribbon.addButton(saveButton);
+				// saveButton.show();
+				// GENTICS.Aloha.Ribbon.toolbar.render();
+				// GENTICS.Aloha.Ribbon.toolbar.show();
+			} // if edit_page 
+		} // if data.status == "success"
+	GENTICS.Aloha.Log.info(that,that);
+	//console.log(that);
 	// $.ajax
    }; // END INIT
 
@@ -116,7 +120,7 @@ KaraCos.Plugin.save=function(){
     	context: document.body,
     	type: "POST",
         success: function(data) {
-    		console.log(data);
+		GENTICS.Aloha.Log.info(that,data);
     },});
-	       console.log(that);
+	GENTICS.Aloha.Log.info(that,that);
   };
