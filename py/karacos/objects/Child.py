@@ -116,7 +116,7 @@ class Child(karacos.db['Parent']):
                         'errors': None }
     
     #rename.form = forms._forms['rename']
-    rename.label = _("Renommer")
+    #rename.label = _("Renommer")
            
     @karacos._db.isaction
     def get_parent(self):

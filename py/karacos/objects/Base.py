@@ -49,7 +49,7 @@ class Base(KcDocument):
     def _get_by_id(base_id):
         """
         function(doc) {
-         if (doc.type == "BaseObject" && doc._id == "%s")
+         if (doc.type == "Base" && doc._id == "%s")
           emit(doc._id, doc);
         }
         """
@@ -83,7 +83,7 @@ class Base(KcDocument):
     
     @staticmethod
     def get_by_name(name=None):
-        log.debug("BEGIN BaseObject.get_by_name : %s" % name)
+        log.debug("BEGIN Base.get_by_name : %s" % name)
         assert isinstance(name,basestring), "Parameter name must be string"
         result = None
         try:

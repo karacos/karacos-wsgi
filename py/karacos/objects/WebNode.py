@@ -152,7 +152,7 @@ class WebNode(karacos.db['Node']):
                     {'name':'type', 'title':_("Type d'objet"),'dataType': 'TEXT'},
                     {'name':'base', 'title':_('Base'),'dataType': 'TEXT'},
                  ] }
-    create_child_node.label = _("Creer un noeud")
+    #create_child_node.label = _("Creer un noeud")
     
     def _serve_att(self,name):
         att_filename = os.path.join(self.get_att_dir(),name)
@@ -184,7 +184,7 @@ class WebNode(karacos.db['Node']):
         return {'title': _("Modifier l'ACL"),
          'submit': _('Modifier'),
          'fields': [{'name':'ACL', 'title':'ACL','dataType': 'TEXT','formType': 'TEXTAREA', 'value': karacos.json.dumps(self['ACL'])}]}
-    set_ACL.label = "Edit ACL"
+    #set_ACL.label = "Edit ACL"
     set_ACL.get_form = _set_ACL_form
     def _publish_node(self):
         self['ACL']['group.everyone@%s' % self.__domain__['name']] = ["get_user_actions_forms","w_browse","index"]
