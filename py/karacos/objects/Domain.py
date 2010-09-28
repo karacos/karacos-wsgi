@@ -470,7 +470,9 @@ class Domain(karacos.db['Parent']):
     logout.label = _('Se d&eacute;connecter')
     
     def _get_user_base_settings_form(self):
+        self._update_item()
         user = self.get_user_auth()
+        user._update_item()
         if 'CUSTOM_SITE_BASE' not in user:
             user['CUSTOM_SITE_BASE'] = self.get_site_theme_base()
         if 'CUSTOM_SITE_SKIN' not in user:
@@ -494,6 +496,7 @@ class Domain(karacos.db['Parent']):
         assert 'CUSTOM_SITE_BASE' in kw
         
         user = self.get_user_auth()
+        user._update_item()
         user['CUSTOM_SITE_SKIN'] = kw['CUSTOM_SITE_SKIN']
         user['CUSTOM_SITE_BASE'] = kw['CUSTOM_SITE_BASE']
         user.save()
