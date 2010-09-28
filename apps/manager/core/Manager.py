@@ -62,7 +62,7 @@ class Manager(karacos.db['WebNode']):
     def _create_workflow_item(self, data):
         assert 'type' in data
         assert data['type'] != 'WorkFlowItem'
-        assert data['type'] in KaraCos.Db.__dict__
+        assert data['type'] in karacos.db
         assert issubclass(karacos.db[data['type']],karacos.db['WorkFlowItem'])
         if 'ref_auth' not in data:
             data['ref_auth'] = ['group.staff@%s' % self.__domain__['name']]
