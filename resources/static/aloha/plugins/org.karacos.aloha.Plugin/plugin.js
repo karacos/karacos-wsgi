@@ -60,7 +60,7 @@ KaraCos.Plugin.init=function(){
 			// GENTICS.Aloha.Ribbon.toolbar.show();
 		} // for
 		if (that.edit_page) {
-				console.log(that.edit_page_action);
+				//console.log(that.edit_page_action);
 				len = that.edit_page_action.form.fields.length;
 				for (var i=0 ; i<len; ++i) {
 					field = that.edit_page_action.form.fields[i];
