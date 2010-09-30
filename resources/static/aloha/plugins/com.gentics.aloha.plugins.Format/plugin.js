@@ -104,7 +104,7 @@ GENTICS.Aloha.Format.initButtons = function () {
 						var rangeObject = GENTICS.Aloha.Selection.rangeObject;
 
 						// check whether the markup is found in the range (at the start of the range)
-						var foundMarkup = rangeObject.findMarkup(function() {
+						var formatImgfoundMarkup = rangeObject.findMarkup(function() {
 							return this.nodeName.toLowerCase() == markup.get(0).nodeName.toLowerCase();
 						}, GENTICS.Aloha.activeEditable.obj);
 

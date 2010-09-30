@@ -60,6 +60,24 @@
 						//TOTO quelque chose
 						//CKEDITOR.instances[field.name];
 				}
+				if (field.formType == 'DATE') {
+					parent.append("<div class='form_field_holder'></div>");
+					field_div = parent.children(':last');
+					if (field.title) {
+						field_div.append("<label for='' class='left'/>");
+						//"${field['name']}" class="left">${field['title']}</label>
+						field_div.children(':last').attr('for',field.name);
+						field_div.children(':last').append(field.title);
+					}
+					field_div.append("<input class='datepicker' type='text'/>");
+					input_el = field_div.children(':last');
+					input_el.attr('id',"field_"+field.name);
+					input_el.attr('name',field.name);
+					input_el.attr('value',field_value);
+					input_el.AnyTime_picker(
+								{ format: "%Y-%m-%e", firstDOW: 1 } );
+				}
+					
 				if (field.formType == 'WYSIWYG') {
 					parent.append("<div class='form_field_holder'></div>");
 					field_div = parent.children(':last');
