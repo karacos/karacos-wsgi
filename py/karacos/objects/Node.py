@@ -89,7 +89,7 @@ class Node(karacos.db['Child']):
     
     def _add_attachment(self, att_file=None):
         new_file_name = os.path.join(self.get_att_dir(),att_file.filename)
-        new_file = open(new_file_name,'w')
+        new_file = open(new_file_name,'wb')
         new_file.write(att_file.file.read())
         new_file.flush()
         new_file.close()
@@ -99,20 +99,6 @@ class Node(karacos.db['Child']):
         if not os.path.exists(att_dirname):
             os.makedirs(att_dirname)
         return att_dirname
-    @karacos._db.isaction
-    def add_attachment(self, att_file=None):
-        #size = 0
-        #while True:
-        #    data = att_file.file.read(8192)
-        #    if not data:
-        #        break
-        #    size += len(data)
-        return self._add_attachment(att_file)
-        
-    add_attachment.form = {'title': _("upload file"),
-         'submit': _('Upload'),
-         'fields': [{'name':'att_file', 'title':'Fichier','dataType': 'FILE'}]}
-
     
     @karacos._db.isaction
     def reset_admin_ACL(self):

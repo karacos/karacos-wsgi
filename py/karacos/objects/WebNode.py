@@ -199,6 +199,30 @@ class WebNode(karacos.db['Node']):
         return {'status': 'success', 'message': _('WebNode is public now')}
     
     @karacos._db.isaction
+    def add_attachment(self, *args, **kwds):
+        assert 'att_file' in kwds
+        request = karacos.serving.get_request()
+        
+        result = self._add_attachment(request.POST.get('att_file'))
+        if 'return_json' in kwds:
+            request.headers['Accept'] = 'application/json'
+            response = karacos.serving.get_response()
+            response.headers['Content-Type'] = 'text/html'
+            response.__headers_type_set__ = True
+        #size = 0
+        #while True:
+        #    data = att_file.file.read(8192)
+        #    if not data:
+        #        break
+        #    size += len(data)
+        return result
+        
+    add_attachment.form = {'title': _("upload file"),
+         'submit': _('Upload'),
+         'fields': [{'name':'att_file', 'title':'Fichier','dataType': 'FILE'}]}
+    add_attachment.label = _("Attacher un fichier")
+    
+    @karacos._db.isaction
     def delete_child(self,childname=None):
         assert childname != None
         child = self.get_child_by_name(childname)

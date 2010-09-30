@@ -32,7 +32,7 @@ class Dispatcher(object):
             request.__method__ = None
             request.__args_spec__ = None
             response = karacos.serving.get_response()
-            
+            response.__headers_type_set__ = False
             self.log.debug("Response object has body '%s'" % response.body)
             session = karacos.serving.get_session()
             domain = session.get_karacos_domain()
@@ -136,7 +136,7 @@ class Dispatcher(object):
         self.log.debug("process_http_params START")
         method = ""
         for name, value in request.params.items():
-            request.__kwds__[name] = value
+            request.__kwds__[str(name)] = value
         if 'method' in request.__kwds__:
             if request.__method__ != None:
                 raise HTTPError(status=400, message="Bad request, method found before !")
@@ -268,7 +268,8 @@ class Dispatcher(object):
         if response.__result__ != None and response.__action__ == None :
             body = karacos.json.dumps(response.__result__)
         response.body = body
-        response.headers['Content-Type'] = 'application/json'
+        if not response.__headers_type_set__:
+            response.headers['Content-Type'] = 'application/json'
         response.headers['Content-Length'] = "%s" % len(body)
         
     def render_xml(self,response):
