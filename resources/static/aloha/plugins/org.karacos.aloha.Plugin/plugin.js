@@ -109,6 +109,7 @@ KaraCos.Plugin.initImage = function() {
 	    	'label' : that.i18n('button.uploadimg.label'),
 	    	'size' : 'small',
 	    	'onclick' : function () { 
+	    		GENTICS.Aloha.FloatingMenu.obj.hide();
 	    		$.kc_write_kc_action(this.add_attachment,$('#dialog_window'));
 	    		$('#dialog_window input.field').fileUploader({
 	    			imageLoader: '',
@@ -124,6 +125,7 @@ KaraCos.Plugin.initImage = function() {
 	    			console.log(that.imgUploadButton.targetImg);
 	    			console.log(data);
 	    			that.imgUploadButton.targetImg.src = data.data;
+	    			GENTICS.Aloha.FloatingMenu.obj.show();
 	    		}
 	    			});
 	    		$('#dialog_window').dialog('open');

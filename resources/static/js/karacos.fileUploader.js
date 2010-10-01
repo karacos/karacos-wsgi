@@ -23,17 +23,17 @@
 			callback: function(data){} // callback for each uploaded file
 		}, config);
 		
-		var itr = 0; //number of files to uploaded
+		var itr = 0; // number of files to uploaded
 		var files = 0;
-		//public function
+		// public function
 		$.fileUploader.change = function(e){
+			$('#px_button input').removeAttr("disabled");
 			var fname = px.validateFile( $(e).val() );
 			if (fname == -1){
 				alert ("Invalid file!");
 				$(e).val("");
 				return false;
 			}
-			$('#px_button input').removeAttr("disabled");
 			var imageLoader = '';
 			if ($.trim(config.imageLoader) != ''){
 				imageLoader = '<img src="'+ config.imageLoader +'" alt="uploader" />';
@@ -45,12 +45,15 @@
 				'<div class="status">Pending...</div></div>';
 			$("#px_display").append(display);
 			$("#pxupload"+ itr +"_text").css("color", "#202020");
-			px.appendForm();
+			files++;
+			if ( (config.maxfiles == -1) || (files < config.maxfiles) ) {
+				px.appendForm();
+			}
 			$(e).hide();
-		}
+		};
 		
 		$(config.buttonUpload).click(function(){
-			if (itr > 1){
+			if (itr >= 1){
 				$('#px_button input').attr("disabled","disabled");
 				$("#pxupload_form form").each(function(){
 					e = $(this);
@@ -70,9 +73,9 @@
 						$(id).submit();
 						$(id +"_frame").load(function(){
 							$(id + "_text .loader").hide();
-							//console.log($(this).contents().find("body").text());
+							// console.log($(this).contents().find("body").text());
 							data = $.evalJSON($(this).contents().find("body").text());
-							//console.log(data);
+							// console.log(data);
 							if (data.status == "success"){
 								$(id + "_text").css("background-color", "#F0F8FF");
 								config.callback(data);
@@ -84,9 +87,11 @@
 							$(config.buttonClear).removeAttr("disabled");
 							
 							/*
-							 up_output = $(this).contents().find("#output").text();
-							up_output += '<br />' + $(this).contents().find("#message").text();
-							* 
+							 * up_output =
+							 * $(this).contents().find("#output").text();
+							 * up_output += '<br />' +
+							 * $(this).contents().find("#message").text();
+							 * 
 							 */
 						});
 					}
@@ -95,8 +100,6 @@
 		});
 		
 		$(".close").live("click", function(){
-			console.log(" @close config.maxfiles" + config.maxfiles + " files" + files);
-			files--;
 			var id = "#";
 			id = id + $(this).parent().attr("title");
 			$(id+"_frame").remove();
@@ -104,10 +107,14 @@
 				$(this).remove();
 			});
 			$(id).remove();
-//			$('#pxupload_form form input.pxupload').removeAttr("disabled");
-//			$('#pxupload_form form input.pxupload').removeAttr("value");
-//			$('#pxupload_form form input.pxupload').show();
-			//$('#pxupload_form input.pxupload').doLayout();
+			if (config.maxfiles != -1 && files == config.maxfiles ) {
+				px.appendForm();
+			}
+			files--;
+// $('#pxupload_form form input.pxupload').removeAttr("disabled");
+// $('#pxupload_form form input.pxupload').removeAttr("value");
+// $('#pxupload_form form input.pxupload').show();
+			// $('#pxupload_form input.pxupload').doLayout();
 			return false;
 		});
 		
@@ -123,7 +130,7 @@
 			});
 		});
 		
-		//private function
+		// private function
 		var px = {
 			init: function(e){
 				var form = $(e).parents('form');
@@ -164,17 +171,9 @@
 				}else if (file.indexOf('\\') > -1){
 					file = file.substring(file.lastIndexOf('\\') + 1);
 				}
-				//var extensions = /(.jpg|.jpeg|.gif|.png)$/i;
+				// var extensions = /(.jpg|.jpeg|.gif|.png)$/i;
 				var extensions = new RegExp(config.allowedExtension + '$', 'i');
-				if (extensions.test(file)){
-					files++;
-					console.log("config.maxfiles" + config.maxfiles + " files" + files);
-					if (config.maxfiles != -1 && files >= config.maxfiles ) {
-						console.log("disabling conf");
-						$('#pxupload_form input.pxupload').attr("disabled","disabled");
-//						$('#pxupload_form input.pxupload').hide();
-					}
-
+				if (extensions.test(file)) {
 					return file;
 				} else {
 					return -1;
