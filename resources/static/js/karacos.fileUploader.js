@@ -9,7 +9,7 @@
 (function($) {
 	$.fileUploader = {version: '1.0'};
 	$.fn.fileUploader = function(config){
-		
+		var that = this;
 		config = $.extend({}, {
 			maxfiles: 1,
 			imageLoader: '',
@@ -17,9 +17,10 @@
 			buttonClear: '#pxClear',
 			successOutput: 'File Uploaded',
 			errorOutput: 'Failed',
-			inputName: 'userfile',
+			inputName: 'att_file',
 			inputSize: 30,
-			allowedExtension: 'jpg|jpeg|gif|png'
+			allowedExtension: 'jpg|jpeg|gif|png',
+			callback: function(data){} // callback for each uploaded file
 		}, config);
 		
 		var itr = 0; //number of files to uploaded
@@ -43,7 +44,7 @@
 				'<span class="loader" style="display:none">'+ imageLoader +'</span>' +
 				'<div class="status">Pending...</div></div>';
 			$("#px_display").append(display);
-			$("pxupload'+ itr +'_text").css("color", "#202020");
+			$("#pxupload"+ itr +"_text").css("color", "#202020");
 			px.appendForm();
 			$(e).hide();
 		}
@@ -55,14 +56,17 @@
 					e = $(this);
 					var id = "#" + $(e).attr("id");
 					var input_id = id + "_input";
-					var input_val = $(input_id).val();
+					var input_val = $(input_id).attr("value");
+					console.log(input_val);
 					if (input_val != ""){
+						$(input_id).removeAttr("disabled");
 						$(id + "_text .status").text("Uploading...");
 						$(id + "_text").css("background-color", "#FFF0E1");
 						$(id + "_text").css("color", "#202020");
 						$(id + "_text .loader").show();
 						$(id + "_text .close").hide();
-						
+						console.log("Submitting ");
+						console.log($(id));
 						$(id).submit();
 						$(id +"_frame").load(function(){
 							$(id + "_text .loader").hide();
@@ -71,6 +75,7 @@
 							//console.log(data);
 							if (data.status == "success"){
 								$(id + "_text").css("background-color", "#F0F8FF");
+								config.callback(data);
 							}else{
 								$(id + "_text").css("background-color", "#FF0000");
 							}
@@ -90,16 +95,18 @@
 		});
 		
 		$(".close").live("click", function(){
-			$('#pxupload_form input.pxupload').removeAttr("disabled");
-//			$('#pxupload_form input.pxupload').show();
 			console.log(" @close config.maxfiles" + config.maxfiles + " files" + files);
 			files--;
-			var id = "#" + $(this).parent().attr("title");
+			var id = "#";
+			id = id + $(this).parent().attr("title");
 			$(id+"_frame").remove();
-			$(id).remove();
 			$(id+"_text").fadeOut("slow",function(){
 				$(this).remove();
 			});
+			$(id).remove();
+//			$('#pxupload_form form input.pxupload').removeAttr("disabled");
+//			$('#pxupload_form form input.pxupload').removeAttr("value");
+//			$('#pxupload_form form input.pxupload').show();
 			//$('#pxupload_form input.pxupload').doLayout();
 			return false;
 		});

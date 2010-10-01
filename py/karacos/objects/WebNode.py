@@ -200,15 +200,15 @@ class WebNode(karacos.db['Node']):
     
     @karacos._db.isaction
     def add_attachment(self, *args, **kwds):
-        assert 'att_file' in kwds
         request = karacos.serving.get_request()
-        
-        result = self._add_attachment(request.POST.get('att_file'))
         if 'return_json' in kwds:
             request.headers['Accept'] = 'application/json'
             response = karacos.serving.get_response()
             response.headers['Content-Type'] = 'text/html'
             response.__headers_type_set__ = True
+        assert 'att_file' in kwds
+        
+        result = self._add_attachment(request.POST.get('att_file'))
         #size = 0
         #while True:
         #    data = att_file.file.read(8192)

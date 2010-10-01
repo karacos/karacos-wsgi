@@ -105,7 +105,7 @@ KaraCos.Plugin.initImage = function() {
 	var that = this;
 	
 	if (that.add_attachment != null) {
-	    this.imgUploadButton = new GENTICS.Aloha.ui.Button({
+	    that.imgUploadButton = new GENTICS.Aloha.ui.Button({
 	    	'label' : that.i18n('button.uploadimg.label'),
 	    	'size' : 'small',
 	    	'onclick' : function () { 
@@ -116,9 +116,15 @@ KaraCos.Plugin.initImage = function() {
 	    			buttonClear: '#pxClear',
 	    			successOutput: 'File Uploaded',
 	    			errorOutput: 'Failed',
-	    			inputName: 'userfile',
+	    			inputName: 'att_file',
 	    			inputSize: 30,
-	    			allowedExtension: 'jpg|jpeg|png|gif'
+	    			allowedExtension: 'jpg|jpeg|png|gif',
+	    			callback: function(data) {
+	    			$('#dialog_window').dialog('close');
+	    			console.log(that.imgUploadButton.targetImg);
+	    			console.log(data);
+	    			that.imgUploadButton.targetImg.src = data.data;
+	    		}
 	    			});
 	    		$('#dialog_window').dialog('open');
 	    		
