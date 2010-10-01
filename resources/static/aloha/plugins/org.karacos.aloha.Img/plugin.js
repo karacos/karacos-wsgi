@@ -114,7 +114,7 @@ KaraCos.Img.findImgMarkup = function ( range ) {
 				if (range.startOffset)
 					if (range.startContainer.childNodes[range.startOffset])
 	    if (range.startContainer.childNodes[range.startOffset].nodeName.toLowerCase() == 'img') {
-			console.log(range);
+			//console.log(range);
 			return range.startContainer.childNodes[range.startOffset];
 		}
 	} catch (e) {}

@@ -5,3 +5,4 @@ button.addimg.tooltip=add image ref
 floatingmenu.tab.img=Image
 button.uploadimg.tooltip=Upload img
 button.uploadimg.label=Upload
+button.chooseimg.label=Choose an Img

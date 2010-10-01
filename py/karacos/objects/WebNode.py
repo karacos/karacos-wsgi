@@ -160,21 +160,30 @@ class WebNode(karacos.db['Node']):
             att_url = '/_atts/%s/%s' % (self.id, name)
             raise karacos.http.Redirect(url=att_url, code=301)
         raise karacos.http.NotFound(message=_("Ressource introuvable '%s'") % name)
+    
     @karacos._db.isaction
     def _att(self,*args,**kw):
         response = karacos.serving.get_response()
         if len(args) == 0:
-            # TODO templating
-            res = '<ul>'
-            for file in os.listdir(self.get_att_dir()):
-                res = '%s<li><a href="%s/_att/%s">%s</a></li>' % (res,self._get_action_url(),file,file)
-            res = '%s</ul>' % res
-            response.body = '%s' % res
-            return
+            assert 'filename' in kw, "filename argument missing"
+            self._serve_att(kw['filename'])
         else:
             name=args[0]
             self._serve_att(name)
-    
+    def get_atts_form(self):
+        res=[]
+        for file in os.listdir(self.get_att_dir()):
+            res.append({'label': file , 'value': '/_atts/%s/%s' % (self.id, file)})
+            
+        return {'title': _("Choisissez un fichier a visualiser"),
+         'submit': _('Envoyer'),
+         'fields': [
+                    {'name':'filename', 'title':'Action','dataType': 'TEXT',
+                       'formType':'RADIO', 'values': res}
+                    ]
+                    }
+    _att.get_form = get_atts_form
+    _att.label = _('Attachments')
     @karacos._db.isaction
     def set_ACL(self, ACL=None):
         self['ACL'] = karacos.json.loads(ACL)

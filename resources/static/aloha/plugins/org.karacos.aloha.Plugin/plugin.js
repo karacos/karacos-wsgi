@@ -46,6 +46,9 @@ KaraCos.Plugin.init=function(){
 				if (that.rsdata.actions[i].action == "add_attachment") {
 					that.add_attachment = that.rsdata.actions[i];
 				}
+				if (that.rsdata.actions[i].action == "_att") {
+					that._att = that.rsdata.actions[i];
+				}
 				if (that.rsdata.actions[i].label) {
 					var actionButton=new GENTICS.Aloha.ui.Button({label:that.rsdata.actions[i].label,
 						onclick:function(){ // When a button is clicked :
@@ -122,8 +125,8 @@ KaraCos.Plugin.initImage = function() {
 	    			allowedExtension: 'jpg|jpeg|png|gif',
 	    			callback: function(data) {
 	    			$('#dialog_window').dialog('close');
-	    			console.log(that.imgUploadButton.targetImg);
-	    			console.log(data);
+	    			//console.log(that.imgUploadButton.targetImg);
+	    			//console.log(data);
 	    			that.imgUploadButton.targetImg.src = data.data;
 	    			GENTICS.Aloha.FloatingMenu.obj.show();
 	    		}
@@ -134,11 +137,45 @@ KaraCos.Plugin.initImage = function() {
 	    	'tooltip' : that.i18n('button.uploadimg.tooltip'),
 	    	'toggle' : true
 	    });
-	    this.imgUploadButton.add_attachment = that.add_attachment;
+	    that.imgUploadButton.add_attachment = that.add_attachment;
 	    //this.imgUploadButton.setResourceObjectTypes(KaraCos.Plugin.resourceObjectTypes);
 	    GENTICS.Aloha.FloatingMenu.addButton(
 	    		KaraCos.Img.getUID('img'),
 	    		this.imgUploadButton,
+	    		this.i18n('floatingmenu.tab.img'),
+	    		2
+	    );
+	    that.imgChooseButton = new GENTICS.Aloha.ui.Button({
+	    	'label' : that.i18n('button.chooseimg.label'),
+	    	'size' : 'small',
+	    	'onclick' : function () { 
+	    		$('#dialog_window').html("");
+	    		GENTICS.Aloha.FloatingMenu.obj.hide();
+	    		$('#dialog_window').append("<table></table>");
+	    		$.each(this._att.form.fields[0].values, function(id,value) {
+	    			$('#dialog_window table').append('<tr><td><img id="img'
+	    					+ id + '_img" class="imgselector" "src="' + value.value
+	    					+ '" style="width: 64px; height: 64px;"/></td></tr>')
+	    		});
+	    		
+	    		$(".imgselector").click(function() {
+	    			img = $(this);
+	    			console.log(this.id);
+	    			$('#dialog_window').dialog('close');
+	    			that.imgUploadButton.targetImg.src = this.src;
+	    			GENTICS.Aloha.FloatingMenu.obj.show();
+	    		});
+	    		$('#dialog_window').dialog('open');
+	    		
+	    },
+	    	'tooltip' : that.i18n('button.choose.tooltip'),
+	    	'toggle' : true
+	    });
+	    that.imgChooseButton.add_attachment = that.add_attachment;
+	    that.imgChooseButton._att = that._att;
+	    GENTICS.Aloha.FloatingMenu.addButton(
+	    		KaraCos.Img.getUID('img'),
+	    		this.imgChooseButton,
 	    		this.i18n('floatingmenu.tab.img'),
 	    		2
 	    );
@@ -160,6 +197,7 @@ KaraCos.Plugin.subscribeEvents = function () {
 	        if ( foundImgMarkup != null ) {
 	        	//img found
 	            that.imgUploadButton.targetImg = foundImgMarkup;
+	            that.imgChooseButton.targetImg = foundImgMarkup;
 	        } else {
 	        	that.imgUploadButton.targetImg = null;
 	        }
