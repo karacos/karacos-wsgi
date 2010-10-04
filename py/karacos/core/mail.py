@@ -39,10 +39,10 @@ def send_mail(destmail, msg):
                               karacos.config.get('mail','smtp_server_port'))
         server.ehlo()
         if karacos.config.has_option('mail', 'smtp_ssl'):
-            if karacos.config.get('mail', 'smtp_ssl') == True:
+            if karacos.config.get('mail', 'smtp_ssl') == "True" or karacos.config.get('mail', 'smtp_ssl'):
                 server.starttls()
                 server.ehlo()
-        if karacos.config.has_option('mail', 'smtp_user') and karacos.config.has_option('mail', 'smtp_password'):
+        if karacos.config.has_option('mail', 'smtp_password'):
             src = karacos.config.get('mail','from_addr')
             password = karacos.config.get('mail','smtp_password')
             server.login(src, password) 
