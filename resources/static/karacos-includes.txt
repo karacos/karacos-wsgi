@@ -1,0 +1,14 @@
+aloha/aloha.js
+js/jquery-ui-1.8.custom.min.js
+js/karacos-forms.js
+aloha/plugins/com.gentics.aloha.plugins.Format/plugin.js
+aloha/plugins/com.gentics.aloha.plugins.Table/plugin.js
+aloha/plugins/com.gentics.aloha.plugins.List/plugin.js
+aloha/plugins/com.gentics.aloha.plugins.Link/plugin.js
+aloha/plugins/org.karacos.aloha.Img/plugin.js
+aloha/plugins/org.karacos.aloha.Plugin/plugin.js
+js/anytime.js
+ckeditor/ckeditor.js
+ckeditor/adapters/jquery.js
+js/jquery.wysiwyg.js
+wymeditor/jquery.wymeditor.min.js

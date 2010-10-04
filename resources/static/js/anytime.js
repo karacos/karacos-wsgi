@@ -1,4 +1,6 @@
+//Always start with comments (concat et tcet)
 /*****************************************************************************
+
  *  FILE:  anytime.js - The Any+Time(TM) JavaScript Library (source)
  *
  *  VERSION: 4.1112D
@@ -3656,3 +3658,4 @@ AnyTime.picker = function( id, options )
 } // AnyTime.picker = 
 
 })(jQuery); // function($)...
+

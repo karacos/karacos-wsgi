@@ -1,3 +1,7 @@
+//Always start with comments (concat et tcet)
+/**
+ * 
+ */
 (function($) {
 	/**
 	 * Return true type of (differences between array an object

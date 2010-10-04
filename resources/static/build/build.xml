@@ -1,0 +1,82 @@
+<project name="KaraCos js builder" default="all">
+	<property name="filename" value="karacos" />
+	<property name="compressor" value="yuicompressor-2.4.2.jar" />
+	<property name="srcdir" value=".." />
+	<property name="outdir" value=".." />
+	<property name="karacos.includes.filename" value="karacos-includes.txt" />
+	<property name="css.includes.filename" value="karacos-css.txt" />
+	<property name="java" value="${java.home}${file.separator}bin${file.separator}java" />
+	<path id="minify.classpath">
+		<fileset dir="deps">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	<target name="makedirs">
+		<mkdir dir="${outdir}/js" />
+		<mkdir dir="${outdir}/js" />
+	</target>
+	<target name="prepare_js_includes" depends="makedirs">
+		<copy file="${includefile}" todir="${outdir}/js" overwrite="true" />
+		<fixcrlf file="${outdir}/js/${includefile}" eol="unix" />
+		<replaceregexp file="${outdir}/js/${includefile}" flags="gm" match="\n" replace=" " />
+	</target>
+	<target name="prepare_css_includes" depends="makedirs">
+		<copy file="${includefile}" todir="${outdir}/css" overwrite="true" />
+		<fixcrlf file="${outdir}/css/${includefile}" eol="unix" />
+		<replaceregexp file="${outdir}/css/${includefile}" flags="gm" match="\n" replace=" " />
+	</target>
+	<target name="all">
+		<loadfile property="karacos.includes" srcfile="karacos-includes.txt" />
+		<loadfile property="css.includes" srcfile="${css.includes.filename}" />
+		<delete>
+			<fileset dir="${outdir}">
+				<include name="{filename}-debug.js" />
+				<include name="{filename}-noaloha-debug.js" />
+				<include name="{filename}.js" />
+				<include name="{filename}-noaloha.js" />
+				<include name="build/*.log"/>
+			</fileset>
+		</delete>
+		<mkdir dir="${outdir}" />
+		<concat destfile="${outdir}/${filename}-noaloha-debug.js" force="no">
+			<filelist dir="${srcdir}" files="js/jquery-ui-1.8.5.custom.min.js,js/anytime.js,js/karacos-forms.js" />
+		</concat>
+		<echo>Concat to ${outdir}/${filename}-debug.js files ${karacos.includes}</echo>
+		<copy tofile="${outdir}/${filename}-debug.js" file="${srcdir}/aloha-nka-fork/build/out/aloha-nightly/debug/aloha.js"/>
+		<concat destfile="${outdir}/${filename}-debug.js" append="true" force="no">
+			<filelist dir="${srcdir}/" files="${karacos.includes}" />
+
+			<!--
+			js/jquery-ui-1.8.5.custom.min.js,js/anytime.js,js/karacos-forms.js"/>
+			<fileset dir="${srcdir}">
+				<include name="aloha/aloha.js" />
+				<include name="js/jquery-ui-1.8.2.custom.min.js" />
+				<include name="js/karacos-forms.js" />
+				<include name="aloha/plugins/com.gentics.aloha.plugins.Format/plugin.js" />
+				<include name="aloha/plugins/com.gentics.aloha.plugins.Table/plugin.js" />
+				<include name="aloha/plugins/com.gentics.aloha.plugins.List/plugin.js" />
+				<include name="aloha/plugins/com.gentics.aloha.plugins.Link/plugin.js" />
+				<include name="aloha/plugins/org.karacos.aloha.Img/plugin.js" />
+				<include name="aloha/plugins/org.karacos.aloha.Plugin/plugin.js" />
+				<include name="js/anytime.js" />
+			</fileset>
+			-->
+		</concat>
+		<concat destfile="${outdir}/${filename}.css" force="no">
+			<fileset dir="${srcdir}">
+				<include name="fileuploader/fileUploader.css" />
+				<include name="aloha/plugins/org.karacos.aloha.Img/resources/style.css" />
+				<include name="js/anytime.css" />
+
+			</fileset>
+		</concat>
+		<java jar="deps/${compressor}" fork="true" failonerror="true" output="compressorNoAloha.log" append="true">
+			<arg line="--type js -o ${outdir}/${filename}-noaloha.js --nomunge --verbose --charset UTF-8 ${outdir}/${filename}-noaloha-debug.js" />
+			<classpath refid="minify.classpath" />
+		</java>
+		<java jar="deps/${compressor}" fork="true" failonerror="true" output="${outdir}/compressorFull.log" append="true">
+			<arg line="--type js -o ${outdir}/${filename}.js --nomunge --verbose --charset UTF-8 ${outdir}/${filename}-debug.js" />
+			<classpath refid="minify.classpath" />
+		</java>
+	</target>
+</project>
