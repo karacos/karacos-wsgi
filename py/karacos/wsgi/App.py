@@ -54,9 +54,9 @@ class Dispatcher(object):
     def render(self,request, response):
         session = karacos.serving.get_session()
         self.log.debug("RENDER : Response object has body '%s'" % response.body[:200])
-        if response.__action__ == None:
-            if len(session['backlinks']) > 0:
-                raise Redirect(session['backlinks'].pop(), 302, _("Action processing redirect backlink"))
+        #if response.__action__ == None:
+        if len(session['backlinks']) > 0:
+            raise Redirect(session['backlinks'].pop(), 302, _("Action processing redirect backlink"))
         if response.body == '':
             if (request.headers['Accept'].find('text/html') >= 0 or
                 request.headers['Accept'].find('application/xhtml+xml') >= 0):

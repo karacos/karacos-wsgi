@@ -122,7 +122,10 @@ class Session(dict):
         Invalidate session
         """
         self.user = None
+        for k in self.keys():
+            del self[k]
         self['username'] = 'anonymous'
+        self['backlinks'] = []
     
     def authenticate(self,username,password):
         assert self['username'] == 'anonymous'
