@@ -34,11 +34,21 @@ def send_mail(destmail, msg):
     """
     """
     try:
+        
         server = smtplib.SMTP(karacos.config.get('mail','smtp_server'),
                               karacos.config.get('mail','smtp_server_port'))
         server.ehlo()
+        if karacos.config.has_option('mail', 'smtp_ssl'):
+            if karacos.config.get('mail', 'smtp_ssl') == True:
+                server.starttls()
+                server.ehlo()
+        if karacos.config.has_option('mail', 'smtp_user') and karacos.config.has_option('mail', 'smtp_password'):
+            src = karacos.config.get('mail','from_addr')
+            password = karacos.config.get('mail','smtp_password')
+            server.login(src, password) 
         server.sendmail(karacos.config.get('mail','from_addr'), destmail, msg)
         print "mail sent"
+        server.close() 
     except Exception,e:
         import sys
         print sys.exc_info()
