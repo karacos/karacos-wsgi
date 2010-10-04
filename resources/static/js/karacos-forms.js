@@ -2,6 +2,7 @@
 /**
  * 
  */
+
 (function($) {
 	/**
 	 * Return true type of (differences between array an object

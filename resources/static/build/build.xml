@@ -1,8 +1,8 @@
 <project name="KaraCos js builder" default="all">
-	<property name="filename" value="karacos" />
 	<property name="compressor" value="yuicompressor-2.4.2.jar" />
 	<property name="srcdir" value=".." />
 	<property name="outdir" value=".." />
+	<property name="tmpdir" value="tmp" />
 	<property name="karacos.includes.filename" value="karacos-includes.txt" />
 	<property name="css.includes.filename" value="karacos-css.txt" />
 	<property name="java" value="${java.home}${file.separator}bin${file.separator}java" />
@@ -12,55 +12,87 @@
 		</fileset>
 	</path>
 	<target name="makedirs">
-		<mkdir dir="${outdir}/js" />
-		<mkdir dir="${outdir}/js" />
+		<mkdir dir="tmpdir" />
 	</target>
-	<target name="prepare_js_includes" depends="makedirs">
-		<copy file="${includefile}" todir="${outdir}/js" overwrite="true" />
-		<fixcrlf file="${outdir}/js/${includefile}" eol="unix" />
-		<replaceregexp file="${outdir}/js/${includefile}" flags="gm" match="\n" replace=" " />
+
+	<target name="compress_files" depends="makedirs">
+		<copy file="${filename}.txt" todir="${tmpdir}" overwrite="true" />
+		<fixcrlf file="${tmpdir}/${filename}.txt" eol="unix" />
+		<replaceregexp file="${tmpdir}/${filename}.txt" flags="gm" match="\n" replace=", " />
+		<loadfile property="includes" srcfile="${tmpdir}/${filename}.txt" />
+		<concat destfile="${outdir}/${filename}-debug.js" append="false" force="yes" fixlastline="true">
+			<filelist dir="${srcdir}/" files="${includes}" />
+		</concat>
+		<delete file="${outdir}/out/compressorFull.log"/>
+		<java jar="deps/${compressor}" fork="true" failonerror="true" output="${outdir}/build/compressorFull.log" append="true">
+			<arg line="--type js -o ${outdir}/${filename}-yuimin.js --nomunge --verbose --charset UTF-8 ${outdir}/${filename}-debug.js" />
+			<classpath refid="minify.classpath" />
+		</java>
 	</target>
-	<target name="prepare_css_includes" depends="makedirs">
-		<copy file="${includefile}" todir="${outdir}/css" overwrite="true" />
-		<fixcrlf file="${outdir}/css/${includefile}" eol="unix" />
-		<replaceregexp file="${outdir}/css/${includefile}" flags="gm" match="\n" replace=" " />
-	</target>
-	<target name="all">
-		<loadfile property="karacos.includes" srcfile="karacos-includes.txt" />
-		<loadfile property="css.includes" srcfile="${css.includes.filename}" />
+
+
+	<!-- ================================= 
+          target: clean              
+         ================================= -->
+	<target name="clean" description="description">
+
 		<delete>
+			<filename name="${tmpdir}" />
 			<fileset dir="${outdir}">
 				<include name="{filename}-debug.js" />
 				<include name="{filename}-noaloha-debug.js" />
 				<include name="{filename}.js" />
 				<include name="{filename}-noaloha.js" />
-				<include name="build/*.log"/>
+				<include name="build/*.log" />
 			</fileset>
 		</delete>
+	</target>
+
+	<!-- ================================= 
+          target: all              
+         ================================= -->
+	<target name="all" depends="clean" description="description">
+		<antcall target="compress_files">
+			<param name="filename" value="karacos-min" />
+		</antcall>
+		<antcall target="compress_files">
+			<param name="filename" value="karacos-full" />
+		</antcall>
+		<!--
+		-->
+		<!--
+		<copy tofile="${outdir}/${filename}-debug.js" file="${srcdir}/aloha/aloha.js" overwrite="true" />
+		<antcall target="jsminify">
+		</antcall>
+		-->
+
+	</target>
+
+	<!-- ================================= 
+          target: jsminify              
+         ================================= -->
+	<target name="jsminify" description="description">
+
+		<taskdef name="jsmin" classname="net.matthaynes.jsmin.JSMin_Task" classpath="deps/jsmin.0.2.4.jar" />
+
+		<java jar="deps/${compressor}" fork="true" failonerror="true" output="compressorFull.log" append="true">
+			<arg line="--type css -o ${outdir}/${filename}-yuimin.css --nomunge --verbose --charset UTF-8 ${outdir}/${filename}-debug.css" />
+			<classpath refid="minify.classpath" />
+		</java>
+	</target>
+
+	<!-- ================================= 
+          target: YUICompress              
+         ================================= -->
+	<target name="YUICompress" description="description">
 		<mkdir dir="${outdir}" />
 		<concat destfile="${outdir}/${filename}-noaloha-debug.js" force="no">
 			<filelist dir="${srcdir}" files="js/jquery-ui-1.8.5.custom.min.js,js/anytime.js,js/karacos-forms.js" />
 		</concat>
 		<echo>Concat to ${outdir}/${filename}-debug.js files ${karacos.includes}</echo>
-		<copy tofile="${outdir}/${filename}-debug.js" file="${srcdir}/aloha-nka-fork/build/out/aloha-nightly/debug/aloha.js"/>
-		<concat destfile="${outdir}/${filename}-debug.js" append="true" force="no">
+		<concat destfile="${outdir}/${filename}-debug.js" append="true" force="no" fixlastline="true">
 			<filelist dir="${srcdir}/" files="${karacos.includes}" />
 
-			<!--
-			js/jquery-ui-1.8.5.custom.min.js,js/anytime.js,js/karacos-forms.js"/>
-			<fileset dir="${srcdir}">
-				<include name="aloha/aloha.js" />
-				<include name="js/jquery-ui-1.8.2.custom.min.js" />
-				<include name="js/karacos-forms.js" />
-				<include name="aloha/plugins/com.gentics.aloha.plugins.Format/plugin.js" />
-				<include name="aloha/plugins/com.gentics.aloha.plugins.Table/plugin.js" />
-				<include name="aloha/plugins/com.gentics.aloha.plugins.List/plugin.js" />
-				<include name="aloha/plugins/com.gentics.aloha.plugins.Link/plugin.js" />
-				<include name="aloha/plugins/org.karacos.aloha.Img/plugin.js" />
-				<include name="aloha/plugins/org.karacos.aloha.Plugin/plugin.js" />
-				<include name="js/anytime.js" />
-			</fileset>
-			-->
 		</concat>
 		<concat destfile="${outdir}/${filename}.css" force="no">
 			<fileset dir="${srcdir}">
@@ -74,9 +106,6 @@
 			<arg line="--type js -o ${outdir}/${filename}-noaloha.js --nomunge --verbose --charset UTF-8 ${outdir}/${filename}-noaloha-debug.js" />
 			<classpath refid="minify.classpath" />
 		</java>
-		<java jar="deps/${compressor}" fork="true" failonerror="true" output="${outdir}/compressorFull.log" append="true">
-			<arg line="--type js -o ${outdir}/${filename}.js --nomunge --verbose --charset UTF-8 ${outdir}/${filename}-debug.js" />
-			<classpath refid="minify.classpath" />
-		</java>
+
 	</target>
 </project>

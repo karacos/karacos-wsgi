@@ -202,3 +202,4524 @@ GENTICS.Aloha.RepositoryManager=function(){this.repositories=new Array()};GENTIC
 * Licensed unter the terms of http://www.aloha-editor.com/license.html
 */
 GENTICS.Aloha.Repository=function(repositoryId,basePath){this.repositoryId=repositoryId;this.basePath=basePath?basePath:repositoryId;GENTICS.Aloha.RepositoryManager.register(this);this.settings={}};GENTICS.Aloha.Repository.prototype.init=function(){};GENTICS.Aloha.Repository.prototype.query=function(queryString,objectTypeFilter,filter,inFolderId,orderBy,maxItems,skipCount,renditionFilter,callback){return true};GENTICS.Aloha.Repository.prototype.getChildren=function(objectTypeFilter,filter,inFolderId,inTreeId,orderBy,maxItems,skipCount,renditionFilter,callback){return true};GENTICS.Aloha.Repository.prototype.makeClean=function(obj){};GENTICS.Aloha.Repository.prototype.markObject=function(obj,repositoryItem){};
+/*!
+ * jQuery UI 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI
+ *//*
+ * jQuery UI 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI
+ */
+jQuery.ui||(function(a){a.ui={version:"1.8",plugin:{add:function(c,d,f){var e=a.ui[c].prototype;for(var b in f){e.plugins[b]=e.plugins[b]||[];e.plugins[b].push([d,f[b]])}},call:function(b,d,c){var f=b.plugins[d];if(!f||!b.element[0].parentNode){return}for(var e=0;e<f.length;e++){if(b.options[f[e][0]]){f[e][1].apply(b.element,c)}}}},contains:function(d,c){return document.compareDocumentPosition?d.compareDocumentPosition(c)&16:d!==c&&d.contains(c)},hasScroll:function(e,c){if(a(e).css("overflow")=="hidden"){return false}var b=(c&&c=="left")?"scrollLeft":"scrollTop",d=false;if(e[b]>0){return true}e[b]=1;d=(e[b]>0);e[b]=0;return d},isOverAxis:function(c,b,d){return(c>b)&&(c<(b+d))},isOver:function(g,c,f,e,b,d){return a.ui.isOverAxis(g,f,b)&&a.ui.isOverAxis(c,e,d)},keyCode:{BACKSPACE:8,CAPS_LOCK:20,COMMA:188,CONTROL:17,DELETE:46,DOWN:40,END:35,ENTER:13,ESCAPE:27,HOME:36,INSERT:45,LEFT:37,NUMPAD_ADD:107,NUMPAD_DECIMAL:110,NUMPAD_DIVIDE:111,NUMPAD_ENTER:108,NUMPAD_MULTIPLY:106,NUMPAD_SUBTRACT:109,PAGE_DOWN:34,PAGE_UP:33,PERIOD:190,RIGHT:39,SHIFT:16,SPACE:32,TAB:9,UP:38}};a.fn.extend({_focus:a.fn.focus,focus:function(b,c){return typeof b==="number"?this.each(function(){var d=this;setTimeout(function(){a(d).focus();(c&&c.call(d))},b)}):this._focus.apply(this,arguments)},enableSelection:function(){return this.attr("unselectable","off").css("MozUserSelect","").unbind("selectstart.ui")},disableSelection:function(){return this.attr("unselectable","on").css("MozUserSelect","none").bind("selectstart.ui",function(){return false})},scrollParent:function(){var b;if((a.browser.msie&&(/(static|relative)/).test(this.css("position")))||(/absolute/).test(this.css("position"))){b=this.parents().filter(function(){return(/(relative|absolute|fixed)/).test(a.curCSS(this,"position",1))&&(/(auto|scroll)/).test(a.curCSS(this,"overflow",1)+a.curCSS(this,"overflow-y",1)+a.curCSS(this,"overflow-x",1))}).eq(0)}else{b=this.parents().filter(function(){return(/(auto|scroll)/).test(a.curCSS(this,"overflow",1)+a.curCSS(this,"overflow-y",1)+a.curCSS(this,"overflow-x",1))}).eq(0)}return(/fixed/).test(this.css("position"))||!b.length?a(document):b},zIndex:function(e){if(e!==undefined){return this.css("zIndex",e)}if(this.length){var c=a(this[0]),b,d;while(c.length&&c[0]!==document){b=c.css("position");if(b=="absolute"||b=="relative"||b=="fixed"){d=parseInt(c.css("zIndex"));if(!isNaN(d)&&d!=0){return d}}c=c.parent()}}return 0}});a.extend(a.expr[":"],{data:function(d,c,b){return !!a.data(d,b[3])},focusable:function(c){var d=c.nodeName.toLowerCase(),b=a.attr(c,"tabindex");return(/input|select|textarea|button|object/.test(d)?!c.disabled:"a"==d||"area"==d?c.href||!isNaN(b):!isNaN(b))&&!a(c)["area"==d?"parents":"closest"](":hidden").length},tabbable:function(c){var b=a.attr(c,"tabindex");return(isNaN(b)||b>=0)&&a(c).is(":focusable")}})})(jQuery);;/*!
+ * jQuery UI Widget 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Widget
+ *//*
+ * jQuery UI Widget 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Widget
+ */
+(function(b){var a=b.fn.remove;b.fn.remove=function(c,d){return this.each(function(){if(!d){if(!c||b.filter(c,[this]).length){b("*",this).add(this).each(function(){b(this).triggerHandler("remove")})}}return a.call(b(this),c,d)})};b.widget=function(d,f,c){var e=d.split(".")[0],h;d=d.split(".")[1];h=e+"-"+d;if(!c){c=f;f=b.Widget}b.expr[":"][h]=function(i){return !!b.data(i,d)};b[e]=b[e]||{};b[e][d]=function(i,j){if(arguments.length){this._createWidget(i,j)}};var g=new f();g.options=b.extend({},g.options);b[e][d].prototype=b.extend(true,g,{namespace:e,widgetName:d,widgetEventPrefix:b[e][d].prototype.widgetEventPrefix||d,widgetBaseClass:h},c);b.widget.bridge(d,b[e][d])};b.widget.bridge=function(d,c){b.fn[d]=function(g){var e=typeof g==="string",f=Array.prototype.slice.call(arguments,1),h=this;g=!e&&f.length?b.extend.apply(null,[true,g].concat(f)):g;if(e&&g.substring(0,1)==="_"){return h}if(e){this.each(function(){var i=b.data(this,d),j=i&&b.isFunction(i[g])?i[g].apply(i,f):i;if(j!==i&&j!==undefined){h=j;return false}})}else{this.each(function(){var i=b.data(this,d);if(i){if(g){i.option(g)}i._init()}else{b.data(this,d,new c(g,this))}})}return h}};b.Widget=function(c,d){if(arguments.length){this._createWidget(c,d)}};b.Widget.prototype={widgetName:"widget",widgetEventPrefix:"",options:{disabled:false},_createWidget:function(d,e){this.element=b(e).data(this.widgetName,this);this.options=b.extend(true,{},this.options,b.metadata&&b.metadata.get(e)[this.widgetName],d);var c=this;this.element.bind("remove."+this.widgetName,function(){c.destroy()});this._create();this._init()},_create:function(){},_init:function(){},destroy:function(){this.element.unbind("."+this.widgetName).removeData(this.widgetName);this.widget().unbind("."+this.widgetName).removeAttr("aria-disabled").removeClass(this.widgetBaseClass+"-disabled "+this.namespace+"-state-disabled")},widget:function(){return this.element},option:function(e,f){var d=e,c=this;if(arguments.length===0){return b.extend({},c.options)}if(typeof e==="string"){if(f===undefined){return this.options[e]}d={};d[e]=f}b.each(d,function(g,h){c._setOption(g,h)});return c},_setOption:function(c,d){this.options[c]=d;if(c==="disabled"){this.widget()[d?"addClass":"removeClass"](this.widgetBaseClass+"-disabled "+this.namespace+"-state-disabled").attr("aria-disabled",d)}return this},enable:function(){return this._setOption("disabled",false)},disable:function(){return this._setOption("disabled",true)},_trigger:function(d,e,f){var h=this.options[d];e=b.Event(e);e.type=(d===this.widgetEventPrefix?d:this.widgetEventPrefix+d).toLowerCase();f=f||{};if(e.originalEvent){for(var c=b.event.props.length,g;c;){g=b.event.props[--c];e[g]=e.originalEvent[g]}}this.element.trigger(e,f);return !(b.isFunction(h)&&h.call(this.element[0],e,f)===false||e.isDefaultPrevented())}}})(jQuery);;/*!
+ * jQuery UI Mouse 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Mouse
+ *
+ * Depends:
+ *	jquery.ui.widget.js
+ *//*
+ * jQuery UI Mouse 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Mouse
+ *
+ * Depends:
+ *	jquery.ui.widget.js
+ */
+(function(a){a.widget("ui.mouse",{options:{cancel:":input,option",distance:1,delay:0},_mouseInit:function(){var b=this;this.element.bind("mousedown."+this.widgetName,function(c){return b._mouseDown(c)}).bind("click."+this.widgetName,function(c){if(b._preventClickEvent){b._preventClickEvent=false;c.stopImmediatePropagation();return false}});this.started=false},_mouseDestroy:function(){this.element.unbind("."+this.widgetName)},_mouseDown:function(d){d.originalEvent=d.originalEvent||{};if(d.originalEvent.mouseHandled){return}(this._mouseStarted&&this._mouseUp(d));this._mouseDownEvent=d;var c=this,e=(d.which==1),b=(typeof this.options.cancel=="string"?a(d.target).parents().add(d.target).filter(this.options.cancel).length:false);if(!e||b||!this._mouseCapture(d)){return true}this.mouseDelayMet=!this.options.delay;if(!this.mouseDelayMet){this._mouseDelayTimer=setTimeout(function(){c.mouseDelayMet=true},this.options.delay)}if(this._mouseDistanceMet(d)&&this._mouseDelayMet(d)){this._mouseStarted=(this._mouseStart(d)!==false);if(!this._mouseStarted){d.preventDefault();return true}}this._mouseMoveDelegate=function(f){return c._mouseMove(f)};this._mouseUpDelegate=function(f){return c._mouseUp(f)};a(document).bind("mousemove."+this.widgetName,this._mouseMoveDelegate).bind("mouseup."+this.widgetName,this._mouseUpDelegate);(a.browser.safari||d.preventDefault());d.originalEvent.mouseHandled=true;return true},_mouseMove:function(b){if(a.browser.msie&&!b.button){return this._mouseUp(b)}if(this._mouseStarted){this._mouseDrag(b);return b.preventDefault()}if(this._mouseDistanceMet(b)&&this._mouseDelayMet(b)){this._mouseStarted=(this._mouseStart(this._mouseDownEvent,b)!==false);(this._mouseStarted?this._mouseDrag(b):this._mouseUp(b))}return !this._mouseStarted},_mouseUp:function(b){a(document).unbind("mousemove."+this.widgetName,this._mouseMoveDelegate).unbind("mouseup."+this.widgetName,this._mouseUpDelegate);if(this._mouseStarted){this._mouseStarted=false;this._preventClickEvent=(b.target==this._mouseDownEvent.target);this._mouseStop(b)}return false},_mouseDistanceMet:function(b){return(Math.max(Math.abs(this._mouseDownEvent.pageX-b.pageX),Math.abs(this._mouseDownEvent.pageY-b.pageY))>=this.options.distance)},_mouseDelayMet:function(b){return this.mouseDelayMet},_mouseStart:function(b){},_mouseDrag:function(b){},_mouseStop:function(b){},_mouseCapture:function(b){return true}})})(jQuery);;/*
+ * jQuery UI Position 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Position
+ */(function(f){f.ui=f.ui||{};var c=/left|center|right/,e="center",d=/top|center|bottom/,g="center",a=f.fn.position,b=f.fn.offset;f.fn.position=function(i){if(!i||!i.of){return a.apply(this,arguments)}i=f.extend({},i);var l=f(i.of),n=(i.collision||"flip").split(" "),m=i.offset?i.offset.split(" "):[0,0],k,h,j;if(i.of.nodeType===9){k=l.width();h=l.height();j={top:0,left:0}}else{if(i.of.scrollTo&&i.of.document){k=l.width();h=l.height();j={top:l.scrollTop(),left:l.scrollLeft()}}else{if(i.of.preventDefault){i.at="left top";k=h=0;j={top:i.of.pageY,left:i.of.pageX}}else{k=l.outerWidth();h=l.outerHeight();j=l.offset()}}}f.each(["my","at"],function(){var o=(i[this]||"").split(" ");if(o.length===1){o=c.test(o[0])?o.concat([g]):d.test(o[0])?[e].concat(o):[e,g]}o[0]=c.test(o[0])?o[0]:e;o[1]=d.test(o[1])?o[1]:g;i[this]=o});if(n.length===1){n[1]=n[0]}m[0]=parseInt(m[0],10)||0;if(m.length===1){m[1]=m[0]}m[1]=parseInt(m[1],10)||0;if(i.at[0]==="right"){j.left+=k}else{if(i.at[0]===e){j.left+=k/2}}if(i.at[1]==="bottom"){j.top+=h}else{if(i.at[1]===g){j.top+=h/2}}j.left+=m[0];j.top+=m[1];return this.each(function(){var r=f(this),q=r.outerWidth(),p=r.outerHeight(),o=f.extend({},j);if(i.my[0]==="right"){o.left-=q}else{if(i.my[0]===e){o.left-=q/2}}if(i.my[1]==="bottom"){o.top-=p}else{if(i.my[1]===g){o.top-=p/2}}f.each(["left","top"],function(t,s){if(f.ui.position[n[t]]){f.ui.position[n[t]][s](o,{targetWidth:k,targetHeight:h,elemWidth:q,elemHeight:p,offset:m,my:i.my,at:i.at})}});if(f.fn.bgiframe){r.bgiframe()}r.offset(f.extend(o,{using:i.using}))})};f.ui.position={fit:{left:function(h,i){var k=f(window),j=h.left+i.elemWidth-k.width()-k.scrollLeft();h.left=j>0?h.left-j:Math.max(0,h.left)},top:function(h,i){var k=f(window),j=h.top+i.elemHeight-k.height()-k.scrollTop();h.top=j>0?h.top-j:Math.max(0,h.top)}},flip:{left:function(i,j){if(j.at[0]==="center"){return}var l=f(window),k=i.left+j.elemWidth-l.width()-l.scrollLeft(),h=j.my[0]==="left"?-j.elemWidth:j.my[0]==="right"?j.elemWidth:0,m=-2*j.offset[0];i.left+=i.left<0?h+j.targetWidth+m:k>0?h-j.targetWidth+m:0},top:function(i,k){if(k.at[1]==="center"){return}var m=f(window),l=i.top+k.elemHeight-m.height()-m.scrollTop(),h=k.my[1]==="top"?-k.elemHeight:k.my[1]==="bottom"?k.elemHeight:0,j=k.at[1]==="top"?k.targetHeight:-k.targetHeight,n=-2*k.offset[1];i.top+=i.top<0?h+k.targetHeight+n:l>0?h+j+n:0}}};if(!f.offset.setOffset){f.offset.setOffset=function(l,i){if(/static/.test(f.curCSS(l,"position"))){l.style.position="relative"}var k=f(l),n=k.offset(),h=parseInt(f.curCSS(l,"top",true),10)||0,m=parseInt(f.curCSS(l,"left",true),10)||0,j={top:(i.top-n.top)+h,left:(i.left-n.left)+m};if("using" in i){i.using.call(l,j)}else{k.css(j)}};f.fn.offset=function(h){var i=this[0];if(!i||!i.ownerDocument){return null}if(h){return this.each(function(){f.offset.setOffset(this,h)})}return b.call(this)}}}(jQuery));;/*
+ * jQuery UI Draggable 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Draggables
+ *
+ * Depends:
+ *	jquery.ui.core.js
+ *	jquery.ui.mouse.js
+ *	jquery.ui.widget.js
+ */(function(a){a.widget("ui.draggable",a.ui.mouse,{widgetEventPrefix:"drag",options:{addClasses:true,appendTo:"parent",axis:false,connectToSortable:false,containment:false,cursor:"auto",cursorAt:false,grid:false,handle:false,helper:"original",iframeFix:false,opacity:false,refreshPositions:false,revert:false,revertDuration:500,scope:"default",scroll:true,scrollSensitivity:20,scrollSpeed:20,snap:false,snapMode:"both",snapTolerance:20,stack:false,zIndex:false},_create:function(){if(this.options.helper=="original"&&!(/^(?:r|a|f)/).test(this.element.css("position"))){this.element[0].style.position="relative"}(this.options.addClasses&&this.element.addClass("ui-draggable"));(this.options.disabled&&this.element.addClass("ui-draggable-disabled"));this._mouseInit()},destroy:function(){if(!this.element.data("draggable")){return}this.element.removeData("draggable").unbind(".draggable").removeClass("ui-draggable ui-draggable-dragging ui-draggable-disabled");this._mouseDestroy();return this},_mouseCapture:function(b){var c=this.options;if(this.helper||c.disabled||a(b.target).is(".ui-resizable-handle")){return false}this.handle=this._getHandle(b);if(!this.handle){return false}return true},_mouseStart:function(b){var c=this.options;this.helper=this._createHelper(b);this._cacheHelperProportions();if(a.ui.ddmanager){a.ui.ddmanager.current=this}this._cacheMargins();this.cssPosition=this.helper.css("position");this.scrollParent=this.helper.scrollParent();this.offset=this.positionAbs=this.element.offset();this.offset={top:this.offset.top-this.margins.top,left:this.offset.left-this.margins.left};a.extend(this.offset,{click:{left:b.pageX-this.offset.left,top:b.pageY-this.offset.top},parent:this._getParentOffset(),relative:this._getRelativeOffset()});this.originalPosition=this.position=this._generatePosition(b);this.originalPageX=b.pageX;this.originalPageY=b.pageY;(c.cursorAt&&this._adjustOffsetFromHelper(c.cursorAt));if(c.containment){this._setContainment()}if(this._trigger("start",b)===false){this._clear();return false}this._cacheHelperProportions();if(a.ui.ddmanager&&!c.dropBehaviour){a.ui.ddmanager.prepareOffsets(this,b)}this.helper.addClass("ui-draggable-dragging");this._mouseDrag(b,true);return true},_mouseDrag:function(b,d){this.position=this._generatePosition(b);this.positionAbs=this._convertPositionTo("absolute");if(!d){var c=this._uiHash();if(this._trigger("drag",b,c)===false){this._mouseUp({});return false}this.position=c.position}if(!this.options.axis||this.options.axis!="y"){this.helper[0].style.left=this.position.left+"px"}if(!this.options.axis||this.options.axis!="x"){this.helper[0].style.top=this.position.top+"px"}if(a.ui.ddmanager){a.ui.ddmanager.drag(this,b)}return false},_mouseStop:function(c){var d=false;if(a.ui.ddmanager&&!this.options.dropBehaviour){d=a.ui.ddmanager.drop(this,c)}if(this.dropped){d=this.dropped;this.dropped=false}if(!this.element[0]||!this.element[0].parentNode){return false}if((this.options.revert=="invalid"&&!d)||(this.options.revert=="valid"&&d)||this.options.revert===true||(a.isFunction(this.options.revert)&&this.options.revert.call(this.element,d))){var b=this;a(this.helper).animate(this.originalPosition,parseInt(this.options.revertDuration,10),function(){if(b._trigger("stop",c)!==false){b._clear()}})}else{if(this._trigger("stop",c)!==false){this._clear()}}return false},cancel:function(){if(this.helper.is(".ui-draggable-dragging")){this._mouseUp({})}else{this._clear()}return this},_getHandle:function(b){var c=!this.options.handle||!a(this.options.handle,this.element).length?true:false;a(this.options.handle,this.element).find("*").andSelf().each(function(){if(this==b.target){c=true}});return c},_createHelper:function(c){var d=this.options;var b=a.isFunction(d.helper)?a(d.helper.apply(this.element[0],[c])):(d.helper=="clone"?this.element.clone():this.element);if(!b.parents("body").length){b.appendTo((d.appendTo=="parent"?this.element[0].parentNode:d.appendTo))}if(b[0]!=this.element[0]&&!(/(fixed|absolute)/).test(b.css("position"))){b.css("position","absolute")}return b},_adjustOffsetFromHelper:function(b){if(typeof b=="string"){b=b.split(" ")}if(a.isArray(b)){b={left:+b[0],top:+b[1]||0}}if("left" in b){this.offset.click.left=b.left+this.margins.left}if("right" in b){this.offset.click.left=this.helperProportions.width-b.right+this.margins.left}if("top" in b){this.offset.click.top=b.top+this.margins.top}if("bottom" in b){this.offset.click.top=this.helperProportions.height-b.bottom+this.margins.top}},_getParentOffset:function(){this.offsetParent=this.helper.offsetParent();var b=this.offsetParent.offset();if(this.cssPosition=="absolute"&&this.scrollParent[0]!=document&&a.ui.contains(this.scrollParent[0],this.offsetParent[0])){b.left+=this.scrollParent.scrollLeft();b.top+=this.scrollParent.scrollTop()}if((this.offsetParent[0]==document.body)||(this.offsetParent[0].tagName&&this.offsetParent[0].tagName.toLowerCase()=="html"&&a.browser.msie)){b={top:0,left:0}}return{top:b.top+(parseInt(this.offsetParent.css("borderTopWidth"),10)||0),left:b.left+(parseInt(this.offsetParent.css("borderLeftWidth"),10)||0)}},_getRelativeOffset:function(){if(this.cssPosition=="relative"){var b=this.element.position();return{top:b.top-(parseInt(this.helper.css("top"),10)||0)+this.scrollParent.scrollTop(),left:b.left-(parseInt(this.helper.css("left"),10)||0)+this.scrollParent.scrollLeft()}}else{return{top:0,left:0}}},_cacheMargins:function(){this.margins={left:(parseInt(this.element.css("marginLeft"),10)||0),top:(parseInt(this.element.css("marginTop"),10)||0)}},_cacheHelperProportions:function(){this.helperProportions={width:this.helper.outerWidth(),height:this.helper.outerHeight()}},_setContainment:function(){var e=this.options;if(e.containment=="parent"){e.containment=this.helper[0].parentNode}if(e.containment=="document"||e.containment=="window"){this.containment=[0-this.offset.relative.left-this.offset.parent.left,0-this.offset.relative.top-this.offset.parent.top,a(e.containment=="document"?document:window).width()-this.helperProportions.width-this.margins.left,(a(e.containment=="document"?document:window).height()||document.body.parentNode.scrollHeight)-this.helperProportions.height-this.margins.top]}if(!(/^(document|window|parent)$/).test(e.containment)&&e.containment.constructor!=Array){var c=a(e.containment)[0];if(!c){return}var d=a(e.containment).offset();var b=(a(c).css("overflow")!="hidden");this.containment=[d.left+(parseInt(a(c).css("borderLeftWidth"),10)||0)+(parseInt(a(c).css("paddingLeft"),10)||0)-this.margins.left,d.top+(parseInt(a(c).css("borderTopWidth"),10)||0)+(parseInt(a(c).css("paddingTop"),10)||0)-this.margins.top,d.left+(b?Math.max(c.scrollWidth,c.offsetWidth):c.offsetWidth)-(parseInt(a(c).css("borderLeftWidth"),10)||0)-(parseInt(a(c).css("paddingRight"),10)||0)-this.helperProportions.width-this.margins.left,d.top+(b?Math.max(c.scrollHeight,c.offsetHeight):c.offsetHeight)-(parseInt(a(c).css("borderTopWidth"),10)||0)-(parseInt(a(c).css("paddingBottom"),10)||0)-this.helperProportions.height-this.margins.top]}else{if(e.containment.constructor==Array){this.containment=e.containment}}},_convertPositionTo:function(f,h){if(!h){h=this.position}var c=f=="absolute"?1:-1;var e=this.options,b=this.cssPosition=="absolute"&&!(this.scrollParent[0]!=document&&a.ui.contains(this.scrollParent[0],this.offsetParent[0]))?this.offsetParent:this.scrollParent,g=(/(html|body)/i).test(b[0].tagName);return{top:(h.top+this.offset.relative.top*c+this.offset.parent.top*c-(a.browser.safari&&a.browser.version<526&&this.cssPosition=="fixed"?0:(this.cssPosition=="fixed"?-this.scrollParent.scrollTop():(g?0:b.scrollTop()))*c)),left:(h.left+this.offset.relative.left*c+this.offset.parent.left*c-(a.browser.safari&&a.browser.version<526&&this.cssPosition=="fixed"?0:(this.cssPosition=="fixed"?-this.scrollParent.scrollLeft():g?0:b.scrollLeft())*c))}},_generatePosition:function(e){var h=this.options,b=this.cssPosition=="absolute"&&!(this.scrollParent[0]!=document&&a.ui.contains(this.scrollParent[0],this.offsetParent[0]))?this.offsetParent:this.scrollParent,i=(/(html|body)/i).test(b[0].tagName);var d=e.pageX;var c=e.pageY;if(this.originalPosition){if(this.containment){if(e.pageX-this.offset.click.left<this.containment[0]){d=this.containment[0]+this.offset.click.left}if(e.pageY-this.offset.click.top<this.containment[1]){c=this.containment[1]+this.offset.click.top}if(e.pageX-this.offset.click.left>this.containment[2]){d=this.containment[2]+this.offset.click.left}if(e.pageY-this.offset.click.top>this.containment[3]){c=this.containment[3]+this.offset.click.top}}if(h.grid){var g=this.originalPageY+Math.round((c-this.originalPageY)/h.grid[1])*h.grid[1];c=this.containment?(!(g-this.offset.click.top<this.containment[1]||g-this.offset.click.top>this.containment[3])?g:(!(g-this.offset.click.top<this.containment[1])?g-h.grid[1]:g+h.grid[1])):g;var f=this.originalPageX+Math.round((d-this.originalPageX)/h.grid[0])*h.grid[0];d=this.containment?(!(f-this.offset.click.left<this.containment[0]||f-this.offset.click.left>this.containment[2])?f:(!(f-this.offset.click.left<this.containment[0])?f-h.grid[0]:f+h.grid[0])):f}}return{top:(c-this.offset.click.top-this.offset.relative.top-this.offset.parent.top+(a.browser.safari&&a.browser.version<526&&this.cssPosition=="fixed"?0:(this.cssPosition=="fixed"?-this.scrollParent.scrollTop():(i?0:b.scrollTop())))),left:(d-this.offset.click.left-this.offset.relative.left-this.offset.parent.left+(a.browser.safari&&a.browser.version<526&&this.cssPosition=="fixed"?0:(this.cssPosition=="fixed"?-this.scrollParent.scrollLeft():i?0:b.scrollLeft())))}},_clear:function(){this.helper.removeClass("ui-draggable-dragging");if(this.helper[0]!=this.element[0]&&!this.cancelHelperRemoval){this.helper.remove()}this.helper=null;this.cancelHelperRemoval=false},_trigger:function(b,c,d){d=d||this._uiHash();a.ui.plugin.call(this,b,[c,d]);if(b=="drag"){this.positionAbs=this._convertPositionTo("absolute")}return a.Widget.prototype._trigger.call(this,b,c,d)},plugins:{},_uiHash:function(b){return{helper:this.helper,position:this.position,originalPosition:this.originalPosition,offset:this.positionAbs}}});a.extend(a.ui.draggable,{version:"1.8"});a.ui.plugin.add("draggable","connectToSortable",{start:function(c,e){var d=a(this).data("draggable"),f=d.options,b=a.extend({},e,{item:d.element});d.sortables=[];a(f.connectToSortable).each(function(){var g=a.data(this,"sortable");if(g&&!g.options.disabled){d.sortables.push({instance:g,shouldRevert:g.options.revert});g._refreshItems();g._trigger("activate",c,b)}})},stop:function(c,e){var d=a(this).data("draggable"),b=a.extend({},e,{item:d.element});a.each(d.sortables,function(){if(this.instance.isOver){this.instance.isOver=0;d.cancelHelperRemoval=true;this.instance.cancelHelperRemoval=false;if(this.shouldRevert){this.instance.options.revert=true}this.instance._mouseStop(c);this.instance.options.helper=this.instance.options._helper;if(d.options.helper=="original"){this.instance.currentItem.css({top:"auto",left:"auto"})}}else{this.instance.cancelHelperRemoval=false;this.instance._trigger("deactivate",c,b)}})},drag:function(c,f){var e=a(this).data("draggable"),b=this;var d=function(i){var n=this.offset.click.top,m=this.offset.click.left;var g=this.positionAbs.top,k=this.positionAbs.left;var j=i.height,l=i.width;var p=i.top,h=i.left;return a.ui.isOver(g+n,k+m,p,h,j,l)};a.each(e.sortables,function(g){this.instance.positionAbs=e.positionAbs;this.instance.helperProportions=e.helperProportions;this.instance.offset.click=e.offset.click;if(this.instance._intersectsWith(this.instance.containerCache)){if(!this.instance.isOver){this.instance.isOver=1;this.instance.currentItem=a(b).clone().appendTo(this.instance.element).data("sortable-item",true);this.instance.options._helper=this.instance.options.helper;this.instance.options.helper=function(){return f.helper[0]};c.target=this.instance.currentItem[0];this.instance._mouseCapture(c,true);this.instance._mouseStart(c,true,true);this.instance.offset.click.top=e.offset.click.top;this.instance.offset.click.left=e.offset.click.left;this.instance.offset.parent.left-=e.offset.parent.left-this.instance.offset.parent.left;this.instance.offset.parent.top-=e.offset.parent.top-this.instance.offset.parent.top;e._trigger("toSortable",c);e.dropped=this.instance.element;e.currentItem=e.element;this.instance.fromOutside=e}if(this.instance.currentItem){this.instance._mouseDrag(c)}}else{if(this.instance.isOver){this.instance.isOver=0;this.instance.cancelHelperRemoval=true;this.instance.options.revert=false;this.instance._trigger("out",c,this.instance._uiHash(this.instance));this.instance._mouseStop(c,true);this.instance.options.helper=this.instance.options._helper;this.instance.currentItem.remove();if(this.instance.placeholder){this.instance.placeholder.remove()}e._trigger("fromSortable",c);e.dropped=false}}})}});a.ui.plugin.add("draggable","cursor",{start:function(c,d){var b=a("body"),e=a(this).data("draggable").options;if(b.css("cursor")){e._cursor=b.css("cursor")}b.css("cursor",e.cursor)},stop:function(b,c){var d=a(this).data("draggable").options;if(d._cursor){a("body").css("cursor",d._cursor)}}});a.ui.plugin.add("draggable","iframeFix",{start:function(b,c){var d=a(this).data("draggable").options;a(d.iframeFix===true?"iframe":d.iframeFix).each(function(){a('<div class="ui-draggable-iframeFix" style="background: #fff;"></div>').css({width:this.offsetWidth+"px",height:this.offsetHeight+"px",position:"absolute",opacity:"0.001",zIndex:1000}).css(a(this).offset()).appendTo("body")})},stop:function(b,c){a("div.ui-draggable-iframeFix").each(function(){this.parentNode.removeChild(this)})}});a.ui.plugin.add("draggable","opacity",{start:function(c,d){var b=a(d.helper),e=a(this).data("draggable").options;if(b.css("opacity")){e._opacity=b.css("opacity")}b.css("opacity",e.opacity)},stop:function(b,c){var d=a(this).data("draggable").options;if(d._opacity){a(c.helper).css("opacity",d._opacity)}}});a.ui.plugin.add("draggable","scroll",{start:function(c,d){var b=a(this).data("draggable");if(b.scrollParent[0]!=document&&b.scrollParent[0].tagName!="HTML"){b.overflowOffset=b.scrollParent.offset()}},drag:function(d,e){var c=a(this).data("draggable"),f=c.options,b=false;if(c.scrollParent[0]!=document&&c.scrollParent[0].tagName!="HTML"){if(!f.axis||f.axis!="x"){if((c.overflowOffset.top+c.scrollParent[0].offsetHeight)-d.pageY<f.scrollSensitivity){c.scrollParent[0].scrollTop=b=c.scrollParent[0].scrollTop+f.scrollSpeed}else{if(d.pageY-c.overflowOffset.top<f.scrollSensitivity){c.scrollParent[0].scrollTop=b=c.scrollParent[0].scrollTop-f.scrollSpeed}}}if(!f.axis||f.axis!="y"){if((c.overflowOffset.left+c.scrollParent[0].offsetWidth)-d.pageX<f.scrollSensitivity){c.scrollParent[0].scrollLeft=b=c.scrollParent[0].scrollLeft+f.scrollSpeed}else{if(d.pageX-c.overflowOffset.left<f.scrollSensitivity){c.scrollParent[0].scrollLeft=b=c.scrollParent[0].scrollLeft-f.scrollSpeed}}}}else{if(!f.axis||f.axis!="x"){if(d.pageY-a(document).scrollTop()<f.scrollSensitivity){b=a(document).scrollTop(a(document).scrollTop()-f.scrollSpeed)}else{if(a(window).height()-(d.pageY-a(document).scrollTop())<f.scrollSensitivity){b=a(document).scrollTop(a(document).scrollTop()+f.scrollSpeed)}}}if(!f.axis||f.axis!="y"){if(d.pageX-a(document).scrollLeft()<f.scrollSensitivity){b=a(document).scrollLeft(a(document).scrollLeft()-f.scrollSpeed)}else{if(a(window).width()-(d.pageX-a(document).scrollLeft())<f.scrollSensitivity){b=a(document).scrollLeft(a(document).scrollLeft()+f.scrollSpeed)}}}}if(b!==false&&a.ui.ddmanager&&!f.dropBehaviour){a.ui.ddmanager.prepareOffsets(c,d)}}});a.ui.plugin.add("draggable","snap",{start:function(c,d){var b=a(this).data("draggable"),e=b.options;b.snapElements=[];a(e.snap.constructor!=String?(e.snap.items||":data(draggable)"):e.snap).each(function(){var g=a(this);var f=g.offset();if(this!=b.element[0]){b.snapElements.push({item:this,width:g.outerWidth(),height:g.outerHeight(),top:f.top,left:f.left})}})},drag:function(u,p){var g=a(this).data("draggable"),q=g.options;var y=q.snapTolerance;var x=p.offset.left,w=x+g.helperProportions.width,f=p.offset.top,e=f+g.helperProportions.height;for(var v=g.snapElements.length-1;v>=0;v--){var s=g.snapElements[v].left,n=s+g.snapElements[v].width,m=g.snapElements[v].top,A=m+g.snapElements[v].height;if(!((s-y<x&&x<n+y&&m-y<f&&f<A+y)||(s-y<x&&x<n+y&&m-y<e&&e<A+y)||(s-y<w&&w<n+y&&m-y<f&&f<A+y)||(s-y<w&&w<n+y&&m-y<e&&e<A+y))){if(g.snapElements[v].snapping){(g.options.snap.release&&g.options.snap.release.call(g.element,u,a.extend(g._uiHash(),{snapItem:g.snapElements[v].item})))}g.snapElements[v].snapping=false;continue}if(q.snapMode!="inner"){var c=Math.abs(m-e)<=y;var z=Math.abs(A-f)<=y;var j=Math.abs(s-w)<=y;var k=Math.abs(n-x)<=y;if(c){p.position.top=g._convertPositionTo("relative",{top:m-g.helperProportions.height,left:0}).top-g.margins.top}if(z){p.position.top=g._convertPositionTo("relative",{top:A,left:0}).top-g.margins.top}if(j){p.position.left=g._convertPositionTo("relative",{top:0,left:s-g.helperProportions.width}).left-g.margins.left}if(k){p.position.left=g._convertPositionTo("relative",{top:0,left:n}).left-g.margins.left}}var h=(c||z||j||k);if(q.snapMode!="outer"){var c=Math.abs(m-f)<=y;var z=Math.abs(A-e)<=y;var j=Math.abs(s-x)<=y;var k=Math.abs(n-w)<=y;if(c){p.position.top=g._convertPositionTo("relative",{top:m,left:0}).top-g.margins.top}if(z){p.position.top=g._convertPositionTo("relative",{top:A-g.helperProportions.height,left:0}).top-g.margins.top}if(j){p.position.left=g._convertPositionTo("relative",{top:0,left:s}).left-g.margins.left}if(k){p.position.left=g._convertPositionTo("relative",{top:0,left:n-g.helperProportions.width}).left-g.margins.left}}if(!g.snapElements[v].snapping&&(c||z||j||k||h)){(g.options.snap.snap&&g.options.snap.snap.call(g.element,u,a.extend(g._uiHash(),{snapItem:g.snapElements[v].item})))}g.snapElements[v].snapping=(c||z||j||k||h)}}});a.ui.plugin.add("draggable","stack",{start:function(c,d){var f=a(this).data("draggable").options;var e=a.makeArray(a(f.stack)).sort(function(h,g){return(parseInt(a(h).css("zIndex"),10)||0)-(parseInt(a(g).css("zIndex"),10)||0)});if(!e.length){return}var b=parseInt(e[0].style.zIndex)||0;a(e).each(function(g){this.style.zIndex=b+g});this[0].style.zIndex=b+e.length}});a.ui.plugin.add("draggable","zIndex",{start:function(c,d){var b=a(d.helper),e=a(this).data("draggable").options;if(b.css("zIndex")){e._zIndex=b.css("zIndex")}b.css("zIndex",e.zIndex)},stop:function(b,c){var d=a(this).data("draggable").options;if(d._zIndex){a(c.helper).css("zIndex",d._zIndex)}}})})(jQuery);;/*
+ * jQuery UI Droppable 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Droppables
+ *
+ * Depends:
+ *	jquery.ui.core.js
+ *	jquery.ui.widget.js
+ *	jquery.ui.mouse.js
+ *	jquery.ui.draggable.js
+ */(function(a){a.widget("ui.droppable",{widgetEventPrefix:"drop",options:{accept:"*",activeClass:false,addClasses:true,greedy:false,hoverClass:false,scope:"default",tolerance:"intersect"},_create:function(){var c=this.options,b=c.accept;this.isover=0;this.isout=1;this.accept=a.isFunction(b)?b:function(e){return e.is(b)};this.proportions={width:this.element[0].offsetWidth,height:this.element[0].offsetHeight};a.ui.ddmanager.droppables[c.scope]=a.ui.ddmanager.droppables[c.scope]||[];a.ui.ddmanager.droppables[c.scope].push(this);(c.addClasses&&this.element.addClass("ui-droppable"))},destroy:function(){var b=a.ui.ddmanager.droppables[this.options.scope];for(var c=0;c<b.length;c++){if(b[c]==this){b.splice(c,1)}}this.element.removeClass("ui-droppable ui-droppable-disabled").removeData("droppable").unbind(".droppable");return this},_setOption:function(b,c){if(b=="accept"){this.accept=a.isFunction(c)?c:function(e){return e.is(c)}}a.Widget.prototype._setOption.apply(this,arguments)},_activate:function(c){var b=a.ui.ddmanager.current;if(this.options.activeClass){this.element.addClass(this.options.activeClass)}(b&&this._trigger("activate",c,this.ui(b)))},_deactivate:function(c){var b=a.ui.ddmanager.current;if(this.options.activeClass){this.element.removeClass(this.options.activeClass)}(b&&this._trigger("deactivate",c,this.ui(b)))},_over:function(c){var b=a.ui.ddmanager.current;if(!b||(b.currentItem||b.element)[0]==this.element[0]){return}if(this.accept.call(this.element[0],(b.currentItem||b.element))){if(this.options.hoverClass){this.element.addClass(this.options.hoverClass)}this._trigger("over",c,this.ui(b))}},_out:function(c){var b=a.ui.ddmanager.current;if(!b||(b.currentItem||b.element)[0]==this.element[0]){return}if(this.accept.call(this.element[0],(b.currentItem||b.element))){if(this.options.hoverClass){this.element.removeClass(this.options.hoverClass)}this._trigger("out",c,this.ui(b))}},_drop:function(c,d){var b=d||a.ui.ddmanager.current;if(!b||(b.currentItem||b.element)[0]==this.element[0]){return false}var e=false;this.element.find(":data(droppable)").not(".ui-draggable-dragging").each(function(){var f=a.data(this,"droppable");if(f.options.greedy&&!f.options.disabled&&f.options.scope==b.options.scope&&f.accept.call(f.element[0],(b.currentItem||b.element))&&a.ui.intersect(b,a.extend(f,{offset:f.element.offset()}),f.options.tolerance)){e=true;return false}});if(e){return false}if(this.accept.call(this.element[0],(b.currentItem||b.element))){if(this.options.activeClass){this.element.removeClass(this.options.activeClass)}if(this.options.hoverClass){this.element.removeClass(this.options.hoverClass)}this._trigger("drop",c,this.ui(b));return this.element}return false},ui:function(b){return{draggable:(b.currentItem||b.element),helper:b.helper,position:b.position,offset:b.positionAbs}}});a.extend(a.ui.droppable,{version:"1.8"});a.ui.intersect=function(q,j,o){if(!j.offset){return false}var e=(q.positionAbs||q.position.absolute).left,d=e+q.helperProportions.width,n=(q.positionAbs||q.position.absolute).top,m=n+q.helperProportions.height;var g=j.offset.left,c=g+j.proportions.width,p=j.offset.top,k=p+j.proportions.height;switch(o){case"fit":return(g<e&&d<c&&p<n&&m<k);break;case"intersect":return(g<e+(q.helperProportions.width/2)&&d-(q.helperProportions.width/2)<c&&p<n+(q.helperProportions.height/2)&&m-(q.helperProportions.height/2)<k);break;case"pointer":var h=((q.positionAbs||q.position.absolute).left+(q.clickOffset||q.offset.click).left),i=((q.positionAbs||q.position.absolute).top+(q.clickOffset||q.offset.click).top),f=a.ui.isOver(i,h,p,g,j.proportions.height,j.proportions.width);return f;break;case"touch":return((n>=p&&n<=k)||(m>=p&&m<=k)||(n<p&&m>k))&&((e>=g&&e<=c)||(d>=g&&d<=c)||(e<g&&d>c));break;default:return false;break}};a.ui.ddmanager={current:null,droppables:{"default":[]},prepareOffsets:function(e,g){var b=a.ui.ddmanager.droppables[e.options.scope]||[];var f=g?g.type:null;var h=(e.currentItem||e.element).find(":data(droppable)").andSelf();droppablesLoop:for(var d=0;d<b.length;d++){if(b[d].options.disabled||(e&&!b[d].accept.call(b[d].element[0],(e.currentItem||e.element)))){continue}for(var c=0;c<h.length;c++){if(h[c]==b[d].element[0]){b[d].proportions.height=0;continue droppablesLoop}}b[d].visible=b[d].element.css("display")!="none";if(!b[d].visible){continue}b[d].offset=b[d].element.offset();b[d].proportions={width:b[d].element[0].offsetWidth,height:b[d].element[0].offsetHeight};if(f=="mousedown"){b[d]._activate.call(b[d],g)}}},drop:function(b,c){var d=false;a.each(a.ui.ddmanager.droppables[b.options.scope]||[],function(){if(!this.options){return}if(!this.options.disabled&&this.visible&&a.ui.intersect(b,this,this.options.tolerance)){d=d||this._drop.call(this,c)}if(!this.options.disabled&&this.visible&&this.accept.call(this.element[0],(b.currentItem||b.element))){this.isout=1;this.isover=0;this._deactivate.call(this,c)}});return d},drag:function(b,c){if(b.options.refreshPositions){a.ui.ddmanager.prepareOffsets(b,c)}a.each(a.ui.ddmanager.droppables[b.options.scope]||[],function(){if(this.options.disabled||this.greedyChild||!this.visible){return}var e=a.ui.intersect(b,this,this.options.tolerance);var g=!e&&this.isover==1?"isout":(e&&this.isover==0?"isover":null);if(!g){return}var f;if(this.options.greedy){var d=this.element.parents(":data(droppable):eq(0)");if(d.length){f=a.data(d[0],"droppable");f.greedyChild=(g=="isover"?1:0)}}if(f&&g=="isover"){f.isover=0;f.isout=1;f._out.call(f,c)}this[g]=1;this[g=="isout"?"isover":"isout"]=0;this[g=="isover"?"_over":"_out"].call(this,c);if(f&&g=="isout"){f.isout=0;f.isover=1;f._over.call(f,c)}})}}})(jQuery);;/*
+ * jQuery UI Resizable 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Resizables
+ *
+ * Depends:
+ *	jquery.ui.core.js
+ *	jquery.ui.mouse.js
+ *	jquery.ui.widget.js
+ */(function(c){c.widget("ui.resizable",c.ui.mouse,{widgetEventPrefix:"resize",options:{alsoResize:false,animate:false,animateDuration:"slow",animateEasing:"swing",aspectRatio:false,autoHide:false,containment:false,ghost:false,grid:false,handles:"e,s,se",helper:false,maxHeight:null,maxWidth:null,minHeight:10,minWidth:10,zIndex:1000},_create:function(){var e=this,j=this.options;this.element.addClass("ui-resizable");c.extend(this,{_aspectRatio:!!(j.aspectRatio),aspectRatio:j.aspectRatio,originalElement:this.element,_proportionallyResizeElements:[],_helper:j.helper||j.ghost||j.animate?j.helper||"ui-resizable-helper":null});if(this.element[0].nodeName.match(/canvas|textarea|input|select|button|img/i)){if(/relative/.test(this.element.css("position"))&&c.browser.opera){this.element.css({position:"relative",top:"auto",left:"auto"})}this.element.wrap(c('<div class="ui-wrapper" style="overflow: hidden;"></div>').css({position:this.element.css("position"),width:this.element.outerWidth(),height:this.element.outerHeight(),top:this.element.css("top"),left:this.element.css("left")}));this.element=this.element.parent().data("resizable",this.element.data("resizable"));this.elementIsWrapper=true;this.element.css({marginLeft:this.originalElement.css("marginLeft"),marginTop:this.originalElement.css("marginTop"),marginRight:this.originalElement.css("marginRight"),marginBottom:this.originalElement.css("marginBottom")});this.originalElement.css({marginLeft:0,marginTop:0,marginRight:0,marginBottom:0});this.originalResizeStyle=this.originalElement.css("resize");this.originalElement.css("resize","none");this._proportionallyResizeElements.push(this.originalElement.css({position:"static",zoom:1,display:"block"}));this.originalElement.css({margin:this.originalElement.css("margin")});this._proportionallyResize()}this.handles=j.handles||(!c(".ui-resizable-handle",this.element).length?"e,s,se":{n:".ui-resizable-n",e:".ui-resizable-e",s:".ui-resizable-s",w:".ui-resizable-w",se:".ui-resizable-se",sw:".ui-resizable-sw",ne:".ui-resizable-ne",nw:".ui-resizable-nw"});if(this.handles.constructor==String){if(this.handles=="all"){this.handles="n,e,s,w,se,sw,ne,nw"}var k=this.handles.split(",");this.handles={};for(var f=0;f<k.length;f++){var h=c.trim(k[f]),d="ui-resizable-"+h;var g=c('<div class="ui-resizable-handle '+d+'"></div>');if(/sw|se|ne|nw/.test(h)){g.css({zIndex:++j.zIndex})}if("se"==h){g.addClass("ui-icon ui-icon-gripsmall-diagonal-se")}this.handles[h]=".ui-resizable-"+h;this.element.append(g)}}this._renderAxis=function(p){p=p||this.element;for(var m in this.handles){if(this.handles[m].constructor==String){this.handles[m]=c(this.handles[m],this.element).show()}if(this.elementIsWrapper&&this.originalElement[0].nodeName.match(/textarea|input|select|button/i)){var n=c(this.handles[m],this.element),o=0;o=/sw|ne|nw|se|n|s/.test(m)?n.outerHeight():n.outerWidth();var l=["padding",/ne|nw|n/.test(m)?"Top":/se|sw|s/.test(m)?"Bottom":/^e$/.test(m)?"Right":"Left"].join("");p.css(l,o);this._proportionallyResize()}if(!c(this.handles[m]).length){continue}}};this._renderAxis(this.element);this._handles=c(".ui-resizable-handle",this.element).disableSelection();this._handles.mouseover(function(){if(!e.resizing){if(this.className){var i=this.className.match(/ui-resizable-(se|sw|ne|nw|n|e|s|w)/i)}e.axis=i&&i[1]?i[1]:"se"}});if(j.autoHide){this._handles.hide();c(this.element).addClass("ui-resizable-autohide").hover(function(){c(this).removeClass("ui-resizable-autohide");e._handles.show()},function(){if(!e.resizing){c(this).addClass("ui-resizable-autohide");e._handles.hide()}})}this._mouseInit()},destroy:function(){this._mouseDestroy();var d=function(f){c(f).removeClass("ui-resizable ui-resizable-disabled ui-resizable-resizing").removeData("resizable").unbind(".resizable").find(".ui-resizable-handle").remove()};if(this.elementIsWrapper){d(this.element);var e=this.element;e.after(this.originalElement.css({position:e.css("position"),width:e.outerWidth(),height:e.outerHeight(),top:e.css("top"),left:e.css("left")})).remove()}this.originalElement.css("resize",this.originalResizeStyle);d(this.originalElement);return this},_mouseCapture:function(e){var f=false;for(var d in this.handles){if(c(this.handles[d])[0]==e.target){f=true}}return !this.options.disabled&&f},_mouseStart:function(f){var i=this.options,e=this.element.position(),d=this.element;this.resizing=true;this.documentScroll={top:c(document).scrollTop(),left:c(document).scrollLeft()};if(d.is(".ui-draggable")||(/absolute/).test(d.css("position"))){d.css({position:"absolute",top:e.top,left:e.left})}if(c.browser.opera&&(/relative/).test(d.css("position"))){d.css({position:"relative",top:"auto",left:"auto"})}this._renderProxy();var j=b(this.helper.css("left")),g=b(this.helper.css("top"));if(i.containment){j+=c(i.containment).scrollLeft()||0;g+=c(i.containment).scrollTop()||0}this.offset=this.helper.offset();this.position={left:j,top:g};this.size=this._helper?{width:d.outerWidth(),height:d.outerHeight()}:{width:d.width(),height:d.height()};this.originalSize=this._helper?{width:d.outerWidth(),height:d.outerHeight()}:{width:d.width(),height:d.height()};this.originalPosition={left:j,top:g};this.sizeDiff={width:d.outerWidth()-d.width(),height:d.outerHeight()-d.height()};this.originalMousePosition={left:f.pageX,top:f.pageY};this.aspectRatio=(typeof i.aspectRatio=="number")?i.aspectRatio:((this.originalSize.width/this.originalSize.height)||1);var h=c(".ui-resizable-"+this.axis).css("cursor");c("body").css("cursor",h=="auto"?this.axis+"-resize":h);d.addClass("ui-resizable-resizing");this._propagate("start",f);return true},_mouseDrag:function(d){var g=this.helper,f=this.options,l={},p=this,i=this.originalMousePosition,m=this.axis;var q=(d.pageX-i.left)||0,n=(d.pageY-i.top)||0;var h=this._change[m];if(!h){return false}var k=h.apply(this,[d,q,n]),j=c.browser.msie&&c.browser.version<7,e=this.sizeDiff;if(this._aspectRatio||d.shiftKey){k=this._updateRatio(k,d)}k=this._respectSize(k,d);this._propagate("resize",d);g.css({top:this.position.top+"px",left:this.position.left+"px",width:this.size.width+"px",height:this.size.height+"px"});if(!this._helper&&this._proportionallyResizeElements.length){this._proportionallyResize()}this._updateCache(k);this._trigger("resize",d,this.ui());return false},_mouseStop:function(g){this.resizing=false;var h=this.options,l=this;if(this._helper){var f=this._proportionallyResizeElements,d=f.length&&(/textarea/i).test(f[0].nodeName),e=d&&c.ui.hasScroll(f[0],"left")?0:l.sizeDiff.height,j=d?0:l.sizeDiff.width;var m={width:(l.size.width-j),height:(l.size.height-e)},i=(parseInt(l.element.css("left"),10)+(l.position.left-l.originalPosition.left))||null,k=(parseInt(l.element.css("top"),10)+(l.position.top-l.originalPosition.top))||null;if(!h.animate){this.element.css(c.extend(m,{top:k,left:i}))}l.helper.height(l.size.height);l.helper.width(l.size.width);if(this._helper&&!h.animate){this._proportionallyResize()}}c("body").css("cursor","auto");this.element.removeClass("ui-resizable-resizing");this._propagate("stop",g);if(this._helper){this.helper.remove()}return false},_updateCache:function(d){var e=this.options;this.offset=this.helper.offset();if(a(d.left)){this.position.left=d.left}if(a(d.top)){this.position.top=d.top}if(a(d.height)){this.size.height=d.height}if(a(d.width)){this.size.width=d.width}},_updateRatio:function(g,f){var h=this.options,i=this.position,e=this.size,d=this.axis;if(g.height){g.width=(e.height*this.aspectRatio)}else{if(g.width){g.height=(e.width/this.aspectRatio)}}if(d=="sw"){g.left=i.left+(e.width-g.width);g.top=null}if(d=="nw"){g.top=i.top+(e.height-g.height);g.left=i.left+(e.width-g.width)}return g},_respectSize:function(k,f){var i=this.helper,h=this.options,q=this._aspectRatio||f.shiftKey,p=this.axis,s=a(k.width)&&h.maxWidth&&(h.maxWidth<k.width),l=a(k.height)&&h.maxHeight&&(h.maxHeight<k.height),g=a(k.width)&&h.minWidth&&(h.minWidth>k.width),r=a(k.height)&&h.minHeight&&(h.minHeight>k.height);if(g){k.width=h.minWidth}if(r){k.height=h.minHeight}if(s){k.width=h.maxWidth}if(l){k.height=h.maxHeight}var e=this.originalPosition.left+this.originalSize.width,n=this.position.top+this.size.height;var j=/sw|nw|w/.test(p),d=/nw|ne|n/.test(p);if(g&&j){k.left=e-h.minWidth}if(s&&j){k.left=e-h.maxWidth}if(r&&d){k.top=n-h.minHeight}if(l&&d){k.top=n-h.maxHeight}var m=!k.width&&!k.height;if(m&&!k.left&&k.top){k.top=null}else{if(m&&!k.top&&k.left){k.left=null}}return k},_proportionallyResize:function(){var j=this.options;if(!this._proportionallyResizeElements.length){return}var f=this.helper||this.element;for(var e=0;e<this._proportionallyResizeElements.length;e++){var g=this._proportionallyResizeElements[e];if(!this.borderDif){var d=[g.css("borderTopWidth"),g.css("borderRightWidth"),g.css("borderBottomWidth"),g.css("borderLeftWidth")],h=[g.css("paddingTop"),g.css("paddingRight"),g.css("paddingBottom"),g.css("paddingLeft")];this.borderDif=c.map(d,function(k,m){var l=parseInt(k,10)||0,n=parseInt(h[m],10)||0;return l+n})}if(c.browser.msie&&!(!(c(f).is(":hidden")||c(f).parents(":hidden").length))){continue}g.css({height:(f.height()-this.borderDif[0]-this.borderDif[2])||0,width:(f.width()-this.borderDif[1]-this.borderDif[3])||0})}},_renderProxy:function(){var e=this.element,h=this.options;this.elementOffset=e.offset();if(this._helper){this.helper=this.helper||c('<div style="overflow:hidden;"></div>');var d=c.browser.msie&&c.browser.version<7,f=(d?1:0),g=(d?2:-1);this.helper.addClass(this._helper).css({width:this.element.outerWidth()+g,height:this.element.outerHeight()+g,position:"absolute",left:this.elementOffset.left-f+"px",top:this.elementOffset.top-f+"px",zIndex:++h.zIndex});this.helper.appendTo("body").disableSelection()}else{this.helper=this.element}},_change:{e:function(f,e,d){return{width:this.originalSize.width+e}},w:function(g,e,d){var i=this.options,f=this.originalSize,h=this.originalPosition;return{left:h.left+e,width:f.width-e}},n:function(g,e,d){var i=this.options,f=this.originalSize,h=this.originalPosition;return{top:h.top+d,height:f.height-d}},s:function(f,e,d){return{height:this.originalSize.height+d}},se:function(f,e,d){return c.extend(this._change.s.apply(this,arguments),this._change.e.apply(this,[f,e,d]))},sw:function(f,e,d){return c.extend(this._change.s.apply(this,arguments),this._change.w.apply(this,[f,e,d]))},ne:function(f,e,d){return c.extend(this._change.n.apply(this,arguments),this._change.e.apply(this,[f,e,d]))},nw:function(f,e,d){return c.extend(this._change.n.apply(this,arguments),this._change.w.apply(this,[f,e,d]))}},_propagate:function(e,d){c.ui.plugin.call(this,e,[d,this.ui()]);(e!="resize"&&this._trigger(e,d,this.ui()))},plugins:{},ui:function(){return{originalElement:this.originalElement,element:this.element,helper:this.helper,position:this.position,size:this.size,originalSize:this.originalSize,originalPosition:this.originalPosition}}});c.extend(c.ui.resizable,{version:"1.8"});c.ui.plugin.add("resizable","alsoResize",{start:function(e,f){var d=c(this).data("resizable"),h=d.options;var g=function(i){c(i).each(function(){c(this).data("resizable-alsoresize",{width:parseInt(c(this).width(),10),height:parseInt(c(this).height(),10),left:parseInt(c(this).css("left"),10),top:parseInt(c(this).css("top"),10)})})};if(typeof(h.alsoResize)=="object"&&!h.alsoResize.parentNode){if(h.alsoResize.length){h.alsoResize=h.alsoResize[0];g(h.alsoResize)}else{c.each(h.alsoResize,function(i,j){g(i)})}}else{g(h.alsoResize)}},resize:function(f,h){var e=c(this).data("resizable"),i=e.options,g=e.originalSize,k=e.originalPosition;var j={height:(e.size.height-g.height)||0,width:(e.size.width-g.width)||0,top:(e.position.top-k.top)||0,left:(e.position.left-k.left)||0},d=function(l,m){c(l).each(function(){var p=c(this),q=c(this).data("resizable-alsoresize"),o={},n=m&&m.length?m:["width","height","top","left"];c.each(n||["width","height","top","left"],function(r,t){var s=(q[t]||0)+(j[t]||0);if(s&&s>=0){o[t]=s||null}});if(/relative/.test(p.css("position"))&&c.browser.opera){e._revertToRelativePosition=true;p.css({position:"absolute",top:"auto",left:"auto"})}p.css(o)})};if(typeof(i.alsoResize)=="object"&&!i.alsoResize.nodeType){c.each(i.alsoResize,function(l,m){d(l,m)})}else{d(i.alsoResize)}},stop:function(e,f){var d=c(this).data("resizable");if(d._revertToRelativePosition&&c.browser.opera){d._revertToRelativePosition=false;el.css({position:"relative"})}c(this).removeData("resizable-alsoresize-start")}});c.ui.plugin.add("resizable","animate",{stop:function(h,m){var n=c(this).data("resizable"),i=n.options;var g=n._proportionallyResizeElements,d=g.length&&(/textarea/i).test(g[0].nodeName),e=d&&c.ui.hasScroll(g[0],"left")?0:n.sizeDiff.height,k=d?0:n.sizeDiff.width;var f={width:(n.size.width-k),height:(n.size.height-e)},j=(parseInt(n.element.css("left"),10)+(n.position.left-n.originalPosition.left))||null,l=(parseInt(n.element.css("top"),10)+(n.position.top-n.originalPosition.top))||null;n.element.animate(c.extend(f,l&&j?{top:l,left:j}:{}),{duration:i.animateDuration,easing:i.animateEasing,step:function(){var o={width:parseInt(n.element.css("width"),10),height:parseInt(n.element.css("height"),10),top:parseInt(n.element.css("top"),10),left:parseInt(n.element.css("left"),10)};if(g&&g.length){c(g[0]).css({width:o.width,height:o.height})}n._updateCache(o);n._propagate("resize",h)}})}});c.ui.plugin.add("resizable","containment",{start:function(e,q){var s=c(this).data("resizable"),i=s.options,k=s.element;var f=i.containment,j=(f instanceof c)?f.get(0):(/parent/.test(f))?k.parent().get(0):f;if(!j){return}s.containerElement=c(j);if(/document/.test(f)||f==document){s.containerOffset={left:0,top:0};s.containerPosition={left:0,top:0};s.parentData={element:c(document),left:0,top:0,width:c(document).width(),height:c(document).height()||document.body.parentNode.scrollHeight}}else{var m=c(j),h=[];c(["Top","Right","Left","Bottom"]).each(function(p,o){h[p]=b(m.css("padding"+o))});s.containerOffset=m.offset();s.containerPosition=m.position();s.containerSize={height:(m.innerHeight()-h[3]),width:(m.innerWidth()-h[1])};var n=s.containerOffset,d=s.containerSize.height,l=s.containerSize.width,g=(c.ui.hasScroll(j,"left")?j.scrollWidth:l),r=(c.ui.hasScroll(j)?j.scrollHeight:d);s.parentData={element:j,left:n.left,top:n.top,width:g,height:r}}},resize:function(f,p){var s=c(this).data("resizable"),h=s.options,e=s.containerSize,n=s.containerOffset,l=s.size,m=s.position,q=s._aspectRatio||f.shiftKey,d={top:0,left:0},g=s.containerElement;if(g[0]!=document&&(/static/).test(g.css("position"))){d=n}if(m.left<(s._helper?n.left:0)){s.size.width=s.size.width+(s._helper?(s.position.left-n.left):(s.position.left-d.left));if(q){s.size.height=s.size.width/h.aspectRatio}s.position.left=h.helper?n.left:0}if(m.top<(s._helper?n.top:0)){s.size.height=s.size.height+(s._helper?(s.position.top-n.top):s.position.top);if(q){s.size.width=s.size.height*h.aspectRatio}s.position.top=s._helper?n.top:0}s.offset.left=s.parentData.left+s.position.left;s.offset.top=s.parentData.top+s.position.top;var k=Math.abs((s._helper?s.offset.left-d.left:(s.offset.left-d.left))+s.sizeDiff.width),r=Math.abs((s._helper?s.offset.top-d.top:(s.offset.top-n.top))+s.sizeDiff.height);var j=s.containerElement.get(0)==s.element.parent().get(0),i=/relative|absolute/.test(s.containerElement.css("position"));if(j&&i){k-=s.parentData.left}if(k+s.size.width>=s.parentData.width){s.size.width=s.parentData.width-k;if(q){s.size.height=s.size.width/s.aspectRatio}}if(r+s.size.height>=s.parentData.height){s.size.height=s.parentData.height-r;if(q){s.size.width=s.size.height*s.aspectRatio}}},stop:function(e,m){var p=c(this).data("resizable"),f=p.options,k=p.position,l=p.containerOffset,d=p.containerPosition,g=p.containerElement;var i=c(p.helper),q=i.offset(),n=i.outerWidth()-p.sizeDiff.width,j=i.outerHeight()-p.sizeDiff.height;if(p._helper&&!f.animate&&(/relative/).test(g.css("position"))){c(this).css({left:q.left-d.left-l.left,width:n,height:j})}if(p._helper&&!f.animate&&(/static/).test(g.css("position"))){c(this).css({left:q.left-d.left-l.left,width:n,height:j})}}});c.ui.plugin.add("resizable","ghost",{start:function(f,g){var d=c(this).data("resizable"),h=d.options,e=d.size;d.ghost=d.originalElement.clone();d.ghost.css({opacity:0.25,display:"block",position:"relative",height:e.height,width:e.width,margin:0,left:0,top:0}).addClass("ui-resizable-ghost").addClass(typeof h.ghost=="string"?h.ghost:"");d.ghost.appendTo(d.helper)},resize:function(e,f){var d=c(this).data("resizable"),g=d.options;if(d.ghost){d.ghost.css({position:"relative",height:d.size.height,width:d.size.width})}},stop:function(e,f){var d=c(this).data("resizable"),g=d.options;if(d.ghost&&d.helper){d.helper.get(0).removeChild(d.ghost.get(0))}}});c.ui.plugin.add("resizable","grid",{resize:function(d,l){var n=c(this).data("resizable"),g=n.options,j=n.size,h=n.originalSize,i=n.originalPosition,m=n.axis,k=g._aspectRatio||d.shiftKey;g.grid=typeof g.grid=="number"?[g.grid,g.grid]:g.grid;var f=Math.round((j.width-h.width)/(g.grid[0]||1))*(g.grid[0]||1),e=Math.round((j.height-h.height)/(g.grid[1]||1))*(g.grid[1]||1);if(/^(se|s|e)$/.test(m)){n.size.width=h.width+f;n.size.height=h.height+e}else{if(/^(ne)$/.test(m)){n.size.width=h.width+f;n.size.height=h.height+e;n.position.top=i.top-e}else{if(/^(sw)$/.test(m)){n.size.width=h.width+f;n.size.height=h.height+e;n.position.left=i.left-f}else{n.size.width=h.width+f;n.size.height=h.height+e;n.position.top=i.top-e;n.position.left=i.left-f}}}}});var b=function(d){return parseInt(d,10)||0};var a=function(d){return !isNaN(parseInt(d,10))}})(jQuery);;/*
+ * jQuery UI Selectable 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Selectables
+ *
+ * Depends:
+ *	jquery.ui.core.js
+ *	jquery.ui.mouse.js
+ *	jquery.ui.widget.js
+ */(function(a){a.widget("ui.selectable",a.ui.mouse,{options:{appendTo:"body",autoRefresh:true,distance:0,filter:"*",tolerance:"touch"},_create:function(){var b=this;this.element.addClass("ui-selectable");this.dragged=false;var c;this.refresh=function(){c=a(b.options.filter,b.element[0]);c.each(function(){var d=a(this);var e=d.offset();a.data(this,"selectable-item",{element:this,$element:d,left:e.left,top:e.top,right:e.left+d.outerWidth(),bottom:e.top+d.outerHeight(),startselected:false,selected:d.hasClass("ui-selected"),selecting:d.hasClass("ui-selecting"),unselecting:d.hasClass("ui-unselecting")})})};this.refresh();this.selectees=c.addClass("ui-selectee");this._mouseInit();this.helper=a(document.createElement("div")).css({border:"1px dotted black"}).addClass("ui-selectable-helper")},destroy:function(){this.selectees.removeClass("ui-selectee").removeData("selectable-item");this.element.removeClass("ui-selectable ui-selectable-disabled").removeData("selectable").unbind(".selectable");this._mouseDestroy();return this},_mouseStart:function(d){var b=this;this.opos=[d.pageX,d.pageY];if(this.options.disabled){return}var c=this.options;this.selectees=a(c.filter,this.element[0]);this._trigger("start",d);a(c.appendTo).append(this.helper);this.helper.css({"z-index":100,position:"absolute",left:d.clientX,top:d.clientY,width:0,height:0});if(c.autoRefresh){this.refresh()}this.selectees.filter(".ui-selected").each(function(){var e=a.data(this,"selectable-item");e.startselected=true;if(!d.metaKey){e.$element.removeClass("ui-selected");e.selected=false;e.$element.addClass("ui-unselecting");e.unselecting=true;b._trigger("unselecting",d,{unselecting:e.element})}});a(d.target).parents().andSelf().each(function(){var e=a.data(this,"selectable-item");if(e){e.$element.removeClass("ui-unselecting").addClass("ui-selecting");e.unselecting=false;e.selecting=true;e.selected=true;b._trigger("selecting",d,{selecting:e.element});return false}})},_mouseDrag:function(i){var c=this;this.dragged=true;if(this.options.disabled){return}var e=this.options;var d=this.opos[0],h=this.opos[1],b=i.pageX,g=i.pageY;if(d>b){var f=b;b=d;d=f}if(h>g){var f=g;g=h;h=f}this.helper.css({left:d,top:h,width:b-d,height:g-h});this.selectees.each(function(){var j=a.data(this,"selectable-item");if(!j||j.element==c.element[0]){return}var k=false;if(e.tolerance=="touch"){k=(!(j.left>b||j.right<d||j.top>g||j.bottom<h))}else{if(e.tolerance=="fit"){k=(j.left>d&&j.right<b&&j.top>h&&j.bottom<g)}}if(k){if(j.selected){j.$element.removeClass("ui-selected");j.selected=false}if(j.unselecting){j.$element.removeClass("ui-unselecting");j.unselecting=false}if(!j.selecting){j.$element.addClass("ui-selecting");j.selecting=true;c._trigger("selecting",i,{selecting:j.element})}}else{if(j.selecting){if(i.metaKey&&j.startselected){j.$element.removeClass("ui-selecting");j.selecting=false;j.$element.addClass("ui-selected");j.selected=true}else{j.$element.removeClass("ui-selecting");j.selecting=false;if(j.startselected){j.$element.addClass("ui-unselecting");j.unselecting=true}c._trigger("unselecting",i,{unselecting:j.element})}}if(j.selected){if(!i.metaKey&&!j.startselected){j.$element.removeClass("ui-selected");j.selected=false;j.$element.addClass("ui-unselecting");j.unselecting=true;c._trigger("unselecting",i,{unselecting:j.element})}}}});return false},_mouseStop:function(d){var b=this;this.dragged=false;var c=this.options;a(".ui-unselecting",this.element[0]).each(function(){var e=a.data(this,"selectable-item");e.$element.removeClass("ui-unselecting");e.unselecting=false;e.startselected=false;b._trigger("unselected",d,{unselected:e.element})});a(".ui-selecting",this.element[0]).each(function(){var e=a.data(this,"selectable-item");e.$element.removeClass("ui-selecting").addClass("ui-selected");e.selecting=false;e.selected=true;e.startselected=true;b._trigger("selected",d,{selected:e.element})});this._trigger("stop",d);this.helper.remove();return false}});a.extend(a.ui.selectable,{version:"1.8"})})(jQuery);;/*
+ * jQuery UI Sortable 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Sortables
+ *
+ * Depends:
+ *	jquery.ui.core.js
+ *	jquery.ui.mouse.js
+ *	jquery.ui.widget.js
+ */(function(a){a.widget("ui.sortable",a.ui.mouse,{widgetEventPrefix:"sort",options:{appendTo:"parent",axis:false,connectWith:false,containment:false,cursor:"auto",cursorAt:false,dropOnEmpty:true,forcePlaceholderSize:false,forceHelperSize:false,grid:false,handle:false,helper:"original",items:"> *",opacity:false,placeholder:false,revert:false,scroll:true,scrollSensitivity:20,scrollSpeed:20,scope:"default",tolerance:"intersect",zIndex:1000},_create:function(){var b=this.options;this.containerCache={};this.element.addClass("ui-sortable");this.refresh();this.floating=this.items.length?(/left|right/).test(this.items[0].item.css("float")):false;this.offset=this.element.offset();this._mouseInit()},destroy:function(){this.element.removeClass("ui-sortable ui-sortable-disabled").removeData("sortable").unbind(".sortable");this._mouseDestroy();for(var b=this.items.length-1;b>=0;b--){this.items[b].item.removeData("sortable-item")}return this},_mouseCapture:function(e,f){if(this.reverting){return false}if(this.options.disabled||this.options.type=="static"){return false}this._refreshItems(e);var d=null,c=this,b=a(e.target).parents().each(function(){if(a.data(this,"sortable-item")==c){d=a(this);return false}});if(a.data(e.target,"sortable-item")==c){d=a(e.target)}if(!d){return false}if(this.options.handle&&!f){var g=false;a(this.options.handle,d).find("*").andSelf().each(function(){if(this==e.target){g=true}});if(!g){return false}}this.currentItem=d;this._removeCurrentsFromItems();return true},_mouseStart:function(e,f,b){var g=this.options,c=this;this.currentContainer=this;this.refreshPositions();this.helper=this._createHelper(e);this._cacheHelperProportions();this._cacheMargins();this.scrollParent=this.helper.scrollParent();this.offset=this.currentItem.offset();this.offset={top:this.offset.top-this.margins.top,left:this.offset.left-this.margins.left};this.helper.css("position","absolute");this.cssPosition=this.helper.css("position");a.extend(this.offset,{click:{left:e.pageX-this.offset.left,top:e.pageY-this.offset.top},parent:this._getParentOffset(),relative:this._getRelativeOffset()});this.originalPosition=this._generatePosition(e);this.originalPageX=e.pageX;this.originalPageY=e.pageY;(g.cursorAt&&this._adjustOffsetFromHelper(g.cursorAt));this.domPosition={prev:this.currentItem.prev()[0],parent:this.currentItem.parent()[0]};if(this.helper[0]!=this.currentItem[0]){this.currentItem.hide()}this._createPlaceholder();if(g.containment){this._setContainment()}if(g.cursor){if(a("body").css("cursor")){this._storedCursor=a("body").css("cursor")}a("body").css("cursor",g.cursor)}if(g.opacity){if(this.helper.css("opacity")){this._storedOpacity=this.helper.css("opacity")}this.helper.css("opacity",g.opacity)}if(g.zIndex){if(this.helper.css("zIndex")){this._storedZIndex=this.helper.css("zIndex")}this.helper.css("zIndex",g.zIndex)}if(this.scrollParent[0]!=document&&this.scrollParent[0].tagName!="HTML"){this.overflowOffset=this.scrollParent.offset()}this._trigger("start",e,this._uiHash());if(!this._preserveHelperProportions){this._cacheHelperProportions()}if(!b){for(var d=this.containers.length-1;d>=0;d--){this.containers[d]._trigger("activate",e,c._uiHash(this))}}if(a.ui.ddmanager){a.ui.ddmanager.current=this}if(a.ui.ddmanager&&!g.dropBehaviour){a.ui.ddmanager.prepareOffsets(this,e)}this.dragging=true;this.helper.addClass("ui-sortable-helper");this._mouseDrag(e);return true},_mouseDrag:function(f){this.position=this._generatePosition(f);this.positionAbs=this._convertPositionTo("absolute");if(!this.lastPositionAbs){this.lastPositionAbs=this.positionAbs}if(this.options.scroll){var g=this.options,b=false;if(this.scrollParent[0]!=document&&this.scrollParent[0].tagName!="HTML"){if((this.overflowOffset.top+this.scrollParent[0].offsetHeight)-f.pageY<g.scrollSensitivity){this.scrollParent[0].scrollTop=b=this.scrollParent[0].scrollTop+g.scrollSpeed}else{if(f.pageY-this.overflowOffset.top<g.scrollSensitivity){this.scrollParent[0].scrollTop=b=this.scrollParent[0].scrollTop-g.scrollSpeed}}if((this.overflowOffset.left+this.scrollParent[0].offsetWidth)-f.pageX<g.scrollSensitivity){this.scrollParent[0].scrollLeft=b=this.scrollParent[0].scrollLeft+g.scrollSpeed}else{if(f.pageX-this.overflowOffset.left<g.scrollSensitivity){this.scrollParent[0].scrollLeft=b=this.scrollParent[0].scrollLeft-g.scrollSpeed}}}else{if(f.pageY-a(document).scrollTop()<g.scrollSensitivity){b=a(document).scrollTop(a(document).scrollTop()-g.scrollSpeed)}else{if(a(window).height()-(f.pageY-a(document).scrollTop())<g.scrollSensitivity){b=a(document).scrollTop(a(document).scrollTop()+g.scrollSpeed)}}if(f.pageX-a(document).scrollLeft()<g.scrollSensitivity){b=a(document).scrollLeft(a(document).scrollLeft()-g.scrollSpeed)}else{if(a(window).width()-(f.pageX-a(document).scrollLeft())<g.scrollSensitivity){b=a(document).scrollLeft(a(document).scrollLeft()+g.scrollSpeed)}}}if(b!==false&&a.ui.ddmanager&&!g.dropBehaviour){a.ui.ddmanager.prepareOffsets(this,f)}}this.positionAbs=this._convertPositionTo("absolute");if(!this.options.axis||this.options.axis!="y"){this.helper[0].style.left=this.position.left+"px"}if(!this.options.axis||this.options.axis!="x"){this.helper[0].style.top=this.position.top+"px"}for(var d=this.items.length-1;d>=0;d--){var e=this.items[d],c=e.item[0],h=this._intersectsWithPointer(e);if(!h){continue}if(c!=this.currentItem[0]&&this.placeholder[h==1?"next":"prev"]()[0]!=c&&!a.ui.contains(this.placeholder[0],c)&&(this.options.type=="semi-dynamic"?!a.ui.contains(this.element[0],c):true)){this.direction=h==1?"down":"up";if(this.options.tolerance=="pointer"||this._intersectsWithSides(e)){this._rearrange(f,e)}else{break}this._trigger("change",f,this._uiHash());break}}this._contactContainers(f);if(a.ui.ddmanager){a.ui.ddmanager.drag(this,f)}this._trigger("sort",f,this._uiHash());this.lastPositionAbs=this.positionAbs;return false},_mouseStop:function(c,d){if(!c){return}if(a.ui.ddmanager&&!this.options.dropBehaviour){a.ui.ddmanager.drop(this,c)}if(this.options.revert){var b=this;var e=b.placeholder.offset();b.reverting=true;a(this.helper).animate({left:e.left-this.offset.parent.left-b.margins.left+(this.offsetParent[0]==document.body?0:this.offsetParent[0].scrollLeft),top:e.top-this.offset.parent.top-b.margins.top+(this.offsetParent[0]==document.body?0:this.offsetParent[0].scrollTop)},parseInt(this.options.revert,10)||500,function(){b._clear(c)})}else{this._clear(c,d)}return false},cancel:function(){var b=this;if(this.dragging){this._mouseUp();if(this.options.helper=="original"){this.currentItem.css(this._storedCSS).removeClass("ui-sortable-helper")}else{this.currentItem.show()}for(var c=this.containers.length-1;c>=0;c--){this.containers[c]._trigger("deactivate",null,b._uiHash(this));if(this.containers[c].containerCache.over){this.containers[c]._trigger("out",null,b._uiHash(this));this.containers[c].containerCache.over=0}}}if(this.placeholder[0].parentNode){this.placeholder[0].parentNode.removeChild(this.placeholder[0])}if(this.options.helper!="original"&&this.helper&&this.helper[0].parentNode){this.helper.remove()}a.extend(this,{helper:null,dragging:false,reverting:false,_noFinalSort:null});if(this.domPosition.prev){a(this.domPosition.prev).after(this.currentItem)}else{a(this.domPosition.parent).prepend(this.currentItem)}return this},serialize:function(d){var b=this._getItemsAsjQuery(d&&d.connected);var c=[];d=d||{};a(b).each(function(){var e=(a(d.item||this).attr(d.attribute||"id")||"").match(d.expression||(/(.+)[-=_](.+)/));if(e){c.push((d.key||e[1]+"[]")+"="+(d.key&&d.expression?e[1]:e[2]))}});return c.join("&")},toArray:function(d){var b=this._getItemsAsjQuery(d&&d.connected);var c=[];d=d||{};b.each(function(){c.push(a(d.item||this).attr(d.attribute||"id")||"")});return c},_intersectsWith:function(m){var e=this.positionAbs.left,d=e+this.helperProportions.width,k=this.positionAbs.top,j=k+this.helperProportions.height;var f=m.left,c=f+m.width,n=m.top,i=n+m.height;var o=this.offset.click.top,h=this.offset.click.left;var g=(k+o)>n&&(k+o)<i&&(e+h)>f&&(e+h)<c;if(this.options.tolerance=="pointer"||this.options.forcePointerForContainers||(this.options.tolerance!="pointer"&&this.helperProportions[this.floating?"width":"height"]>m[this.floating?"width":"height"])){return g}else{return(f<e+(this.helperProportions.width/2)&&d-(this.helperProportions.width/2)<c&&n<k+(this.helperProportions.height/2)&&j-(this.helperProportions.height/2)<i)}},_intersectsWithPointer:function(d){var e=a.ui.isOverAxis(this.positionAbs.top+this.offset.click.top,d.top,d.height),c=a.ui.isOverAxis(this.positionAbs.left+this.offset.click.left,d.left,d.width),g=e&&c,b=this._getDragVerticalDirection(),f=this._getDragHorizontalDirection();if(!g){return false}return this.floating?(((f&&f=="right")||b=="down")?2:1):(b&&(b=="down"?2:1))},_intersectsWithSides:function(e){var c=a.ui.isOverAxis(this.positionAbs.top+this.offset.click.top,e.top+(e.height/2),e.height),d=a.ui.isOverAxis(this.positionAbs.left+this.offset.click.left,e.left+(e.width/2),e.width),b=this._getDragVerticalDirection(),f=this._getDragHorizontalDirection();if(this.floating&&f){return((f=="right"&&d)||(f=="left"&&!d))}else{return b&&((b=="down"&&c)||(b=="up"&&!c))}},_getDragVerticalDirection:function(){var b=this.positionAbs.top-this.lastPositionAbs.top;return b!=0&&(b>0?"down":"up")},_getDragHorizontalDirection:function(){var b=this.positionAbs.left-this.lastPositionAbs.left;return b!=0&&(b>0?"right":"left")},refresh:function(b){this._refreshItems(b);this.refreshPositions();return this},_connectWith:function(){var b=this.options;return b.connectWith.constructor==String?[b.connectWith]:b.connectWith},_getItemsAsjQuery:function(b){var l=this;var g=[];var e=[];var h=this._connectWith();if(h&&b){for(var d=h.length-1;d>=0;d--){var k=a(h[d]);for(var c=k.length-1;c>=0;c--){var f=a.data(k[c],"sortable");if(f&&f!=this&&!f.options.disabled){e.push([a.isFunction(f.options.items)?f.options.items.call(f.element):a(f.options.items,f.element).not(".ui-sortable-helper").not(".ui-sortable-placeholder"),f])}}}}e.push([a.isFunction(this.options.items)?this.options.items.call(this.element,null,{options:this.options,item:this.currentItem}):a(this.options.items,this.element).not(".ui-sortable-helper").not(".ui-sortable-placeholder"),this]);for(var d=e.length-1;d>=0;d--){e[d][0].each(function(){g.push(this)})}return a(g)},_removeCurrentsFromItems:function(){var d=this.currentItem.find(":data(sortable-item)");for(var c=0;c<this.items.length;c++){for(var b=0;b<d.length;b++){if(d[b]==this.items[c].item[0]){this.items.splice(c,1)}}}},_refreshItems:function(b){this.items=[];this.containers=[this];var h=this.items;var p=this;var f=[[a.isFunction(this.options.items)?this.options.items.call(this.element[0],b,{item:this.currentItem}):a(this.options.items,this.element),this]];var l=this._connectWith();if(l){for(var e=l.length-1;e>=0;e--){var m=a(l[e]);for(var d=m.length-1;d>=0;d--){var g=a.data(m[d],"sortable");if(g&&g!=this&&!g.options.disabled){f.push([a.isFunction(g.options.items)?g.options.items.call(g.element[0],b,{item:this.currentItem}):a(g.options.items,g.element),g]);this.containers.push(g)}}}}for(var e=f.length-1;e>=0;e--){var k=f[e][1];var c=f[e][0];for(var d=0,n=c.length;d<n;d++){var o=a(c[d]);o.data("sortable-item",k);h.push({item:o,instance:k,width:0,height:0,left:0,top:0})}}},refreshPositions:function(b){if(this.offsetParent&&this.helper){this.offset.parent=this._getParentOffset()}for(var d=this.items.length-1;d>=0;d--){var e=this.items[d];var c=this.options.toleranceElement?a(this.options.toleranceElement,e.item):e.item;if(!b){e.width=c.outerWidth();e.height=c.outerHeight()}var f=c.offset();e.left=f.left;e.top=f.top}if(this.options.custom&&this.options.custom.refreshContainers){this.options.custom.refreshContainers.call(this)}else{for(var d=this.containers.length-1;d>=0;d--){var f=this.containers[d].element.offset();this.containers[d].containerCache.left=f.left;this.containers[d].containerCache.top=f.top;this.containers[d].containerCache.width=this.containers[d].element.outerWidth();this.containers[d].containerCache.height=this.containers[d].element.outerHeight()}}return this},_createPlaceholder:function(d){var b=d||this,e=b.options;if(!e.placeholder||e.placeholder.constructor==String){var c=e.placeholder;e.placeholder={element:function(){var f=a(document.createElement(b.currentItem[0].nodeName)).addClass(c||b.currentItem[0].className+" ui-sortable-placeholder").removeClass("ui-sortable-helper")[0];if(!c){f.style.visibility="hidden"}return f},update:function(f,g){if(c&&!e.forcePlaceholderSize){return}if(!g.height()){g.height(b.currentItem.innerHeight()-parseInt(b.currentItem.css("paddingTop")||0,10)-parseInt(b.currentItem.css("paddingBottom")||0,10))}if(!g.width()){g.width(b.currentItem.innerWidth()-parseInt(b.currentItem.css("paddingLeft")||0,10)-parseInt(b.currentItem.css("paddingRight")||0,10))}}}}b.placeholder=a(e.placeholder.element.call(b.element,b.currentItem));b.currentItem.after(b.placeholder);e.placeholder.update(b,b.placeholder)},_contactContainers:function(b){var d=null,k=null;for(var f=this.containers.length-1;f>=0;f--){if(a.ui.contains(this.currentItem[0],this.containers[f].element[0])){continue}if(this._intersectsWith(this.containers[f].containerCache)){if(d&&a.ui.contains(this.containers[f].element[0],d.element[0])){continue}d=this.containers[f];k=f}else{if(this.containers[f].containerCache.over){this.containers[f]._trigger("out",b,this._uiHash(this));this.containers[f].containerCache.over=0}}}if(!d){return}if(this.containers.length===1){this.containers[k]._trigger("over",b,this._uiHash(this));this.containers[k].containerCache.over=1}else{if(this.currentContainer!=this.containers[k]){var h=10000;var g=null;var c=this.positionAbs[this.containers[k].floating?"left":"top"];for(var e=this.items.length-1;e>=0;e--){if(!a.ui.contains(this.containers[k].element[0],this.items[e].item[0])){continue}var l=this.items[e][this.containers[k].floating?"left":"top"];if(Math.abs(l-c)<h){h=Math.abs(l-c);g=this.items[e]}}if(!g&&!this.options.dropOnEmpty){return}this.currentContainer=this.containers[k];g?this._rearrange(b,g,null,true):this._rearrange(b,null,this.containers[k].element,true);this._trigger("change",b,this._uiHash());this.containers[k]._trigger("change",b,this._uiHash(this));this.options.placeholder.update(this.currentContainer,this.placeholder);this.containers[k]._trigger("over",b,this._uiHash(this));this.containers[k].containerCache.over=1}}},_createHelper:function(c){var d=this.options;var b=a.isFunction(d.helper)?a(d.helper.apply(this.element[0],[c,this.currentItem])):(d.helper=="clone"?this.currentItem.clone():this.currentItem);if(!b.parents("body").length){a(d.appendTo!="parent"?d.appendTo:this.currentItem[0].parentNode)[0].appendChild(b[0])}if(b[0]==this.currentItem[0]){this._storedCSS={width:this.currentItem[0].style.width,height:this.currentItem[0].style.height,position:this.currentItem.css("position"),top:this.currentItem.css("top"),left:this.currentItem.css("left")}}if(b[0].style.width==""||d.forceHelperSize){b.width(this.currentItem.width())}if(b[0].style.height==""||d.forceHelperSize){b.height(this.currentItem.height())}return b},_adjustOffsetFromHelper:function(b){if(typeof b=="string"){b=b.split(" ")}if(a.isArray(b)){b={left:+b[0],top:+b[1]||0}}if("left" in b){this.offset.click.left=b.left+this.margins.left}if("right" in b){this.offset.click.left=this.helperProportions.width-b.right+this.margins.left}if("top" in b){this.offset.click.top=b.top+this.margins.top}if("bottom" in b){this.offset.click.top=this.helperProportions.height-b.bottom+this.margins.top}},_getParentOffset:function(){this.offsetParent=this.helper.offsetParent();var b=this.offsetParent.offset();if(this.cssPosition=="absolute"&&this.scrollParent[0]!=document&&a.ui.contains(this.scrollParent[0],this.offsetParent[0])){b.left+=this.scrollParent.scrollLeft();b.top+=this.scrollParent.scrollTop()}if((this.offsetParent[0]==document.body)||(this.offsetParent[0].tagName&&this.offsetParent[0].tagName.toLowerCase()=="html"&&a.browser.msie)){b={top:0,left:0}}return{top:b.top+(parseInt(this.offsetParent.css("borderTopWidth"),10)||0),left:b.left+(parseInt(this.offsetParent.css("borderLeftWidth"),10)||0)}},_getRelativeOffset:function(){if(this.cssPosition=="relative"){var b=this.currentItem.position();return{top:b.top-(parseInt(this.helper.css("top"),10)||0)+this.scrollParent.scrollTop(),left:b.left-(parseInt(this.helper.css("left"),10)||0)+this.scrollParent.scrollLeft()}}else{return{top:0,left:0}}},_cacheMargins:function(){this.margins={left:(parseInt(this.currentItem.css("marginLeft"),10)||0),top:(parseInt(this.currentItem.css("marginTop"),10)||0)}},_cacheHelperProportions:function(){this.helperProportions={width:this.helper.outerWidth(),height:this.helper.outerHeight()}},_setContainment:function(){var e=this.options;if(e.containment=="parent"){e.containment=this.helper[0].parentNode}if(e.containment=="document"||e.containment=="window"){this.containment=[0-this.offset.relative.left-this.offset.parent.left,0-this.offset.relative.top-this.offset.parent.top,a(e.containment=="document"?document:window).width()-this.helperProportions.width-this.margins.left,(a(e.containment=="document"?document:window).height()||document.body.parentNode.scrollHeight)-this.helperProportions.height-this.margins.top]}if(!(/^(document|window|parent)$/).test(e.containment)){var c=a(e.containment)[0];var d=a(e.containment).offset();var b=(a(c).css("overflow")!="hidden");this.containment=[d.left+(parseInt(a(c).css("borderLeftWidth"),10)||0)+(parseInt(a(c).css("paddingLeft"),10)||0)-this.margins.left,d.top+(parseInt(a(c).css("borderTopWidth"),10)||0)+(parseInt(a(c).css("paddingTop"),10)||0)-this.margins.top,d.left+(b?Math.max(c.scrollWidth,c.offsetWidth):c.offsetWidth)-(parseInt(a(c).css("borderLeftWidth"),10)||0)-(parseInt(a(c).css("paddingRight"),10)||0)-this.helperProportions.width-this.margins.left,d.top+(b?Math.max(c.scrollHeight,c.offsetHeight):c.offsetHeight)-(parseInt(a(c).css("borderTopWidth"),10)||0)-(parseInt(a(c).css("paddingBottom"),10)||0)-this.helperProportions.height-this.margins.top]}},_convertPositionTo:function(f,h){if(!h){h=this.position}var c=f=="absolute"?1:-1;var e=this.options,b=this.cssPosition=="absolute"&&!(this.scrollParent[0]!=document&&a.ui.contains(this.scrollParent[0],this.offsetParent[0]))?this.offsetParent:this.scrollParent,g=(/(html|body)/i).test(b[0].tagName);return{top:(h.top+this.offset.relative.top*c+this.offset.parent.top*c-(a.browser.safari&&this.cssPosition=="fixed"?0:(this.cssPosition=="fixed"?-this.scrollParent.scrollTop():(g?0:b.scrollTop()))*c)),left:(h.left+this.offset.relative.left*c+this.offset.parent.left*c-(a.browser.safari&&this.cssPosition=="fixed"?0:(this.cssPosition=="fixed"?-this.scrollParent.scrollLeft():g?0:b.scrollLeft())*c))}},_generatePosition:function(e){var h=this.options,b=this.cssPosition=="absolute"&&!(this.scrollParent[0]!=document&&a.ui.contains(this.scrollParent[0],this.offsetParent[0]))?this.offsetParent:this.scrollParent,i=(/(html|body)/i).test(b[0].tagName);if(this.cssPosition=="relative"&&!(this.scrollParent[0]!=document&&this.scrollParent[0]!=this.offsetParent[0])){this.offset.relative=this._getRelativeOffset()}var d=e.pageX;var c=e.pageY;if(this.originalPosition){if(this.containment){if(e.pageX-this.offset.click.left<this.containment[0]){d=this.containment[0]+this.offset.click.left}if(e.pageY-this.offset.click.top<this.containment[1]){c=this.containment[1]+this.offset.click.top}if(e.pageX-this.offset.click.left>this.containment[2]){d=this.containment[2]+this.offset.click.left}if(e.pageY-this.offset.click.top>this.containment[3]){c=this.containment[3]+this.offset.click.top}}if(h.grid){var g=this.originalPageY+Math.round((c-this.originalPageY)/h.grid[1])*h.grid[1];c=this.containment?(!(g-this.offset.click.top<this.containment[1]||g-this.offset.click.top>this.containment[3])?g:(!(g-this.offset.click.top<this.containment[1])?g-h.grid[1]:g+h.grid[1])):g;var f=this.originalPageX+Math.round((d-this.originalPageX)/h.grid[0])*h.grid[0];d=this.containment?(!(f-this.offset.click.left<this.containment[0]||f-this.offset.click.left>this.containment[2])?f:(!(f-this.offset.click.left<this.containment[0])?f-h.grid[0]:f+h.grid[0])):f}}return{top:(c-this.offset.click.top-this.offset.relative.top-this.offset.parent.top+(a.browser.safari&&this.cssPosition=="fixed"?0:(this.cssPosition=="fixed"?-this.scrollParent.scrollTop():(i?0:b.scrollTop())))),left:(d-this.offset.click.left-this.offset.relative.left-this.offset.parent.left+(a.browser.safari&&this.cssPosition=="fixed"?0:(this.cssPosition=="fixed"?-this.scrollParent.scrollLeft():i?0:b.scrollLeft())))}},_rearrange:function(g,f,c,e){c?c[0].appendChild(this.placeholder[0]):f.item[0].parentNode.insertBefore(this.placeholder[0],(this.direction=="down"?f.item[0]:f.item[0].nextSibling));this.counter=this.counter?++this.counter:1;var d=this,b=this.counter;window.setTimeout(function(){if(b==d.counter){d.refreshPositions(!e)}},0)},_clear:function(d,e){this.reverting=false;var f=[],b=this;if(!this._noFinalSort&&this.currentItem[0].parentNode){this.placeholder.before(this.currentItem)}this._noFinalSort=null;if(this.helper[0]==this.currentItem[0]){for(var c in this._storedCSS){if(this._storedCSS[c]=="auto"||this._storedCSS[c]=="static"){this._storedCSS[c]=""}}this.currentItem.css(this._storedCSS).removeClass("ui-sortable-helper")}else{this.currentItem.show()}if(this.fromOutside&&!e){f.push(function(g){this._trigger("receive",g,this._uiHash(this.fromOutside))})}if((this.fromOutside||this.domPosition.prev!=this.currentItem.prev().not(".ui-sortable-helper")[0]||this.domPosition.parent!=this.currentItem.parent()[0])&&!e){f.push(function(g){this._trigger("update",g,this._uiHash())})}if(!a.ui.contains(this.element[0],this.currentItem[0])){if(!e){f.push(function(g){this._trigger("remove",g,this._uiHash())})}for(var c=this.containers.length-1;c>=0;c--){if(a.ui.contains(this.containers[c].element[0],this.currentItem[0])&&!e){f.push((function(g){return function(h){g._trigger("receive",h,this._uiHash(this))}}).call(this,this.containers[c]));f.push((function(g){return function(h){g._trigger("update",h,this._uiHash(this))}}).call(this,this.containers[c]))}}}for(var c=this.containers.length-1;c>=0;c--){if(!e){f.push((function(g){return function(h){g._trigger("deactivate",h,this._uiHash(this))}}).call(this,this.containers[c]))}if(this.containers[c].containerCache.over){f.push((function(g){return function(h){g._trigger("out",h,this._uiHash(this))}}).call(this,this.containers[c]));this.containers[c].containerCache.over=0}}if(this._storedCursor){a("body").css("cursor",this._storedCursor)}if(this._storedOpacity){this.helper.css("opacity",this._storedOpacity)}if(this._storedZIndex){this.helper.css("zIndex",this._storedZIndex=="auto"?"":this._storedZIndex)}this.dragging=false;if(this.cancelHelperRemoval){if(!e){this._trigger("beforeStop",d,this._uiHash());for(var c=0;c<f.length;c++){f[c].call(this,d)}this._trigger("stop",d,this._uiHash())}return false}if(!e){this._trigger("beforeStop",d,this._uiHash())}this.placeholder[0].parentNode.removeChild(this.placeholder[0]);if(this.helper[0]!=this.currentItem[0]){this.helper.remove()}this.helper=null;if(!e){for(var c=0;c<f.length;c++){f[c].call(this,d)}this._trigger("stop",d,this._uiHash())}this.fromOutside=false;return true},_trigger:function(){if(a.Widget.prototype._trigger.apply(this,arguments)===false){this.cancel()}},_uiHash:function(c){var b=c||this;return{helper:b.helper,placeholder:b.placeholder||a([]),position:b.position,originalPosition:b.originalPosition,offset:b.positionAbs,item:b.currentItem,sender:c?c.element:null}}});a.extend(a.ui.sortable,{version:"1.8"})})(jQuery);;/*
+ * jQuery UI Accordion 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Accordion
+ *
+ * Depends:
+ *	jquery.ui.core.js
+ *	jquery.ui.widget.js
+ */(function(a){a.widget("ui.accordion",{options:{active:0,animated:"slide",autoHeight:true,clearStyle:false,collapsible:false,event:"click",fillSpace:false,header:"> li > :first-child,> :not(li):even",icons:{header:"ui-icon-triangle-1-e",headerSelected:"ui-icon-triangle-1-s"},navigation:false,navigationFilter:function(){return this.href.toLowerCase()==location.href.toLowerCase()}},_create:function(){var d=this.options,b=this;this.running=0;this.element.addClass("ui-accordion ui-widget ui-helper-reset");if(this.element[0].nodeName=="UL"){this.element.children("li").addClass("ui-accordion-li-fix")}this.headers=this.element.find(d.header).addClass("ui-accordion-header ui-helper-reset ui-state-default ui-corner-all").bind("mouseenter.accordion",function(){a(this).addClass("ui-state-hover")}).bind("mouseleave.accordion",function(){a(this).removeClass("ui-state-hover")}).bind("focus.accordion",function(){a(this).addClass("ui-state-focus")}).bind("blur.accordion",function(){a(this).removeClass("ui-state-focus")});this.headers.next().addClass("ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom");if(d.navigation){var c=this.element.find("a").filter(d.navigationFilter);if(c.length){var e=c.closest(".ui-accordion-header");if(e.length){this.active=e}else{this.active=c.closest(".ui-accordion-content").prev()}}}this.active=this._findActive(this.active||d.active).toggleClass("ui-state-default").toggleClass("ui-state-active").toggleClass("ui-corner-all").toggleClass("ui-corner-top");this.active.next().addClass("ui-accordion-content-active");this._createIcons();if(a.browser.msie){this.element.find("a").css("zoom","1")}this.resize();this.element.attr("role","tablist");this.headers.attr("role","tab").bind("keydown",function(f){return b._keydown(f)}).next().attr("role","tabpanel");this.headers.not(this.active||"").attr("aria-expanded","false").attr("tabIndex","-1").next().hide();if(!this.active.length){this.headers.eq(0).attr("tabIndex","0")}else{this.active.attr("aria-expanded","true").attr("tabIndex","0")}if(!a.browser.safari){this.headers.find("a").attr("tabIndex","-1")}if(d.event){this.headers.bind((d.event)+".accordion",function(f){b._clickHandler.call(b,f,this);f.preventDefault()})}},_createIcons:function(){var b=this.options;if(b.icons){a("<span/>").addClass("ui-icon "+b.icons.header).prependTo(this.headers);this.active.find(".ui-icon").toggleClass(b.icons.header).toggleClass(b.icons.headerSelected);this.element.addClass("ui-accordion-icons")}},_destroyIcons:function(){this.headers.children(".ui-icon").remove();this.element.removeClass("ui-accordion-icons")},destroy:function(){var c=this.options;this.element.removeClass("ui-accordion ui-widget ui-helper-reset").removeAttr("role").unbind(".accordion").removeData("accordion");this.headers.unbind(".accordion").removeClass("ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ui-state-active ui-corner-top").removeAttr("role").removeAttr("aria-expanded").removeAttr("tabindex");this.headers.find("a").removeAttr("tabindex");this._destroyIcons();var b=this.headers.next().css("display","").removeAttr("role").removeClass("ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content ui-accordion-content-active");if(c.autoHeight||c.fillHeight){b.css("height","")}return this},_setOption:function(b,c){a.Widget.prototype._setOption.apply(this,arguments);if(b=="active"){this.activate(c)}if(b=="icons"){this._destroyIcons();if(c){this._createIcons()}}},_keydown:function(e){var g=this.options,f=a.ui.keyCode;if(g.disabled||e.altKey||e.ctrlKey){return}var d=this.headers.length;var b=this.headers.index(e.target);var c=false;switch(e.keyCode){case f.RIGHT:case f.DOWN:c=this.headers[(b+1)%d];break;case f.LEFT:case f.UP:c=this.headers[(b-1+d)%d];break;case f.SPACE:case f.ENTER:this._clickHandler({target:e.target},e.target);e.preventDefault()}if(c){a(e.target).attr("tabIndex","-1");a(c).attr("tabIndex","0");c.focus();return false}return true},resize:function(){var d=this.options,c;if(d.fillSpace){if(a.browser.msie){var b=this.element.parent().css("overflow");this.element.parent().css("overflow","hidden")}c=this.element.parent().height();if(a.browser.msie){this.element.parent().css("overflow",b)}this.headers.each(function(){c-=a(this).outerHeight(true)});this.headers.next().each(function(){a(this).height(Math.max(0,c-a(this).innerHeight()+a(this).height()))}).css("overflow","auto")}else{if(d.autoHeight){c=0;this.headers.next().each(function(){c=Math.max(c,a(this).height())}).height(c)}}return this},activate:function(b){this.options.active=b;var c=this._findActive(b)[0];this._clickHandler({target:c},c);return this},_findActive:function(b){return b?typeof b=="number"?this.headers.filter(":eq("+b+")"):this.headers.not(this.headers.not(b)):b===false?a([]):this.headers.filter(":eq(0)")},_clickHandler:function(b,f){var d=this.options;if(d.disabled){return}if(!b.target){if(!d.collapsible){return}this.active.removeClass("ui-state-active ui-corner-top").addClass("ui-state-default ui-corner-all").find(".ui-icon").removeClass(d.icons.headerSelected).addClass(d.icons.header);this.active.next().addClass("ui-accordion-content-active");var h=this.active.next(),e={options:d,newHeader:a([]),oldHeader:d.active,newContent:a([]),oldContent:h},c=(this.active=a([]));this._toggle(c,h,e);return}var g=a(b.currentTarget||f);var i=g[0]==this.active[0];d.active=d.collapsible&&i?false:a(".ui-accordion-header",this.element).index(g);if(this.running||(!d.collapsible&&i)){return}this.active.removeClass("ui-state-active ui-corner-top").addClass("ui-state-default ui-corner-all").find(".ui-icon").removeClass(d.icons.headerSelected).addClass(d.icons.header);if(!i){g.removeClass("ui-state-default ui-corner-all").addClass("ui-state-active ui-corner-top").find(".ui-icon").removeClass(d.icons.header).addClass(d.icons.headerSelected);g.next().addClass("ui-accordion-content-active")}var c=g.next(),h=this.active.next(),e={options:d,newHeader:i&&d.collapsible?a([]):g,oldHeader:this.active,newContent:i&&d.collapsible?a([]):c,oldContent:h},j=this.headers.index(this.active[0])>this.headers.index(g[0]);this.active=i?a([]):g;this._toggle(c,h,e,i,j);return},_toggle:function(b,i,g,j,k){var d=this.options,m=this;this.toShow=b;this.toHide=i;this.data=g;var c=function(){if(!m){return}return m._completed.apply(m,arguments)};this._trigger("changestart",null,this.data);this.running=i.size()===0?b.size():i.size();if(d.animated){var f={};if(d.collapsible&&j){f={toShow:a([]),toHide:i,complete:c,down:k,autoHeight:d.autoHeight||d.fillSpace}}else{f={toShow:b,toHide:i,complete:c,down:k,autoHeight:d.autoHeight||d.fillSpace}}if(!d.proxied){d.proxied=d.animated}if(!d.proxiedDuration){d.proxiedDuration=d.duration}d.animated=a.isFunction(d.proxied)?d.proxied(f):d.proxied;d.duration=a.isFunction(d.proxiedDuration)?d.proxiedDuration(f):d.proxiedDuration;var l=a.ui.accordion.animations,e=d.duration,h=d.animated;if(h&&!l[h]&&!a.easing[h]){h="slide"}if(!l[h]){l[h]=function(n){this.slide(n,{easing:h,duration:e||700})}}l[h](f)}else{if(d.collapsible&&j){b.toggle()}else{i.hide();b.show()}c(true)}i.prev().attr("aria-expanded","false").attr("tabIndex","-1").blur();b.prev().attr("aria-expanded","true").attr("tabIndex","0").focus()},_completed:function(b){var c=this.options;this.running=b?0:--this.running;if(this.running){return}if(c.clearStyle){this.toShow.add(this.toHide).css({height:"",overflow:""})}this.toHide.removeClass("ui-accordion-content-active");this._trigger("change",null,this.data)}});a.extend(a.ui.accordion,{version:"1.8",animations:{slide:function(j,h){j=a.extend({easing:"swing",duration:300},j,h);if(!j.toHide.size()){j.toShow.animate({height:"show"},j);return}if(!j.toShow.size()){j.toHide.animate({height:"hide"},j);return}var c=j.toShow.css("overflow"),g=0,d={},f={},e=["height","paddingTop","paddingBottom"],b;var i=j.toShow;b=i[0].style.width;i.width(parseInt(i.parent().width(),10)-parseInt(i.css("paddingLeft"),10)-parseInt(i.css("paddingRight"),10)-(parseInt(i.css("borderLeftWidth"),10)||0)-(parseInt(i.css("borderRightWidth"),10)||0));a.each(e,function(k,m){f[m]="hide";var l=(""+a.css(j.toShow[0],m)).match(/^([\d+-.]+)(.*)$/);d[m]={value:l[1],unit:l[2]||"px"}});j.toShow.css({height:0,overflow:"hidden"}).show();j.toHide.filter(":hidden").each(j.complete).end().filter(":visible").animate(f,{step:function(k,l){if(l.prop=="height"){g=(l.end-l.start===0)?0:(l.now-l.start)/(l.end-l.start)}j.toShow[0].style[l.prop]=(g*d[l.prop].value)+d[l.prop].unit},duration:j.duration,easing:j.easing,complete:function(){if(!j.autoHeight){j.toShow.css("height","")}j.toShow.css("width",b);j.toShow.css({overflow:c});j.complete()}})},bounceslide:function(b){this.slide(b,{easing:b.down?"easeOutBounce":"swing",duration:b.down?1000:200})}}})})(jQuery);;/*
+ * jQuery UI Autocomplete 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Autocomplete
+ *
+ * Depends:
+ *	jquery.ui.core.js
+ *	jquery.ui.widget.js
+ *	jquery.ui.position.js
+ */(function(a){a.widget("ui.autocomplete",{options:{minLength:1,delay:300},_create:function(){var b=this,c=this.element[0].ownerDocument;this.element.addClass("ui-autocomplete-input").attr("autocomplete","off").attr({role:"textbox","aria-autocomplete":"list","aria-haspopup":"true"}).bind("keydown.autocomplete",function(d){var e=a.ui.keyCode;switch(d.keyCode){case e.PAGE_UP:b._move("previousPage",d);break;case e.PAGE_DOWN:b._move("nextPage",d);break;case e.UP:b._move("previous",d);d.preventDefault();break;case e.DOWN:b._move("next",d);d.preventDefault();break;case e.ENTER:if(b.menu.active){d.preventDefault()}case e.TAB:if(!b.menu.active){return}b.menu.select();break;case e.ESCAPE:b.element.val(b.term);b.close(d);break;case e.SHIFT:case e.CONTROL:case 18:break;default:clearTimeout(b.searching);b.searching=setTimeout(function(){b.search(null,d)},b.options.delay);break}}).bind("focus.autocomplete",function(){b.previous=b.element.val()}).bind("blur.autocomplete",function(d){clearTimeout(b.searching);b.closing=setTimeout(function(){b.close(d)},150)});this._initSource();this.response=function(){return b._response.apply(b,arguments)};this.menu=a("<ul></ul>").addClass("ui-autocomplete").appendTo("body",c).menu({focus:function(e,f){var d=f.item.data("item.autocomplete");if(false!==b._trigger("focus",null,{item:d})){b.element.val(d.value)}},selected:function(e,f){var d=f.item.data("item.autocomplete");if(false!==b._trigger("select",e,{item:d})){b.element.val(d.value)}b.close(e);b.previous=b.element.val();if(b.element[0]!==c.activeElement){b.element.focus()}},blur:function(d,e){if(b.menu.element.is(":visible")){b.element.val(b.term)}}}).zIndex(this.element.zIndex()+1).css({top:0,left:0}).hide().data("menu");if(a.fn.bgiframe){this.menu.element.bgiframe()}},destroy:function(){this.element.removeClass("ui-autocomplete-input ui-widget ui-widget-content").removeAttr("autocomplete").removeAttr("role").removeAttr("aria-autocomplete").removeAttr("aria-haspopup");this.menu.element.remove();a.Widget.prototype.destroy.call(this)},_setOption:function(b){a.Widget.prototype._setOption.apply(this,arguments);if(b==="source"){this._initSource()}},_initSource:function(){var c,b;if(a.isArray(this.options.source)){c=this.options.source;this.source=function(e,d){var f=new RegExp(a.ui.autocomplete.escapeRegex(e.term),"i");d(a.grep(c,function(g){return f.test(g.label||g.value||g)}))}}else{if(typeof this.options.source==="string"){b=this.options.source;this.source=function(e,d){a.getJSON(b,e,d)}}else{this.source=this.options.source}}},search:function(c,b){c=c!=null?c:this.element.val();if(c.length<this.options.minLength){return this.close(b)}clearTimeout(this.closing);if(this._trigger("search")===false){return}return this._search(c)},_search:function(b){this.term=this.element.addClass("ui-autocomplete-loading").val();this.source({term:b},this.response)},_response:function(b){if(b.length){b=this._normalize(b);this._suggest(b);this._trigger("open")}else{this.close()}this.element.removeClass("ui-autocomplete-loading")},close:function(b){clearTimeout(this.closing);if(this.menu.element.is(":visible")){this._trigger("close",b);this.menu.element.hide();this.menu.deactivate()}if(this.previous!==this.element.val()){this._trigger("change",b)}},_normalize:function(b){if(b.length&&b[0].label&&b[0].value){return b}return a.map(b,function(c){if(typeof c==="string"){return{label:c,value:c}}return a.extend({label:c.label||c.value,value:c.value||c.label},c)})},_suggest:function(b){var c=this.menu.element.empty().zIndex(this.element.zIndex()+1),d,e;this._renderMenu(c,b);this.menu.deactivate();this.menu.refresh();this.menu.element.show().position({my:"left top",at:"left bottom",of:this.element,collision:"none"});d=c.width("").width();e=this.element.width();c.width(Math.max(d,e))},_renderMenu:function(d,c){var b=this;a.each(c,function(e,f){b._renderItem(d,f)})},_renderItem:function(b,c){return a("<li></li>").data("item.autocomplete",c).append("<a>"+c.label+"</a>").appendTo(b)},_move:function(c,b){if(!this.menu.element.is(":visible")){this.search(null,b);return}if(this.menu.first()&&/^previous/.test(c)||this.menu.last()&&/^next/.test(c)){this.element.val(this.term);this.menu.deactivate();return}this.menu[c]()},widget:function(){return this.menu.element}});a.extend(a.ui.autocomplete,{escapeRegex:function(b){return b.replace(/([\^\$\(\)\[\]\{\}\*\.\+\?\|\\])/gi,"\\$1")}})}(jQuery));(function(a){a.widget("ui.menu",{_create:function(){var b=this;this.element.addClass("ui-menu ui-widget ui-widget-content ui-corner-all").attr({role:"listbox","aria-activedescendant":"ui-active-menuitem"}).click(function(c){c.preventDefault();b.select()});this.refresh()},refresh:function(){var c=this;var b=this.element.children("li:not(.ui-menu-item):has(a)").addClass("ui-menu-item").attr("role","menuitem");b.children("a").addClass("ui-corner-all").attr("tabindex",-1).mouseenter(function(){c.activate(a(this).parent())}).mouseleave(function(){c.deactivate()})},activate:function(d){this.deactivate();if(this.hasScroll()){var e=d.offset().top-this.element.offset().top,b=this.element.attr("scrollTop"),c=this.element.height();if(e<0){this.element.attr("scrollTop",b+e)}else{if(e>c){this.element.attr("scrollTop",b+e-c+d.height())}}}this.active=d.eq(0).children("a").addClass("ui-state-hover").attr("id","ui-active-menuitem").end();this._trigger("focus",null,{item:d})},deactivate:function(){if(!this.active){return}this.active.children("a").removeClass("ui-state-hover").removeAttr("id");this._trigger("blur");this.active=null},next:function(){this.move("next","li:first")},previous:function(){this.move("prev","li:last")},first:function(){return this.active&&!this.active.prev().length},last:function(){return this.active&&!this.active.next().length},move:function(d,c){if(!this.active){this.activate(this.element.children(c));return}var b=this.active[d]();if(b.length){this.activate(b)}else{this.activate(this.element.children(c))}},nextPage:function(){if(this.hasScroll()){if(!this.active||this.last()){this.activate(this.element.children(":first"));return}var d=this.active.offset().top,c=this.element.height(),b=this.element.children("li").filter(function(){var e=a(this).offset().top-d-c+a(this).height();return e<10&&e>-10});if(!b.length){b=this.element.children(":last")}this.activate(b)}else{this.activate(this.element.children(!this.active||this.last()?":first":":last"))}},previousPage:function(){if(this.hasScroll()){if(!this.active||this.first()){this.activate(this.element.children(":last"));return}var c=this.active.offset().top,b=this.element.height();result=this.element.children("li").filter(function(){var d=a(this).offset().top-c+b-a(this).height();return d<10&&d>-10});if(!result.length){result=this.element.children(":first")}this.activate(result)}else{this.activate(this.element.children(!this.active||this.first()?":last":":first"))}},hasScroll:function(){return this.element.height()<this.element.attr("scrollHeight")},select:function(){this._trigger("selected",null,{item:this.active})}})}(jQuery));;/*
+ * jQuery UI Button 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Button
+ *
+ * Depends:
+ *	jquery.ui.core.js
+ *	jquery.ui.widget.js
+ */(function(f){var d,c="ui-button ui-widget ui-state-default ui-corner-all",b="ui-state-hover ui-state-active ui-button-icons-only ui-button-icon-only ui-button-text-icons ui-button-text-icon ui-button-text-only",e=function(g){f(":ui-button",g.target.form).each(function(){var h=f(this).data("button");setTimeout(function(){h.refresh()},1)})},a=function(h){var g=h.name,i=h.form,j=f([]);if(g){if(i){j=f(i).find("[name='"+g+"']")}else{j=f("[name='"+g+"']",h.ownerDocument).filter(function(){return !this.form})}}return j};f.widget("ui.button",{options:{text:true,label:null,icons:{primary:null,secondary:null}},_create:function(){this.element.closest("form").unbind("reset.button").bind("reset.button",e);this._determineButtonType();this.hasTitle=!!this.buttonElement.attr("title");var g=this,i=this.options,j=this.type==="checkbox"||this.type==="radio",k="ui-state-hover"+(!j?" ui-state-active":""),h="ui-state-focus";if(i.label===null){i.label=this.buttonElement.html()}if(this.element.is(":disabled")){i.disabled=true}this.buttonElement.addClass(c).attr("role","button").bind("mouseenter.button",function(){if(i.disabled){return}f(this).addClass("ui-state-hover");if(this===d){f(this).addClass("ui-state-active")}}).bind("mouseleave.button",function(){if(i.disabled){return}f(this).removeClass(k)}).bind("focus.button",function(){f(this).addClass(h)}).bind("blur.button",function(){f(this).removeClass(h)});if(j){this.element.bind("change.button",function(){g.refresh()})}if(this.type==="checkbox"){this.buttonElement.bind("click.button",function(){if(i.disabled){return false}f(this).toggleClass("ui-state-active");g.buttonElement.attr("aria-pressed",g.element[0].checked)})}else{if(this.type==="radio"){this.buttonElement.bind("click.button",function(){if(i.disabled){return false}f(this).addClass("ui-state-active");g.buttonElement.attr("aria-pressed",true);var l=g.element[0];a(l).not(l).map(function(){return f(this).button("widget")[0]}).removeClass("ui-state-active").attr("aria-pressed",false)})}else{this.buttonElement.bind("mousedown.button",function(){if(i.disabled){return false}f(this).addClass("ui-state-active");d=this;f(document).one("mouseup",function(){d=null})}).bind("mouseup.button",function(){if(i.disabled){return false}f(this).removeClass("ui-state-active")}).bind("keydown.button",function(l){if(i.disabled){return false}if(l.keyCode==f.ui.keyCode.SPACE||l.keyCode==f.ui.keyCode.ENTER){f(this).addClass("ui-state-active")}}).bind("keyup.button",function(){f(this).removeClass("ui-state-active")});if(this.buttonElement.is("a")){this.buttonElement.keyup(function(l){if(l.keyCode===f.ui.keyCode.SPACE){f(this).click()}})}}}this._setOption("disabled",i.disabled)},_determineButtonType:function(){if(this.element.is(":checkbox")){this.type="checkbox"}else{if(this.element.is(":radio")){this.type="radio"}else{if(this.element.is("input")){this.type="input"}else{this.type="button"}}}if(this.type==="checkbox"||this.type==="radio"){this.buttonElement=this.element.parents().last().find("[for="+this.element.attr("id")+"]");this.element.addClass("ui-helper-hidden-accessible");var g=this.element.is(":checked");if(g){this.buttonElement.addClass("ui-state-active")}this.buttonElement.attr("aria-pressed",g)}else{this.buttonElement=this.element}},widget:function(){return this.buttonElement},destroy:function(){this.element.removeClass("ui-helper-hidden-accessible");this.buttonElement.removeClass(c+" "+b).removeAttr("role").removeAttr("aria-pressed").html(this.buttonElement.find(".ui-button-text").html());if(!this.hasTitle){this.buttonElement.removeAttr("title")}f.Widget.prototype.destroy.call(this)},_setOption:function(g,h){f.Widget.prototype._setOption.apply(this,arguments);if(g==="disabled"){if(h){this.element.attr("disabled",true)}else{this.element.removeAttr("disabled")}}this._resetButton()},refresh:function(){var g=this.element.is(":disabled");if(g!==this.options.disabled){this._setOption("disabled",g)}if(this.type==="radio"){a(this.element[0]).each(function(){if(f(this).is(":checked")){f(this).button("widget").addClass("ui-state-active").attr("aria-pressed",true)}else{f(this).button("widget").removeClass("ui-state-active").attr("aria-pressed",false)}})}else{if(this.type==="checkbox"){if(this.element.is(":checked")){this.buttonElement.addClass("ui-state-active").attr("aria-pressed",true)}else{this.buttonElement.removeClass("ui-state-active").attr("aria-pressed",false)}}}},_resetButton:function(){if(this.type==="input"){if(this.options.label){this.element.val(this.options.label)}return}var j=this.buttonElement,i=f("<span></span>").addClass("ui-button-text").html(this.options.label).appendTo(j.empty()).text(),h=this.options.icons,g=h.primary&&h.secondary;if(h.primary||h.secondary){j.addClass("ui-button-text-icon"+(g?"s":""));if(h.primary){j.prepend("<span class='ui-button-icon-primary ui-icon "+h.primary+"'></span>")}if(h.secondary){j.append("<span class='ui-button-icon-secondary ui-icon "+h.secondary+"'></span>")}if(!this.options.text){j.addClass(g?"ui-button-icons-only":"ui-button-icon-only").removeClass("ui-button-text-icons ui-button-text-icon");if(!this.hasTitle){j.attr("title",i)}}}else{j.addClass("ui-button-text-only")}}});f.widget("ui.buttonset",{_create:function(){this.element.addClass("ui-buttonset");this._init()},_init:function(){this.refresh()},_setOption:function(g,h){if(g==="disabled"){this.buttons.button("option",g,h)}f.Widget.prototype._setOption.apply(this,arguments)},refresh:function(){this.buttons=this.element.find(":button, :submit, :reset, :checkbox, :radio, a, :data(button)").filter(":ui-button").button("refresh").end().not(":ui-button").button().end().map(function(){return f(this).button("widget")[0]}).removeClass("ui-corner-all ui-corner-left ui-corner-right").filter(":first").addClass("ui-corner-left").end().filter(":last").addClass("ui-corner-right").end().end()},destroy:function(){this.element.removeClass("ui-buttonset");this.buttons.map(function(){return f(this).button("widget")[0]}).removeClass("ui-corner-left ui-corner-right").end().button("destroy");f.Widget.prototype.destroy.call(this)}})}(jQuery));;/*
+ * jQuery UI Dialog 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Dialog
+ *
+ * Depends:
+ *	jquery.ui.core.js
+ *	jquery.ui.widget.js
+ *  jquery.ui.button.js
+ *	jquery.ui.draggable.js
+ *	jquery.ui.mouse.js
+ *	jquery.ui.position.js
+ *	jquery.ui.resizable.js
+ */(function(b){var a="ui-dialog ui-widget ui-widget-content ui-corner-all ";b.widget("ui.dialog",{options:{autoOpen:true,buttons:{},closeOnEscape:true,closeText:"close",dialogClass:"",draggable:true,hide:null,height:"auto",maxHeight:false,maxWidth:false,minHeight:150,minWidth:150,modal:false,position:"center",resizable:true,show:null,stack:true,title:"",width:300,zIndex:1000},_create:function(){this.originalTitle=this.element.attr("title");var k=this,l=k.options,i=l.title||k.originalTitle||"&#160;",d=b.ui.dialog.getTitleId(k.element),j=(k.uiDialog=b("<div></div>")).appendTo(document.body).hide().addClass(a+l.dialogClass).css({zIndex:l.zIndex}).attr("tabIndex",-1).css("outline",0).keydown(function(m){if(l.closeOnEscape&&m.keyCode&&m.keyCode===b.ui.keyCode.ESCAPE){k.close(m);m.preventDefault()}}).attr({role:"dialog","aria-labelledby":d}).mousedown(function(m){k.moveToTop(false,m)}),f=k.element.show().removeAttr("title").addClass("ui-dialog-content ui-widget-content").appendTo(j),e=(k.uiDialogTitlebar=b("<div></div>")).addClass("ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix").prependTo(j),h=b('<a href="#"></a>').addClass("ui-dialog-titlebar-close ui-corner-all").attr("role","button").hover(function(){h.addClass("ui-state-hover")},function(){h.removeClass("ui-state-hover")}).focus(function(){h.addClass("ui-state-focus")}).blur(function(){h.removeClass("ui-state-focus")}).click(function(m){k.close(m);return false}).appendTo(e),g=(k.uiDialogTitlebarCloseText=b("<span></span>")).addClass("ui-icon ui-icon-closethick").text(l.closeText).appendTo(h),c=b("<span></span>").addClass("ui-dialog-title").attr("id",d).html(i).prependTo(e);if(b.isFunction(l.beforeclose)&&!b.isFunction(l.beforeClose)){l.beforeClose=l.beforeclose}e.find("*").add(e).disableSelection();if(l.draggable&&b.fn.draggable){k._makeDraggable()}if(l.resizable&&b.fn.resizable){k._makeResizable()}k._createButtons(l.buttons);k._isOpen=false;if(b.fn.bgiframe){j.bgiframe()}},_init:function(){if(this.options.autoOpen){this.open()}},destroy:function(){var c=this;if(c.overlay){c.overlay.destroy()}c.uiDialog.hide();c.element.unbind(".dialog").removeData("dialog").removeClass("ui-dialog-content ui-widget-content").hide().appendTo("body");c.uiDialog.remove();if(c.originalTitle){c.element.attr("title",c.originalTitle)}return c},widget:function(){return this.uiDialog},close:function(e){var c=this,d;if(false===c._trigger("beforeClose",e)){return}if(c.overlay){c.overlay.destroy()}c.uiDialog.unbind("keypress.ui-dialog");c._isOpen=false;if(c.options.hide){c.uiDialog.hide(c.options.hide,function(){c._trigger("close",e)})}else{c.uiDialog.hide();c._trigger("close",e)}b.ui.dialog.overlay.resize();if(c.options.modal){d=0;b(".ui-dialog").each(function(){if(this!==c.uiDialog[0]){d=Math.max(d,b(this).css("z-index"))}});b.ui.dialog.maxZ=d}return c},isOpen:function(){return this._isOpen},moveToTop:function(g,f){var c=this,e=c.options,d;if((e.modal&&!g)||(!e.stack&&!e.modal)){return c._trigger("focus",f)}if(e.zIndex>b.ui.dialog.maxZ){b.ui.dialog.maxZ=e.zIndex}if(c.overlay){b.ui.dialog.maxZ+=1;c.overlay.$el.css("z-index",b.ui.dialog.overlay.maxZ=b.ui.dialog.maxZ)}d={scrollTop:c.element.attr("scrollTop"),scrollLeft:c.element.attr("scrollLeft")};b.ui.dialog.maxZ+=1;c.uiDialog.css("z-index",b.ui.dialog.maxZ);c.element.attr(d);c._trigger("focus",f);return c},open:function(){if(this._isOpen){return}var d=this,e=d.options,c=d.uiDialog;d.overlay=e.modal?new b.ui.dialog.overlay(d):null;if(c.next().length){c.appendTo("body")}d._size();d._position(e.position);c.show(e.show);d.moveToTop(true);if(e.modal){c.bind("keypress.ui-dialog",function(h){if(h.keyCode!==b.ui.keyCode.TAB){return}var g=b(":tabbable",this),i=g.filter(":first"),f=g.filter(":last");if(h.target===f[0]&&!h.shiftKey){i.focus(1);return false}else{if(h.target===i[0]&&h.shiftKey){f.focus(1);return false}}})}b([]).add(c.find(".ui-dialog-content :tabbable:first")).add(c.find(".ui-dialog-buttonpane :tabbable:first")).add(c).filter(":first").focus();d._trigger("open");d._isOpen=true;return d},_createButtons:function(f){var e=this,c=false,d=b("<div></div>").addClass("ui-dialog-buttonpane ui-widget-content ui-helper-clearfix");e.uiDialog.find(".ui-dialog-buttonpane").remove();if(typeof f==="object"&&f!==null){b.each(f,function(){return !(c=true)})}if(c){b.each(f,function(g,i){var h=b('<button type="button"></button>').text(g).click(function(){i.apply(e.element[0],arguments)}).appendTo(d);if(b.fn.button){h.button()}});d.appendTo(e.uiDialog)}},_makeDraggable:function(){var c=this,f=c.options,g=b(document),e;function d(h){return{position:h.position,offset:h.offset}}c.uiDialog.draggable({cancel:".ui-dialog-content, .ui-dialog-titlebar-close",handle:".ui-dialog-titlebar",containment:"document",start:function(h,i){e=f.height==="auto"?"auto":b(this).height();b(this).height(b(this).height()).addClass("ui-dialog-dragging");c._trigger("dragStart",h,d(i))},drag:function(h,i){c._trigger("drag",h,d(i))},stop:function(h,i){f.position=[i.position.left-g.scrollLeft(),i.position.top-g.scrollTop()];b(this).removeClass("ui-dialog-dragging").height(e);c._trigger("dragStop",h,d(i));b.ui.dialog.overlay.resize()}})},_makeResizable:function(h){h=(h===undefined?this.options.resizable:h);var d=this,g=d.options,c=d.uiDialog.css("position"),f=(typeof h==="string"?h:"n,e,s,w,se,sw,ne,nw");function e(i){return{originalPosition:i.originalPosition,originalSize:i.originalSize,position:i.position,size:i.size}}d.uiDialog.resizable({cancel:".ui-dialog-content",containment:"document",alsoResize:d.element,maxWidth:g.maxWidth,maxHeight:g.maxHeight,minWidth:g.minWidth,minHeight:d._minHeight(),handles:f,start:function(i,j){b(this).addClass("ui-dialog-resizing");d._trigger("resizeStart",i,e(j))},resize:function(i,j){d._trigger("resize",i,e(j))},stop:function(i,j){b(this).removeClass("ui-dialog-resizing");g.height=b(this).height();g.width=b(this).width();d._trigger("resizeStop",i,e(j));b.ui.dialog.overlay.resize()}}).css("position",c).find(".ui-resizable-se").addClass("ui-icon ui-icon-grip-diagonal-se")},_minHeight:function(){var c=this.options;if(c.height==="auto"){return c.minHeight}else{return Math.min(c.minHeight,c.height)}},_position:function(d){var e=[],f=[0,0],c;d=d||b.ui.dialog.prototype.options.position;if(typeof d==="string"||(typeof d==="object"&&"0" in d)){e=d.split?d.split(" "):[d[0],d[1]];if(e.length===1){e[1]=e[0]}b.each(["left","top"],function(h,g){if(+e[h]===e[h]){f[h]=e[h];e[h]=g}})}else{if(typeof d==="object"){if("left" in d){e[0]="left";f[0]=d.left}else{if("right" in d){e[0]="right";f[0]=-d.right}}if("top" in d){e[1]="top";f[1]=d.top}else{if("bottom" in d){e[1]="bottom";f[1]=-d.bottom}}}}c=this.uiDialog.is(":visible");if(!c){this.uiDialog.show()}this.uiDialog.css({top:0,left:0}).position({my:e.join(" "),at:e.join(" "),offset:f.join(" "),of:window,collision:"fit",using:function(h){var g=b(this).css(h).offset().top;if(g<0){b(this).css("top",h.top-g)}}});if(!c){this.uiDialog.hide()}},_setOption:function(f,g){var d=this,c=d.uiDialog,h=c.is(":data(resizable)"),e=false;switch(f){case"beforeclose":f="beforeClose";break;case"buttons":d._createButtons(g);break;case"closeText":d.uiDialogTitlebarCloseText.text(""+g);break;case"dialogClass":c.removeClass(d.options.dialogClass).addClass(a+g);break;case"disabled":if(g){c.addClass("ui-dialog-disabled")}else{c.removeClass("ui-dialog-disabled")}break;case"draggable":if(g){d._makeDraggable()}else{c.draggable("destroy")}break;case"height":e=true;break;case"maxHeight":if(h){c.resizable("option","maxHeight",g)}e=true;break;case"maxWidth":if(h){c.resizable("option","maxWidth",g)}e=true;break;case"minHeight":if(h){c.resizable("option","minHeight",g)}e=true;break;case"minWidth":if(h){c.resizable("option","minWidth",g)}e=true;break;case"position":d._position(g);break;case"resizable":if(h&&!g){c.resizable("destroy")}if(h&&typeof g==="string"){c.resizable("option","handles",g)}if(!h&&g!==false){d._makeResizable(g)}break;case"title":b(".ui-dialog-title",d.uiDialogTitlebar).html(""+(g||"&#160;"));break;case"width":e=true;break}b.Widget.prototype._setOption.apply(d,arguments);if(e){d._size()}},_size:function(){var d=this.options,c;this.element.css("width","auto").hide();c=this.uiDialog.css({height:"auto",width:d.width}).height();this.element.css(d.height==="auto"?{minHeight:Math.max(d.minHeight-c,0),height:"auto"}:{minHeight:0,height:Math.max(d.height-c,0)}).show();if(this.uiDialog.is(":data(resizable)")){this.uiDialog.resizable("option","minHeight",this._minHeight())}}});b.extend(b.ui.dialog,{version:"1.8",uuid:0,maxZ:0,getTitleId:function(c){var d=c.attr("id");if(!d){this.uuid+=1;d=this.uuid}return"ui-dialog-title-"+d},overlay:function(c){this.$el=b.ui.dialog.overlay.create(c)}});b.extend(b.ui.dialog.overlay,{instances:[],oldInstances:[],maxZ:0,events:b.map("focus,mousedown,mouseup,keydown,keypress,click".split(","),function(c){return c+".dialog-overlay"}).join(" "),create:function(d){if(this.instances.length===0){setTimeout(function(){if(b.ui.dialog.overlay.instances.length){b(document).bind(b.ui.dialog.overlay.events,function(e){return(b(e.target).zIndex()>=b.ui.dialog.overlay.maxZ)})}},1);b(document).bind("keydown.dialog-overlay",function(e){if(d.options.closeOnEscape&&e.keyCode&&e.keyCode===b.ui.keyCode.ESCAPE){d.close(e);e.preventDefault()}});b(window).bind("resize.dialog-overlay",b.ui.dialog.overlay.resize)}var c=(this.oldInstances.pop()||b("<div></div>").addClass("ui-widget-overlay")).appendTo(document.body).css({width:this.width(),height:this.height()});if(b.fn.bgiframe){c.bgiframe()}this.instances.push(c);return c},destroy:function(c){this.oldInstances.push(this.instances.splice(b.inArray(c,this.instances),1)[0]);if(this.instances.length===0){b([document,window]).unbind(".dialog-overlay")}c.remove();var d=0;b.each(this.instances,function(){d=Math.max(d,this.css("z-index"))});this.maxZ=d},height:function(){var d,c;if(b.browser.msie&&b.browser.version<7){d=Math.max(document.documentElement.scrollHeight,document.body.scrollHeight);c=Math.max(document.documentElement.offsetHeight,document.body.offsetHeight);if(d<c){return b(window).height()+"px"}else{return d+"px"}}else{return b(document).height()+"px"}},width:function(){var c,d;if(b.browser.msie&&b.browser.version<7){c=Math.max(document.documentElement.scrollWidth,document.body.scrollWidth);d=Math.max(document.documentElement.offsetWidth,document.body.offsetWidth);if(c<d){return b(window).width()+"px"}else{return c+"px"}}else{return b(document).width()+"px"}},resize:function(){var c=b([]);b.each(b.ui.dialog.overlay.instances,function(){c=c.add(this)});c.css({width:0,height:0}).css({width:b.ui.dialog.overlay.width(),height:b.ui.dialog.overlay.height()})}});b.extend(b.ui.dialog.overlay.prototype,{destroy:function(){b.ui.dialog.overlay.destroy(this.$el)}})}(jQuery));;/*
+ * jQuery UI Slider 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Slider
+ *
+ * Depends:
+ *	jquery.ui.core.js
+ *	jquery.ui.mouse.js
+ *	jquery.ui.widget.js
+ */(function(b){var a=5;b.widget("ui.slider",b.ui.mouse,{widgetEventPrefix:"slide",options:{animate:false,distance:0,max:100,min:0,orientation:"horizontal",range:false,step:1,value:0,values:null},_create:function(){var c=this,d=this.options;this._keySliding=false;this._mouseSliding=false;this._animateOff=true;this._handleIndex=null;this._detectOrientation();this._mouseInit();this.element.addClass("ui-slider ui-slider-"+this.orientation+" ui-widget ui-widget-content ui-corner-all");if(d.disabled){this.element.addClass("ui-slider-disabled ui-disabled")}this.range=b([]);if(d.range){if(d.range===true){this.range=b("<div></div>");if(!d.values){d.values=[this._valueMin(),this._valueMin()]}if(d.values.length&&d.values.length!=2){d.values=[d.values[0],d.values[0]]}}else{this.range=b("<div></div>")}this.range.appendTo(this.element).addClass("ui-slider-range");if(d.range=="min"||d.range=="max"){this.range.addClass("ui-slider-range-"+d.range)}this.range.addClass("ui-widget-header")}if(b(".ui-slider-handle",this.element).length==0){b('<a href="#"></a>').appendTo(this.element).addClass("ui-slider-handle")}if(d.values&&d.values.length){while(b(".ui-slider-handle",this.element).length<d.values.length){b('<a href="#"></a>').appendTo(this.element).addClass("ui-slider-handle")}}this.handles=b(".ui-slider-handle",this.element).addClass("ui-state-default ui-corner-all");this.handle=this.handles.eq(0);this.handles.add(this.range).filter("a").click(function(e){e.preventDefault()}).hover(function(){if(!d.disabled){b(this).addClass("ui-state-hover")}},function(){b(this).removeClass("ui-state-hover")}).focus(function(){if(!d.disabled){b(".ui-slider .ui-state-focus").removeClass("ui-state-focus");b(this).addClass("ui-state-focus")}else{b(this).blur()}}).blur(function(){b(this).removeClass("ui-state-focus")});this.handles.each(function(e){b(this).data("index.ui-slider-handle",e)});this.handles.keydown(function(j){var g=true;var f=b(this).data("index.ui-slider-handle");if(c.options.disabled){return}switch(j.keyCode){case b.ui.keyCode.HOME:case b.ui.keyCode.END:case b.ui.keyCode.PAGE_UP:case b.ui.keyCode.PAGE_DOWN:case b.ui.keyCode.UP:case b.ui.keyCode.RIGHT:case b.ui.keyCode.DOWN:case b.ui.keyCode.LEFT:g=false;if(!c._keySliding){c._keySliding=true;b(this).addClass("ui-state-active");c._start(j,f)}break}var h,e,i=c._step();if(c.options.values&&c.options.values.length){h=e=c.values(f)}else{h=e=c.value()}switch(j.keyCode){case b.ui.keyCode.HOME:e=c._valueMin();break;case b.ui.keyCode.END:e=c._valueMax();break;case b.ui.keyCode.PAGE_UP:e=h+((c._valueMax()-c._valueMin())/a);break;case b.ui.keyCode.PAGE_DOWN:e=h-((c._valueMax()-c._valueMin())/a);break;case b.ui.keyCode.UP:case b.ui.keyCode.RIGHT:if(h==c._valueMax()){return}e=h+i;break;case b.ui.keyCode.DOWN:case b.ui.keyCode.LEFT:if(h==c._valueMin()){return}e=h-i;break}c._slide(j,f,e);return g}).keyup(function(f){var e=b(this).data("index.ui-slider-handle");if(c._keySliding){c._keySliding=false;c._stop(f,e);c._change(f,e);b(this).removeClass("ui-state-active")}});this._refreshValue();this._animateOff=false},destroy:function(){this.handles.remove();this.range.remove();this.element.removeClass("ui-slider ui-slider-horizontal ui-slider-vertical ui-slider-disabled ui-widget ui-widget-content ui-corner-all").removeData("slider").unbind(".slider");this._mouseDestroy();return this},_mouseCapture:function(e){var f=this.options;if(f.disabled){return false}this.elementSize={width:this.element.outerWidth(),height:this.element.outerHeight()};this.elementOffset=this.element.offset();var i={x:e.pageX,y:e.pageY};var k=this._normValueFromMouse(i);var d=this._valueMax()-this._valueMin()+1,g;var l=this,j;this.handles.each(function(m){var n=Math.abs(k-l.values(m));if(d>n){d=n;g=b(this);j=m}});if(f.range==true&&this.values(1)==f.min){g=b(this.handles[++j])}this._start(e,j);this._mouseSliding=true;l._handleIndex=j;g.addClass("ui-state-active").focus();var h=g.offset();var c=!b(e.target).parents().andSelf().is(".ui-slider-handle");this._clickOffset=c?{left:0,top:0}:{left:e.pageX-h.left-(g.width()/2),top:e.pageY-h.top-(g.height()/2)-(parseInt(g.css("borderTopWidth"),10)||0)-(parseInt(g.css("borderBottomWidth"),10)||0)+(parseInt(g.css("marginTop"),10)||0)};k=this._normValueFromMouse(i);this._slide(e,j,k);this._animateOff=true;return true},_mouseStart:function(c){return true},_mouseDrag:function(e){var c={x:e.pageX,y:e.pageY};var d=this._normValueFromMouse(c);this._slide(e,this._handleIndex,d);return false},_mouseStop:function(c){this.handles.removeClass("ui-state-active");this._mouseSliding=false;this._stop(c,this._handleIndex);this._change(c,this._handleIndex);this._handleIndex=null;this._clickOffset=null;this._animateOff=false;return false},_detectOrientation:function(){this.orientation=this.options.orientation=="vertical"?"vertical":"horizontal"},_normValueFromMouse:function(e){var d,i;if("horizontal"==this.orientation){d=this.elementSize.width;i=e.x-this.elementOffset.left-(this._clickOffset?this._clickOffset.left:0)}else{d=this.elementSize.height;i=e.y-this.elementOffset.top-(this._clickOffset?this._clickOffset.top:0)}var g=(i/d);if(g>1){g=1}if(g<0){g=0}if("vertical"==this.orientation){g=1-g}var f=this._valueMax()-this._valueMin(),j=g*f,c=j%this.options.step,h=this._valueMin()+j-c;if(c>(this.options.step/2)){h+=this.options.step}return parseFloat(h.toFixed(5))},_start:function(e,d){var c={handle:this.handles[d],value:this.value()};if(this.options.values&&this.options.values.length){c.value=this.values(d);c.values=this.values()}this._trigger("start",e,c)},_slide:function(g,f,e){var h=this.handles[f];if(this.options.values&&this.options.values.length){var c=this.values(f?0:1);if((this.options.values.length==2&&this.options.range===true)&&((f==0&&e>c)||(f==1&&e<c))){e=c}if(e!=this.values(f)){var d=this.values();d[f]=e;var i=this._trigger("slide",g,{handle:this.handles[f],value:e,values:d});var c=this.values(f?0:1);if(i!==false){this.values(f,e,true)}}}else{if(e!=this.value()){var i=this._trigger("slide",g,{handle:this.handles[f],value:e});if(i!==false){this.value(e)}}}},_stop:function(e,d){var c={handle:this.handles[d],value:this.value()};if(this.options.values&&this.options.values.length){c.value=this.values(d);c.values=this.values()}this._trigger("stop",e,c)},_change:function(e,d){if(!this._keySliding&&!this._mouseSliding){var c={handle:this.handles[d],value:this.value()};if(this.options.values&&this.options.values.length){c.value=this.values(d);c.values=this.values()}this._trigger("change",e,c)}},value:function(c){if(arguments.length){this.options.value=this._trimValue(c);this._refreshValue();this._change(null,0)}return this._value()},values:function(e,h){if(arguments.length>1){this.options.values[e]=this._trimValue(h);this._refreshValue();this._change(null,e)}if(arguments.length){if(b.isArray(arguments[0])){var g=this.options.values,d=arguments[0];for(var f=0,c=g.length;f<c;f++){g[f]=this._trimValue(d[f]);this._change(null,f)}this._refreshValue()}else{if(this.options.values&&this.options.values.length){return this._values(e)}else{return this.value()}}}else{return this._values()}},_setOption:function(d,e){var c,f=0;if(jQuery.isArray(this.options.values)){f=this.options.values.length}b.Widget.prototype._setOption.apply(this,arguments);switch(d){case"disabled":if(e){this.handles.filter(".ui-state-focus").blur();this.handles.removeClass("ui-state-hover");this.handles.attr("disabled","disabled");this.element.addClass("ui-disabled")}else{this.handles.removeAttr("disabled");this.element.removeClass("ui-disabled")}case"orientation":this._detectOrientation();this.element.removeClass("ui-slider-horizontal ui-slider-vertical").addClass("ui-slider-"+this.orientation);this._refreshValue();break;case"value":this._animateOff=true;this._refreshValue();this._change(null,0);this._animateOff=false;break;case"values":this._animateOff=true;this._refreshValue();for(c=0;c<f;c++){this._change(null,c)}this._animateOff=false;break}},_step:function(){var c=this.options.step;return c},_value:function(){var c=this.options.value;c=this._trimValue(c);return c},_values:function(d){if(arguments.length){var g=this.options.values[d];g=this._trimValue(g);return g}else{var f=this.options.values.slice();for(var e=0,c=f.length;e<c;e++){f[e]=this._trimValue(f[e])}return f}},_trimValue:function(c){if(c<this._valueMin()){c=this._valueMin()}if(c>this._valueMax()){c=this._valueMax()}return c},_valueMin:function(){var c=this.options.min;return c},_valueMax:function(){var c=this.options.max;return c},_refreshValue:function(){var g=this.options.range,e=this.options,m=this;var d=(!this._animateOff)?e.animate:false;if(this.options.values&&this.options.values.length){var j,i;this.handles.each(function(q,o){var p=(m.values(q)-m._valueMin())/(m._valueMax()-m._valueMin())*100;var n={};n[m.orientation=="horizontal"?"left":"bottom"]=p+"%";b(this).stop(1,1)[d?"animate":"css"](n,e.animate);if(m.options.range===true){if(m.orientation=="horizontal"){(q==0)&&m.range.stop(1,1)[d?"animate":"css"]({left:p+"%"},e.animate);(q==1)&&m.range[d?"animate":"css"]({width:(p-lastValPercent)+"%"},{queue:false,duration:e.animate})}else{(q==0)&&m.range.stop(1,1)[d?"animate":"css"]({bottom:(p)+"%"},e.animate);(q==1)&&m.range[d?"animate":"css"]({height:(p-lastValPercent)+"%"},{queue:false,duration:e.animate})}}lastValPercent=p})}else{var k=this.value(),h=this._valueMin(),l=this._valueMax(),f=l!=h?(k-h)/(l-h)*100:0;var c={};c[m.orientation=="horizontal"?"left":"bottom"]=f+"%";this.handle.stop(1,1)[d?"animate":"css"](c,e.animate);(g=="min")&&(this.orientation=="horizontal")&&this.range.stop(1,1)[d?"animate":"css"]({width:f+"%"},e.animate);(g=="max")&&(this.orientation=="horizontal")&&this.range[d?"animate":"css"]({width:(100-f)+"%"},{queue:false,duration:e.animate});(g=="min")&&(this.orientation=="vertical")&&this.range.stop(1,1)[d?"animate":"css"]({height:f+"%"},e.animate);(g=="max")&&(this.orientation=="vertical")&&this.range[d?"animate":"css"]({height:(100-f)+"%"},{queue:false,duration:e.animate})}}});b.extend(b.ui.slider,{version:"1.8"})})(jQuery);;/*
+ * jQuery UI Tabs 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Tabs
+ *
+ * Depends:
+ *	jquery.ui.core.js
+ *	jquery.ui.widget.js
+ */(function(c){var b=0,a=0;c.widget("ui.tabs",{options:{add:null,ajaxOptions:null,cache:false,cookie:null,collapsible:false,disable:null,disabled:[],enable:null,event:"click",fx:null,idPrefix:"ui-tabs-",load:null,panelTemplate:"<div></div>",remove:null,select:null,show:null,spinner:"<em>Loading&#8230;</em>",tabTemplate:'<li><a href="#{href}"><span>#{label}</span></a></li>'},_create:function(){this._tabify(true)},_setOption:function(d,e){if(d=="selected"){if(this.options.collapsible&&e==this.options.selected){return}this.select(e)}else{this.options[d]=e;this._tabify()}},_tabId:function(d){return d.title&&d.title.replace(/\s/g,"_").replace(/[^A-Za-z0-9\-_:\.]/g,"")||this.options.idPrefix+(++b)},_sanitizeSelector:function(d){return d.replace(/:/g,"\\:")},_cookie:function(){var d=this.cookie||(this.cookie=this.options.cookie.name||"ui-tabs-"+(++a));return c.cookie.apply(null,[d].concat(c.makeArray(arguments)))},_ui:function(e,d){return{tab:e,panel:d,index:this.anchors.index(e)}},_cleanup:function(){this.lis.filter(".ui-state-processing").removeClass("ui-state-processing").find("span:data(label.tabs)").each(function(){var d=c(this);d.html(d.data("label.tabs")).removeData("label.tabs")})},_tabify:function(q){this.list=this.element.find("ol,ul").eq(0);this.lis=c("li:has(a[href])",this.list);this.anchors=this.lis.map(function(){return c("a",this)[0]});this.panels=c([]);var r=this,f=this.options;var e=/^#.+/;this.anchors.each(function(u,o){var s=c(o).attr("href");var v=s.split("#")[0],w;if(v&&(v===location.toString().split("#")[0]||(w=c("base")[0])&&v===w.href)){s=o.hash;o.href=s}if(e.test(s)){r.panels=r.panels.add(r._sanitizeSelector(s))}else{if(s!="#"){c.data(o,"href.tabs",s);c.data(o,"load.tabs",s.replace(/#.*$/,""));var y=r._tabId(o);o.href="#"+y;var x=c("#"+y);if(!x.length){x=c(f.panelTemplate).attr("id",y).addClass("ui-tabs-panel ui-widget-content ui-corner-bottom").insertAfter(r.panels[u-1]||r.list);x.data("destroy.tabs",true)}r.panels=r.panels.add(x)}else{f.disabled.push(u)}}});if(q){this.element.addClass("ui-tabs ui-widget ui-widget-content ui-corner-all");this.list.addClass("ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all");this.lis.addClass("ui-state-default ui-corner-top");this.panels.addClass("ui-tabs-panel ui-widget-content ui-corner-bottom");if(f.selected===undefined){if(location.hash){this.anchors.each(function(s,o){if(o.hash==location.hash){f.selected=s;return false}})}if(typeof f.selected!="number"&&f.cookie){f.selected=parseInt(r._cookie(),10)}if(typeof f.selected!="number"&&this.lis.filter(".ui-tabs-selected").length){f.selected=this.lis.index(this.lis.filter(".ui-tabs-selected"))}f.selected=f.selected||(this.lis.length?0:-1)}else{if(f.selected===null){f.selected=-1}}f.selected=((f.selected>=0&&this.anchors[f.selected])||f.selected<0)?f.selected:0;f.disabled=c.unique(f.disabled.concat(c.map(this.lis.filter(".ui-state-disabled"),function(s,o){return r.lis.index(s)}))).sort();if(c.inArray(f.selected,f.disabled)!=-1){f.disabled.splice(c.inArray(f.selected,f.disabled),1)}this.panels.addClass("ui-tabs-hide");this.lis.removeClass("ui-tabs-selected ui-state-active");if(f.selected>=0&&this.anchors.length){this.panels.eq(f.selected).removeClass("ui-tabs-hide");this.lis.eq(f.selected).addClass("ui-tabs-selected ui-state-active");r.element.queue("tabs",function(){r._trigger("show",null,r._ui(r.anchors[f.selected],r.panels[f.selected]))});this.load(f.selected)}c(window).bind("unload",function(){r.lis.add(r.anchors).unbind(".tabs");r.lis=r.anchors=r.panels=null})}else{f.selected=this.lis.index(this.lis.filter(".ui-tabs-selected"))}this.element[f.collapsible?"addClass":"removeClass"]("ui-tabs-collapsible");if(f.cookie){this._cookie(f.selected,f.cookie)}for(var j=0,p;(p=this.lis[j]);j++){c(p)[c.inArray(j,f.disabled)!=-1&&!c(p).hasClass("ui-tabs-selected")?"addClass":"removeClass"]("ui-state-disabled")}if(f.cache===false){this.anchors.removeData("cache.tabs")}this.lis.add(this.anchors).unbind(".tabs");if(f.event!="mouseover"){var h=function(o,i){if(i.is(":not(.ui-state-disabled)")){i.addClass("ui-state-"+o)}};var l=function(o,i){i.removeClass("ui-state-"+o)};this.lis.bind("mouseover.tabs",function(){h("hover",c(this))});this.lis.bind("mouseout.tabs",function(){l("hover",c(this))});this.anchors.bind("focus.tabs",function(){h("focus",c(this).closest("li"))});this.anchors.bind("blur.tabs",function(){l("focus",c(this).closest("li"))})}var d,k;if(f.fx){if(c.isArray(f.fx)){d=f.fx[0];k=f.fx[1]}else{d=k=f.fx}}function g(i,o){i.css({display:""});if(!c.support.opacity&&o.opacity){i[0].style.removeAttribute("filter")}}var m=k?function(i,o){c(i).closest("li").addClass("ui-tabs-selected ui-state-active");o.hide().removeClass("ui-tabs-hide").animate(k,k.duration||"normal",function(){g(o,k);r._trigger("show",null,r._ui(i,o[0]))})}:function(i,o){c(i).closest("li").addClass("ui-tabs-selected ui-state-active");o.removeClass("ui-tabs-hide");r._trigger("show",null,r._ui(i,o[0]))};var n=d?function(o,i){i.animate(d,d.duration||"normal",function(){r.lis.removeClass("ui-tabs-selected ui-state-active");i.addClass("ui-tabs-hide");g(i,d);r.element.dequeue("tabs")})}:function(o,i,s){r.lis.removeClass("ui-tabs-selected ui-state-active");i.addClass("ui-tabs-hide");r.element.dequeue("tabs")};this.anchors.bind(f.event+".tabs",function(){var o=this,u=c(this).closest("li"),i=r.panels.filter(":not(.ui-tabs-hide)"),s=c(r._sanitizeSelector(this.hash));if((u.hasClass("ui-tabs-selected")&&!f.collapsible)||u.hasClass("ui-state-disabled")||u.hasClass("ui-state-processing")||r._trigger("select",null,r._ui(this,s[0]))===false){this.blur();return false}f.selected=r.anchors.index(this);r.abort();if(f.collapsible){if(u.hasClass("ui-tabs-selected")){f.selected=-1;if(f.cookie){r._cookie(f.selected,f.cookie)}r.element.queue("tabs",function(){n(o,i)}).dequeue("tabs");this.blur();return false}else{if(!i.length){if(f.cookie){r._cookie(f.selected,f.cookie)}r.element.queue("tabs",function(){m(o,s)});r.load(r.anchors.index(this));this.blur();return false}}}if(f.cookie){r._cookie(f.selected,f.cookie)}if(s.length){if(i.length){r.element.queue("tabs",function(){n(o,i)})}r.element.queue("tabs",function(){m(o,s)});r.load(r.anchors.index(this))}else{throw"jQuery UI Tabs: Mismatching fragment identifier."}if(c.browser.msie){this.blur()}});this.anchors.bind("click.tabs",function(){return false})},destroy:function(){var d=this.options;this.abort();this.element.unbind(".tabs").removeClass("ui-tabs ui-widget ui-widget-content ui-corner-all ui-tabs-collapsible").removeData("tabs");this.list.removeClass("ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all");this.anchors.each(function(){var e=c.data(this,"href.tabs");if(e){this.href=e}var f=c(this).unbind(".tabs");c.each(["href","load","cache"],function(g,h){f.removeData(h+".tabs")})});this.lis.unbind(".tabs").add(this.panels).each(function(){if(c.data(this,"destroy.tabs")){c(this).remove()}else{c(this).removeClass(["ui-state-default","ui-corner-top","ui-tabs-selected","ui-state-active","ui-state-hover","ui-state-focus","ui-state-disabled","ui-tabs-panel","ui-widget-content","ui-corner-bottom","ui-tabs-hide"].join(" "))}});if(d.cookie){this._cookie(null,d.cookie)}return this},add:function(g,f,e){if(e===undefined){e=this.anchors.length}var d=this,i=this.options,k=c(i.tabTemplate.replace(/#\{href\}/g,g).replace(/#\{label\}/g,f)),j=!g.indexOf("#")?g.replace("#",""):this._tabId(c("a",k)[0]);k.addClass("ui-state-default ui-corner-top").data("destroy.tabs",true);var h=c("#"+j);if(!h.length){h=c(i.panelTemplate).attr("id",j).data("destroy.tabs",true)}h.addClass("ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide");if(e>=this.lis.length){k.appendTo(this.list);h.appendTo(this.list[0].parentNode)}else{k.insertBefore(this.lis[e]);h.insertBefore(this.panels[e])}i.disabled=c.map(i.disabled,function(m,l){return m>=e?++m:m});this._tabify();if(this.anchors.length==1){i.selected=0;k.addClass("ui-tabs-selected ui-state-active");h.removeClass("ui-tabs-hide");this.element.queue("tabs",function(){d._trigger("show",null,d._ui(d.anchors[0],d.panels[0]))});this.load(0)}this._trigger("add",null,this._ui(this.anchors[e],this.panels[e]));return this},remove:function(d){var f=this.options,g=this.lis.eq(d).remove(),e=this.panels.eq(d).remove();if(g.hasClass("ui-tabs-selected")&&this.anchors.length>1){this.select(d+(d+1<this.anchors.length?1:-1))}f.disabled=c.map(c.grep(f.disabled,function(j,h){return j!=d}),function(j,h){return j>=d?--j:j});this._tabify();this._trigger("remove",null,this._ui(g.find("a")[0],e[0]));return this},enable:function(d){var e=this.options;if(c.inArray(d,e.disabled)==-1){return}this.lis.eq(d).removeClass("ui-state-disabled");e.disabled=c.grep(e.disabled,function(g,f){return g!=d});this._trigger("enable",null,this._ui(this.anchors[d],this.panels[d]));return this},disable:function(e){var d=this,f=this.options;if(e!=f.selected){this.lis.eq(e).addClass("ui-state-disabled");f.disabled.push(e);f.disabled.sort();this._trigger("disable",null,this._ui(this.anchors[e],this.panels[e]))}return this},select:function(d){if(typeof d=="string"){d=this.anchors.index(this.anchors.filter("[href$="+d+"]"))}else{if(d===null){d=-1}}if(d==-1&&this.options.collapsible){d=this.options.selected}this.anchors.eq(d).trigger(this.options.event+".tabs");return this},load:function(g){var e=this,i=this.options,d=this.anchors.eq(g)[0],f=c.data(d,"load.tabs");this.abort();if(!f||this.element.queue("tabs").length!==0&&c.data(d,"cache.tabs")){this.element.dequeue("tabs");return}this.lis.eq(g).addClass("ui-state-processing");if(i.spinner){var h=c("span",d);h.data("label.tabs",h.html()).html(i.spinner)}this.xhr=c.ajax(c.extend({},i.ajaxOptions,{url:f,success:function(k,j){c(e._sanitizeSelector(d.hash)).html(k);e._cleanup();if(i.cache){c.data(d,"cache.tabs",true)}e._trigger("load",null,e._ui(e.anchors[g],e.panels[g]));try{i.ajaxOptions.success(k,j)}catch(l){}},error:function(l,j,k){e._cleanup();e._trigger("load",null,e._ui(e.anchors[g],e.panels[g]));try{i.ajaxOptions.error(l,j,g,d)}catch(k){}}}));e.element.dequeue("tabs");return this},abort:function(){this.element.queue([]);this.panels.stop(false,true);this.element.queue("tabs",this.element.queue("tabs").splice(-2,2));if(this.xhr){this.xhr.abort();delete this.xhr}this._cleanup();return this},url:function(e,d){this.anchors.eq(e).removeData("cache.tabs").data("load.tabs",d);return this},length:function(){return this.anchors.length}});c.extend(c.ui.tabs,{version:"1.8"});c.extend(c.ui.tabs.prototype,{rotation:null,rotate:function(f,h){var d=this,i=this.options;var e=d._rotate||(d._rotate=function(j){clearTimeout(d.rotation);d.rotation=setTimeout(function(){var k=i.selected;d.select(++k<d.anchors.length?k:0)},f);if(j){j.stopPropagation()}});var g=d._unrotate||(d._unrotate=!h?function(j){if(j.clientX){d.rotate(null)}}:function(j){t=i.selected;e()});if(f){this.element.bind("tabsshow",e);this.anchors.bind(i.event+".tabs",g);e()}else{clearTimeout(d.rotation);this.element.unbind("tabsshow",e);this.anchors.unbind(i.event+".tabs",g);delete this._rotate;delete this._unrotate}return this}})})(jQuery);;/*
+ * jQuery UI Datepicker 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Datepicker
+ *
+ * Depends:
+ *	jquery.ui.core.js
+ */(function($){$.extend($.ui,{datepicker:{version:"1.8"}});var PROP_NAME="datepicker";var dpuuid=new Date().getTime();function Datepicker(){this.debug=false;this._curInst=null;this._keyEvent=false;this._disabledInputs=[];this._datepickerShowing=false;this._inDialog=false;this._mainDivId="ui-datepicker-div";this._inlineClass="ui-datepicker-inline";this._appendClass="ui-datepicker-append";this._triggerClass="ui-datepicker-trigger";this._dialogClass="ui-datepicker-dialog";this._disableClass="ui-datepicker-disabled";this._unselectableClass="ui-datepicker-unselectable";this._currentClass="ui-datepicker-current-day";this._dayOverClass="ui-datepicker-days-cell-over";this.regional=[];this.regional[""]={closeText:"Done",prevText:"Prev",nextText:"Next",currentText:"Today",monthNames:["January","February","March","April","May","June","July","August","September","October","November","December"],monthNamesShort:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],dayNames:["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],dayNamesShort:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],dayNamesMin:["Su","Mo","Tu","We","Th","Fr","Sa"],weekHeader:"Wk",dateFormat:"mm/dd/yy",firstDay:0,isRTL:false,showMonthAfterYear:false,yearSuffix:""};this._defaults={showOn:"focus",showAnim:"show",showOptions:{},defaultDate:null,appendText:"",buttonText:"...",buttonImage:"",buttonImageOnly:false,hideIfNoPrevNext:false,navigationAsDateFormat:false,gotoCurrent:false,changeMonth:false,changeYear:false,yearRange:"c-10:c+10",showOtherMonths:false,selectOtherMonths:false,showWeek:false,calculateWeek:this.iso8601Week,shortYearCutoff:"+10",minDate:null,maxDate:null,duration:"_default",beforeShowDay:null,beforeShow:null,onSelect:null,onChangeMonthYear:null,onClose:null,numberOfMonths:1,showCurrentAtPos:0,stepMonths:1,stepBigMonths:12,altField:"",altFormat:"",constrainInput:true,showButtonPanel:false,autoSize:false};$.extend(this._defaults,this.regional[""]);this.dpDiv=$('<div id="'+this._mainDivId+'" class="ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all ui-helper-hidden-accessible"></div>')}$.extend(Datepicker.prototype,{markerClassName:"hasDatepicker",log:function(){if(this.debug){console.log.apply("",arguments)}},_widgetDatepicker:function(){return this.dpDiv},setDefaults:function(settings){extendRemove(this._defaults,settings||{});return this},_attachDatepicker:function(target,settings){var inlineSettings=null;for(var attrName in this._defaults){var attrValue=target.getAttribute("date:"+attrName);if(attrValue){inlineSettings=inlineSettings||{};try{inlineSettings[attrName]=eval(attrValue)}catch(err){inlineSettings[attrName]=attrValue}}}var nodeName=target.nodeName.toLowerCase();var inline=(nodeName=="div"||nodeName=="span");if(!target.id){target.id="dp"+(++this.uuid)}var inst=this._newInst($(target),inline);inst.settings=$.extend({},settings||{},inlineSettings||{});if(nodeName=="input"){this._connectDatepicker(target,inst)}else{if(inline){this._inlineDatepicker(target,inst)}}},_newInst:function(target,inline){var id=target[0].id.replace(/([^A-Za-z0-9_])/g,"\\\\$1");return{id:id,input:target,selectedDay:0,selectedMonth:0,selectedYear:0,drawMonth:0,drawYear:0,inline:inline,dpDiv:(!inline?this.dpDiv:$('<div class="'+this._inlineClass+' ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all"></div>'))}},_connectDatepicker:function(target,inst){var input=$(target);inst.append=$([]);inst.trigger=$([]);if(input.hasClass(this.markerClassName)){return}this._attachments(input,inst);input.addClass(this.markerClassName).keydown(this._doKeyDown).keypress(this._doKeyPress).keyup(this._doKeyUp).bind("setData.datepicker",function(event,key,value){inst.settings[key]=value}).bind("getData.datepicker",function(event,key){return this._get(inst,key)});this._autoSize(inst);$.data(target,PROP_NAME,inst)},_attachments:function(input,inst){var appendText=this._get(inst,"appendText");var isRTL=this._get(inst,"isRTL");if(inst.append){inst.append.remove()}if(appendText){inst.append=$('<span class="'+this._appendClass+'">'+appendText+"</span>");input[isRTL?"before":"after"](inst.append)}input.unbind("focus",this._showDatepicker);if(inst.trigger){inst.trigger.remove()}var showOn=this._get(inst,"showOn");if(showOn=="focus"||showOn=="both"){input.focus(this._showDatepicker)}if(showOn=="button"||showOn=="both"){var buttonText=this._get(inst,"buttonText");var buttonImage=this._get(inst,"buttonImage");inst.trigger=$(this._get(inst,"buttonImageOnly")?$("<img/>").addClass(this._triggerClass).attr({src:buttonImage,alt:buttonText,title:buttonText}):$('<button type="button"></button>').addClass(this._triggerClass).html(buttonImage==""?buttonText:$("<img/>").attr({src:buttonImage,alt:buttonText,title:buttonText})));input[isRTL?"before":"after"](inst.trigger);inst.trigger.click(function(){if($.datepicker._datepickerShowing&&$.datepicker._lastInput==input[0]){$.datepicker._hideDatepicker()}else{$.datepicker._showDatepicker(input[0])}return false})}},_autoSize:function(inst){if(this._get(inst,"autoSize")&&!inst.inline){var date=new Date(2009,12-1,20);var dateFormat=this._get(inst,"dateFormat");if(dateFormat.match(/[DM]/)){var findMax=function(names){var max=0;var maxI=0;for(var i=0;i<names.length;i++){if(names[i].length>max){max=names[i].length;maxI=i}}return maxI};date.setMonth(findMax(this._get(inst,(dateFormat.match(/MM/)?"monthNames":"monthNamesShort"))));date.setDate(findMax(this._get(inst,(dateFormat.match(/DD/)?"dayNames":"dayNamesShort")))+20-date.getDay())}inst.input.attr("size",this._formatDate(inst,date).length)}},_inlineDatepicker:function(target,inst){var divSpan=$(target);if(divSpan.hasClass(this.markerClassName)){return}divSpan.addClass(this.markerClassName).append(inst.dpDiv).bind("setData.datepicker",function(event,key,value){inst.settings[key]=value}).bind("getData.datepicker",function(event,key){return this._get(inst,key)});$.data(target,PROP_NAME,inst);this._setDate(inst,this._getDefaultDate(inst),true);this._updateDatepicker(inst);this._updateAlternate(inst)},_dialogDatepicker:function(input,date,onSelect,settings,pos){var inst=this._dialogInst;if(!inst){var id="dp"+(++this.uuid);this._dialogInput=$('<input type="text" id="'+id+'" style="position: absolute; top: -100px; width: 0px; z-index: -10;"/>');this._dialogInput.keydown(this._doKeyDown);$("body").append(this._dialogInput);inst=this._dialogInst=this._newInst(this._dialogInput,false);inst.settings={};$.data(this._dialogInput[0],PROP_NAME,inst)}extendRemove(inst.settings,settings||{});date=(date&&date.constructor==Date?this._formatDate(inst,date):date);this._dialogInput.val(date);this._pos=(pos?(pos.length?pos:[pos.pageX,pos.pageY]):null);if(!this._pos){var browserWidth=document.documentElement.clientWidth;var browserHeight=document.documentElement.clientHeight;var scrollX=document.documentElement.scrollLeft||document.body.scrollLeft;var scrollY=document.documentElement.scrollTop||document.body.scrollTop;this._pos=[(browserWidth/2)-100+scrollX,(browserHeight/2)-150+scrollY]}this._dialogInput.css("left",(this._pos[0]+20)+"px").css("top",this._pos[1]+"px");inst.settings.onSelect=onSelect;this._inDialog=true;this.dpDiv.addClass(this._dialogClass);this._showDatepicker(this._dialogInput[0]);if($.blockUI){$.blockUI(this.dpDiv)}$.data(this._dialogInput[0],PROP_NAME,inst);return this},_destroyDatepicker:function(target){var $target=$(target);var inst=$.data(target,PROP_NAME);if(!$target.hasClass(this.markerClassName)){return}var nodeName=target.nodeName.toLowerCase();$.removeData(target,PROP_NAME);if(nodeName=="input"){inst.append.remove();inst.trigger.remove();$target.removeClass(this.markerClassName).unbind("focus",this._showDatepicker).unbind("keydown",this._doKeyDown).unbind("keypress",this._doKeyPress).unbind("keyup",this._doKeyUp)}else{if(nodeName=="div"||nodeName=="span"){$target.removeClass(this.markerClassName).empty()}}},_enableDatepicker:function(target){var $target=$(target);var inst=$.data(target,PROP_NAME);if(!$target.hasClass(this.markerClassName)){return}var nodeName=target.nodeName.toLowerCase();if(nodeName=="input"){target.disabled=false;inst.trigger.filter("button").each(function(){this.disabled=false}).end().filter("img").css({opacity:"1.0",cursor:""})}else{if(nodeName=="div"||nodeName=="span"){var inline=$target.children("."+this._inlineClass);inline.children().removeClass("ui-state-disabled")}}this._disabledInputs=$.map(this._disabledInputs,function(value){return(value==target?null:value)})},_disableDatepicker:function(target){var $target=$(target);var inst=$.data(target,PROP_NAME);if(!$target.hasClass(this.markerClassName)){return}var nodeName=target.nodeName.toLowerCase();if(nodeName=="input"){target.disabled=true;inst.trigger.filter("button").each(function(){this.disabled=true}).end().filter("img").css({opacity:"0.5",cursor:"default"})}else{if(nodeName=="div"||nodeName=="span"){var inline=$target.children("."+this._inlineClass);inline.children().addClass("ui-state-disabled")}}this._disabledInputs=$.map(this._disabledInputs,function(value){return(value==target?null:value)});this._disabledInputs[this._disabledInputs.length]=target},_isDisabledDatepicker:function(target){if(!target){return false}for(var i=0;i<this._disabledInputs.length;i++){if(this._disabledInputs[i]==target){return true}}return false},_getInst:function(target){try{return $.data(target,PROP_NAME)}catch(err){throw"Missing instance data for this datepicker"}},_optionDatepicker:function(target,name,value){var inst=this._getInst(target);if(arguments.length==2&&typeof name=="string"){return(name=="defaults"?$.extend({},$.datepicker._defaults):(inst?(name=="all"?$.extend({},inst.settings):this._get(inst,name)):null))}var settings=name||{};if(typeof name=="string"){settings={};settings[name]=value}if(inst){if(this._curInst==inst){this._hideDatepicker()}var date=this._getDateDatepicker(target,true);extendRemove(inst.settings,settings);this._attachments($(target),inst);this._autoSize(inst);this._setDateDatepicker(target,date);this._updateDatepicker(inst)}},_changeDatepicker:function(target,name,value){this._optionDatepicker(target,name,value)},_refreshDatepicker:function(target){var inst=this._getInst(target);if(inst){this._updateDatepicker(inst)}},_setDateDatepicker:function(target,date){var inst=this._getInst(target);if(inst){this._setDate(inst,date);this._updateDatepicker(inst);this._updateAlternate(inst)}},_getDateDatepicker:function(target,noDefault){var inst=this._getInst(target);if(inst&&!inst.inline){this._setDateFromField(inst,noDefault)}return(inst?this._getDate(inst):null)},_doKeyDown:function(event){var inst=$.datepicker._getInst(event.target);var handled=true;var isRTL=inst.dpDiv.is(".ui-datepicker-rtl");inst._keyEvent=true;if($.datepicker._datepickerShowing){switch(event.keyCode){case 9:$.datepicker._hideDatepicker();handled=false;break;case 13:var sel=$("td."+$.datepicker._dayOverClass,inst.dpDiv).add($("td."+$.datepicker._currentClass,inst.dpDiv));if(sel[0]){$.datepicker._selectDay(event.target,inst.selectedMonth,inst.selectedYear,sel[0])}else{$.datepicker._hideDatepicker()}return false;break;case 27:$.datepicker._hideDatepicker();break;case 33:$.datepicker._adjustDate(event.target,(event.ctrlKey?-$.datepicker._get(inst,"stepBigMonths"):-$.datepicker._get(inst,"stepMonths")),"M");break;case 34:$.datepicker._adjustDate(event.target,(event.ctrlKey?+$.datepicker._get(inst,"stepBigMonths"):+$.datepicker._get(inst,"stepMonths")),"M");break;case 35:if(event.ctrlKey||event.metaKey){$.datepicker._clearDate(event.target)}handled=event.ctrlKey||event.metaKey;break;case 36:if(event.ctrlKey||event.metaKey){$.datepicker._gotoToday(event.target)}handled=event.ctrlKey||event.metaKey;break;case 37:if(event.ctrlKey||event.metaKey){$.datepicker._adjustDate(event.target,(isRTL?+1:-1),"D")}handled=event.ctrlKey||event.metaKey;if(event.originalEvent.altKey){$.datepicker._adjustDate(event.target,(event.ctrlKey?-$.datepicker._get(inst,"stepBigMonths"):-$.datepicker._get(inst,"stepMonths")),"M")}break;case 38:if(event.ctrlKey||event.metaKey){$.datepicker._adjustDate(event.target,-7,"D")}handled=event.ctrlKey||event.metaKey;break;case 39:if(event.ctrlKey||event.metaKey){$.datepicker._adjustDate(event.target,(isRTL?-1:+1),"D")}handled=event.ctrlKey||event.metaKey;if(event.originalEvent.altKey){$.datepicker._adjustDate(event.target,(event.ctrlKey?+$.datepicker._get(inst,"stepBigMonths"):+$.datepicker._get(inst,"stepMonths")),"M")}break;case 40:if(event.ctrlKey||event.metaKey){$.datepicker._adjustDate(event.target,+7,"D")}handled=event.ctrlKey||event.metaKey;break;default:handled=false}}else{if(event.keyCode==36&&event.ctrlKey){$.datepicker._showDatepicker(this)}else{handled=false}}if(handled){event.preventDefault();event.stopPropagation()}},_doKeyPress:function(event){var inst=$.datepicker._getInst(event.target);if($.datepicker._get(inst,"constrainInput")){var chars=$.datepicker._possibleChars($.datepicker._get(inst,"dateFormat"));var chr=String.fromCharCode(event.charCode==undefined?event.keyCode:event.charCode);return event.ctrlKey||(chr<" "||!chars||chars.indexOf(chr)>-1)}},_doKeyUp:function(event){var inst=$.datepicker._getInst(event.target);if(inst.input.val()!=inst.lastVal){try{var date=$.datepicker.parseDate($.datepicker._get(inst,"dateFormat"),(inst.input?inst.input.val():null),$.datepicker._getFormatConfig(inst));if(date){$.datepicker._setDateFromField(inst);$.datepicker._updateAlternate(inst);$.datepicker._updateDatepicker(inst)}}catch(event){$.datepicker.log(event)}}return true},_showDatepicker:function(input){input=input.target||input;if(input.nodeName.toLowerCase()!="input"){input=$("input",input.parentNode)[0]}if($.datepicker._isDisabledDatepicker(input)||$.datepicker._lastInput==input){return}var inst=$.datepicker._getInst(input);if($.datepicker._curInst&&$.datepicker._curInst!=inst){$.datepicker._curInst.dpDiv.stop(true,true)}var beforeShow=$.datepicker._get(inst,"beforeShow");extendRemove(inst.settings,(beforeShow?beforeShow.apply(input,[input,inst]):{}));inst.lastVal=null;$.datepicker._lastInput=input;$.datepicker._setDateFromField(inst);if($.datepicker._inDialog){input.value=""}if(!$.datepicker._pos){$.datepicker._pos=$.datepicker._findPos(input);$.datepicker._pos[1]+=input.offsetHeight}var isFixed=false;$(input).parents().each(function(){isFixed|=$(this).css("position")=="fixed";return !isFixed});if(isFixed&&$.browser.opera){$.datepicker._pos[0]-=document.documentElement.scrollLeft;$.datepicker._pos[1]-=document.documentElement.scrollTop}var offset={left:$.datepicker._pos[0],top:$.datepicker._pos[1]};$.datepicker._pos=null;inst.dpDiv.css({position:"absolute",display:"block",top:"-1000px"});$.datepicker._updateDatepicker(inst);offset=$.datepicker._checkOffset(inst,offset,isFixed);inst.dpDiv.css({position:($.datepicker._inDialog&&$.blockUI?"static":(isFixed?"fixed":"absolute")),display:"none",left:offset.left+"px",top:offset.top+"px"});if(!inst.inline){var showAnim=$.datepicker._get(inst,"showAnim");var duration=$.datepicker._get(inst,"duration");var postProcess=function(){$.datepicker._datepickerShowing=true;var borders=$.datepicker._getBorders(inst.dpDiv);inst.dpDiv.find("iframe.ui-datepicker-cover").css({left:-borders[0],top:-borders[1],width:inst.dpDiv.outerWidth(),height:inst.dpDiv.outerHeight()})};inst.dpDiv.zIndex($(input).zIndex()+1);if($.effects&&$.effects[showAnim]){inst.dpDiv.show(showAnim,$.datepicker._get(inst,"showOptions"),duration,postProcess)}else{inst.dpDiv[showAnim||"show"]((showAnim?duration:null),postProcess)}if(!showAnim||!duration){postProcess()}if(inst.input.is(":visible")&&!inst.input.is(":disabled")){inst.input.focus()}$.datepicker._curInst=inst}},_updateDatepicker:function(inst){var self=this;var borders=$.datepicker._getBorders(inst.dpDiv);inst.dpDiv.empty().append(this._generateHTML(inst)).find("iframe.ui-datepicker-cover").css({left:-borders[0],top:-borders[1],width:inst.dpDiv.outerWidth(),height:inst.dpDiv.outerHeight()}).end().find("button, .ui-datepicker-prev, .ui-datepicker-next, .ui-datepicker-calendar td a").bind("mouseout",function(){$(this).removeClass("ui-state-hover");if(this.className.indexOf("ui-datepicker-prev")!=-1){$(this).removeClass("ui-datepicker-prev-hover")}if(this.className.indexOf("ui-datepicker-next")!=-1){$(this).removeClass("ui-datepicker-next-hover")}}).bind("mouseover",function(){if(!self._isDisabledDatepicker(inst.inline?inst.dpDiv.parent()[0]:inst.input[0])){$(this).parents(".ui-datepicker-calendar").find("a").removeClass("ui-state-hover");$(this).addClass("ui-state-hover");if(this.className.indexOf("ui-datepicker-prev")!=-1){$(this).addClass("ui-datepicker-prev-hover")}if(this.className.indexOf("ui-datepicker-next")!=-1){$(this).addClass("ui-datepicker-next-hover")}}}).end().find("."+this._dayOverClass+" a").trigger("mouseover").end();var numMonths=this._getNumberOfMonths(inst);var cols=numMonths[1];var width=17;if(cols>1){inst.dpDiv.addClass("ui-datepicker-multi-"+cols).css("width",(width*cols)+"em")}else{inst.dpDiv.removeClass("ui-datepicker-multi-2 ui-datepicker-multi-3 ui-datepicker-multi-4").width("")}inst.dpDiv[(numMonths[0]!=1||numMonths[1]!=1?"add":"remove")+"Class"]("ui-datepicker-multi");inst.dpDiv[(this._get(inst,"isRTL")?"add":"remove")+"Class"]("ui-datepicker-rtl");if(inst==$.datepicker._curInst&&$.datepicker._datepickerShowing&&inst.input&&inst.input.is(":visible")&&!inst.input.is(":disabled")){inst.input.focus()}},_getBorders:function(elem){var convert=function(value){return{thin:1,medium:2,thick:3}[value]||value};return[parseFloat(convert(elem.css("border-left-width"))),parseFloat(convert(elem.css("border-top-width")))]},_checkOffset:function(inst,offset,isFixed){var dpWidth=inst.dpDiv.outerWidth();var dpHeight=inst.dpDiv.outerHeight();var inputWidth=inst.input?inst.input.outerWidth():0;var inputHeight=inst.input?inst.input.outerHeight():0;var viewWidth=document.documentElement.clientWidth+$(document).scrollLeft();var viewHeight=document.documentElement.clientHeight+$(document).scrollTop();offset.left-=(this._get(inst,"isRTL")?(dpWidth-inputWidth):0);offset.left-=(isFixed&&offset.left==inst.input.offset().left)?$(document).scrollLeft():0;offset.top-=(isFixed&&offset.top==(inst.input.offset().top+inputHeight))?$(document).scrollTop():0;offset.left-=Math.min(offset.left,(offset.left+dpWidth>viewWidth&&viewWidth>dpWidth)?Math.abs(offset.left+dpWidth-viewWidth):0);offset.top-=Math.min(offset.top,(offset.top+dpHeight>viewHeight&&viewHeight>dpHeight)?Math.abs(dpHeight+inputHeight):0);return offset},_findPos:function(obj){var inst=this._getInst(obj);var isRTL=this._get(inst,"isRTL");while(obj&&(obj.type=="hidden"||obj.nodeType!=1)){obj=obj[isRTL?"previousSibling":"nextSibling"]}var position=$(obj).offset();return[position.left,position.top]},_hideDatepicker:function(input){var inst=this._curInst;if(!inst||(input&&inst!=$.data(input,PROP_NAME))){return}if(this._datepickerShowing){var showAnim=this._get(inst,"showAnim");var duration=this._get(inst,"duration");var postProcess=function(){$.datepicker._tidyDialog(inst);this._curInst=null};if($.effects&&$.effects[showAnim]){inst.dpDiv.hide(showAnim,$.datepicker._get(inst,"showOptions"),duration,postProcess)}else{inst.dpDiv[(showAnim=="slideDown"?"slideUp":(showAnim=="fadeIn"?"fadeOut":"hide"))]((showAnim?duration:null),postProcess)}if(!showAnim){postProcess()}var onClose=this._get(inst,"onClose");if(onClose){onClose.apply((inst.input?inst.input[0]:null),[(inst.input?inst.input.val():""),inst])}this._datepickerShowing=false;this._lastInput=null;if(this._inDialog){this._dialogInput.css({position:"absolute",left:"0",top:"-100px"});if($.blockUI){$.unblockUI();$("body").append(this.dpDiv)}}this._inDialog=false}},_tidyDialog:function(inst){inst.dpDiv.removeClass(this._dialogClass).unbind(".ui-datepicker-calendar")},_checkExternalClick:function(event){if(!$.datepicker._curInst){return}var $target=$(event.target);if($target[0].id!=$.datepicker._mainDivId&&$target.parents("#"+$.datepicker._mainDivId).length==0&&!$target.hasClass($.datepicker.markerClassName)&&!$target.hasClass($.datepicker._triggerClass)&&$.datepicker._datepickerShowing&&!($.datepicker._inDialog&&$.blockUI)){$.datepicker._hideDatepicker()}},_adjustDate:function(id,offset,period){var target=$(id);var inst=this._getInst(target[0]);if(this._isDisabledDatepicker(target[0])){return}this._adjustInstDate(inst,offset+(period=="M"?this._get(inst,"showCurrentAtPos"):0),period);this._updateDatepicker(inst)},_gotoToday:function(id){var target=$(id);var inst=this._getInst(target[0]);if(this._get(inst,"gotoCurrent")&&inst.currentDay){inst.selectedDay=inst.currentDay;inst.drawMonth=inst.selectedMonth=inst.currentMonth;inst.drawYear=inst.selectedYear=inst.currentYear}else{var date=new Date();inst.selectedDay=date.getDate();inst.drawMonth=inst.selectedMonth=date.getMonth();inst.drawYear=inst.selectedYear=date.getFullYear()}this._notifyChange(inst);this._adjustDate(target)},_selectMonthYear:function(id,select,period){var target=$(id);var inst=this._getInst(target[0]);inst._selectingMonthYear=false;inst["selected"+(period=="M"?"Month":"Year")]=inst["draw"+(period=="M"?"Month":"Year")]=parseInt(select.options[select.selectedIndex].value,10);this._notifyChange(inst);this._adjustDate(target)},_clickMonthYear:function(id){var target=$(id);var inst=this._getInst(target[0]);if(inst.input&&inst._selectingMonthYear&&!$.browser.msie){inst.input.focus()}inst._selectingMonthYear=!inst._selectingMonthYear},_selectDay:function(id,month,year,td){var target=$(id);if($(td).hasClass(this._unselectableClass)||this._isDisabledDatepicker(target[0])){return}var inst=this._getInst(target[0]);inst.selectedDay=inst.currentDay=$("a",td).html();inst.selectedMonth=inst.currentMonth=month;inst.selectedYear=inst.currentYear=year;this._selectDate(id,this._formatDate(inst,inst.currentDay,inst.currentMonth,inst.currentYear))},_clearDate:function(id){var target=$(id);var inst=this._getInst(target[0]);this._selectDate(target,"")},_selectDate:function(id,dateStr){var target=$(id);var inst=this._getInst(target[0]);dateStr=(dateStr!=null?dateStr:this._formatDate(inst));if(inst.input){inst.input.val(dateStr)}this._updateAlternate(inst);var onSelect=this._get(inst,"onSelect");if(onSelect){onSelect.apply((inst.input?inst.input[0]:null),[dateStr,inst])}else{if(inst.input){inst.input.trigger("change")}}if(inst.inline){this._updateDatepicker(inst)}else{this._hideDatepicker();this._lastInput=inst.input[0];if(typeof(inst.input[0])!="object"){inst.input.focus()}this._lastInput=null}},_updateAlternate:function(inst){var altField=this._get(inst,"altField");if(altField){var altFormat=this._get(inst,"altFormat")||this._get(inst,"dateFormat");var date=this._getDate(inst);var dateStr=this.formatDate(altFormat,date,this._getFormatConfig(inst));$(altField).each(function(){$(this).val(dateStr)})}},noWeekends:function(date){var day=date.getDay();return[(day>0&&day<6),""]},iso8601Week:function(date){var checkDate=new Date(date.getTime());checkDate.setDate(checkDate.getDate()+4-(checkDate.getDay()||7));var time=checkDate.getTime();checkDate.setMonth(0);checkDate.setDate(1);return Math.floor(Math.round((time-checkDate)/86400000)/7)+1},parseDate:function(format,value,settings){if(format==null||value==null){throw"Invalid arguments"}value=(typeof value=="object"?value.toString():value+"");if(value==""){return null}var shortYearCutoff=(settings?settings.shortYearCutoff:null)||this._defaults.shortYearCutoff;var dayNamesShort=(settings?settings.dayNamesShort:null)||this._defaults.dayNamesShort;var dayNames=(settings?settings.dayNames:null)||this._defaults.dayNames;var monthNamesShort=(settings?settings.monthNamesShort:null)||this._defaults.monthNamesShort;var monthNames=(settings?settings.monthNames:null)||this._defaults.monthNames;var year=-1;var month=-1;var day=-1;var doy=-1;var literal=false;var lookAhead=function(match){var matches=(iFormat+1<format.length&&format.charAt(iFormat+1)==match);if(matches){iFormat++}return matches};var getNumber=function(match){lookAhead(match);var size=(match=="@"?14:(match=="!"?20:(match=="y"?4:(match=="o"?3:2))));var digits=new RegExp("^\\d{1,"+size+"}");var num=value.substring(iValue).match(digits);if(!num){throw"Missing number at position "+iValue}iValue+=num[0].length;return parseInt(num[0],10)};var getName=function(match,shortNames,longNames){var names=(lookAhead(match)?longNames:shortNames);for(var i=0;i<names.length;i++){if(value.substr(iValue,names[i].length)==names[i]){iValue+=names[i].length;return i+1}}throw"Unknown name at position "+iValue};var checkLiteral=function(){if(value.charAt(iValue)!=format.charAt(iFormat)){throw"Unexpected literal at position "+iValue}iValue++};var iValue=0;for(var iFormat=0;iFormat<format.length;iFormat++){if(literal){if(format.charAt(iFormat)=="'"&&!lookAhead("'")){literal=false}else{checkLiteral()}}else{switch(format.charAt(iFormat)){case"d":day=getNumber("d");break;case"D":getName("D",dayNamesShort,dayNames);break;case"o":doy=getNumber("o");break;case"m":month=getNumber("m");break;case"M":month=getName("M",monthNamesShort,monthNames);break;case"y":year=getNumber("y");break;case"@":var date=new Date(getNumber("@"));year=date.getFullYear();month=date.getMonth()+1;day=date.getDate();break;case"!":var date=new Date((getNumber("!")-this._ticksTo1970)/10000);year=date.getFullYear();month=date.getMonth()+1;day=date.getDate();break;case"'":if(lookAhead("'")){checkLiteral()}else{literal=true}break;default:checkLiteral()}}}if(year==-1){year=new Date().getFullYear()}else{if(year<100){year+=new Date().getFullYear()-new Date().getFullYear()%100+(year<=shortYearCutoff?0:-100)}}if(doy>-1){month=1;day=doy;do{var dim=this._getDaysInMonth(year,month-1);if(day<=dim){break}month++;day-=dim}while(true)}var date=this._daylightSavingAdjust(new Date(year,month-1,day));if(date.getFullYear()!=year||date.getMonth()+1!=month||date.getDate()!=day){throw"Invalid date"}return date},ATOM:"yy-mm-dd",COOKIE:"D, dd M yy",ISO_8601:"yy-mm-dd",RFC_822:"D, d M y",RFC_850:"DD, dd-M-y",RFC_1036:"D, d M y",RFC_1123:"D, d M yy",RFC_2822:"D, d M yy",RSS:"D, d M y",TICKS:"!",TIMESTAMP:"@",W3C:"yy-mm-dd",_ticksTo1970:(((1970-1)*365+Math.floor(1970/4)-Math.floor(1970/100)+Math.floor(1970/400))*24*60*60*10000000),formatDate:function(format,date,settings){if(!date){return""}var dayNamesShort=(settings?settings.dayNamesShort:null)||this._defaults.dayNamesShort;var dayNames=(settings?settings.dayNames:null)||this._defaults.dayNames;var monthNamesShort=(settings?settings.monthNamesShort:null)||this._defaults.monthNamesShort;var monthNames=(settings?settings.monthNames:null)||this._defaults.monthNames;var lookAhead=function(match){var matches=(iFormat+1<format.length&&format.charAt(iFormat+1)==match);if(matches){iFormat++}return matches};var formatNumber=function(match,value,len){var num=""+value;if(lookAhead(match)){while(num.length<len){num="0"+num}}return num};var formatName=function(match,value,shortNames,longNames){return(lookAhead(match)?longNames[value]:shortNames[value])};var output="";var literal=false;if(date){for(var iFormat=0;iFormat<format.length;iFormat++){if(literal){if(format.charAt(iFormat)=="'"&&!lookAhead("'")){literal=false}else{output+=format.charAt(iFormat)}}else{switch(format.charAt(iFormat)){case"d":output+=formatNumber("d",date.getDate(),2);break;case"D":output+=formatName("D",date.getDay(),dayNamesShort,dayNames);break;case"o":output+=formatNumber("o",(date.getTime()-new Date(date.getFullYear(),0,0).getTime())/86400000,3);break;case"m":output+=formatNumber("m",date.getMonth()+1,2);break;case"M":output+=formatName("M",date.getMonth(),monthNamesShort,monthNames);break;case"y":output+=(lookAhead("y")?date.getFullYear():(date.getYear()%100<10?"0":"")+date.getYear()%100);break;case"@":output+=date.getTime();break;case"!":output+=date.getTime()*10000+this._ticksTo1970;break;case"'":if(lookAhead("'")){output+="'"}else{literal=true}break;default:output+=format.charAt(iFormat)}}}}return output},_possibleChars:function(format){var chars="";var literal=false;var lookAhead=function(match){var matches=(iFormat+1<format.length&&format.charAt(iFormat+1)==match);if(matches){iFormat++}return matches};for(var iFormat=0;iFormat<format.length;iFormat++){if(literal){if(format.charAt(iFormat)=="'"&&!lookAhead("'")){literal=false}else{chars+=format.charAt(iFormat)}}else{switch(format.charAt(iFormat)){case"d":case"m":case"y":case"@":chars+="0123456789";break;case"D":case"M":return null;case"'":if(lookAhead("'")){chars+="'"}else{literal=true}break;default:chars+=format.charAt(iFormat)}}}return chars},_get:function(inst,name){return inst.settings[name]!==undefined?inst.settings[name]:this._defaults[name]},_setDateFromField:function(inst,noDefault){if(inst.input.val()==inst.lastVal){return}var dateFormat=this._get(inst,"dateFormat");var dates=inst.lastVal=inst.input?inst.input.val():null;var date,defaultDate;date=defaultDate=this._getDefaultDate(inst);var settings=this._getFormatConfig(inst);try{date=this.parseDate(dateFormat,dates,settings)||defaultDate}catch(event){this.log(event);dates=(noDefault?"":dates)}inst.selectedDay=date.getDate();inst.drawMonth=inst.selectedMonth=date.getMonth();inst.drawYear=inst.selectedYear=date.getFullYear();inst.currentDay=(dates?date.getDate():0);inst.currentMonth=(dates?date.getMonth():0);inst.currentYear=(dates?date.getFullYear():0);this._adjustInstDate(inst)},_getDefaultDate:function(inst){return this._restrictMinMax(inst,this._determineDate(inst,this._get(inst,"defaultDate"),new Date()))},_determineDate:function(inst,date,defaultDate){var offsetNumeric=function(offset){var date=new Date();date.setDate(date.getDate()+offset);return date};var offsetString=function(offset){try{return $.datepicker.parseDate($.datepicker._get(inst,"dateFormat"),offset,$.datepicker._getFormatConfig(inst))}catch(e){}var date=(offset.toLowerCase().match(/^c/)?$.datepicker._getDate(inst):null)||new Date();var year=date.getFullYear();var month=date.getMonth();var day=date.getDate();var pattern=/([+-]?[0-9]+)\s*(d|D|w|W|m|M|y|Y)?/g;var matches=pattern.exec(offset);while(matches){switch(matches[2]||"d"){case"d":case"D":day+=parseInt(matches[1],10);break;case"w":case"W":day+=parseInt(matches[1],10)*7;break;case"m":case"M":month+=parseInt(matches[1],10);day=Math.min(day,$.datepicker._getDaysInMonth(year,month));break;case"y":case"Y":year+=parseInt(matches[1],10);day=Math.min(day,$.datepicker._getDaysInMonth(year,month));break}matches=pattern.exec(offset)}return new Date(year,month,day)};date=(date==null?defaultDate:(typeof date=="string"?offsetString(date):(typeof date=="number"?(isNaN(date)?defaultDate:offsetNumeric(date)):date)));date=(date&&date.toString()=="Invalid Date"?defaultDate:date);if(date){date.setHours(0);date.setMinutes(0);date.setSeconds(0);date.setMilliseconds(0)}return this._daylightSavingAdjust(date)},_daylightSavingAdjust:function(date){if(!date){return null}date.setHours(date.getHours()>12?date.getHours()+2:0);return date},_setDate:function(inst,date,noChange){var clear=!(date);var origMonth=inst.selectedMonth;var origYear=inst.selectedYear;date=this._restrictMinMax(inst,this._determineDate(inst,date,new Date()));inst.selectedDay=inst.currentDay=date.getDate();inst.drawMonth=inst.selectedMonth=inst.currentMonth=date.getMonth();inst.drawYear=inst.selectedYear=inst.currentYear=date.getFullYear();if((origMonth!=inst.selectedMonth||origYear!=inst.selectedYear)&&!noChange){this._notifyChange(inst)}this._adjustInstDate(inst);if(inst.input){inst.input.val(clear?"":this._formatDate(inst))}},_getDate:function(inst){var startDate=(!inst.currentYear||(inst.input&&inst.input.val()=="")?null:this._daylightSavingAdjust(new Date(inst.currentYear,inst.currentMonth,inst.currentDay)));return startDate},_generateHTML:function(inst){var today=new Date();today=this._daylightSavingAdjust(new Date(today.getFullYear(),today.getMonth(),today.getDate()));var isRTL=this._get(inst,"isRTL");var showButtonPanel=this._get(inst,"showButtonPanel");var hideIfNoPrevNext=this._get(inst,"hideIfNoPrevNext");var navigationAsDateFormat=this._get(inst,"navigationAsDateFormat");var numMonths=this._getNumberOfMonths(inst);var showCurrentAtPos=this._get(inst,"showCurrentAtPos");var stepMonths=this._get(inst,"stepMonths");var isMultiMonth=(numMonths[0]!=1||numMonths[1]!=1);var currentDate=this._daylightSavingAdjust((!inst.currentDay?new Date(9999,9,9):new Date(inst.currentYear,inst.currentMonth,inst.currentDay)));var minDate=this._getMinMaxDate(inst,"min");var maxDate=this._getMinMaxDate(inst,"max");var drawMonth=inst.drawMonth-showCurrentAtPos;var drawYear=inst.drawYear;if(drawMonth<0){drawMonth+=12;drawYear--}if(maxDate){var maxDraw=this._daylightSavingAdjust(new Date(maxDate.getFullYear(),maxDate.getMonth()-(numMonths[0]*numMonths[1])+1,maxDate.getDate()));maxDraw=(minDate&&maxDraw<minDate?minDate:maxDraw);while(this._daylightSavingAdjust(new Date(drawYear,drawMonth,1))>maxDraw){drawMonth--;if(drawMonth<0){drawMonth=11;drawYear--}}}inst.drawMonth=drawMonth;inst.drawYear=drawYear;var prevText=this._get(inst,"prevText");prevText=(!navigationAsDateFormat?prevText:this.formatDate(prevText,this._daylightSavingAdjust(new Date(drawYear,drawMonth-stepMonths,1)),this._getFormatConfig(inst)));var prev=(this._canAdjustMonth(inst,-1,drawYear,drawMonth)?'<a class="ui-datepicker-prev ui-corner-all" onclick="DP_jQuery_'+dpuuid+".datepicker._adjustDate('#"+inst.id+"', -"+stepMonths+", 'M');\" title=\""+prevText+'"><span class="ui-icon ui-icon-circle-triangle-'+(isRTL?"e":"w")+'">'+prevText+"</span></a>":(hideIfNoPrevNext?"":'<a class="ui-datepicker-prev ui-corner-all ui-state-disabled" title="'+prevText+'"><span class="ui-icon ui-icon-circle-triangle-'+(isRTL?"e":"w")+'">'+prevText+"</span></a>"));var nextText=this._get(inst,"nextText");nextText=(!navigationAsDateFormat?nextText:this.formatDate(nextText,this._daylightSavingAdjust(new Date(drawYear,drawMonth+stepMonths,1)),this._getFormatConfig(inst)));var next=(this._canAdjustMonth(inst,+1,drawYear,drawMonth)?'<a class="ui-datepicker-next ui-corner-all" onclick="DP_jQuery_'+dpuuid+".datepicker._adjustDate('#"+inst.id+"', +"+stepMonths+", 'M');\" title=\""+nextText+'"><span class="ui-icon ui-icon-circle-triangle-'+(isRTL?"w":"e")+'">'+nextText+"</span></a>":(hideIfNoPrevNext?"":'<a class="ui-datepicker-next ui-corner-all ui-state-disabled" title="'+nextText+'"><span class="ui-icon ui-icon-circle-triangle-'+(isRTL?"w":"e")+'">'+nextText+"</span></a>"));var currentText=this._get(inst,"currentText");var gotoDate=(this._get(inst,"gotoCurrent")&&inst.currentDay?currentDate:today);currentText=(!navigationAsDateFormat?currentText:this.formatDate(currentText,gotoDate,this._getFormatConfig(inst)));var controls=(!inst.inline?'<button type="button" class="ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all" onclick="DP_jQuery_'+dpuuid+'.datepicker._hideDatepicker();">'+this._get(inst,"closeText")+"</button>":"");var buttonPanel=(showButtonPanel)?'<div class="ui-datepicker-buttonpane ui-widget-content">'+(isRTL?controls:"")+(this._isInRange(inst,gotoDate)?'<button type="button" class="ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all" onclick="DP_jQuery_'+dpuuid+".datepicker._gotoToday('#"+inst.id+"');\">"+currentText+"</button>":"")+(isRTL?"":controls)+"</div>":"";var firstDay=parseInt(this._get(inst,"firstDay"),10);firstDay=(isNaN(firstDay)?0:firstDay);var showWeek=this._get(inst,"showWeek");var dayNames=this._get(inst,"dayNames");var dayNamesShort=this._get(inst,"dayNamesShort");var dayNamesMin=this._get(inst,"dayNamesMin");var monthNames=this._get(inst,"monthNames");var monthNamesShort=this._get(inst,"monthNamesShort");var beforeShowDay=this._get(inst,"beforeShowDay");var showOtherMonths=this._get(inst,"showOtherMonths");var selectOtherMonths=this._get(inst,"selectOtherMonths");var calculateWeek=this._get(inst,"calculateWeek")||this.iso8601Week;var defaultDate=this._getDefaultDate(inst);var html="";for(var row=0;row<numMonths[0];row++){var group="";for(var col=0;col<numMonths[1];col++){var selectedDate=this._daylightSavingAdjust(new Date(drawYear,drawMonth,inst.selectedDay));var cornerClass=" ui-corner-all";var calender="";if(isMultiMonth){calender+='<div class="ui-datepicker-group';if(numMonths[1]>1){switch(col){case 0:calender+=" ui-datepicker-group-first";cornerClass=" ui-corner-"+(isRTL?"right":"left");break;case numMonths[1]-1:calender+=" ui-datepicker-group-last";cornerClass=" ui-corner-"+(isRTL?"left":"right");break;default:calender+=" ui-datepicker-group-middle";cornerClass="";break}}calender+='">'}calender+='<div class="ui-datepicker-header ui-widget-header ui-helper-clearfix'+cornerClass+'">'+(/all|left/.test(cornerClass)&&row==0?(isRTL?next:prev):"")+(/all|right/.test(cornerClass)&&row==0?(isRTL?prev:next):"")+this._generateMonthYearHeader(inst,drawMonth,drawYear,minDate,maxDate,row>0||col>0,monthNames,monthNamesShort)+'</div><table class="ui-datepicker-calendar"><thead><tr>';var thead=(showWeek?'<th class="ui-datepicker-week-col">'+this._get(inst,"weekHeader")+"</th>":"");for(var dow=0;dow<7;dow++){var day=(dow+firstDay)%7;thead+="<th"+((dow+firstDay+6)%7>=5?' class="ui-datepicker-week-end"':"")+'><span title="'+dayNames[day]+'">'+dayNamesMin[day]+"</span></th>"}calender+=thead+"</tr></thead><tbody>";var daysInMonth=this._getDaysInMonth(drawYear,drawMonth);if(drawYear==inst.selectedYear&&drawMonth==inst.selectedMonth){inst.selectedDay=Math.min(inst.selectedDay,daysInMonth)}var leadDays=(this._getFirstDayOfMonth(drawYear,drawMonth)-firstDay+7)%7;var numRows=(isMultiMonth?6:Math.ceil((leadDays+daysInMonth)/7));var printDate=this._daylightSavingAdjust(new Date(drawYear,drawMonth,1-leadDays));for(var dRow=0;dRow<numRows;dRow++){calender+="<tr>";var tbody=(!showWeek?"":'<td class="ui-datepicker-week-col">'+this._get(inst,"calculateWeek")(printDate)+"</td>");for(var dow=0;dow<7;dow++){var daySettings=(beforeShowDay?beforeShowDay.apply((inst.input?inst.input[0]:null),[printDate]):[true,""]);var otherMonth=(printDate.getMonth()!=drawMonth);var unselectable=(otherMonth&&!selectOtherMonths)||!daySettings[0]||(minDate&&printDate<minDate)||(maxDate&&printDate>maxDate);tbody+='<td class="'+((dow+firstDay+6)%7>=5?" ui-datepicker-week-end":"")+(otherMonth?" ui-datepicker-other-month":"")+((printDate.getTime()==selectedDate.getTime()&&drawMonth==inst.selectedMonth&&inst._keyEvent)||(defaultDate.getTime()==printDate.getTime()&&defaultDate.getTime()==selectedDate.getTime())?" "+this._dayOverClass:"")+(unselectable?" "+this._unselectableClass+" ui-state-disabled":"")+(otherMonth&&!showOtherMonths?"":" "+daySettings[1]+(printDate.getTime()==currentDate.getTime()?" "+this._currentClass:"")+(printDate.getTime()==today.getTime()?" ui-datepicker-today":""))+'"'+((!otherMonth||showOtherMonths)&&daySettings[2]?' title="'+daySettings[2]+'"':"")+(unselectable?"":' onclick="DP_jQuery_'+dpuuid+".datepicker._selectDay('#"+inst.id+"',"+printDate.getMonth()+","+printDate.getFullYear()+', this);return false;"')+">"+(otherMonth&&!showOtherMonths?"&#xa0;":(unselectable?'<span class="ui-state-default">'+printDate.getDate()+"</span>":'<a class="ui-state-default'+(printDate.getTime()==today.getTime()?" ui-state-highlight":"")+(printDate.getTime()==currentDate.getTime()?" ui-state-active":"")+(otherMonth?" ui-priority-secondary":"")+'" href="#">'+printDate.getDate()+"</a>"))+"</td>";printDate.setDate(printDate.getDate()+1);printDate=this._daylightSavingAdjust(printDate)}calender+=tbody+"</tr>"}drawMonth++;if(drawMonth>11){drawMonth=0;drawYear++}calender+="</tbody></table>"+(isMultiMonth?"</div>"+((numMonths[0]>0&&col==numMonths[1]-1)?'<div class="ui-datepicker-row-break"></div>':""):"");group+=calender}html+=group}html+=buttonPanel+($.browser.msie&&parseInt($.browser.version,10)<7&&!inst.inline?'<iframe src="javascript:false;" class="ui-datepicker-cover" frameborder="0"></iframe>':"");inst._keyEvent=false;return html},_generateMonthYearHeader:function(inst,drawMonth,drawYear,minDate,maxDate,secondary,monthNames,monthNamesShort){var changeMonth=this._get(inst,"changeMonth");var changeYear=this._get(inst,"changeYear");var showMonthAfterYear=this._get(inst,"showMonthAfterYear");var html='<div class="ui-datepicker-title">';var monthHtml="";if(secondary||!changeMonth){monthHtml+='<span class="ui-datepicker-month">'+monthNames[drawMonth]+"</span>"}else{var inMinYear=(minDate&&minDate.getFullYear()==drawYear);var inMaxYear=(maxDate&&maxDate.getFullYear()==drawYear);monthHtml+='<select class="ui-datepicker-month" onchange="DP_jQuery_'+dpuuid+".datepicker._selectMonthYear('#"+inst.id+"', this, 'M');\" onclick=\"DP_jQuery_"+dpuuid+".datepicker._clickMonthYear('#"+inst.id+"');\">";for(var month=0;month<12;month++){if((!inMinYear||month>=minDate.getMonth())&&(!inMaxYear||month<=maxDate.getMonth())){monthHtml+='<option value="'+month+'"'+(month==drawMonth?' selected="selected"':"")+">"+monthNamesShort[month]+"</option>"}}monthHtml+="</select>"}if(!showMonthAfterYear){html+=monthHtml+(secondary||!(changeMonth&&changeYear)?"&#xa0;":"")}if(secondary||!changeYear){html+='<span class="ui-datepicker-year">'+drawYear+"</span>"}else{var years=this._get(inst,"yearRange").split(":");var thisYear=new Date().getFullYear();var determineYear=function(value){var year=(value.match(/c[+-].*/)?drawYear+parseInt(value.substring(1),10):(value.match(/[+-].*/)?thisYear+parseInt(value,10):parseInt(value,10)));return(isNaN(year)?thisYear:year)};var year=determineYear(years[0]);var endYear=Math.max(year,determineYear(years[1]||""));year=(minDate?Math.max(year,minDate.getFullYear()):year);endYear=(maxDate?Math.min(endYear,maxDate.getFullYear()):endYear);html+='<select class="ui-datepicker-year" onchange="DP_jQuery_'+dpuuid+".datepicker._selectMonthYear('#"+inst.id+"', this, 'Y');\" onclick=\"DP_jQuery_"+dpuuid+".datepicker._clickMonthYear('#"+inst.id+"');\">";for(;year<=endYear;year++){html+='<option value="'+year+'"'+(year==drawYear?' selected="selected"':"")+">"+year+"</option>"}html+="</select>"}html+=this._get(inst,"yearSuffix");if(showMonthAfterYear){html+=(secondary||!(changeMonth&&changeYear)?"&#xa0;":"")+monthHtml}html+="</div>";return html},_adjustInstDate:function(inst,offset,period){var year=inst.drawYear+(period=="Y"?offset:0);var month=inst.drawMonth+(period=="M"?offset:0);var day=Math.min(inst.selectedDay,this._getDaysInMonth(year,month))+(period=="D"?offset:0);var date=this._restrictMinMax(inst,this._daylightSavingAdjust(new Date(year,month,day)));inst.selectedDay=date.getDate();inst.drawMonth=inst.selectedMonth=date.getMonth();inst.drawYear=inst.selectedYear=date.getFullYear();if(period=="M"||period=="Y"){this._notifyChange(inst)}},_restrictMinMax:function(inst,date){var minDate=this._getMinMaxDate(inst,"min");var maxDate=this._getMinMaxDate(inst,"max");date=(minDate&&date<minDate?minDate:date);date=(maxDate&&date>maxDate?maxDate:date);return date},_notifyChange:function(inst){var onChange=this._get(inst,"onChangeMonthYear");if(onChange){onChange.apply((inst.input?inst.input[0]:null),[inst.selectedYear,inst.selectedMonth+1,inst])}},_getNumberOfMonths:function(inst){var numMonths=this._get(inst,"numberOfMonths");return(numMonths==null?[1,1]:(typeof numMonths=="number"?[1,numMonths]:numMonths))},_getMinMaxDate:function(inst,minMax){return this._determineDate(inst,this._get(inst,minMax+"Date"),null)},_getDaysInMonth:function(year,month){return 32-new Date(year,month,32).getDate()},_getFirstDayOfMonth:function(year,month){return new Date(year,month,1).getDay()},_canAdjustMonth:function(inst,offset,curYear,curMonth){var numMonths=this._getNumberOfMonths(inst);var date=this._daylightSavingAdjust(new Date(curYear,curMonth+(offset<0?offset:numMonths[0]*numMonths[1]),1));if(offset<0){date.setDate(this._getDaysInMonth(date.getFullYear(),date.getMonth()))}return this._isInRange(inst,date)},_isInRange:function(inst,date){var minDate=this._getMinMaxDate(inst,"min");var maxDate=this._getMinMaxDate(inst,"max");return((!minDate||date.getTime()>=minDate.getTime())&&(!maxDate||date.getTime()<=maxDate.getTime()))},_getFormatConfig:function(inst){var shortYearCutoff=this._get(inst,"shortYearCutoff");shortYearCutoff=(typeof shortYearCutoff!="string"?shortYearCutoff:new Date().getFullYear()%100+parseInt(shortYearCutoff,10));return{shortYearCutoff:shortYearCutoff,dayNamesShort:this._get(inst,"dayNamesShort"),dayNames:this._get(inst,"dayNames"),monthNamesShort:this._get(inst,"monthNamesShort"),monthNames:this._get(inst,"monthNames")}},_formatDate:function(inst,day,month,year){if(!day){inst.currentDay=inst.selectedDay;inst.currentMonth=inst.selectedMonth;inst.currentYear=inst.selectedYear}var date=(day?(typeof day=="object"?day:this._daylightSavingAdjust(new Date(year,month,day))):this._daylightSavingAdjust(new Date(inst.currentYear,inst.currentMonth,inst.currentDay)));return this.formatDate(this._get(inst,"dateFormat"),date,this._getFormatConfig(inst))}});function extendRemove(target,props){$.extend(target,props);for(var name in props){if(props[name]==null||props[name]==undefined){target[name]=props[name]}}return target}function isArray(a){return(a&&(($.browser.safari&&typeof a=="object"&&a.length)||(a.constructor&&a.constructor.toString().match(/\Array\(\)/))))}$.fn.datepicker=function(options){if(!$.datepicker.initialized){$(document).mousedown($.datepicker._checkExternalClick).find("body").append($.datepicker.dpDiv);$.datepicker.initialized=true}var otherArgs=Array.prototype.slice.call(arguments,1);if(typeof options=="string"&&(options=="isDisabled"||options=="getDate"||options=="widget")){return $.datepicker["_"+options+"Datepicker"].apply($.datepicker,[this[0]].concat(otherArgs))}if(options=="option"&&arguments.length==2&&typeof arguments[1]=="string"){return $.datepicker["_"+options+"Datepicker"].apply($.datepicker,[this[0]].concat(otherArgs))}return this.each(function(){typeof options=="string"?$.datepicker["_"+options+"Datepicker"].apply($.datepicker,[this].concat(otherArgs)):$.datepicker._attachDatepicker(this,options)})};$.datepicker=new Datepicker();$.datepicker.initialized=false;$.datepicker.uuid=new Date().getTime();$.datepicker.version="1.8";window["DP_jQuery_"+dpuuid]=$})(jQuery);;/*
+ * jQuery UI Progressbar 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Progressbar
+ *
+ * Depends:
+ *   jquery.ui.core.js
+ *   jquery.ui.widget.js
+ */(function(a){a.widget("ui.progressbar",{options:{value:0},_create:function(){this.element.addClass("ui-progressbar ui-widget ui-widget-content ui-corner-all").attr({role:"progressbar","aria-valuemin":this._valueMin(),"aria-valuemax":this._valueMax(),"aria-valuenow":this._value()});this.valueDiv=a("<div class='ui-progressbar-value ui-widget-header ui-corner-left'></div>").appendTo(this.element);this._refreshValue()},destroy:function(){this.element.removeClass("ui-progressbar ui-widget ui-widget-content ui-corner-all").removeAttr("role").removeAttr("aria-valuemin").removeAttr("aria-valuemax").removeAttr("aria-valuenow");this.valueDiv.remove();a.Widget.prototype.destroy.apply(this,arguments)},value:function(b){if(b===undefined){return this._value()}this._setOption("value",b);return this},_setOption:function(b,c){switch(b){case"value":this.options.value=c;this._refreshValue();this._trigger("change");break}a.Widget.prototype._setOption.apply(this,arguments)},_value:function(){var b=this.options.value;if(typeof b!=="number"){b=0}if(b<this._valueMin()){b=this._valueMin()}if(b>this._valueMax()){b=this._valueMax()}return b},_valueMin:function(){return 0},_valueMax:function(){return 100},_refreshValue:function(){var b=this.value();this.valueDiv[b===this._valueMax()?"addClass":"removeClass"]("ui-corner-right").width(b+"%");this.element.attr("aria-valuenow",b)}});a.extend(a.ui.progressbar,{version:"1.8"})})(jQuery);;/*
+ * jQuery UI Effects 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Effects/
+ */jQuery.effects||(function(g){g.effects={};g.each(["backgroundColor","borderBottomColor","borderLeftColor","borderRightColor","borderTopColor","color","outlineColor"],function(l,k){g.fx.step[k]=function(m){if(!m.colorInit){m.start=j(m.elem,k);m.end=i(m.end);m.colorInit=true}m.elem.style[k]="rgb("+Math.max(Math.min(parseInt((m.pos*(m.end[0]-m.start[0]))+m.start[0],10),255),0)+","+Math.max(Math.min(parseInt((m.pos*(m.end[1]-m.start[1]))+m.start[1],10),255),0)+","+Math.max(Math.min(parseInt((m.pos*(m.end[2]-m.start[2]))+m.start[2],10),255),0)+")"}});function i(l){var k;if(l&&l.constructor==Array&&l.length==3){return l}if(k=/rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/.exec(l)){return[parseInt(k[1],10),parseInt(k[2],10),parseInt(k[3],10)]}if(k=/rgb\(\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\%\s*\)/.exec(l)){return[parseFloat(k[1])*2.55,parseFloat(k[2])*2.55,parseFloat(k[3])*2.55]}if(k=/#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/.exec(l)){return[parseInt(k[1],16),parseInt(k[2],16),parseInt(k[3],16)]}if(k=/#([a-fA-F0-9])([a-fA-F0-9])([a-fA-F0-9])/.exec(l)){return[parseInt(k[1]+k[1],16),parseInt(k[2]+k[2],16),parseInt(k[3]+k[3],16)]}if(k=/rgba\(0, 0, 0, 0\)/.exec(l)){return a.transparent}return a[g.trim(l).toLowerCase()]}function j(m,k){var l;do{l=g.curCSS(m,k);if(l!=""&&l!="transparent"||g.nodeName(m,"body")){break}k="backgroundColor"}while(m=m.parentNode);return i(l)}var a={aqua:[0,255,255],azure:[240,255,255],beige:[245,245,220],black:[0,0,0],blue:[0,0,255],brown:[165,42,42],cyan:[0,255,255],darkblue:[0,0,139],darkcyan:[0,139,139],darkgrey:[169,169,169],darkgreen:[0,100,0],darkkhaki:[189,183,107],darkmagenta:[139,0,139],darkolivegreen:[85,107,47],darkorange:[255,140,0],darkorchid:[153,50,204],darkred:[139,0,0],darksalmon:[233,150,122],darkviolet:[148,0,211],fuchsia:[255,0,255],gold:[255,215,0],green:[0,128,0],indigo:[75,0,130],khaki:[240,230,140],lightblue:[173,216,230],lightcyan:[224,255,255],lightgreen:[144,238,144],lightgrey:[211,211,211],lightpink:[255,182,193],lightyellow:[255,255,224],lime:[0,255,0],magenta:[255,0,255],maroon:[128,0,0],navy:[0,0,128],olive:[128,128,0],orange:[255,165,0],pink:[255,192,203],purple:[128,0,128],violet:[128,0,128],red:[255,0,0],silver:[192,192,192],white:[255,255,255],yellow:[255,255,0],transparent:[255,255,255]};var e=["add","remove","toggle"],c={border:1,borderBottom:1,borderColor:1,borderLeft:1,borderRight:1,borderTop:1,borderWidth:1,margin:1,padding:1};function f(){var n=document.defaultView?document.defaultView.getComputedStyle(this,null):this.currentStyle,o={},l,m;if(n&&n.length&&n[0]&&n[n[0]]){var k=n.length;while(k--){l=n[k];if(typeof n[l]=="string"){m=l.replace(/\-(\w)/g,function(p,q){return q.toUpperCase()});o[m]=n[l]}}}else{for(l in n){if(typeof n[l]==="string"){o[l]=n[l]}}}return o}function b(l){var k,m;for(k in l){m=l[k];if(m==null||g.isFunction(m)||k in c||(/scrollbar/).test(k)||(!(/color/i).test(k)&&isNaN(parseFloat(m)))){delete l[k]}}return l}function h(k,m){var n={_:0},l;for(l in m){if(k[l]!=m[l]){n[l]=m[l]}}return n}g.effects.animateClass=function(k,l,n,m){if(g.isFunction(n)){m=n;n=null}return this.each(function(){var r=g(this),o=r.attr("style")||" ",s=b(f.call(this)),q,p=r.attr("className");g.each(e,function(t,u){if(k[u]){r[u+"Class"](k[u])}});q=b(f.call(this));r.attr("className",p);r.animate(h(s,q),l,n,function(){g.each(e,function(t,u){if(k[u]){r[u+"Class"](k[u])}});if(typeof r.attr("style")=="object"){r.attr("style").cssText="";r.attr("style").cssText=o}else{r.attr("style",o)}if(m){m.apply(this,arguments)}})})};g.fn.extend({_addClass:g.fn.addClass,addClass:function(l,k,n,m){return k?g.effects.animateClass.apply(this,[{add:l},k,n,m]):this._addClass(l)},_removeClass:g.fn.removeClass,removeClass:function(l,k,n,m){return k?g.effects.animateClass.apply(this,[{remove:l},k,n,m]):this._removeClass(l)},_toggleClass:g.fn.toggleClass,toggleClass:function(m,l,k,o,n){if(typeof l=="boolean"||l===undefined){if(!k){return this._toggleClass(m,l)}else{return g.effects.animateClass.apply(this,[(l?{add:m}:{remove:m}),k,o,n])}}else{return g.effects.animateClass.apply(this,[{toggle:m},l,k,o])}},switchClass:function(k,m,l,o,n){return g.effects.animateClass.apply(this,[{add:m,remove:k},l,o,n])}});g.extend(g.effects,{version:"1.8",save:function(l,m){for(var k=0;k<m.length;k++){if(m[k]!==null){l.data("ec.storage."+m[k],l[0].style[m[k]])}}},restore:function(l,m){for(var k=0;k<m.length;k++){if(m[k]!==null){l.css(m[k],l.data("ec.storage."+m[k]))}}},setMode:function(k,l){if(l=="toggle"){l=k.is(":hidden")?"show":"hide"}return l},getBaseline:function(l,m){var n,k;switch(l[0]){case"top":n=0;break;case"middle":n=0.5;break;case"bottom":n=1;break;default:n=l[0]/m.height}switch(l[1]){case"left":k=0;break;case"center":k=0.5;break;case"right":k=1;break;default:k=l[1]/m.width}return{x:k,y:n}},createWrapper:function(k){if(k.parent().is(".ui-effects-wrapper")){return k.parent()}var l={width:k.outerWidth(true),height:k.outerHeight(true),"float":k.css("float")},m=g("<div></div>").addClass("ui-effects-wrapper").css({fontSize:"100%",background:"transparent",border:"none",margin:0,padding:0});k.wrap(m);m=k.parent();if(k.css("position")=="static"){m.css({position:"relative"});k.css({position:"relative"})}else{g.extend(l,{position:k.css("position"),zIndex:k.css("z-index")});g.each(["top","left","bottom","right"],function(n,o){l[o]=k.css(o);if(isNaN(parseInt(l[o],10))){l[o]="auto"}});k.css({position:"relative",top:0,left:0})}return m.css(l).show()},removeWrapper:function(k){if(k.parent().is(".ui-effects-wrapper")){return k.parent().replaceWith(k)}return k},setTransition:function(l,n,k,m){m=m||{};g.each(n,function(p,o){unit=l.cssUnit(o);if(unit[0]>0){m[o]=unit[0]*k+unit[1]}});return m}});function d(l,k,m,n){if(typeof l=="object"){n=k;m=null;k=l;l=k.effect}if(g.isFunction(k)){n=k;m=null;k={}}if(g.isFunction(m)){n=m;m=null}if(typeof k=="number"||g.fx.speeds[k]){n=m;m=k;k={}}k=k||{};m=m||k.duration;m=g.fx.off?0:typeof m=="number"?m:g.fx.speeds[m]||g.fx.speeds._default;n=n||k.complete;return[l,k,m,n]}g.fn.extend({effect:function(n,m,p,q){var l=d.apply(this,arguments),o={options:l[1],duration:l[2],callback:l[3]},k=g.effects[n];return k&&!g.fx.off?k.call(this,o):this},_show:g.fn.show,show:function(l){if(!l||typeof l=="number"||g.fx.speeds[l]){return this._show.apply(this,arguments)}else{var k=d.apply(this,arguments);k[1].mode="show";return this.effect.apply(this,k)}},_hide:g.fn.hide,hide:function(l){if(!l||typeof l=="number"||g.fx.speeds[l]){return this._hide.apply(this,arguments)}else{var k=d.apply(this,arguments);k[1].mode="hide";return this.effect.apply(this,k)}},__toggle:g.fn.toggle,toggle:function(l){if(!l||typeof l=="number"||g.fx.speeds[l]||typeof l=="boolean"||g.isFunction(l)){return this.__toggle.apply(this,arguments)}else{var k=d.apply(this,arguments);k[1].mode="toggle";return this.effect.apply(this,k)}},cssUnit:function(k){var l=this.css(k),m=[];g.each(["em","px","%","pt"],function(n,o){if(l.indexOf(o)>0){m=[parseFloat(l),o]}});return m}});g.easing.jswing=g.easing.swing;g.extend(g.easing,{def:"easeOutQuad",swing:function(l,m,k,o,n){return g.easing[g.easing.def](l,m,k,o,n)},easeInQuad:function(l,m,k,o,n){return o*(m/=n)*m+k},easeOutQuad:function(l,m,k,o,n){return -o*(m/=n)*(m-2)+k},easeInOutQuad:function(l,m,k,o,n){if((m/=n/2)<1){return o/2*m*m+k}return -o/2*((--m)*(m-2)-1)+k},easeInCubic:function(l,m,k,o,n){return o*(m/=n)*m*m+k},easeOutCubic:function(l,m,k,o,n){return o*((m=m/n-1)*m*m+1)+k},easeInOutCubic:function(l,m,k,o,n){if((m/=n/2)<1){return o/2*m*m*m+k}return o/2*((m-=2)*m*m+2)+k},easeInQuart:function(l,m,k,o,n){return o*(m/=n)*m*m*m+k},easeOutQuart:function(l,m,k,o,n){return -o*((m=m/n-1)*m*m*m-1)+k},easeInOutQuart:function(l,m,k,o,n){if((m/=n/2)<1){return o/2*m*m*m*m+k}return -o/2*((m-=2)*m*m*m-2)+k},easeInQuint:function(l,m,k,o,n){return o*(m/=n)*m*m*m*m+k},easeOutQuint:function(l,m,k,o,n){return o*((m=m/n-1)*m*m*m*m+1)+k},easeInOutQuint:function(l,m,k,o,n){if((m/=n/2)<1){return o/2*m*m*m*m*m+k}return o/2*((m-=2)*m*m*m*m+2)+k},easeInSine:function(l,m,k,o,n){return -o*Math.cos(m/n*(Math.PI/2))+o+k},easeOutSine:function(l,m,k,o,n){return o*Math.sin(m/n*(Math.PI/2))+k},easeInOutSine:function(l,m,k,o,n){return -o/2*(Math.cos(Math.PI*m/n)-1)+k},easeInExpo:function(l,m,k,o,n){return(m==0)?k:o*Math.pow(2,10*(m/n-1))+k},easeOutExpo:function(l,m,k,o,n){return(m==n)?k+o:o*(-Math.pow(2,-10*m/n)+1)+k},easeInOutExpo:function(l,m,k,o,n){if(m==0){return k}if(m==n){return k+o}if((m/=n/2)<1){return o/2*Math.pow(2,10*(m-1))+k}return o/2*(-Math.pow(2,-10*--m)+2)+k},easeInCirc:function(l,m,k,o,n){return -o*(Math.sqrt(1-(m/=n)*m)-1)+k},easeOutCirc:function(l,m,k,o,n){return o*Math.sqrt(1-(m=m/n-1)*m)+k},easeInOutCirc:function(l,m,k,o,n){if((m/=n/2)<1){return -o/2*(Math.sqrt(1-m*m)-1)+k}return o/2*(Math.sqrt(1-(m-=2)*m)+1)+k},easeInElastic:function(l,n,k,u,r){var o=1.70158;var q=0;var m=u;if(n==0){return k}if((n/=r)==1){return k+u}if(!q){q=r*0.3}if(m<Math.abs(u)){m=u;var o=q/4}else{var o=q/(2*Math.PI)*Math.asin(u/m)}return -(m*Math.pow(2,10*(n-=1))*Math.sin((n*r-o)*(2*Math.PI)/q))+k},easeOutElastic:function(l,n,k,u,r){var o=1.70158;var q=0;var m=u;if(n==0){return k}if((n/=r)==1){return k+u}if(!q){q=r*0.3}if(m<Math.abs(u)){m=u;var o=q/4}else{var o=q/(2*Math.PI)*Math.asin(u/m)}return m*Math.pow(2,-10*n)*Math.sin((n*r-o)*(2*Math.PI)/q)+u+k},easeInOutElastic:function(l,n,k,u,r){var o=1.70158;var q=0;var m=u;if(n==0){return k}if((n/=r/2)==2){return k+u}if(!q){q=r*(0.3*1.5)}if(m<Math.abs(u)){m=u;var o=q/4}else{var o=q/(2*Math.PI)*Math.asin(u/m)}if(n<1){return -0.5*(m*Math.pow(2,10*(n-=1))*Math.sin((n*r-o)*(2*Math.PI)/q))+k}return m*Math.pow(2,-10*(n-=1))*Math.sin((n*r-o)*(2*Math.PI)/q)*0.5+u+k},easeInBack:function(l,m,k,p,o,n){if(n==undefined){n=1.70158}return p*(m/=o)*m*((n+1)*m-n)+k},easeOutBack:function(l,m,k,p,o,n){if(n==undefined){n=1.70158}return p*((m=m/o-1)*m*((n+1)*m+n)+1)+k},easeInOutBack:function(l,m,k,p,o,n){if(n==undefined){n=1.70158}if((m/=o/2)<1){return p/2*(m*m*(((n*=(1.525))+1)*m-n))+k}return p/2*((m-=2)*m*(((n*=(1.525))+1)*m+n)+2)+k},easeInBounce:function(l,m,k,o,n){return o-g.easing.easeOutBounce(l,n-m,0,o,n)+k},easeOutBounce:function(l,m,k,o,n){if((m/=n)<(1/2.75)){return o*(7.5625*m*m)+k}else{if(m<(2/2.75)){return o*(7.5625*(m-=(1.5/2.75))*m+0.75)+k}else{if(m<(2.5/2.75)){return o*(7.5625*(m-=(2.25/2.75))*m+0.9375)+k}else{return o*(7.5625*(m-=(2.625/2.75))*m+0.984375)+k}}}},easeInOutBounce:function(l,m,k,o,n){if(m<n/2){return g.easing.easeInBounce(l,m*2,0,o,n)*0.5+k}return g.easing.easeOutBounce(l,m*2-n,0,o,n)*0.5+o*0.5+k}})})(jQuery);;/*
+ * jQuery UI Effects Blind 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Effects/Blind
+ *
+ * Depends:
+ *	jquery.effects.core.js
+ */(function(a){a.effects.blind=function(b){return this.queue(function(){var d=a(this),c=["position","top","left"];var h=a.effects.setMode(d,b.options.mode||"hide");var g=b.options.direction||"vertical";a.effects.save(d,c);d.show();var j=a.effects.createWrapper(d).css({overflow:"hidden"});var e=(g=="vertical")?"height":"width";var i=(g=="vertical")?j.height():j.width();if(h=="show"){j.css(e,0)}var f={};f[e]=h=="show"?i:0;j.animate(f,b.duration,b.options.easing,function(){if(h=="hide"){d.hide()}a.effects.restore(d,c);a.effects.removeWrapper(d);if(b.callback){b.callback.apply(d[0],arguments)}d.dequeue()})})}})(jQuery);;/*
+ * jQuery UI Effects Bounce 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Effects/Bounce
+ *
+ * Depends:
+ *	jquery.effects.core.js
+ */(function(a){a.effects.bounce=function(b){return this.queue(function(){var e=a(this),l=["position","top","left"];var k=a.effects.setMode(e,b.options.mode||"effect");var n=b.options.direction||"up";var c=b.options.distance||20;var d=b.options.times||5;var g=b.duration||250;if(/show|hide/.test(k)){l.push("opacity")}a.effects.save(e,l);e.show();a.effects.createWrapper(e);var f=(n=="up"||n=="down")?"top":"left";var p=(n=="up"||n=="left")?"pos":"neg";var c=b.options.distance||(f=="top"?e.outerHeight({margin:true})/3:e.outerWidth({margin:true})/3);if(k=="show"){e.css("opacity",0).css(f,p=="pos"?-c:c)}if(k=="hide"){c=c/(d*2)}if(k!="hide"){d--}if(k=="show"){var h={opacity:1};h[f]=(p=="pos"?"+=":"-=")+c;e.animate(h,g/2,b.options.easing);c=c/2;d--}for(var j=0;j<d;j++){var o={},m={};o[f]=(p=="pos"?"-=":"+=")+c;m[f]=(p=="pos"?"+=":"-=")+c;e.animate(o,g/2,b.options.easing).animate(m,g/2,b.options.easing);c=(k=="hide")?c*2:c/2}if(k=="hide"){var h={opacity:0};h[f]=(p=="pos"?"-=":"+=")+c;e.animate(h,g/2,b.options.easing,function(){e.hide();a.effects.restore(e,l);a.effects.removeWrapper(e);if(b.callback){b.callback.apply(this,arguments)}})}else{var o={},m={};o[f]=(p=="pos"?"-=":"+=")+c;m[f]=(p=="pos"?"+=":"-=")+c;e.animate(o,g/2,b.options.easing).animate(m,g/2,b.options.easing,function(){a.effects.restore(e,l);a.effects.removeWrapper(e);if(b.callback){b.callback.apply(this,arguments)}})}e.queue("fx",function(){e.dequeue()});e.dequeue()})}})(jQuery);;/*
+ * jQuery UI Effects Clip 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Effects/Clip
+ *
+ * Depends:
+ *	jquery.effects.core.js
+ */(function(a){a.effects.clip=function(b){return this.queue(function(){var f=a(this),j=["position","top","left","height","width"];var i=a.effects.setMode(f,b.options.mode||"hide");var k=b.options.direction||"vertical";a.effects.save(f,j);f.show();var c=a.effects.createWrapper(f).css({overflow:"hidden"});var e=f[0].tagName=="IMG"?c:f;var g={size:(k=="vertical")?"height":"width",position:(k=="vertical")?"top":"left"};var d=(k=="vertical")?e.height():e.width();if(i=="show"){e.css(g.size,0);e.css(g.position,d/2)}var h={};h[g.size]=i=="show"?d:0;h[g.position]=i=="show"?0:d/2;e.animate(h,{queue:false,duration:b.duration,easing:b.options.easing,complete:function(){if(i=="hide"){f.hide()}a.effects.restore(f,j);a.effects.removeWrapper(f);if(b.callback){b.callback.apply(f[0],arguments)}f.dequeue()}})})}})(jQuery);;/*
+ * jQuery UI Effects Drop 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Effects/Drop
+ *
+ * Depends:
+ *	jquery.effects.core.js
+ */(function(a){a.effects.drop=function(b){return this.queue(function(){var e=a(this),d=["position","top","left","opacity"];var i=a.effects.setMode(e,b.options.mode||"hide");var h=b.options.direction||"left";a.effects.save(e,d);e.show();a.effects.createWrapper(e);var f=(h=="up"||h=="down")?"top":"left";var c=(h=="up"||h=="left")?"pos":"neg";var j=b.options.distance||(f=="top"?e.outerHeight({margin:true})/2:e.outerWidth({margin:true})/2);if(i=="show"){e.css("opacity",0).css(f,c=="pos"?-j:j)}var g={opacity:i=="show"?1:0};g[f]=(i=="show"?(c=="pos"?"+=":"-="):(c=="pos"?"-=":"+="))+j;e.animate(g,{queue:false,duration:b.duration,easing:b.options.easing,complete:function(){if(i=="hide"){e.hide()}a.effects.restore(e,d);a.effects.removeWrapper(e);if(b.callback){b.callback.apply(this,arguments)}e.dequeue()}})})}})(jQuery);;/*
+ * jQuery UI Effects Explode 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Effects/Explode
+ *
+ * Depends:
+ *	jquery.effects.core.js
+ */(function(a){a.effects.explode=function(b){return this.queue(function(){var k=b.options.pieces?Math.round(Math.sqrt(b.options.pieces)):3;var e=b.options.pieces?Math.round(Math.sqrt(b.options.pieces)):3;b.options.mode=b.options.mode=="toggle"?(a(this).is(":visible")?"hide":"show"):b.options.mode;var h=a(this).show().css("visibility","hidden");var l=h.offset();l.top-=parseInt(h.css("marginTop"),10)||0;l.left-=parseInt(h.css("marginLeft"),10)||0;var g=h.outerWidth(true);var c=h.outerHeight(true);for(var f=0;f<k;f++){for(var d=0;d<e;d++){h.clone().appendTo("body").wrap("<div></div>").css({position:"absolute",visibility:"visible",left:-d*(g/e),top:-f*(c/k)}).parent().addClass("ui-effects-explode").css({position:"absolute",overflow:"hidden",width:g/e,height:c/k,left:l.left+d*(g/e)+(b.options.mode=="show"?(d-Math.floor(e/2))*(g/e):0),top:l.top+f*(c/k)+(b.options.mode=="show"?(f-Math.floor(k/2))*(c/k):0),opacity:b.options.mode=="show"?0:1}).animate({left:l.left+d*(g/e)+(b.options.mode=="show"?0:(d-Math.floor(e/2))*(g/e)),top:l.top+f*(c/k)+(b.options.mode=="show"?0:(f-Math.floor(k/2))*(c/k)),opacity:b.options.mode=="show"?1:0},b.duration||500)}}setTimeout(function(){b.options.mode=="show"?h.css({visibility:"visible"}):h.css({visibility:"visible"}).hide();if(b.callback){b.callback.apply(h[0])}h.dequeue();a("div.ui-effects-explode").remove()},b.duration||500)})}})(jQuery);;/*
+ * jQuery UI Effects Fold 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Effects/Fold
+ *
+ * Depends:
+ *	jquery.effects.core.js
+ */(function(a){a.effects.fold=function(b){return this.queue(function(){var e=a(this),k=["position","top","left"];var h=a.effects.setMode(e,b.options.mode||"hide");var o=b.options.size||15;var n=!(!b.options.horizFirst);var g=b.duration?b.duration/2:a.fx.speeds._default/2;a.effects.save(e,k);e.show();var d=a.effects.createWrapper(e).css({overflow:"hidden"});var i=((h=="show")!=n);var f=i?["width","height"]:["height","width"];var c=i?[d.width(),d.height()]:[d.height(),d.width()];var j=/([0-9]+)%/.exec(o);if(j){o=parseInt(j[1],10)/100*c[h=="hide"?0:1]}if(h=="show"){d.css(n?{height:0,width:o}:{height:o,width:0})}var m={},l={};m[f[0]]=h=="show"?c[0]:o;l[f[1]]=h=="show"?c[1]:0;d.animate(m,g,b.options.easing).animate(l,g,b.options.easing,function(){if(h=="hide"){e.hide()}a.effects.restore(e,k);a.effects.removeWrapper(e);if(b.callback){b.callback.apply(e[0],arguments)}e.dequeue()})})}})(jQuery);;/*
+ * jQuery UI Effects Highlight 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Effects/Highlight
+ *
+ * Depends:
+ *	jquery.effects.core.js
+ */(function(a){a.effects.highlight=function(b){return this.queue(function(){var d=a(this),c=["backgroundImage","backgroundColor","opacity"],f=a.effects.setMode(d,b.options.mode||"show"),e={backgroundColor:d.css("backgroundColor")};if(f=="hide"){e.opacity=0}a.effects.save(d,c);d.show().css({backgroundImage:"none",backgroundColor:b.options.color||"#ffff99"}).animate(e,{queue:false,duration:b.duration,easing:b.options.easing,complete:function(){(f=="hide"&&d.hide());a.effects.restore(d,c);(f=="show"&&!a.support.opacity&&this.style.removeAttribute("filter"));(b.callback&&b.callback.apply(this,arguments));d.dequeue()}})})}})(jQuery);;/*
+ * jQuery UI Effects Pulsate 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Effects/Pulsate
+ *
+ * Depends:
+ *	jquery.effects.core.js
+ */(function(a){a.effects.pulsate=function(b){return this.queue(function(){var d=a(this),e=a.effects.setMode(d,b.options.mode||"show");times=((b.options.times||5)*2)-1;duration=b.duration?b.duration/2:a.fx.speeds._default/2,isVisible=d.is(":visible"),animateTo=0;if(!isVisible){d.css("opacity",0).show();animateTo=1}if((e=="hide"&&isVisible)||(e=="show"&&!isVisible)){times--}for(var c=0;c<times;c++){d.animate({opacity:animateTo},duration,b.options.easing);animateTo=(animateTo+1)%2}d.animate({opacity:animateTo},duration,b.options.easing,function(){if(animateTo==0){d.hide()}(b.callback&&b.callback.apply(this,arguments))});d.queue("fx",function(){d.dequeue()}).dequeue()})}})(jQuery);;/*
+ * jQuery UI Effects Scale 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Effects/Scale
+ *
+ * Depends:
+ *	jquery.effects.core.js
+ */(function(a){a.effects.puff=function(b){return this.queue(function(){var f=a(this),g=a.effects.setMode(f,b.options.mode||"hide"),e=parseInt(b.options.percent,10)||150,d=e/100,c={height:f.height(),width:f.width()};a.extend(b.options,{fade:true,mode:g,percent:g=="hide"?e:100,from:g=="hide"?c:{height:c.height*d,width:c.width*d}});f.effect("scale",b.options,b.duration,b.callback);f.dequeue()})};a.effects.scale=function(b){return this.queue(function(){var g=a(this);var d=a.extend(true,{},b.options);var j=a.effects.setMode(g,b.options.mode||"effect");var h=parseInt(b.options.percent,10)||(parseInt(b.options.percent,10)==0?0:(j=="hide"?0:100));var i=b.options.direction||"both";var c=b.options.origin;if(j!="effect"){d.origin=c||["middle","center"];d.restore=true}var f={height:g.height(),width:g.width()};g.from=b.options.from||(j=="show"?{height:0,width:0}:f);var e={y:i!="horizontal"?(h/100):1,x:i!="vertical"?(h/100):1};g.to={height:f.height*e.y,width:f.width*e.x};if(b.options.fade){if(j=="show"){g.from.opacity=0;g.to.opacity=1}if(j=="hide"){g.from.opacity=1;g.to.opacity=0}}d.from=g.from;d.to=g.to;d.mode=j;g.effect("size",d,b.duration,b.callback);g.dequeue()})};a.effects.size=function(b){return this.queue(function(){var c=a(this),n=["position","top","left","width","height","overflow","opacity"];var m=["position","top","left","overflow","opacity"];var j=["width","height","overflow"];var p=["fontSize"];var k=["borderTopWidth","borderBottomWidth","paddingTop","paddingBottom"];var f=["borderLeftWidth","borderRightWidth","paddingLeft","paddingRight"];var g=a.effects.setMode(c,b.options.mode||"effect");var i=b.options.restore||false;var e=b.options.scale||"both";var o=b.options.origin;var d={height:c.height(),width:c.width()};c.from=b.options.from||d;c.to=b.options.to||d;if(o){var h=a.effects.getBaseline(o,d);c.from.top=(d.height-c.from.height)*h.y;c.from.left=(d.width-c.from.width)*h.x;c.to.top=(d.height-c.to.height)*h.y;c.to.left=(d.width-c.to.width)*h.x}var l={from:{y:c.from.height/d.height,x:c.from.width/d.width},to:{y:c.to.height/d.height,x:c.to.width/d.width}};if(e=="box"||e=="both"){if(l.from.y!=l.to.y){n=n.concat(k);c.from=a.effects.setTransition(c,k,l.from.y,c.from);c.to=a.effects.setTransition(c,k,l.to.y,c.to)}if(l.from.x!=l.to.x){n=n.concat(f);c.from=a.effects.setTransition(c,f,l.from.x,c.from);c.to=a.effects.setTransition(c,f,l.to.x,c.to)}}if(e=="content"||e=="both"){if(l.from.y!=l.to.y){n=n.concat(p);c.from=a.effects.setTransition(c,p,l.from.y,c.from);c.to=a.effects.setTransition(c,p,l.to.y,c.to)}}a.effects.save(c,i?n:m);c.show();a.effects.createWrapper(c);c.css("overflow","hidden").css(c.from);if(e=="content"||e=="both"){k=k.concat(["marginTop","marginBottom"]).concat(p);f=f.concat(["marginLeft","marginRight"]);j=n.concat(k).concat(f);c.find("*[width]").each(function(){child=a(this);if(i){a.effects.save(child,j)}var q={height:child.height(),width:child.width()};child.from={height:q.height*l.from.y,width:q.width*l.from.x};child.to={height:q.height*l.to.y,width:q.width*l.to.x};if(l.from.y!=l.to.y){child.from=a.effects.setTransition(child,k,l.from.y,child.from);child.to=a.effects.setTransition(child,k,l.to.y,child.to)}if(l.from.x!=l.to.x){child.from=a.effects.setTransition(child,f,l.from.x,child.from);child.to=a.effects.setTransition(child,f,l.to.x,child.to)}child.css(child.from);child.animate(child.to,b.duration,b.options.easing,function(){if(i){a.effects.restore(child,j)}})})}c.animate(c.to,{queue:false,duration:b.duration,easing:b.options.easing,complete:function(){if(c.to.opacity===0){c.css("opacity",c.from.opacity)}if(g=="hide"){c.hide()}a.effects.restore(c,i?n:m);a.effects.removeWrapper(c);if(b.callback){b.callback.apply(this,arguments)}c.dequeue()}})})}})(jQuery);;/*
+ * jQuery UI Effects Shake 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Effects/Shake
+ *
+ * Depends:
+ *	jquery.effects.core.js
+ */(function(a){a.effects.shake=function(b){return this.queue(function(){var e=a(this),l=["position","top","left"];var k=a.effects.setMode(e,b.options.mode||"effect");var n=b.options.direction||"left";var c=b.options.distance||20;var d=b.options.times||3;var g=b.duration||b.options.duration||140;a.effects.save(e,l);e.show();a.effects.createWrapper(e);var f=(n=="up"||n=="down")?"top":"left";var p=(n=="up"||n=="left")?"pos":"neg";var h={},o={},m={};h[f]=(p=="pos"?"-=":"+=")+c;o[f]=(p=="pos"?"+=":"-=")+c*2;m[f]=(p=="pos"?"-=":"+=")+c*2;e.animate(h,g,b.options.easing);for(var j=1;j<d;j++){e.animate(o,g,b.options.easing).animate(m,g,b.options.easing)}e.animate(o,g,b.options.easing).animate(h,g/2,b.options.easing,function(){a.effects.restore(e,l);a.effects.removeWrapper(e);if(b.callback){b.callback.apply(this,arguments)}});e.queue("fx",function(){e.dequeue()});e.dequeue()})}})(jQuery);;/*
+ * jQuery UI Effects Slide 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Effects/Slide
+ *
+ * Depends:
+ *	jquery.effects.core.js
+ */(function(a){a.effects.slide=function(b){return this.queue(function(){var e=a(this),d=["position","top","left"];var i=a.effects.setMode(e,b.options.mode||"show");var h=b.options.direction||"left";a.effects.save(e,d);e.show();a.effects.createWrapper(e).css({overflow:"hidden"});var f=(h=="up"||h=="down")?"top":"left";var c=(h=="up"||h=="left")?"pos":"neg";var j=b.options.distance||(f=="top"?e.outerHeight({margin:true}):e.outerWidth({margin:true}));if(i=="show"){e.css(f,c=="pos"?-j:j)}var g={};g[f]=(i=="show"?(c=="pos"?"+=":"-="):(c=="pos"?"-=":"+="))+j;e.animate(g,{queue:false,duration:b.duration,easing:b.options.easing,complete:function(){if(i=="hide"){e.hide()}a.effects.restore(e,d);a.effects.removeWrapper(e);if(b.callback){b.callback.apply(this,arguments)}e.dequeue()}})})}})(jQuery);;/*
+ * jQuery UI Effects Transfer 1.8
+ *
+ * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * http://docs.jquery.com/UI/Effects/Transfer
+ *
+ * Depends:
+ *	jquery.effects.core.js
+ */(function(a){a.effects.transfer=function(b){return this.queue(function(){var f=a(this),h=a(b.options.to),e=h.offset(),g={top:e.top,left:e.left,height:h.innerHeight(),width:h.innerWidth()},d=f.offset(),c=a('<div class="ui-effects-transfer"></div>').appendTo(document.body).addClass(b.options.className).css({top:d.top,left:d.left,height:f.innerHeight(),width:f.innerWidth(),position:"absolute"}).animate(g,b.duration,b.options.easing,function(){c.remove();(b.callback&&b.callback.apply(f[0],arguments));f.dequeue()})})}})(jQuery);;
+//Always start with comments (concat et tcet)
+/*****************************************************************************
+
+ *  FILE:  anytime.js - The Any+Time(TM) JavaScript Library (source)
+ *
+ *  VERSION: 4.1112D
+ *
+ *  Copyright 2008-2010 Andrew M. Andrews III (www.AMA3.com). Some Rights 
+ *  Reserved. This work licensed under the Creative Commons Attribution-
+ *  Noncommercial-Share Alike 3.0 Unported License except in jurisdicitons
+ *  for which the license has been ported by Creative Commons International,
+ *  where the work is licensed under the applicable ported license instead.
+ *  For a copy of the unported license, visit
+ *  http://creativecommons.org/licenses/by-nc-sa/3.0/
+ *  or send a letter to Creative Commons, 171 Second Street, Suite 300,
+ *  San Francisco, California, 94105, USA.  For ported versions of the
+ *  license, visit http://creativecommons.org/international/
+ *
+ *  Alternative licensing arrangements may be made by contacting the
+ *  author at http://www.AMA3.com/contact/
+ *
+ *  The Any+Time(TM) JavaScript Library provides the following ECMAScript
+ *  functionality:
+ *
+ *    AnyTime.Converter
+ *      Converts Dates to/from Strings, allowing a wide range of formats
+ *      closely matching those provided by the MySQL DATE_FORMAT() function,
+ *      with some noteworthy enhancements.
+ *
+ *    AnyTime.pad()
+ *      Pads a value with a specific number of leading zeroes.
+ *      
+ *    AnyTime.noPicker()
+ *      Destroys a calendar widget previously added by AnyTime.picker().
+ *      Can also be invoked via jQuery using $(selector).AnyTime_noPicker()
+ *
+ *    AnyTime.picker()
+ *      Attaches a calendar widget to a text field for selecting date/time
+ *      values with fewer mouse movements than most similar pickers.  Any
+ *      format supported by AnyTime.Converter can be used for the text field.
+ *      If JavaScript is disabled, the text field remains editable without
+ *      any of the picker features.
+ *      Can also be invoked via jQuery using $(selector).AnyTime_picker()
+ *
+ *  IMPORTANT NOTICE:  This code depends upon the jQuery JavaScript Library
+ *  (www.jquery.com), currently version 1.4.
+ *
+ *  The Any+Time(TM) code and styles in anytime.css have been tested (but not
+ *  extensively) on Windows Vista in Internet Explorer 8.0, Firefox 3.0, Opera
+ *  10.10 and Safari 4.0.  Minor variations in IE6+7 are to be expected, due
+ *  to their broken box model. Please report any other problems to the author
+ *  (URL above).
+ *
+ *  Any+Time is a trademark of Andrew M. Andrews III.
+ *  Thanks to Chu for help with a setMonth() issue!
+ ****************************************************************************/
+
+var AnyTime =
+{
+  	//=============================================================================
+  	//  AnyTime.pad() pads a value with a specified number of zeroes and returns
+  	//  a string containing the padded value.
+  	//=============================================================================
+
+  	pad: function( val, len )
+  	{
+  		var str = String(Math.abs(val));
+  		while ( str.length < len )
+  		str = '0'+str;
+  		if ( val < 0 )
+  		str = '-'+str;
+  		return str;
+  	}
+};
+
+(function($)
+{
+	// private members
+
+	var __oneDay = (24*60*60*1000);
+	var __daysIn = [ 31,28,31,30,31,30,31,31,30,31,30,31 ];
+	var __iframe = null;
+	var __initialized = false;
+	var __msie6 = ( navigator.userAgent.indexOf('MSIE 6') > 0 ); 
+	var __msie7 = ( navigator.userAgent.indexOf('MSIE 7') > 0 ); 
+  	var __pickers = [];
+
+  	//  Add methods to jQuery to create and destroy pickers using
+  	//  the typical jQuery approach.
+  	
+  	jQuery.prototype.AnyTime_picker = function( options )
+  	{
+  		return this.each( function(i) { AnyTime.picker( this.id, options ); } );
+  	}
+  	
+  	jQuery.prototype.AnyTime_noPicker = function()
+  	{
+  		return this.each( function(i) { AnyTime.noPicker( this.id ); } );
+  	}
+  	
+  	//	Add special methods to jQuery to compute the height and width
+	//	of picker components differently for Internet Explorer 6.x
+	//  This prevents the pickers from being too tall and wide.
+  	
+  	jQuery.prototype.AnyTime_height = function(inclusive)
+  	{
+  		return ( __msie6 ?
+  					Number(this.css('height').replace(/[^0-9]/g,'')) :
+  					this.outerHeight(inclusive) );
+  	};
+
+  	jQuery.prototype.AnyTime_width = function(inclusive)
+  	{
+  		return ( __msie6 ?
+  					(1+Number(this.css('width').replace(/[^0-9]/g,''))) :
+  					this.outerWidth(inclusive) );
+  	};
+
+  	
+  	// 	Add a method to jQuery to change the classes of an element to
+  	//  indicate whether it's value is current (used by AnyTime.picker),
+  	//  and another to trigger the click handler for the currently-
+  	//  selected button under an element.
+
+  	jQuery.prototype.AnyTime_current = function(isCurrent,isLegal)
+	{
+	    if ( isCurrent )
+	    {
+		  this.removeClass('AnyTime-out-btn ui-state-default ui-state-disabled ui-state-highlight');
+	      this.addClass('AnyTime-cur-btn ui-state-default ui-state-highlight');
+	    }
+	    else
+	    {
+	      this.removeClass('AnyTime-cur-btn ui-state-highlight');
+	      if ( ! isLegal )
+	    	  this.addClass('AnyTime-out-btn ui-state-disabled');
+	      else
+	    	  this.removeClass('AnyTime-out-btn ui-state-disabled');
+	    }
+	};
+	
+	jQuery.prototype.AnyTime_clickCurrent = function()
+	{
+		this.find('.AnyTime-cur-btn').triggerHandler('click');
+	}
+  	
+  	$(document).ready( 
+  		function()
+		{
+			//  Ping the server for statistical purposes (remove if offended).
+			
+  			if ( window.location.hostname.length && ( window.location.hostname != 'www.ama3.com' ) )
+  				$(document.body).append('<img src="http://www.ama3.com/anytime/ping/?4.1112A'+(AnyTime.utcLabel?".tz":"")+'" width="0" height="0" />');
+			
+			//  IE6 doesn't float popups over <select> elements unless an
+			//	<iframe> is inserted between them!  The <iframe> is added to
+			//	the page *before* the popups are moved, so they will appear
+			//  after the <iframe>.
+			
+			if ( __msie6 )
+			{
+				__iframe = $('<iframe frameborder="0" scrolling="no"></iframe>');
+				__iframe.src = "javascript:'<html></html>';";
+				$(__iframe).css( {
+					display: 'block',
+					height: '1px',
+					left: '0',
+					top: '0',
+					width: '1px',
+					zIndex: 0
+					} );
+				$(document.body).append(__iframe);
+			}
+			
+			//  Move popup windows to the end of the page.  This allows them to
+			//  overcome XHTML restrictions on <table> placement enforced by MSIE.
+			
+			for ( var id in __pickers )
+        if ( ! Array.prototype[id] ) // prototype.js compatibility issue
+			    __pickers[id].onReady();
+			
+			__initialized = true;
+		
+		} ); // document.ready
+  	
+//=============================================================================
+//  AnyTime.Converter
+//
+//  This object converts between Date objects and Strings.
+//
+//  To use AnyTime.Converter, simply create an instance for a format string,
+//  and then (repeatedly) invoke the format() and/or parse() methods to
+//  perform the conversions.  For example:
+//
+//    var converter = new AnyTime.Converter({format:'%Y-%m-%d'})
+//    var datetime = converter.parse('1967-07-30') // July 30, 1967 @ 00:00
+//    alert( converter.format(datetime) ); // outputs: 1967-07-30
+//
+//  Constructor parameter:
+//
+//  options - an object of optional parameters that override default behaviors.
+//    The supported options are:
+//
+//    baseYear - the number to add to two-digit years if the %y format
+//      specifier is used.  By default, AnyTime.Converter follows the
+//      MySQL assumption that two-digit years are in the range 1970 to 2069
+//      (see http://dev.mysql.com/doc/refman/5.1/en/y2k-issues.html).
+//      The most common alternatives for baseYear are 1900 and 2000.
+//
+//    dayAbbreviations - an array of seven strings, indexed 0-6, to be used
+//      as ABBREVIATED day names.  If not specified, the following are used:
+//      ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+//      Note that if the firstDOW option is passed to AnyTime.picker() (see
+//      AnyTime.picker()), this array should nonetheless begin with the 
+//      desired abbreviation for Sunday.
+//
+//    dayNames - an array of seven strings, indexed 0-6, to be used as
+//      day names.  If not specified, the following are used: ['Sunday',
+//        'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']
+//      Note that if the firstDOW option is passed to AnyTime.picker() (see
+//      AnyTime.picker()), this array should nonetheless begin with the
+//      desired name for Sunday.
+//
+//    eraAbbreviations - an array of two strings, indexed 0-1, to be used
+//      as ABBREVIATED era names.  Item #0 is the abbreviation for "Before
+//      Common Era" (years before 0001, sometimes represented as negative
+//      years or "B.C"), while item #1 is the abbreviation for "Common Era"
+//      (years from 0001 to present, usually represented as unsigned years
+//      or years "A.D.").  If not specified, the following are used:
+//      ['BCE','CE']
+//
+//    format - a string specifying the pattern of strings involved in the
+//      conversion.  The parse() method can take a string in this format and
+//      convert it to a Date, and the format() method can take a Date object
+//      and convert it to a string matching the format.
+//
+//      Fields in the format string must match those for the DATE_FORMAT()
+//      function in MySQL, as defined here:
+//      http://tinyurl.com/bwd45#function_date-format
+//
+//      IMPORTANT:  Some MySQL specifiers are not supported (especially
+//      those involving day-of-the-year, week-of-the-year) or approximated.
+//      See the code for exact behavior.
+//
+//      In addition to the MySQL format specifiers, the following custom
+//      specifiers are also supported:
+//
+//        %B - If the year is before 0001, then the "Before Common Era"
+//          abbreviation (usually BCE or the obsolete BC) will go here.
+//
+//        %C - If the year is 0001 or later, then the "Common Era"
+//          abbreviation (usually CE or the obsolete AD) will go here.
+//
+//        %E - If the year is before 0001, then the "Before Common Era"
+//          abbreviation (usually BCE or the obsolete BC) will go here.
+//          Otherwise, the "Common Era" abbreviation (usually CE or the
+//          obsolete AD) will go here.
+//
+//        %Z - The current four-digit year, without any sign.  This is
+//          commonly used with years that might be before (or after) 0001,
+//          when the %E (or %B and %C) specifier is used instead of a sign.
+//          For example, 45 BCE is represented "0045".  By comparison, in
+//          the "%Y" format, 45 BCE is represented "-0045".
+//
+//        %z - The current year, without any sign, using only the necessary
+//          number of digits.  This if the year is commonly used with years
+//          that might be before (or after) 0001, when the %E (or %B and %C)
+//          specifier is used instead of a sign.  For example, the year
+//          45 BCE is represented as "45", and the year 312 CE as "312".
+//
+//        %# - the timezone offset, with a sign, in minutes.
+//
+//        %+ - the timezone offset, with a sign, in hours and minutes, in
+//          four-digit, 24-hour format with no delimiter (for example, +0530).
+//          To remember the difference between %+ and %-, it might be helpful
+//          to remember that %+ might have more characters than %-.
+//
+//        %: - the timezone offset, with a sign, in hours and minutes, in
+//          four-digit, 24-hour format with a colon delimiter (for example,
+//          +05:30).  This is similar to the %z format used by Java.  
+//          To remember the difference between %: and %;, it might be helpful
+//          to remember that a colon (:) has a period (.) on the bottom and
+//          a semicolon (;) has a comma (,), and in English sentence structure,
+//          a period represents a more significant stop than a comma, and
+//          %: might be a longer string than %; (I know it's a stretch, but
+//          it's easier than looking it up every time)!
+//  	
+//        %- - the timezone offset, with a sign, in hours and minutes, in
+//          three-or-four-digit, 24-hour format with no delimiter (for
+//          example, +530).
+//
+//        %; - the timezone offset, with a sign, in hours and minutes, in
+//          three-or-four-digit, 24-hour format with a colon delimiter
+//          (for example, +5:30).
+//
+//        %@ - the timezone offset label.  By default, this will be the
+//          string "UTC" followed by the offset, with a sign, in hours and  
+//          minutes, in four-digit, 24-hour format with a colon delimiter
+//          (for example, UTC+05:30).  However, if Any+Time(TM) has been
+//          extended with a member named utcLabel (for example, by the
+//          anytimetz.js file), then it is assumed to be an array of arrays,
+//          where the primary array is indexed by time zone offsets, and
+//          each sub-array contains a potential label for that offset.
+//          When parsing with %@, the array is scanned for matches to the
+//          input string, and if a match is found, the corresponding UTC
+//          offset is used.  When formatting, the array is scanned for a
+//          matching offset, and if one is found, the first member of the
+//          sub-array is used for output (unless overridden with
+//          utcFormatOffsetSubIndex or setUtcFormatOffsetSubIndex()).
+//          If the array does not exist, or does not contain a sub-array
+//          for the offset, then the default format is used.
+//
+//    monthAbbreviations - an array of twelve strings, indexed 0-6, to be
+//      used as ABBREVIATED month names.  If not specified, the following
+//      are used: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep',
+//        'Oct','Nov','Dec']
+//
+//    monthNames - an array of twelve strings, indexed 0-6, to be used as
+//      month names.  If not specified, the following are used:
+//      ['January','February','March','April','May','June','July',
+//        'August','September','October','November','December']
+//
+//    utcFormatOffsetAlleged - the offset from UTC, in minutes, to claim that
+//      a Date object represents during formatting, even though it is formatted
+//      using local time. Unlike utcFormatOffsetImposed, which actually
+//      converts the Date object to the specified different time zone, this
+//      option merely reports the alleged offset when a timezone specifier
+//      (%#, %+, %-, %:, %; %@) is encountered in the format string.
+//      This primarily exists so AnyTime.picker can edit the time as specified
+//      (without conversion to local time) and then convert the edited time to
+//      a different time zone (as selected using the picker).  Any initial
+//      value specified here can be changed by setUtcFormatOffsetAlleged().
+//      If a format offset is alleged, one cannot also be imposed (the imposed
+//      offset is ignored).
+//
+//    utcFormatOffsetImposed - the offset from UTC, in minutes, to specify when
+//      formatting a Date object.  By default, a Date is always formatted
+//      using the local time zone.
+//
+//    utcFormatOffsetSubIndex - when extending AnyTime with a utcLabel array
+//      (for example, by the anytimetz.js file), the specified sub-index is
+//      used to choose the Time Zone label for the UTC offset when formatting
+//      a Date object.  This primarily exists so AnyTime.picker can specify
+//      the label selected using the picker.  Any initial value specified here
+//      can be changed by setUtcFormatOffsetSubIndex().
+//
+//    utcParseOffsetAssumed - the offset from UTC, in minutes, to assume when
+//      parsing a String object.  By default, a Date is always parsed using the
+//      local time zone, unless the format string includes a timezone
+//      specifier (%#, %+, %-, %:, %; or %@), in which case the timezone
+//      specified in the string is used. The Date object created by parsing
+//      always represents local time regardless of the input time zone.
+//
+//    utcParseOffsetCapture - if true, any parsed string is always treated as
+//      though it represents local time, and any offset specified by the string
+//      (or utcParseOffsetAssume) is captured for return by the 
+//      getUtcParseOffsetCaptured() method.  If the %@ format specifier is
+//      used, the sub-index of any matched label is also captured for return
+//      by the getUtcParseOffsetSubIndex() method.  This primarily exists so
+//      AnyTime.picker can edit the time as specified (without conversion to
+//      local time) and then convert the edited time to a different time zone
+//      (as selected using the picker). 
+//=============================================================================
+
+AnyTime.Converter = function(options)
+{
+  	// private members
+
+  	var _flen = 0;
+	var _longDay = 9;
+	var _longMon = 9;
+	var _shortDay = 6;
+	var _shortMon = 3;
+	var _offAl = Number.MIN_VALUE; // format time zone offset alleged
+	var _offCap = Number.MIN_VALUE; // parsed time zone offset captured
+	var _offF = Number.MIN_VALUE; // format time zone offset imposed
+	var _offFSI = (-1); // format time zone label subindex
+	var _offP = Number.MIN_VALUE; // parsed time zone offset assumed
+	var _offPSI = (-1);        // parsed time zone label subindex captured
+	var _captureOffset = false;
+
+	// public members
+  
+	this.fmt = '%Y-%m-%d %T';
+	this.dAbbr = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+	this.dNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+	this.eAbbr = ['BCE','CE'];
+	this.mAbbr = [ 'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec' ];
+	this.mNames = [ 'January','February','March','April','May','June','July','August','September','October','November','December' ];
+	this.baseYear = null;
+	
+	//-------------------------------------------------------------------------
+	//  AnyTime.Converter.dAt() returns true if the character in str at pos
+	//  is a digit.
+	//-------------------------------------------------------------------------
+	
+	this.dAt = function( str, pos )
+	{
+	    return ( (str.charCodeAt(pos)>='0'.charCodeAt(0)) &&
+	            (str.charCodeAt(pos)<='9'.charCodeAt(0)) );
+	};
+	
+	//-------------------------------------------------------------------------
+	//  AnyTime.Converter.format() returns a String containing the value
+	//  of a specified Date object, using the format string passed to
+	//  AnyTime.Converter().
+	//
+	//  Method parameter:
+	//
+	//    date - the Date object to be converted
+	//-------------------------------------------------------------------------
+	
+	this.format = function( date )
+	{
+		var d = new Date(date.getTime());
+		if ( ( _offAl == Number.MIN_VALUE ) && ( _offF != Number.MIN_VALUE ) )
+		  d.setTime( ( d.getTime() + (d.getTimezoneOffset()*60000) ) + (_offF*60000) );
+			
+	    var t;
+	    var str = '';
+	    for ( var f = 0 ; f < _flen ; f++ )
+	    {
+	      if ( this.fmt.charAt(f) != '%' )
+	        str += this.fmt.charAt(f);
+	      else
+	      {
+	    	var ch = this.fmt.charAt(f+1)
+	        switch ( ch )
+	        {
+	          case 'a': // Abbreviated weekday name (Sun..Sat)
+	            str += this.dAbbr[ d.getDay() ];
+	            break;
+	          case 'B': // BCE string (eAbbr[0], usually BCE or BC, only if appropriate) (NON-MYSQL)
+	            if ( d.getFullYear() < 0 )
+	              str += this.eAbbr[0];
+	            break;
+	          case 'b': // Abbreviated month name (Jan..Dec)
+	            str += this.mAbbr[ d.getMonth() ];
+	            break;
+	          case 'C': // CE string (eAbbr[1], usually CE or AD, only if appropriate) (NON-MYSQL)
+	            if ( d.getFullYear() > 0 )
+	              str += this.eAbbr[1];
+	            break;
+	          case 'c': // Month, numeric (0..12)
+	            str += d.getMonth()+1;
+	            break;
+	          case 'd': // Day of the month, numeric (00..31)
+	            t = d.getDate();
+	            if ( t < 10 ) str += '0';
+	            str += String(t);
+	            break;
+	          case 'D': // Day of the month with English suffix (0th, 1st,...)
+	            t = String(d.getDate());
+	            str += t;
+	            if ( ( t.length == 2 ) && ( t.charAt(0) == '1' ) )
+	              str += 'th';
+	            else
+	            {
+	              switch ( t.charAt( t.length-1 ) )
+	              {
+	                case '1': str += 'st'; break;
+	                case '2': str += 'nd'; break;
+	                case '3': str += 'rd'; break;
+	                default: str += 'th'; break;
+	              }
+	            }
+	            break;
+	          case 'E': // era string (from eAbbr[], BCE, CE, BC or AD) (NON-MYSQL)
+	            str += this.eAbbr[ (d.getFullYear()<0) ? 0 : 1 ];
+	            break;
+	          case 'e': // Day of the month, numeric (0..31)
+	            str += d.getDate();
+	            break;
+	          case 'H': // Hour (00..23)
+	            t = d.getHours();
+	            if ( t < 10 ) str += '0';
+	            str += String(t);
+	            break;
+	          case 'h': // Hour (01..12)
+	          case 'I': // Hour (01..12)
+	            t = d.getHours() % 12;
+	            if ( t == 0 )
+	              str += '12';
+	            else
+	            {
+	              if ( t < 10 ) str += '0';
+	              str += String(t);
+	            }
+	            break;
+	          case 'i': // Minutes, numeric (00..59)
+	            t = d.getMinutes();
+	            if ( t < 10 ) str += '0';
+	            str += String(t);
+	            break;
+	          case 'k': // Hour (0..23)
+	            str += d.getHours();
+	            break;
+	          case 'l': // Hour (1..12)
+	            t = d.getHours() % 12;
+	            if ( t == 0 )
+	              str += '12';
+	            else
+	              str += String(t);
+	            break;
+	          case 'M': // Month name (January..December)
+	            str += this.mNames[ d.getMonth() ];
+	            break;
+	          case 'm': // Month, numeric (00..12)
+	            t = d.getMonth() + 1;
+	            if ( t < 10 ) str += '0';
+	            str += String(t);
+	            break;
+	          case 'p': // AM or PM
+	            str += ( ( d.getHours() < 12 ) ? 'AM' : 'PM' );
+	            break;
+	          case 'r': // Time, 12-hour (hh:mm:ss followed by AM or PM)
+	            t = d.getHours() % 12;
+	            if ( t == 0 )
+	              str += '12:';
+	            else
+	            {
+	              if ( t < 10 ) str += '0';
+	              str += String(t) + ':';
+	            }
+	            t = d.getMinutes();
+	            if ( t < 10 ) str += '0';
+	            str += String(t) + ':';
+	            t = d.getSeconds();
+	            if ( t < 10 ) str += '0';
+	            str += String(t);
+	            str += ( ( d.getHours() < 12 ) ? 'AM' : 'PM' );
+	            break;
+	          case 'S': // Seconds (00..59)
+	          case 's': // Seconds (00..59)
+	            t = d.getSeconds();
+	            if ( t < 10 ) str += '0';
+	            str += String(t);
+	            break;
+	          case 'T': // Time, 24-hour (hh:mm:ss)
+	            t = d.getHours();
+	            if ( t < 10 ) str += '0';
+	            str += String(t) + ':';
+	            t = d.getMinutes();
+	            if ( t < 10 ) str += '0';
+	            str += String(t) + ':';
+	            t = d.getSeconds();
+	            if ( t < 10 ) str += '0';
+	            str += String(t);
+	            break;
+	          case 'W': // Weekday name (Sunday..Saturday)
+	            str += this.dNames[ d.getDay() ];
+	            break;
+	          case 'w': // Day of the week (0=Sunday..6=Saturday)
+	            str += d.getDay();
+	            break;
+	          case 'Y': // Year, numeric, four digits (negative if before 0001)
+	            str += AnyTime.pad(d.getFullYear(),4);
+	            break;
+	          case 'y': // Year, numeric (two digits, negative if before 0001)
+	            t = d.getFullYear() % 100;
+	            str += AnyTime.pad(t,2);
+	            break;
+	          case 'Z': // Year, numeric, four digits, unsigned (NON-MYSQL)
+	            str += AnyTime.pad(Math.abs(d.getFullYear()),4);
+	            break;
+	          case 'z': // Year, numeric, variable length, unsigned (NON-MYSQL)
+	            str += Math.abs(d.getFullYear());
+	            break;
+	          case '%': // A literal '%' character
+	            str += '%';
+	            break;
+	          case '#': // signed timezone offset in minutes
+	        	t = ( _offAl != Number.MIN_VALUE ) ? _offAl :
+	        		( _offF == Number.MIN_VALUE ) ? (0-d.getTimezoneOffset()) : _offF;
+	        	if ( t >= 0 )
+	        		str += '+';
+	        	str += t;
+	        	break;
+	          case '@': // timezone offset label
+		        t = ( _offAl != Number.MIN_VALUE ) ? _offAl :
+		        	( _offF == Number.MIN_VALUE ) ? (0-d.getTimezoneOffset()) : _offF;
+		        if ( AnyTime.utcLabel && AnyTime.utcLabel[t] )
+		        {
+		          if ( ( _offFSI > 0 ) && ( _offFSI < AnyTime.utcLabel[t].length ) )
+		            str += AnyTime.utcLabel[t][_offFSI];
+		          else
+		            str += AnyTime.utcLabel[t][0];
+		          break;
+		        }
+		        str += 'UTC';
+		        ch = ':'; // drop through for offset formatting
+	          case '+': // signed, 4-digit timezone offset in hours and minutes
+	          case '-': // signed, 3-or-4-digit timezone offset in hours and minutes
+	          case ':': // signed 4-digit timezone offset with colon delimiter
+	          case ';': // signed 3-or-4-digit timezone offset with colon delimiter
+		        t = ( _offAl != Number.MIN_VALUE ) ? _offAl :
+		        		( _offF == Number.MIN_VALUE ) ? (0-d.getTimezoneOffset()) : _offF;
+		        if ( t < 0 )
+		          str += '-';
+		        else
+		          str += '+';
+		        t = Math.abs(t);
+		        str += ((ch=='+')||(ch==':')) ? AnyTime.pad(Math.floor(t/60),2) : Math.floor(t/60);
+		        if ( (ch==':') || (ch==';') )
+		          str += ':';
+		        str += AnyTime.pad(t%60,2);
+		        break;
+	          case 'f': // Microseconds (000000..999999)
+	          case 'j': // Day of year (001..366)
+	          case 'U': // Week (00..53), where Sunday is the first day of the week
+	          case 'u': // Week (00..53), where Monday is the first day of the week
+	          case 'V': // Week (01..53), where Sunday is the first day of the week; used with %X
+	          case 'v': // Week (01..53), where Monday is the first day of the week; used with %x
+	          case 'X': // Year for the week where Sunday is the first day of the week, numeric, four digits; used with %V
+	          case 'x': // Year for the week, where Monday is the first day of the week, numeric, four digits; used with %v
+	            throw '%'+ch+' not implemented by AnyTime.Converter';
+	          default: // for any character not listed above
+	            str += this.fmt.substr(f,2);
+	        } // switch ( this.fmt.charAt(f+1) )
+	        f++;
+	      } // else
+	    } // for ( var f = 0 ; f < _flen ; f++ )
+	    return str;
+	    
+	}; // AnyTime.Converter.format()
+		  
+	//-------------------------------------------------------------------------
+	//  AnyTime.Converter.getUtcParseOffsetCaptured() returns the UTC offset
+	//  last captured by a parsed string (or assumed by utcParseOffsetAssumed).
+	//  It returns Number.MIN_VALUE if this object was not constructed with
+	//  the utcParseOffsetCapture option set to true, or if an offset was not
+	//  specified by the last parsed string or utcParseOffsetAssumed.
+	//-------------------------------------------------------------------------
+	
+	this.getUtcParseOffsetCaptured = function()
+	{
+	    return _offCap;
+	};
+	
+	//-------------------------------------------------------------------------
+	//  AnyTime.Converter.getUtcParseOffsetCaptured() returns the UTC offset
+	//  last captured by a parsed string (or assumed by utcParseOffsetAssumed).
+	//  It returns Number.MIN_VALUE if this object was not constructed with
+	//  the utcParseOffsetCapture option set to true, or if an offset was not
+	//  specified by the last parsed string or utcParseOffsetAssumed.
+	//-------------------------------------------------------------------------
+	
+	this.getUtcParseOffsetSubIndex = function()
+	{
+	    return _offPSI;
+	};
+	
+	//-------------------------------------------------------------------------
+	//  AnyTime.Converter.parse() returns a Date initialized from a specified
+	//  string, using the format passed to AnyTime.Converter().
+	//
+	//  Method parameter:
+	//
+	//    str - the String object to be converted
+	//-------------------------------------------------------------------------
+	
+	this.parse = function( str )
+	{
+		_offCap = _offP;
+		_offPSI = (-1);
+	    var era = 1;
+      var time = new Date(0,0,1,0,0,0,0);
+	    var slen = str.length;
+	    var s = 0;
+	    var tzSign = 1, tzOff = _offP;
+	    var i, matched, sub, sublen, temp;
+	    for ( var f = 0 ; f < _flen ; f++ )
+	    {
+	      if ( this.fmt.charAt(f) == '%' )
+	      {
+			var ch = this.fmt.charAt(f+1);
+	        switch ( ch )
+	        {
+	          case 'a': // Abbreviated weekday name (Sun..Sat)
+	            matched = false;
+	            for ( sublen = 0 ; s + sublen < slen ; sublen++ )
+	            {
+	              sub = str.substr(s,sublen);
+	              for ( i = 0 ; i < 12 ; i++ )
+	                if ( this.dAbbr[i] == sub )
+	                {
+	                  matched = true;
+	                  s += sublen;
+	                  break;
+	                }
+	              if ( matched )
+	                break;
+	            } // for ( sublen ... )
+	            if ( ! matched )
+	              throw 'unknown weekday: '+str.substr(s);
+	            break;
+	          case 'B': // BCE string (eAbbr[0]), only if needed. (NON-MYSQL)
+	            sublen = this.eAbbr[0].length;
+	            if ( ( s + sublen <= slen ) && ( str.substr(s,sublen) == this.eAbbr[0] ) )
+	            {
+	              era = (-1);
+	              s += sublen;
+	            }
+	            break;
+	          case 'b': // Abbreviated month name (Jan..Dec)
+	            matched = false;
+	            for ( sublen = 0 ; s + sublen < slen ; sublen++ )
+	            {
+	              sub = str.substr(s,sublen);
+	              for ( i = 0 ; i < 12 ; i++ )
+	                if ( this.mAbbr[i] == sub )
+	                {
+	                  time.setMonth( i );
+	                  matched = true;
+	                  s += sublen;
+	                  break;
+	                }
+	              if ( matched )
+	                break;
+	            } // for ( sublen ... )
+	            if ( ! matched )
+	              throw 'unknown month: '+str.substr(s);
+	            break;
+	          case 'C': // CE string (eAbbr[1]), only if needed. (NON-MYSQL)
+	            sublen = this.eAbbr[1].length;
+	            if ( ( s + sublen <= slen ) && ( str.substr(s,sublen) == this.eAbbr[1] ) )
+	              s += sublen; // note: CE is the default era
+	            break;
+	          case 'c': // Month, numeric (0..12)
+	            if ( ( s+1 < slen ) && this.dAt(str,s+1) )
+	            {
+	              time.setMonth( (Number(str.substr(s,2))-1)%12 );
+	              s += 2;
+	            }
+	            else
+	            {
+	              time.setMonth( (Number(str.substr(s,1))-1)%12 );
+	              s++;
+	            }
+	            break;
+	          case 'D': // Day of the month with English suffix (0th,1st,...)
+	            if ( ( s+1 < slen ) && this.dAt(str,s+1) )
+	            {
+	              time.setDate( Number(str.substr(s,2)) );
+	              s += 4;
+	            }
+	            else
+	            {
+	              time.setDate( Number(str.substr(s,1)) );
+	              s += 3;
+	            }
+	            break;
+	          case 'd': // Day of the month, numeric (00..31)
+	            time.setDate( Number(str.substr(s,2)) );
+	            s += 2;
+	            break;
+	          case 'E': // era string (from eAbbr[]) (NON-MYSQL)
+	            sublen = this.eAbbr[0].length;
+	            if ( ( s + sublen <= slen ) && ( str.substr(s,sublen) == this.eAbbr[0] ) )
+	            {
+	              era = (-1);
+	              s += sublen;
+	            }
+	            else if ( ( s + ( sublen = this.eAbbr[1].length ) <= slen ) && ( str.substr(s,sublen) == this.eAbbr[1] ) )
+	              s += sublen; // note: CE is the default era
+	            else
+	              throw 'unknown era: '+str.substr(s);
+	            break;
+	          case 'e': // Day of the month, numeric (0..31)
+	            if ( ( s+1 < slen ) && this.dAt(str,s+1) )
+	            {
+	              time.setDate( Number(str.substr(s,2)) );
+	              s += 2;
+	            }
+	            else
+	            {
+	              time.setDate( Number(str.substr(s,1)) );
+	              s++;
+	            }
+	            break;
+	          case 'f': // Microseconds (000000..999999)
+	            s += 6; // SKIPPED!
+	            break;
+	          case 'H': // Hour (00..23)
+	            time.setHours( Number(str.substr(s,2)) );
+	            s += 2;
+	            break;
+	          case 'h': // Hour (01..12)
+	          case 'I': // Hour (01..12)
+	            time.setHours( Number(str.substr(s,2)) );
+	            s += 2;
+	            break;
+	          case 'i': // Minutes, numeric (00..59)
+	            time.setMinutes( Number(str.substr(s,2)) );
+	            s += 2;
+	            break;
+	          case 'k': // Hour (0..23)
+	            if ( ( s+1 < slen ) && this.dAt(str,s+1) )
+	            {
+	              time.setHours( Number(str.substr(s,2)) );
+	              s += 2;
+	            }
+	            else
+	            {
+	              time.setHours( Number(str.substr(s,1)) );
+	              s++;
+	            }
+	            break;
+	          case 'l': // Hour (1..12)
+	            if ( ( s+1 < slen ) && this.dAt(str,s+1) )
+	            {
+	              time.setHours( Number(str.substr(s,2)) );
+	              s += 2;
+	            }
+	            else
+	            {
+	              time.setHours( Number(str.substr(s,1)) );
+	              s++;
+	            }
+	            break;
+	          case 'M': // Month name (January..December)
+	            matched = false;
+	            for (sublen=_shortMon ; s + sublen <= slen ; sublen++ )
+	            {
+	              if ( sublen > _longMon )
+	                break;
+	              sub = str.substr(s,sublen);
+	              for ( i = 0 ; i < 12 ; i++ )
+	              {
+	                if ( this.mNames[i] == sub )
+	                {
+	                  time.setMonth( i );
+	                  matched = true;
+	                  s += sublen;
+	                  break;
+	                }
+	              }
+	              if ( matched )
+	                break;
+	            }
+	            break;
+	          case 'm': // Month, numeric (00..12)
+	            time.setMonth( (Number(str.substr(s,2))-1)%12 );
+	            s += 2;
+	            break;
+	          case 'p': // AM or PM
+              if ( time.getHours() == 12 )
+              {
+	              if ( str.charAt(s) == 'A' )
+	                time.setHours(0);
+              }
+              else if ( str.charAt(s) == 'P' )
+	              time.setHours( time.getHours() + 12 );
+	            s += 2;
+	            break;
+	          case 'r': // Time, 12-hour (hh:mm:ss followed by AM or PM)
+	            time.setHours(Number(str.substr(s,2)));
+	            time.setMinutes(Number(str.substr(s+3,2)));
+	            time.setSeconds(Number(str.substr(s+6,2)));
+              if ( time.getHours() == 12 )
+              {
+	              if ( str.charAt(s) == 'A' )
+	                time.setHours(0);
+              }
+              else if ( str.charAt(s) == 'P' )
+	              time.setHours( time.getHours() + 12 );
+	            s += 10;
+	            break;
+	          case 'S': // Seconds (00..59)
+	          case 's': // Seconds (00..59)
+	            time.setSeconds(Number(str.substr(s,2)));
+	            s += 2;
+	            break;
+	          case 'T': // Time, 24-hour (hh:mm:ss)
+	            time.setHours(Number(str.substr(s,2)));
+	            time.setMinutes(Number(str.substr(s+3,2)));
+	            time.setSeconds(Number(str.substr(s+6,2)));
+	            s += 8;
+	            break;
+	          case 'W': // Weekday name (Sunday..Saturday)
+	            matched = false;
+	            for (sublen=_shortDay ; s + sublen <= slen ; sublen++ )
+	            {
+	              if ( sublen > _longDay )
+	                break;
+	              sub = str.substr(s,sublen);
+	              for ( i = 0 ; i < 7 ; i++ )
+	              {
+	                if ( this.dNames[i] == sub )
+	                {
+	                  matched = true;
+	                  s += sublen;
+	                  break;
+	                }
+	              }
+	              if ( matched )
+	                break;
+	            }
+	            break;
+            case 'w': // Day of the week (0=Sunday..6=Saturday) (ignored)
+              s += 1;
+              break;
+	          case 'Y': // Year, numeric, four digits, negative if before 0001
+	            i = 4;
+	            if ( str.substr(s,1) == '-' )
+	              i++;
+	            time.setFullYear(Number(str.substr(s,i)));
+	            s += i;
+	            break;
+	          case 'y': // Year, numeric (two digits), negative before baseYear
+	            i = 2;
+	            if ( str.substr(s,1) == '-' )
+	              i++;
+	            temp = Number(str.substr(s,i));
+	            if ( typeof(this.baseYear) == 'number' )
+	            	temp += this.baseYear;
+	            else if ( temp < 70 )
+	            	temp += 2000;
+	            else
+	            	temp += 1900;
+	            time.setFullYear(temp);
+	            s += i;
+	            break;
+	          case 'Z': // Year, numeric, four digits, unsigned (NON-MYSQL)
+	            time.setFullYear(Number(str.substr(s,4)));
+	            s += 4;
+	            break;
+	          case 'z': // Year, numeric, variable length, unsigned (NON-MYSQL)
+	            i = 0;
+	            while ( ( s < slen ) && this.dAt(str,s) )
+	              i = ( i * 10 ) + Number(str.charAt(s++));
+	            time.setFullYear(i);
+	            break;
+	          case '#': // signed timezone offset in minutes.
+	            if ( str.charAt(s++) == '-' )
+	            	tzSign = (-1);
+	            for ( tzOff = 0 ; ( s < slen ) && (String(i=Number(str.charAt(s)))==str.charAt(s)) ; s++ )
+	            	tzOff = ( tzOff * 10 ) + i;
+	            tzOff *= tzSign;
+	            break;
+	          case '@': // timezone label
+	        	_offPSI = (-1);
+	        	if ( AnyTime.utcLabel )
+	        	{
+		            matched = false;
+		            for ( tzOff in AnyTime.utcLabel )
+                  if ( ! Array.prototype[tzOff] ) // prototype.js compatibility issue
+		              {
+		            	  for ( i = 0 ; i < AnyTime.utcLabel[tzOff].length ; i++ )
+  		            	{
+	  	            		sub = AnyTime.utcLabel[tzOff][i];
+		              		sublen = sub.length;
+		              		if ( ( s+sublen <= slen ) && ( str.substr(s,sublen) == sub ) )
+		              		{
+                        s+=sublen;
+		              			matched = true;
+		              			break;
+		              		}
+		              	}
+	            		  if ( matched )
+	            			  break;
+		              }
+		            if ( matched )
+		            {
+		            	_offPSI = i;
+		            	tzOff = Number(tzOff);
+		            	break; // case
+		            }
+	        	}
+	        	if ( ( s+9 < slen ) || ( str.substr(s,3) != "UTC" ) )
+                    throw 'unknown time zone: '+str.substr(s);
+	        	s += 3;
+	            ch = ':'; // drop through for offset parsing
+	          case '-': // signed, 3-or-4-digit timezone offset in hours and minutes
+	          case '+': // signed, 4-digit timezone offset in hours and minutes
+	          case ':': // signed 4-digit timezone offset with colon delimiter
+	          case ';': // signed 3-or-4-digit timezone offset with colon delimiter
+	            if ( str.charAt(s++) == '-' )
+	            	tzSign = (-1);
+	            tzOff = Number(str.charAt(s));
+	            if ( (ch=='+')||(ch==':')||((s+3<slen)&&(String(Number(str.charAt(s+3)))!==str.charAt(s+3))) )
+	            	tzOff = (tzOff*10) + Number(str.charAt(++s));
+                tzOff *= 60;
+	        	if ( (ch==':') || (ch==';') )
+	        		s++; // skip ":" (assumed)
+	        	tzOff = ( tzOff + Number(str.substr(++s,2)) ) * tzSign;
+	        	s += 2;
+		        break;
+	          case 'j': // Day of year (001..366)
+	          case 'U': // Week (00..53), where Sunday is the first day of the week
+	          case 'u': // Week (00..53), where Monday is the first day of the week
+	          case 'V': // Week (01..53), where Sunday is the first day of the week; used with %X
+	          case 'v': // Week (01..53), where Monday is the first day of the week; used with %x
+	          case 'X': // Year for the week where Sunday is the first day of the week, numeric, four digits; used with %V
+	          case 'x': // Year for the week, where Monday is the first day of the week, numeric, four digits; used with %v
+	            throw '%'+this.fmt.charAt(f+1)+' not implemented by AnyTime.Converter';
+	          case '%': // A literal '%' character
+	          default: // for any character not listed above
+		        throw '%'+this.fmt.charAt(f+1)+' reserved for future use';
+	            break;
+	        }
+	        f++;
+	      } // if ( this.fmt.charAt(f) == '%' )
+	      else if ( this.fmt.charAt(f) != str.charAt(s) )
+	        throw str + ' is not in "' + this.fmt + '" format';
+	      else
+	        s++;
+	    } // for ( var f ... )
+	    if ( era < 0 )
+	      time.setFullYear( 0 - time.getFullYear() );
+		if ( tzOff != Number.MIN_VALUE )
+		{
+	       if ( _captureOffset )
+	    	 _offCap = tzOff;
+	       else
+	    	 time.setTime( ( time.getTime() - (tzOff*60000) ) - (time.getTimezoneOffset()*60000) );
+		}
+		
+	    return time;
+	    
+	}; // AnyTime.Converter.parse()
+	
+	//-------------------------------------------------------------------------
+	//  AnyTime.Converter.setUtcFormatOffsetAlleged()  sets the offset from 
+    //  UTC, in minutes, to claim that a Date object represents during
+	//  formatting, even though it is formatted using local time.  This merely
+	//  reports the alleged offset when a timezone specifier (%#, %+, %-, %:,
+	//  %; or %@) is encountered in the format string--it does not otherwise
+	//  affect the date/time value.  This primarily exists so AnyTime.picker
+	//  can edit the time as specified (without conversion to local time) and
+	//  then convert the edited time to a different time zone (as selected
+	//  using the picker).  This method returns the previous value, if any,
+	//  set by the utcFormatOffsetAlleged option, or a previous call to
+	//  setUtcFormatOffsetAlleged(), or Number.MIN_VALUE if no offset was
+	//  previously-alleged.  Call this method with Number.MIN_VALUE to cancel
+	//  any prior value.  Note that if a format offset is alleged, any offset
+	//  specified by option utcFormatOffsetImposed is ignored.
+	//-------------------------------------------------------------------------
+	
+	this.setUtcFormatOffsetAlleged = function( offset )
+	{
+		var prev = _offAl;
+	    _offAl = offset;
+	    return prev;
+	};
+	
+	//-------------------------------------------------------------------------
+	//  AnyTime.Converter.setUtcFormatOffsetSubIndex() sets the sub-index
+	//  to choose from the AnyTime.utcLabel array of arrays when formatting
+	//  a Date using the %@ specifier.  For more information, see option
+	//  AnyTime.Converter.utcFormatOffsetSubIndex.  This primarily exists so
+	//  AnyTime.picker can specify the Time Zone label selected using the
+	//  picker).  This method returns the previous value, if any, set by the
+	//  utcFormatOffsetSubIndex option, or a previous call to
+	//  setUtcFormatOffsetAlleged(), or (-1) if no sub-index was previously-
+	//  chosen.  Call this method with (-1) to cancel any prior value.
+	//-------------------------------------------------------------------------
+	
+	this.setUtcFormatOffsetSubIndex = function( subIndex )
+	{
+		var prev = _offFSI;
+	    _offFSI = subIndex;
+	    return prev;
+	};
+	
+	//-------------------------------------------------------------------------
+	//	AnyTime.Converter construction code:
+	//-------------------------------------------------------------------------
+	  
+	(function(_this)
+	{
+      var i, len;
+		
+		options = jQuery.extend(true,{},options||{});
+		
+	  	if ( options.baseYear )
+			_this.baseYear = Number(options.baseYear);
+		
+	  	if ( options.format )
+			_this.fmt = options.format;
+		
+	  	_flen = _this.fmt.length;
+		
+	  	if ( options.dayAbbreviations )
+	  		_this.dAbbr = $.makeArray( options.dayAbbreviations );
+		
+	  	if ( options.dayNames )
+	  	{
+	  		_this.dNames = $.makeArray( options.dayNames );
+	  		_longDay = 1;
+	  		_shortDay = 1000;
+	  		for ( i = 0 ; i < 7 ; i++ )
+	  		{
+          len = _this.dNames[i].length;
+				if ( len > _longDay )
+					_longDay = len;
+				if ( len < _shortDay )
+					_shortDay = len;
+	  		}
+	  	}
+		
+	  	if ( options.eraAbbreviations )
+	  		_this.eAbbr = $.makeArray(options.eraAbbreviations);
+		
+	  	if ( options.monthAbbreviations )
+	  		_this.mAbbr = $.makeArray(options.monthAbbreviations);
+		
+	  	if ( options.monthNames )
+	  	{
+	  		_this.mNames = $.makeArray( options.monthNames );
+	  		_longMon = 1;
+	  		_shortMon = 1000;
+	  		for ( i = 0 ; i < 12 ; i++ )
+	  		{
+	  			var len = _this.mNames[i].length;
+	  			if ( len > _longMon )
+					_longMon = len;
+	  			if ( len < _shortMon )
+	  				_shortMon = len;
+	  		}
+	  	}
+		
+	  	if ( typeof options.utcFormatOffsetImposed != "undefined" )
+	  		_offF = options.utcFormatOffsetImposed;
+
+	  	if ( typeof options.utcParseOffsetAssumed != "undefined" )
+	  		_offP = options.utcParseOffsetAssumed;
+		
+	  	if ( options.utcParseOffsetCapture )
+	  		_captureOffset = true;
+		
+	})(this); // AnyTime.Converter construction
+
+}; // AnyTime.Converter = 
+
+//=============================================================================
+//  AnyTime.noPicker()
+//
+//  Removes the date/time entry picker attached to a specified text field.
+//=============================================================================
+
+AnyTime.noPicker = function( id )
+{
+	if ( __pickers[id] )
+	{
+		__pickers[id].cleanup();
+		delete __pickers[id];
+	}
+};
+
+//=============================================================================
+//  AnyTime.picker()
+//
+//  Creates a date/time entry picker attached to a specified text field.
+//  Instead of entering a date and/or time into the text field, the user
+//  selects legal combinations using the picker, and the field is auto-
+//  matically populated.  The picker can be incorporated into the page
+//	"inline", or used as a "popup" that appears when the text field is
+//  clicked and disappears when the picker is dismissed. Ajax can be used
+//  to send the selected value to a server to approve or veto it.
+//
+//  To create a picker, simply include the necessary files in an HTML page
+//  and call the function for each date/time input field.  The following
+//  example creates a popup picker for field "foo" using the default
+//  format, and a second date-only (no time) inline (always-visible)
+//  Ajax-enabled picker for field "bar":
+//
+//    <link rel="stylesheet" type="text/css" href="anytime.css" />
+//    <script type="text/javascript" src="jquery.js"></script>
+//    <script type="text/javascript" src="anytime.js"></script>
+//    <input type="text" id="foo" tabindex="1" value="1967-07-30 23:45" />
+//    <input type="text" id="bar" tabindex="2" value="01/06/90" />
+//    <script type="text/javascript">
+//      AnyTime.picker( "foo" );
+//      AnyTime.picker( "bar", { placement:"inline", format: "%m/%d/%y",
+//								ajaxOptions { url: "/some/server/page/" } } );
+//    </script>
+//
+//  The appearance of the picker can be extensively modified using CSS styles.
+//  A default appearance can be achieved by the "anytime.css" stylesheet that
+//  accompanies this script.  The default style looks better in browsers other
+//  than Internet Explorer (before IE8) because older versions of IE do not
+//  properly implement the CSS box model standard; however, it is passable in
+//  Internet Explorer as well.
+//
+//  Method parameters:
+//
+//  id - the "id" attribute of the textfield to associate with the
+//    AnyTime.picker object.  The AnyTime.picker will attach itself
+//    to the textfield and manage its value.
+//
+//  options - an object (associative array) of optional parameters that
+//    override default behaviors.  The supported options are:
+//
+//    ajaxOptions - options passed to jQuery's $.ajax() method whenever
+//      the user dismisses a popup picker or selects a value in an inline
+//      picker.  The input's name (or ID) and value are passed to the
+//      server (appended to ajaxOptions.data, if present), and the
+//      "success" handler sets the input's value to the responseText.
+//      Therefore, the text returned by the server must be valid for the
+//      input'sdate/time format, and the server can approve or veto the
+//      value chosen by the user. For more information, see:
+//      http://docs.jquery.com/Ajax.
+//      If ajaxOptions.success is specified, it is used instead of the
+//      default "success" behavior.
+//
+//    askEra - if true, buttons to select the era are shown on the year
+//        selector popup, even if format specifier does not include the
+//        era.  If false, buttons to select the era are NOT shown, even
+//        if the format specifier includes ther era.  Normally, era buttons
+//        are only shown if the format string specifies the era.
+//
+//    askSecond - if false, buttons for number-of-seconds are not shown
+//        even if the format includes seconds.  Normally, the buttons
+//        are shown if the format string includes seconds.
+//
+//    earliest - String or Date object representing the earliest date/time
+//        that a user can select.  For best results if the field is only
+//        used to specify a date, be sure to set the time to 00:00:00.
+//        If a String is used, it will be parsed according to the picker's
+//        format (see AnyTime.Converter.format()).
+//
+//    firstDOW - a value from 0 (Sunday) to 6 (Saturday) stating which
+//      day should appear at the beginning of the week.  The default is 0
+//      (Sunday).  The most common substitution is 1 (Monday).  Note that
+//      if custom arrays are specified for AnyTime.Converter's dayAbbreviations
+//      and/or dayNames options, they should nonetheless begin with the
+//      value for Sunday.
+//
+//    hideInput - if true, the <input> is "hidden" (the picker appears in 
+//      its place). This actually sets the border, height, margin, padding
+//      and width of the field as small as possivle, so it can still get focus.
+//      If you try to hide the field using traditional techniques (such as
+//      setting "display:none"), the picker will not behave correctly.
+//
+//    labelDayOfMonth - the label for the day-of-month "buttons".
+//      Can be any HTML!  If not specified, "Day of Month" is assumed.
+//
+//    labelDismiss - the label for the dismiss "button" (if placement is
+//      "popup"). Can be any HTML!  If not specified, "X" is assumed.
+//
+//    labelHour - the label for the hour "buttons".
+//      Can be any HTML!  If not specified, "Hour" is assumed.
+//
+//    labelMinute - the label for the minute "buttons".
+//      Can be any HTML!  If not specified, "Minute" is assumed.
+//
+//    labelMonth - the label for the month "buttons".
+//      Can be any HTML!  If not specified, "Month" is assumed.
+//
+//    labelTimeZone - the label for the UTC offset (timezone) "buttons".
+//      Can be any HTML!  If not specified, "Time Zone" is assumed.
+//
+//    labelSecond - the label for the second "buttons".
+//      Can be any HTML!  If not specified, "Second" is assumed.
+//      This option is ignored if askSecond is false!
+//
+//    labelTitle - the label for the "title bar".  Can be any HTML!
+//      If not specified, then whichever of the following is most
+//      appropriate is used:  "Select a Date and Time", "Select a Date"
+//      or "Select a Time", or no label if only one field is present.
+//
+//    labelYear - the label for the year "buttons".
+//      Can be any HTML!  If not specified, "Year" is assumed.
+//
+//    latest - String or Date object representing the latest date/time
+//        that a user can select.  For best results if the field is only
+//        used to specify a date, be sure to set the time to 23:59:59.
+//        If a String is used, it will be parsed according to the picker's
+//        format (see AnyTime.Converter.format()).
+//
+//    placement - One of the following strings:
+//
+//      "popup" = the picker appears above its <input> when the input
+//        receives focus, and disappears when it is dismissed.  This is
+//        the default behavior.
+//
+//      "inline" = the picker is placed immediately after the <input>
+//        and remains visible at all times.  When choosing this placement,
+//        it is best to make the <input> invisible and use only the
+//        picker to select dates.  The <input> value can still be used
+//        during form submission as it will always reflect the current
+//        picker state.
+//
+//        WARNING: when using "inline" and XHTML and including a day-of-
+//        the-month format field, the input may only appear where a <table>
+//        element is permitted (for example, NOT within a <p> element).
+//        This is because the picker uses a <table> element to arrange
+//        the day-of-the-month (calendar) buttons.  Failure to follow this
+//        advice may result in an "unknown error" in Internet Explorer.
+//
+//    The following additional options may be specified; see documentation
+//    for AnyTime.Converter (above) for information about these options:
+//
+//      baseYear
+//      dayAbbreviations
+//      dayNames
+//      eraAbbreviations
+//      format
+//      monthAbbreviations
+//      monthNames
+//
+//  Other behavior, such as how to format the values on the display
+//  and which "buttons" to include, is inferred from the format string.
+//=============================================================================
+
+AnyTime.picker = function( id, options )
+{
+	//  Create a new private object instance to manage the picker,
+	//  if one does not already exist.
+	
+    if ( __pickers[id] )
+    	throw 'Cannot create another AnyTime picker for "'+id+'"';
+
+	var _this = null;
+
+	__pickers[id] =
+	{
+		//  private members
+		
+		twelveHr: false,
+		ajaxOpts: null,		// options for AJAX requests
+		denyTab: true,      // set to true to stop Opera from tabbing away
+		askEra: false,		// prompt the user for the era in yDiv?
+		cloak: null,		// cloak div
+		conv: null,			// AnyTime.Converter
+	  	bMinW: 0,			// min width of body div
+	  	bMinH: 0,			// min height of body div
+	  	dMinW: 0,    		// min width of date div
+	  	dMinH: 0,			// min height of date div
+		div: null,			// picker div
+	  	dB: null,			// body div
+	  	dD: null,			// date div
+	  	dY: null,			// years div
+	  	dMo: null,			// months div
+	  	dDoM: null,			// date-of-month table
+	  	hDoM: null,			// date-of-month heading
+	  	hMo: null,			// month heading
+	  	hTitle: null,		// title heading
+	  	hY: null,			// year heading
+	  	dT: null,			// time div
+	  	dH: null,			// hours div
+	  	dM: null,			// minutes div
+	  	dS: null,			// seconds div
+	  	dO: null,           // offset (time zone) div
+		earliest: null,		// earliest selectable date/time
+		fBtn: null,			// button with current focus
+		fDOW: 0,			// index to use as first day-of-week
+	    hBlur: null,        // input handler
+	    hClick: null,       // input handler
+	    hFocus: null,       // input handler
+	    hKeydown: null,     // input handler
+	    hKeypress: null,    // input handler
+		id: null,			// picker ID
+		inp: null,			// input text field
+		latest: null,		// latest selectable date/time
+		lastAjax: null,		// last value submitted using AJAX
+		lostFocus: false,	// when focus is lost, must redraw
+		lX: 'X',			// label for dismiss button
+		lY: 'Year',			// label for year
+		lO: 'Time Zone',    // label for UTC offset (time zone)
+		oBody: null,        // UTC offset selector popup
+		oConv: null,        // AnyTime.Converter for offset display
+		oCur: null,         // current-UTC-offset button
+		oDiv: null,			// UTC offset selector popup
+		oLab: null,			// UTC offset label
+		oListMinW: 0,       // min width of offset list element
+		oMinW: 0,           // min width of UTC offset element
+		oSel: null,         // select (plus/minus) UTC-offset button
+		offMin: Number.MIN_VALUE, // current UTC offset in minutes
+		offSI: -1,          // current UTC label sub-index (if any)
+		offStr: "",         // current UTC offset (time zone) string
+		pop: true,			// picker is a popup?
+		time: null,			// current date/time
+	  	tMinW: 0,			// min width of time div
+	  	tMinH: 0,			// min height of time div
+		url: null,			// URL to submit value using AJAX
+	  	wMinW: 0,			// min width of picker
+	  	wMinH: 0,			// min height of picker
+		yAhead: null,		// years-ahead button
+		y0XXX: null,		// millenium-digit-zero button (for focus)
+		yCur: null,			// current-year button
+		yDiv: null,			// year selector popup
+		yLab: null,			// year label
+		yNext: null,		// next-year button
+		yPast: null,		// years-past button
+		yPrior: null,		// prior-year button
+
+		//---------------------------------------------------------------------
+		//  .initialize() initializes the picker instance.
+		//---------------------------------------------------------------------
+
+		initialize: function( id )
+		{
+			_this = this;
+
+			this.id = 'AnyTime--'+id;
+
+			options = jQuery.extend(true,{},options||{});
+		  	options.utcParseOffsetCapture = true;
+		  	this.conv = new AnyTime.Converter(options);
+
+		  	if ( options.placement )
+		  	{
+		  		if ( options.placement == 'inline' )
+		  			this.pop = false;
+		  		else if ( options.placement != 'popup' )
+		  			throw 'unknown placement: ' + options.placement;
+		  	}
+
+		  	if ( options.ajaxOptions )
+		  	{
+		  		this.ajaxOpts = jQuery.extend( {}, options.ajaxOptions );
+		        if ( ! this.ajaxOpts.success )
+		        	this.ajaxOpts.success = function(data,status) { _this.inp.val(data); };
+		  	}
+		    
+		  	if ( options.earliest )
+		  	{
+		  		if ( typeof options.earliest.getTime == 'function' )
+		  			this.earliest = options.earliest.getTime();
+		  		else
+		  			this.earliest = this.conv.parse( options.earliest.toString() );
+		  	}
+
+		  	if ( options.firstDOW )
+		  	{
+		  		if ( ( options.firstDOW < 0 ) || ( options.firstDOW > 6 ) )
+		  			throw new Exception('illegal firstDOW: ' + options.firstDOW); 
+		  		this.fDOW = options.firstDOW;
+		  	}
+
+		  	if ( options.latest )
+		  	{
+		  		if ( typeof options.latest.getTime == 'function' )
+		  			this.latest = options.latest.getTime();
+		  		else
+		  			this.latest = this.conv.parse( options.latest.toString() );
+		  	}
+
+		  	this.lX = options.labelDismiss || 'X';
+		  	this.lY = options.labelYear || 'Year';
+		  	this.lO = options.labelTimeZone || 'Time Zone';
+
+		  	//  Infer what we can about what to display from the format.
+
+		  	var i;
+		  	var t;
+		  	var lab;
+		  	var shownFields = 0;
+		  	var format = this.conv.fmt;
+
+		  	if ( typeof options.askEra != 'undefined' )
+		  		this.askEra = options.askEra;
+		  	else
+		  		this.askEra = (format.indexOf('%B')>=0) || (format.indexOf('%C')>=0) || (format.indexOf('%E')>=0);
+		  	var askYear = (format.indexOf('%Y')>=0) || (format.indexOf('%y')>=0) || (format.indexOf('%Z')>=0) || (format.indexOf('%z')>=0);
+		  	var askMonth = (format.indexOf('%b')>=0) || (format.indexOf('%c')>=0) || (format.indexOf('%M')>=0) || (format.indexOf('%m')>=0);
+		  	var askDoM = (format.indexOf('%D')>=0) || (format.indexOf('%d')>=0) || (format.indexOf('%e')>=0);
+		  	var askDate = askYear || askMonth || askDoM;
+		  	this.twelveHr = (format.indexOf('%h')>=0) || (format.indexOf('%I')>=0) || (format.indexOf('%l')>=0) || (format.indexOf('%r')>=0);
+		  	var askHour = this.twelveHr || (format.indexOf('%H')>=0) || (format.indexOf('%k')>=0) || (format.indexOf('%T')>=0);
+		  	var askMinute = (format.indexOf('%i')>=0) || (format.indexOf('%r')>=0) || (format.indexOf('%T')>=0);
+		  	var askSec = ( (format.indexOf('%r')>=0) || (format.indexOf('%S')>=0) || (format.indexOf('%s')>=0) || (format.indexOf('%T')>=0) );
+		  	if ( askSec && ( typeof options.askSecond != 'undefined' ) )
+		  		askSec = options.askSecond;
+		  	var askOff = ( (format.indexOf('%#')>=0) || (format.indexOf('%+')>=0) || (format.indexOf('%-')>=0) || (format.indexOf('%:')>=0) || (format.indexOf('%;')>=0) || (format.indexOf('%<')>=0) || (format.indexOf('%>')>=0) || (format.indexOf('%@')>=0) );
+		  	var askTime = askHour || askMinute || askSec || askOff;
+
+		  	if ( askOff )
+			  	this.oConv = new AnyTime.Converter( { format: options.formatUtcOffset || 
+			  		format.match(/\S*%[-+:;<>#@]\S*/g).join(' ') } );
+
+		  	//  Create the picker HTML and add it to the page.
+		  	//  Popup pickers will be moved to the end of the body
+		  	//  once the entire page has loaded.
+
+		  	this.inp = $('#'+id);
+		  	this.div = $( '<div class="AnyTime-win AnyTime-pkr ui-widget ui-widget-content ui-corner-all" style="width:0;height:0" id="' + this.id + '" aria-live="off"/>' );
+		    this.inp.after(this.div);
+		  	this.wMinW = this.div.outerWidth(!$.browser.safari);
+		  	this.wMinH = this.div.AnyTime_height(true);
+		  	this.hTitle = $( '<h5 class="AnyTime-hdr ui-widget-header ui-corner-top"/>' ); 
+		  	this.div.append( this.hTitle );
+		  	this.dB = $( '<div class="AnyTime-body" style="width:0;height:0"/>' );
+		  	this.div.append( this.dB );
+		  	this.bMinW = this.dB.outerWidth(true);
+		  	this.bMinH = this.dB.AnyTime_height(true);
+
+		  	if ( options.hideInput )
+		        this.inp.css({border:0,height:'1px',margin:0,padding:0,width:'1px'});
+		  	
+		  	//  Add dismiss box to title (if popup)
+
+		  	var t = null;
+		  	var xDiv = null;
+		  	if ( this.pop )
+		  	{
+		  		xDiv = $( '<div class="AnyTime-x-btn ui-state-default">'+this.lX+'</div>' );
+		  		this.hTitle.append( xDiv );
+		  		xDiv.click(function(e){_this.dismiss(e);});
+		  	}
+
+		  	//  date (calendar) portion
+
+		  	var lab = '';
+		  	
+		  	if ( askDate )
+		  	{
+			  this.dD = $( '<div class="AnyTime-date" style="width:0;height:0"/>' );
+			  this.dB.append( this.dD );
+		  	  this.dMinW = this.dD.outerWidth(true);
+		  	  this.dMinH = this.dD.AnyTime_height(true);
+
+		      if ( askYear )
+		      {
+		    	  this.yLab = $('<h6 class="AnyTime-lbl AnyTime-lbl-yr">' + this.lY + '</h6>');
+		    	  this.dD.append( this.yLab );
+
+		          this.dY = $( '<ul class="AnyTime-yrs ui-helper-reset" />' );
+		          this.dD.append( this.dY );
+
+		          this.yPast = this.btn(this.dY,'&lt;',this.newYear,['yrs-past'],'- '+this.lY);
+		          this.yPrior = this.btn(this.dY,'1',this.newYear,['yr-prior'],'-1 '+this.lY);
+		          this.yCur = this.btn(this.dY,'2',this.newYear,['yr-cur'],this.lY);
+		          this.yCur.removeClass('ui-state-default');
+		          this.yCur.addClass('AnyTime-cur-btn ui-state-default ui-state-highlight');
+
+		          this.yNext = this.btn(this.dY,'3',this.newYear,['yr-next'],'+1 '+this.lY);
+		          this.yAhead = this.btn(this.dY,'&gt;',this.newYear,['yrs-ahead'],'+ '+this.lY);
+		          
+		          shownFields++;
+
+		      } // if ( askYear )
+
+		      if ( askMonth )
+		      {
+		    	  lab = options.labelMonth || 'Month';
+		    	  this.hMo = $( '<h6 class="AnyTime-lbl AnyTime-lbl-month">' + lab + '</h6>' );
+		    	  this.dD.append( this.hMo );
+		    	  this.dMo = $('<ul class="AnyTime-mons" />');
+		    	  this.dD.append(this.dMo);
+		    	  for ( i = 0 ; i < 12 ; i++ )
+		    	  {
+		    		  var mBtn = this.btn( this.dMo, this.conv.mAbbr[i], 
+			    			function( event )
+			    			{
+			    				var elem = $(event.target);
+			    			    if ( elem.hasClass("AnyTime-out-btn") )
+			    			    	return;
+			    				var mo = event.target.AnyTime_month;
+			    				var t = new Date(this.time.getTime());
+			    				if ( t.getDate() > __daysIn[mo] )
+			    					t.setDate(__daysIn[mo])
+			    				t.setMonth(mo);
+			    				this.set(t);
+			    			    this.upd(elem);
+			    			},
+			    			['mon','mon'+String(i+1)], lab+' '+this.conv.mNames[i] );
+		    		  mBtn[0].AnyTime_month = i;
+		    	  }
+		    	  shownFields++;
+		      }
+
+		      if ( askDoM )
+		      {
+		    	lab = options.labelDayOfMonth || 'Day of Month';
+		        this.hDoM = $('<h6 class="AnyTime-lbl AnyTime-lbl-dom">' + lab + '</h6>' );
+		      	this.dD.append( this.hDoM );
+		        this.dDoM =  $( '<table border="0" cellpadding="0" cellspacing="0" class="AnyTime-dom-table"/>' );
+		        this.dD.append( this.dDoM );
+		        t = $( '<thead class="AnyTime-dom-head"/>' );
+		        this.dDoM.append(t);
+		        var tr = $( '<tr class="AnyTime-dow"/>' );
+		        t.append(tr);
+		        for ( i = 0 ; i < 7 ; i++ )
+		          tr.append( '<th class="AnyTime-dow AnyTime-dow'+String(i+1)+'">'+this.conv.dAbbr[(this.fDOW+i)%7]+'</th>' );
+
+		        var tbody = $( '<tbody class="AnyTime-dom-body" />' );
+		        this.dDoM.append(tbody);
+		        for ( var r = 0 ; r < 6 ; r++ )
+		        {
+		          tr = $( '<tr class="AnyTime-wk AnyTime-wk'+String(r+1)+'"/>' );
+		          tbody.append(tr);
+		          for ( i = 0 ; i < 7 ; i++ )
+		        	  this.btn( tr, 'x',
+		        		function( event )
+		        		{
+		        			var elem = $(event.target);
+		        		    if ( elem.hasClass("AnyTime-out-btn") )
+		        		    	return;
+		        			var dom = Number(elem.html());
+		        			if ( dom )
+		        			{
+		        				var t = new Date(this.time.getTime());
+		        				t.setDate(dom);
+		        				this.set(t);
+		        				this.upd(elem);
+		        			}
+		        		},
+		        		['dom'], lab );
+		        }
+		        shownFields++;
+
+		      } // if ( askDoM )
+
+		    } // if ( askDate )
+
+		    //  time portion
+
+		    if ( askTime )
+		    {
+          var tensDiv, onesDiv;
+
+		      this.dT = $('<div class="AnyTime-time" style="width:0;height:0" />');
+		      this.dB.append(this.dT);
+		  	  this.tMinW = this.dT.outerWidth(true);
+		  	  this.tMinH = this.dT.AnyTime_height(true);
+
+		      if ( askHour )
+		      {
+		        this.dH = $('<div class="AnyTime-hrs"/>');
+		        this.dT.append(this.dH);
+
+		        lab = options.labelHour || 'Hour';
+		        this.dH.append( $('<h6 class="AnyTime-lbl AnyTime-lbl-hr">'+lab+'</h6>') );
+		        var amDiv = $('<ul class="AnyTime-hrs-am"/>');
+		        this.dH.append( amDiv );
+		        var pmDiv = $('<ul class="AnyTime-hrs-pm"/>');
+		        this.dH.append( pmDiv );
+
+		        for ( i = 0 ; i < 12 ; i++ )
+		        {
+		          if ( this.twelveHr )
+		          {
+		            if ( i == 0 )
+		              t = '12am';
+		            else
+		              t = String(i)+'am';
+		          }
+		          else
+		            t = AnyTime.pad(i,2);
+
+		          this.btn( amDiv, t, this.newHour,['hr','hr'+String(i)],lab+' '+t);
+
+		          if ( this.twelveHr )
+		          {
+		            if ( i == 0 )
+		              t = '12pm';
+		            else
+		              t = String(i)+'pm';
+		          }
+		          else
+		            t = i+12;
+
+		          this.btn( pmDiv, t, this.newHour,['hr','hr'+String(i+12)],lab+' '+t);
+		        }
+
+				shownFields++;
+				
+		      } // if ( askHour )
+
+		      if ( askMinute )
+		      {
+		        this.dM = $('<div class="AnyTime-mins"/>');
+		        this.dT.append(this.dM);
+
+		        lab = options.labelMinute || 'Minute';
+		        this.dM.append( $('<h6 class="AnyTime-lbl AnyTime-lbl-min">'+lab+'</h6>') );
+            tensDiv = $('<ul class="AnyTime-mins-tens"/>');
+		        this.dM.append(tensDiv);
+
+		        for ( i = 0 ; i < 6 ; i++ )
+		          this.btn( tensDiv, i, 
+		        		  function( event )
+		        		  {
+		        		      var elem = $(event.target);
+		        			  if ( elem.hasClass("AnyTime-out-btn") )
+		        			    	return;
+		        		      var t = new Date(this.time.getTime());
+		        		      t.setMinutes( (Number(elem.text())*10) + (this.time.getMinutes()%10) );
+		        		      this.set(t);
+		        		      this.upd(elem);
+		        		  },
+		        		  ['min-ten','min'+i+'0'], lab+' '+i+'0' );
+		        for ( ; i < 12 ; i++ )
+			          this.btn( tensDiv, '&#160;', $.noop, ['min-ten','min'+i+'0'], lab+' '+i+'0' ).addClass('AnyTime-min-ten-btn-empty ui-state-default ui-state-disabled');
+
+            onesDiv = $('<ul class="AnyTime-mins-ones"/>');
+		        this.dM.append(onesDiv);
+		        for ( i = 0 ; i < 10 ; i++ )
+		          this.btn( onesDiv, i, 
+		    		  function( event )
+		    		  {
+		    		      var elem = $(event.target);
+		    			  if ( elem.hasClass("AnyTime-out-btn") )
+		    			    	return;
+		    		      var t = new Date(this.time.getTime());
+		    		      t.setMinutes( (Math.floor(this.time.getMinutes()/10)*10)+Number(elem.text()) );
+		    		      this.set(t);
+		    		      this.upd(elem);  
+		    		  },
+		    		  ['min-one','min'+i], lab+' '+i );
+		        for ( ; i < 12 ; i++ )
+			          this.btn( onesDiv, '&#160;', $.noop, ['min-one','min'+i+'0'], lab+' '+i ).addClass('AnyTime-min-one-btn-empty ui-state-default ui-state-disabled');
+
+				shownFields++;
+
+		      } // if ( askMinute )
+
+		      if ( askSec )
+		      {
+		        this.dS = $('<div class="AnyTime-secs"/>');
+		        this.dT.append(this.dS);
+		        lab = options.labelSecond || 'Second';
+		        this.dS.append( $('<h6 class="AnyTime-lbl AnyTime-lbl-sec">'+lab+'</h6>') );
+            tensDiv = $('<ul class="AnyTime-secs-tens"/>');
+		        this.dS.append(tensDiv);
+
+		        for ( i = 0 ; i < 6 ; i++ )
+		          this.btn( tensDiv, i,
+		    		  function( event )
+		    		  {
+		    		      var elem = $(event.target);
+		    			  if ( elem.hasClass("AnyTime-out-btn") )
+		    			    	return;
+		    		      var t = new Date(this.time.getTime());
+		    		      t.setSeconds( (Number(elem.text())*10) + (this.time.getSeconds()%10) );
+		    		      this.set(t);
+		    		      this.upd(elem);
+		    		  },
+		    		  ['sec-ten','sec'+i+'0'], lab+' '+i+'0' );
+		        for ( ; i < 12 ; i++ )
+			          this.btn( tensDiv, '&#160;', $.noop, ['sec-ten','sec'+i+'0'], lab+' '+i+'0' ).addClass('AnyTime-sec-ten-btn-empty ui-state-default ui-state-disabled');
+
+            onesDiv = $('<ul class="AnyTime-secs-ones"/>');
+		        this.dS.append(onesDiv);
+		        for ( i = 0 ; i < 10 ; i++ )
+		          this.btn( onesDiv, i,
+		    		  function( event )
+		    		  {
+		    		      var elem = $(event.target);
+		    			  if ( elem.hasClass("AnyTime-out-btn") )
+		    			    	return;
+		    		      var t = new Date(this.time.getTime());
+		    		      t.setSeconds( (Math.floor(this.time.getSeconds()/10)*10) + Number(elem.text()) );
+		    		      this.set(t);
+		    		      this.upd(elem);
+		    		  },
+		    		  ['sec-one','sec'+i], lab+' '+i );
+		        for ( ; i < 12 ; i++ )
+			          this.btn( onesDiv, '&#160;', $.noop, ['sec-one','sec'+i+'0'], lab+' '+i ).addClass('AnyTime-sec-one-btn-empty ui-state-default ui-state-disabled');
+
+				shownFields++;
+
+		      } // if ( askSec )
+
+		      if ( askOff )
+		      {
+		    	this.dO = $('<div class="AnyTime-offs" />');
+		        this.dT.append(this.dO);
+			  	this.oMinW = this.dO.outerWidth(true);
+		        
+		    	this.oLab = $('<h6 class="AnyTime-lbl AnyTime-lbl-off">' + this.lO + '</h6>');
+		    	this.dO.append( this.oLab );
+		        
+		    	var offDiv = $('<ul class="AnyTime-off-list ui-helper-reset" />');
+		        this.dO.append(offDiv);
+		        
+		        this.oCur = this.btn(offDiv,'',this.newOffset,['off','off-cur'],lab);
+		        this.oCur.removeClass('ui-state-default');
+		        this.oCur.addClass('AnyTime-cur-btn ui-state-default ui-state-highlight');
+		        this.oCur.css({overflow:"hidden"});
+
+			  	this.oSel = this.btn(offDiv,'&#177;',this.newOffset,['off','off-select'],'+/- '+this.lO);
+			  	this.oListMinW = this.oCur.outerWidth(true)+this.oSel.outerWidth(true);
+
+				shownFields++;
+		      }
+		      
+		    } // if ( askTime )
+
+		    //  Set the title.  If a title option has been specified, use it.
+		    //  Otherwise, determine a worthy title based on which (and how many)
+		    //  format fields have been specified.
+
+		    if ( options.labelTitle )
+		      this.hTitle.append( options.labelTitle );
+		    else if ( shownFields > 1 )
+		      this.hTitle.append( 'Select a '+(askDate?(askTime?'Date and Time':'Date'):'Time') );
+		    else
+		      this.hTitle.append( 'Select' );
+
+
+		    //  Initialize the picker's date/time value.
+
+		    try
+		    {
+		      this.time = this.conv.parse(this.inp.val());
+		      this.offMin = this.conv.getUtcParseOffsetCaptured();
+		      this.offSI = this.conv.getUtcParseOffsetSubIndex();
+		    }
+		    catch ( e )
+		    {
+		      this.time = new Date();
+		    }
+		    this.lastAjax = this.time;
+
+
+		    //  If this is a popup picker, hide it until needed.
+
+		    if ( this.pop )
+		    {
+		      this.div.hide();
+		      if ( __iframe )
+		        __iframe.hide();
+		      this.div.css('position','absolute');
+		    }
+			
+		    //  Setup event listeners for the input and resize listeners for
+		    //  the picker.  Add the picker to the instances list (which is used
+		    //  to hide pickers if the user clicks off of them).
+
+		    this.inp.blur( this.hBlur =
+		    	function(e)
+		    	{
+		    		_this.inpBlur(e);
+		    	} );
+		    
+		    this.inp.click( this.hClick =
+		    	function(e)
+		    	{
+	    			_this.showPkr(e);
+		    	} );
+		    
+		    this.inp.focus( this.hFocus =
+		    	function(e)
+		    	{
+		    		if ( _this.lostFocus )
+		    			_this.showPkr(e);
+		    		_this.lostFocus = false;
+		    	} );
+		    
+		    this.inp.keydown( this.hKeydown =
+		    	function(e)
+		    	{
+		    		_this.key(e);
+		    	} );
+		    
+		    this.inp.keypress( this.hKeypress =
+			    	function(e)
+			    	{
+			    		if ( $.browser.opera && _this.denyTab )
+			    			e.preventDefault();
+			    	} );
+			    
+		    this.div.click( 
+				function(e)
+				{
+					_this.lostFocus = false;
+					_this.inp.focus();
+				} );
+		    
+		    $(window).resize( 
+		    	function(e)
+		    	{
+		    		_this.pos(e);
+		    	} );
+		    
+		    if ( __initialized )
+		    	this.onReady();
+
+		}, // initialize()
+
+
+		//---------------------------------------------------------------------
+		//  .ajax() notifies the server of a value change using Ajax.
+		//---------------------------------------------------------------------
+
+		ajax: function()
+		{
+		    if ( this.ajaxOpts && ( this.time.getTime() != this.lastAjax.getTime() ) )
+		    {
+		      try
+		      {
+		    	var opts = jQuery.extend( {}, this.ajaxOpts );
+		        if ( typeof opts.data == 'object' )
+		        	opts.data[this.inp[0].name||this.inp[0].id] = this.inp.val();
+		        else
+		        {
+		        	var opt = (this.inp[0].name||this.inp[0].id) + '=' + encodeURI(this.inp.val());
+		        	if ( opts.data )
+		        		opts.data += '&' + opt;
+		        	else
+		        		opts.data = opt;
+		        }
+		        $.ajax( opts );
+		        this.lastAjax = this.time;
+		      }
+		      catch( e )
+		      {
+		      }
+		    }
+		    return;
+		
+		}, // .ajax()
+
+		//---------------------------------------------------------------------
+		//  .askOffset() is called by this.newOffset() when the UTC offset or
+		//  +- selection button is clicked.
+		//---------------------------------------------------------------------
+
+		askOffset: function( event )
+		{
+		    if ( ! this.oDiv )
+		    {
+		      this.makeCloak();
+		
+		      this.oDiv = $('<div class="AnyTime-win AnyTime-off-selector ui-widget ui-widget-content ui-corner-all" style="position:absolute" />');
+		      this.div.append(this.oDiv);
+		
+		      // the order here (HDR,BODY,XDIV,TITLE) is important for width calcluation:
+		      var title = $('<h5 class="AnyTime-hdr AnyTime-hdr-off-selector ui-widget-header ui-corner-top" />');
+		      this.oDiv.append( title );
+		      this.oBody = $('<div class="AnyTime-body AnyTime-body-off-selector" style="overflow:auto;white-space:nowrap" />');
+		      this.oDiv.append( this.oBody );
+		      var oBHS = this.oBody.AnyTime_height(true); // body spacing
+		      var oBWS = this.oBody.AnyTime_width(true);
+		      var oTWS = title.AnyTime_width(true);
+		      
+		      var xDiv = $('<div class="AnyTime-x-btn ui-state-default">'+this.lX+'</div>');
+		      title.append(xDiv);
+		      xDiv.click(function(e){_this.dismissODiv(e);});
+		      title.append( this.lO );
+			  if ( __msie6 || __msie7 ) // IE bugs!
+				  title.width(String(this.lO.length*0.8)+"em");
+			  var oBW = title.AnyTime_width(true) - oBWS; // initial body width
+		      
+		      var cont = $('<ul class="AnyTime-off-off" />' );
+		      var last = null;
+		      this.oBody.append(cont);
+		      var useSubIndex = (this.oConv.fmt.indexOf('%@')>=0);
+		      var btnW = 0; // determine uniform button width
+		      if ( AnyTime.utcLabel )
+			      for ( var o = -720 ; o < 720 ; o++ )
+			    	  if ( AnyTime.utcLabel[o] )
+			    	  {
+				        this.oConv.setUtcFormatOffsetAlleged(o);
+				        for ( var i = 0; i < AnyTime.utcLabel[o].length; i++ )
+				        {
+				          this.oConv.setUtcFormatOffsetSubIndex(i);
+				          last = this.btn( cont, this.oConv.format(this.time), this.newOPos, ['off-off'], o );
+				          last[0].AnyTime_offMin = o;
+				          last[0].AnyTime_offSI = i;
+				          var w = last.width();
+				          if ( w > btnW )
+				        	  btnW = w;
+				          if ( ! useSubIndex )
+				        	  break; // for
+				        }
+			    	  }
+			          
+		      if ( last )
+		    	  last.addClass('AnyTime-off-off-last-btn');
+		      
+		      // compute optimal width
+		      
+		      this.oBody.find('.AnyTime-off-off-btn').width(btnW); // set uniform button width
+		      if ( last )
+		      {
+		          var lW = last.AnyTime_width(true);
+		          if ( lW > oBW )
+			          oBW = lW+1; // expand body to hold buttons
+		      }
+		      this.oBody.width(oBW);
+		      oBW = this.oBody.AnyTime_width(true);
+		      this.oDiv.width( oBW );		      
+		      if ( __msie6 || __msie7 ) // IE bugs!
+				  title.width( oBW - oTWS );
+
+		      // compute optimal height
+		      
+		      var oH = this.oDiv.AnyTime_height(true);
+		      var oHmax = this.div.height() * 0.75;
+		      if ( oH > oHmax )
+		      {
+		    	  oH = oHmax;
+		    	  this.oBody.height(oH-(title.AnyTime_height(true)+oBHS));
+			      this.oBody.width(this.oBody.width()+20); // add nominal px for scrollbar 
+			      this.oDiv.width(this.oDiv.width()+20); 
+			      if ( __msie6 || __msie7 ) // IE bugs!
+					  title.width( this.oBody.AnyTime_width(true) - oTWS );
+		      }
+			  if ( ! __msie7 ) // IE7 bug!
+				  this.oDiv.height(String(oH)+'px');
+
+		    } // if ( ! this.oDiv )
+		    else
+		    {
+		      this.cloak.show();
+		      this.oDiv.show();
+		    }
+		    this.pos(event);
+		    this.updODiv(null);
+
+		    var f = this.oDiv.find('.AnyTime-off-off-btn.AnyTime-cur-btn:first');
+		    if ( ! f.length )
+		    	f = this.oDiv.find('.AnyTime-off-off-btn:first');
+		    this.setFocus( f );
+		
+		}, // .askOffset()
+
+		//---------------------------------------------------------------------
+		//  .askYear() is called by this.newYear() when the yPast or yAhead
+		//  button is clicked.
+		//---------------------------------------------------------------------
+
+		askYear: function( event )
+		{
+		    if ( ! this.yDiv )
+		    {
+		      this.makeCloak();
+		
+		      this.yDiv = $('<div class="AnyTime-win AnyTime-yr-selector ui-widget ui-widget-content ui-corner-all" style="position:absolute" />');
+		      this.div.append(this.yDiv);
+		
+		      var title = $('<h5 class="AnyTime-hdr AnyTime-hdr-yr-selector ui-widget-header ui-corner-top" />');
+		      this.yDiv.append( title );
+		
+		      var xDiv = $('<div class="AnyTime-x-btn ui-state-default">'+this.lX+'</div>');
+		      title.append(xDiv);
+		      xDiv.click(function(e){_this.dismissYDiv(e);});
+		
+		      title.append( this.lY );
+		
+		      var yBody = $('<div class="AnyTime-body AnyTime-body-yr-selector" />');
+		      var yW = yBody.AnyTime_width(true);
+		      var yH = 0;
+		      this.yDiv.append( yBody );
+		      
+		      cont = $('<ul class="AnyTime-yr-mil" />' );
+		      yBody.append(cont);
+		      this.y0XXX = this.btn( cont, 0, this.newYPos,['mil','mil0'],this.lY+' '+0+'000');
+		      for ( i = 1; i < 10 ; i++ )
+		        this.btn( cont, i, this.newYPos,['mil','mil'+i],this.lY+' '+i+'000');
+		      yW += cont.AnyTime_width(true);
+		      if ( yH < cont.AnyTime_height(true) )
+		    	  yH = cont.AnyTime_height(true);
+		
+			  cont = $('<ul class="AnyTime-yr-cent" />' );
+		      yBody.append(cont);
+		      for ( i = 0 ; i < 10 ; i++ )
+		        this.btn( cont, i, this.newYPos,['cent','cent'+i],this.lY+' '+i+'00');
+		      yW += cont.AnyTime_width(true);
+		      if ( yH < cont.AnyTime_height(true) )
+		    	  yH = cont.AnyTime_height(true);
+
+		      cont = $('<ul class="AnyTime-yr-dec" />');
+		      yBody.append(cont);
+		      for ( i = 0 ; i < 10 ; i++ )
+		        this.btn( cont, i, this.newYPos,['dec','dec'+i],this.lY+' '+i+'0');
+		      yW += cont.AnyTime_width(true);
+		      if ( yH < cont.AnyTime_height(true) )
+		    	  yH = cont.AnyTime_height(true);
+		
+		      cont = $('<ul class="AnyTime-yr-yr" />');
+		      yBody.append(cont);
+		      for ( i = 0 ; i < 10 ; i++ )
+		        this.btn( cont, i, this.newYPos,['yr','yr'+i],this.lY+' '+i );
+		      yW += cont.AnyTime_width(true);
+		      if ( yH < cont.AnyTime_height(true) )
+		    	  yH = cont.AnyTime_height(true);
+		
+		      if ( this.askEra )
+		      {
+		        cont = $('<ul class="AnyTime-yr-era" />' );
+		        yBody.append(cont);
+		
+		        this.btn( cont, this.conv.eAbbr[0],
+		        		function( event )
+		        		{
+	  		      			var t = new Date(this.time.getTime());
+		        			var year = t.getFullYear();
+		        		    if ( year > 0 )
+								t.setFullYear(0-year);
+							this.set(t);
+							this.updYDiv($(event.target));
+		        		},
+		        		['era','bce'], this.conv.eAbbr[0] );
+		
+		        this.btn( cont, this.conv.eAbbr[1],
+		        		function( event )
+		        		{
+			      			var t = new Date(this.time.getTime());
+		        			var year = t.getFullYear();
+		        		    if ( year < 0 )
+								t.setFullYear(0-year);
+							this.set(t);
+							this.updYDiv($(event.target));
+		        		},
+		        		['era','ce'], this.conv.eAbbr[1] );
+		        
+		        yW += cont.AnyTime_width(true);
+		        if ( yH < cont.AnyTime_height(true) )
+		        	yH = cont.AnyTime_height(true);
+
+		      } // if ( this.askEra )
+
+		      if ( $.browser.msie ) // IE8+ThemeUI bug!
+		    	  yW += 1;
+		      else if ( $.browser.safari ) // Safari small-text bug!
+		    	  yW += 2;
+			  yH += yBody.AnyTime_height(true);
+			  yBody.css('width',String(yW)+'px');
+			  if ( ! __msie7 ) // IE7 bug!
+				  yBody.css('height',String(yH)+'px');
+		      if ( __msie6 || __msie7 ) // IE bugs!
+		    	  title.width(yBody.outerWidth(true));
+		      yH += title.AnyTime_height(true);
+		      if ( title.AnyTime_width(true) > yW )
+		          yW = title.AnyTime_width(true);
+		      this.yDiv.css('width',String(yW)+'px');
+			  if ( ! __msie7 ) // IE7 bug!
+				  this.yDiv.css('height',String(yH)+'px');
+		
+		    } // if ( ! this.yDiv )
+		    else
+		    {
+		      this.cloak.show();
+		      this.yDiv.show();
+		    }
+		    this.pos(event);
+		    this.updYDiv(null);
+		    this.setFocus( this.yDiv.find('.AnyTime-yr-btn.AnyTime-cur-btn:first') );
+		
+		}, // .askYear()
+
+		//---------------------------------------------------------------------
+		//  .inpBlur() is called when a picker's input loses focus to dismiss
+		//  the popup.  A 1/3 second delay is necessary to restore focus if
+		//	the div is clicked (shorter delays don't always work!)  To prevent
+		//  problems cause by scrollbar focus (except in FF), focus is
+		//  force-restored if the offset div is visible. 
+		//---------------------------------------------------------------------
+  
+		inpBlur: function(event)
+		{
+			if ( this.oDiv && this.oDiv.is(":visible") )
+			{
+				_this.inp.focus();
+				return;
+			}
+			this.lostFocus = true;
+		    setTimeout(
+		    	function()
+		    	{ 
+		    		if ( _this.lostFocus )
+		    		{
+		    			_this.div.find('.AnyTime-focus-btn').removeClass('AnyTime-focus-btn ui-state-focus'); 
+		    			if ( _this.pop )
+		    				_this.dismiss(event);
+		    			else
+		    				_this.ajax();
+		    		}
+		    	}, 334 );
+		},
+		
+		//---------------------------------------------------------------------
+		//  .btn() is called by AnyTime.picker() to create a <div> element
+		//  containing an <a> element.  The elements are given appropriate
+		//  classes based on the specified "classes" (an array of strings).
+		//	The specified "text" and "title" are used for the <a> element.
+		//	The "handler" is bound to click events for the <div>, which will
+		//	catch bubbling clicks from the <a> as well.  The button is
+		//	appended to the specified parent (jQuery), and the <div> jQuery
+		//	is returned.
+		//---------------------------------------------------------------------
+		
+		btn: function( parent, text, handler, classes, title )
+		{
+			var tagName = ( (parent[0].nodeName.toLowerCase()=='ul')?'li':'td'); 
+			var div$ = '<' + tagName +
+			  				' class="AnyTime-btn';
+			for ( var i = 0 ; i < classes.length ; i++ )
+				div$ += ' AnyTime-' + classes[i] + '-btn';
+			var div = $( div$ + ' ui-state-default">' + text + '</' + tagName + '>' );
+			parent.append(div);
+			div.AnyTime_title = title;
+			
+			div.click(
+			    function(e)
+			  	{
+			      // bind the handler to the picker so "this" is correct
+				  _this.tempFunc = handler;
+				  _this.tempFunc(e);
+			  	});
+			div.dblclick(
+				function(e)
+				{ 					
+					var elem = $(this);
+					if ( elem.is('.AnyTime-off-off-btn') )
+						_this.dismissODiv(e);
+					else if ( elem.is('.AnyTime-mil-btn') || elem.is('.AnyTime-cent-btn') || elem.is('.AnyTime-dec-btn') || elem.is('.AnyTime-yr-btn') || elem.is('.AnyTime-era-btn') )
+						_this.dismissYDiv(e);
+					else if ( _this.pop )
+						_this.dismiss(e); 
+				});
+		    return div;
+		
+		}, // .btn()
+	
+		//---------------------------------------------------------------------
+		//  .cleanup() destroys the DOM events and elements associated with
+		//  the picker so it can be deleted.
+		//---------------------------------------------------------------------
+	
+		cleanup: function(event)
+		{
+			this.inp.unbind('blur',this.hBlur);
+		    this.inp.unbind('click',this.hClick);
+		    this.inp.unbind('focus',this.hFocus);
+		    this.inp.unbind('keydown',this.hKeydown);
+		    this.inp.unbind('keypress',this.hKeypress);
+			this.div.remove();
+		},
+		
+		//---------------------------------------------------------------------
+		//  .dismiss() dismisses a popup picker.
+		//---------------------------------------------------------------------
+	
+		dismiss: function(event)
+		{
+			this.ajax();
+			this.div.hide();
+			if ( __iframe )
+				__iframe.hide();
+			if ( this.yDiv )
+				this.dismissYDiv();
+			if ( this.oDiv )
+				this.dismissODiv();
+			this.lostFocus = true;
+		},
+	
+		//---------------------------------------------------------------------
+		//  .dismissODiv() dismisses the UTC offset selector popover.
+		//---------------------------------------------------------------------
+	
+		dismissODiv: function(event)
+		{
+		    this.oDiv.hide();
+		    this.cloak.hide();
+			this.setFocus(this.oCur);
+		},
+	
+		//---------------------------------------------------------------------
+		//  .dismissYDiv() dismisses the date selector popover.
+		//---------------------------------------------------------------------
+	
+		dismissYDiv: function(event)
+		{
+		    this.yDiv.hide();
+		    this.cloak.hide();
+			this.setFocus(this.yCur);
+		},
+	
+		//---------------------------------------------------------------------
+		//  .setFocus() makes a specified psuedo-button appear to get focus.
+		//---------------------------------------------------------------------
+		
+		setFocus: function(btn)
+		{
+			if ( ! btn.hasClass('AnyTime-focus-btn') )
+			{
+				this.div.find('.AnyTime-focus-btn').removeClass('AnyTime-focus-btn ui-state-focus');
+				this.fBtn = btn;
+				btn.removeClass('ui-state-default ui-state-highlight');
+				btn.addClass('AnyTime-focus-btn ui-state-default ui-state-highlight ui-state-focus');
+			}
+			if ( btn.hasClass('AnyTime-off-off-btn') )
+			{
+				var oBT = this.oBody.offset().top;
+				var btnT = btn.offset().top;
+				var btnH = btn.AnyTime_height(true);
+				if ( btnT - btnH < oBT ) // move a page up
+					this.oBody.scrollTop( btnT + this.oBody.scrollTop() - ( this.oBody.innerHeight() + oBT ) + ( btnH * 2 ) );
+				else if ( btnT + btnH > oBT + this.oBody.innerHeight() ) // move a page down
+					this.oBody.scrollTop( ( btnT + this.oBody.scrollTop() ) - ( oBT + btnH ) ); 
+			}
+		},
+		  
+		//---------------------------------------------------------------------
+		//  .key() is invoked when a user presses a key while the picker's
+		//	input has focus.  A psuedo-button is considered "in focus" and an
+		//	appropriate action is performed according to the WAI-ARIA Authoring
+		//	Practices 1.0 for datepicker from
+		//  www.w3.org/TR/2009/WD-wai-aria-practices-20091215/#datepicker:
+		//
+		//  * LeftArrow moves focus left, continued to previous week.
+		//  * RightArrow moves focus right, continued to next week.
+		//  * UpArrow moves focus to the same weekday in the previous week.
+		//  * DownArrow moves focus to same weekday in the next week.
+		//  * PageUp moves focus to same day in the previous month.
+		//  * PageDown moves focus to same day in the next month.
+		//  * Shift+Page Up moves focus to same day in the previous year.
+		//  * Shift+Page Down moves focus to same day in the next year.
+		//  * Home moves focus to the first day of the month.
+		//  * End moves focus to the last day of the month.
+		//  * Ctrl+Home moves focus to the first day of the year.
+		//  * Ctrl+End moves focus to the last day of the year.
+		//  * Esc closes a DatePicker that is opened as a Popup.  
+		//
+		//  The following actions (for multiple-date selection) are NOT
+		//	supported:
+		//  * Shift+Arrow performs continous selection.  
+		//  * Ctrl+Space multiple selection of certain days.
+		//
+		//  The authoring practices do not specify behavior for a time picker,
+		//  or for month-and-year pickers that do not have a day-of-the-month,
+		//  but AnyTime.picker uses the following behavior to be as consistent
+		//  as possible with the defined datepicker functionality:
+		//  * LeftArrow moves focus left or up to previous value or field.
+		//  * RightArrow moves focus right or down to next value or field.
+		//  * UpArrow moves focus up or left to previous value or field.
+		//  * DownArrow moves focus down or right to next value or field 
+		//  * PageUp moves focus to the current value in the previous units
+		//    (for example, from ten-minutes to hours or one-minutes to
+		//	  ten-minutes or months to years).
+		//  * PageDown moves focus to the current value in the next units
+		//    (for example, from hours to ten-minutes or ten-minutes to 
+		//    one-minutes or years to months).
+		//  * Home moves the focus to the first unit button.
+		//  * End moves the focus to the last unit button.
+		//
+		//  In addition, Tab and Shift+Tab move between units (including to/
+		//	from the Day-of-Month table) and also in/out of the picker.
+		//
+		//  Because AnyTime.picker sets a value as soon as the button receives
+		//  focus, SPACE and ENTER are not needed (the WAI-ARIA guidelines use
+		//  them to select a value.
+		//---------------------------------------------------------------------
+		
+		key: function(event)
+		{
+			var t = null;
+			var elem = this.div.find('.AnyTime-focus-btn');
+		    var key = event.keyCode || event.which;
+		    this.denyTab = true;
+
+		    if ( key == 16 ) // Shift
+		    {
+		    }
+		    else if ( ( key == 10 ) || ( key == 13 ) || ( key == 27 ) ) // Enter & Esc
+		    {
+		      if ( this.oDiv && this.oDiv.is(':visible') )
+		        this.dismissODiv(event);
+		      else if ( this.yDiv && this.yDiv.is(':visible') )
+			    this.dismissYDiv(event);
+		      else if ( this.pop )
+			    this.dismiss(event);
+		    }
+		    else if ( ( key == 33 ) || ( ( key == 9 ) && event.shiftKey ) ) // PageUp & Shift+Tab
+		    {
+		    	if ( this.fBtn.hasClass('AnyTime-off-off-btn') )
+				{
+		    		if ( key == 9 )
+				        this.dismissODiv(event);
+				}
+		    	else if ( this.fBtn.hasClass('AnyTime-mil-btn') )
+				{
+		    		if ( key == 9 )
+				        this.dismissYDiv(event);
+				}
+		    	else if ( this.fBtn.hasClass('AnyTime-cent-btn') )
+					this.yDiv.find('.AnyTime-mil-btn.AnyTime-cur-btn').triggerHandler('click');
+		    	else if ( this.fBtn.hasClass('AnyTime-dec-btn') )
+					this.yDiv.find('.AnyTime-cent-btn.AnyTime-cur-btn').triggerHandler('click');
+		    	else if ( this.fBtn.hasClass('AnyTime-yr-btn') )
+					this.yDiv.find('.AnyTime-dec-btn.AnyTime-cur-btn').triggerHandler('click');
+		    	else if ( this.fBtn.hasClass('AnyTime-era-btn') )
+					this.yDiv.find('.AnyTime-yr-btn.AnyTime-cur-btn').triggerHandler('click');
+		    	else if ( this.fBtn.parents('.AnyTime-yrs').length )
+				{
+					if ( key == 9 )
+					{
+						this.denyTab = false;
+						return;
+					}
+				}
+		    	else if ( this.fBtn.hasClass('AnyTime-mon-btn') )
+				{
+					if ( this.dY )
+						this.yCur.triggerHandler('click');
+					else if ( key == 9 )
+					{
+						this.denyTab = false;
+						return;
+					}
+				}
+		    	else if ( this.fBtn.hasClass('AnyTime-dom-btn') )
+		    	{
+		    		if ( ( key == 9 ) && event.shiftKey ) // Shift+Tab
+					{
+						this.denyTab = false;
+						return;
+					}
+		    		else // PageUp
+		    		{
+			    		t = new Date(this.time.getTime());
+				    	if ( event.shiftKey )
+				    		t.setFullYear(t.getFullYear()-1);
+				    	else
+				    	{
+				    		var mo = t.getMonth()-1;
+		    				if ( t.getDate() > __daysIn[mo] )
+		    					t.setDate(__daysIn[mo])
+			    			t.setMonth(mo);
+				    	}
+			    		this.keyDateChange(t);
+		    		}
+		    	}
+		    	else if ( this.fBtn.hasClass('AnyTime-hr-btn') )
+				{
+		    		t = this.dDoM || this.dMo;
+					if ( t )
+						t.AnyTime_clickCurrent();
+					else if ( this.dY )
+						this.yCur.triggerHandler('click');
+					else if ( key == 9 )
+					{
+						this.denyTab = false;
+						return;
+					}
+				}
+		    	else if ( this.fBtn.hasClass('AnyTime-min-ten-btn') )
+				{
+		    		t = this.dH || this.dDoM || this.dMo;
+					if ( t )
+						t.AnyTime_clickCurrent();
+					else if ( this.dY )
+						this.yCur.triggerHandler('click');
+					else if ( key == 9 )
+					{
+						this.denyTab = false;
+						return;
+					}
+				}
+		    	else if ( this.fBtn.hasClass('AnyTime-min-one-btn') )
+					this.dM.AnyTime_clickCurrent();
+		    	else if ( this.fBtn.hasClass('AnyTime-sec-ten-btn') )
+				{
+		    		if ( this.dM )
+		    			t = this.dM.find('.AnyTime-mins-ones');
+		    		else
+		    			t = this.dH || this.dDoM || this.dMo;
+					if ( t )
+						t.AnyTime_clickCurrent();
+					else if ( this.dY )
+						this.yCur.triggerHandler('click');
+					else if ( key == 9 )
+					{
+						this.denyTab = false;
+						return;
+					}
+				}
+		    	else if ( this.fBtn.hasClass('AnyTime-sec-one-btn') )
+					this.dS.AnyTime_clickCurrent();
+		    	else if ( this.fBtn.hasClass('AnyTime-off-btn') )
+				{
+		    		if ( this.dS )
+		    			t = this.dS.find('.AnyTime-secs-ones');
+		    		else if ( this.dM )
+		    			t = this.dM.find('.AnyTime-mins-ones');
+		    		else
+		    			t = this.dH || this.dDoM || this.dMo;
+					if ( t )
+						t.AnyTime_clickCurrent();
+					else if ( this.dY )
+						this.yCur.triggerHandler('click');
+					else if ( key == 9 )
+					{
+						this.denyTab = false;
+						return;
+					}
+				}
+			}
+		    else if ( ( key == 34 ) || ( key == 9 ) ) // PageDown or Tab
+		    {
+		    	if ( this.fBtn.hasClass('AnyTime-mil-btn') )
+					this.yDiv.find('.AnyTime-cent-btn.AnyTime-cur-btn').triggerHandler('click');
+		    	else if ( this.fBtn.hasClass('AnyTime-cent-btn') )
+					this.yDiv.find('.AnyTime-dec-btn.AnyTime-cur-btn').triggerHandler('click');
+		    	else if ( this.fBtn.hasClass('AnyTime-dec-btn') )
+					this.yDiv.find('.AnyTime-yr-btn.AnyTime-cur-btn').triggerHandler('click');
+		    	else if ( this.fBtn.hasClass('AnyTime-yr-btn') )
+		    	{
+		    		t = this.yDiv.find('.AnyTime-era-btn.AnyTime-cur-btn');
+					if ( t.length )
+						t.triggerHandler('click');
+					else if ( key == 9 )
+						this.dismissYDiv(event);
+		    	}
+		    	else if ( this.fBtn.hasClass('AnyTime-era-btn') )
+		    	{
+		    		if ( key == 9 )
+		    			this.dismissYDiv(event);
+		    	}
+		    	else if ( this.fBtn.hasClass('AnyTime-off-off-btn') )
+		    	{
+		    		if ( key == 9 )
+		    			this.dismissODiv(event);
+		    	}
+		    	else if ( this.fBtn.parents('.AnyTime-yrs').length )
+				{
+		    		t = this.dDoM || this.dMo || this.dH || this.dM || this.dS || this.dO; 
+					if ( t )
+						t.AnyTime_clickCurrent();
+					else if ( key == 9 )
+					{
+						this.denyTab = false;
+						return;
+					}
+				}
+		    	else if ( this.fBtn.hasClass('AnyTime-mon-btn') )
+				{
+		    		t = this.dDoM || this.dH || this.dM || this.dS || this.dO; 
+					if ( t )
+						t.AnyTime_clickCurrent();
+					else if ( key == 9 )
+					{
+						this.denyTab = false;
+						return;
+					}
+				}
+		    	else if ( this.fBtn.hasClass('AnyTime-dom-btn') )
+		    	{
+		    		if ( key == 9 ) // Tab
+		    		{
+		        		t = this.dH || this.dM || this.dS || this.dO; 
+		    			if ( t )
+							t.AnyTime_clickCurrent();
+		    			else
+						{
+							this.denyTab = false;
+							return;
+						}
+		    		}
+		    		else // PageDown
+		    		{
+			    		t = new Date(this.time.getTime());
+				    	if ( event.shiftKey )
+				    		t.setFullYear(t.getFullYear()+1);
+				    	else
+				    	{
+				    		var mo = t.getMonth()+1;
+		    				if ( t.getDate() > __daysIn[mo] )
+		    					t.setDate(__daysIn[mo])
+			    			t.setMonth(mo);
+				    	}
+			    		this.keyDateChange(t);
+		    		}
+		    	}
+		    	else if ( this.fBtn.hasClass('AnyTime-hr-btn') )
+				{
+		    		t = this.dM || this.dS || this.dO; 
+					if ( t )
+						t.AnyTime_clickCurrent();
+					else if ( key == 9 )
+					{
+						this.denyTab = false;
+						return;
+					}
+				}
+		    	else if ( this.fBtn.hasClass('AnyTime-min-ten-btn') )
+		    		this.dM.find('.AnyTime-mins-ones .AnyTime-cur-btn').triggerHandler('click');
+		    	else if ( this.fBtn.hasClass('AnyTime-min-one-btn') )
+				{
+					t = this.dS || this.dO;
+					if ( t )
+						t.AnyTime_clickCurrent();
+					else if ( key == 9 )
+					{
+						this.denyTab = false;
+						return;
+					}
+				}
+		    	else if ( this.fBtn.hasClass('AnyTime-sec-ten-btn') )
+		    		this.dS.find('.AnyTime-secs-ones .AnyTime-cur-btn').triggerHandler('click');
+		    	else if ( this.fBtn.hasClass('AnyTime-sec-one-btn') )
+				{
+		    		if ( this.dO )
+						this.dO.AnyTime_clickCurrent();
+		    		else if ( key == 9 )
+					{
+						this.denyTab = false;
+						return;
+					}
+				}
+		    	else if ( this.fBtn.hasClass('AnyTime-off-btn') )
+				{
+		    		if ( key == 9 )
+					{
+						this.denyTab = false;
+						return;
+					}
+				}
+			}
+		    else if ( key == 35 ) // END
+		    {
+		    	if ( this.fBtn.hasClass('AnyTime-mil-btn') || this.fBtn.hasClass('AnyTime-cent-btn') ||
+				    this.fBtn.hasClass('AnyTime-dec-btn') || this.fBtn.hasClass('AnyTime-yr-btn') ||
+				    this.fBtn.hasClass('AnyTime-era-btn') )
+		    	{
+		    		t = this.yDiv.find('.AnyTime-ce-btn');
+		    		if ( ! t.length ) 
+		    			t = this.yDiv.find('.AnyTime-yr9-btn');
+		    		t.triggerHandler('click');
+		    	}
+		    	else if ( this.fBtn.hasClass('AnyTime-dom-btn') )
+		    	{
+		    		t = new Date(this.time.getTime());
+					t.setDate(1);
+		    		t.setMonth(t.getMonth()+1);
+					t.setDate(t.getDate()-1);
+			    	if ( event.ctrlKey )
+			    		t.setMonth(11);
+		    		this.keyDateChange(t);
+		    	}
+		    	else if ( this.dS )
+					this.dS.find('.AnyTime-sec9-btn').triggerHandler('click');
+		    	else if ( this.dM )
+					this.dM.find('.AnyTime-min9-btn').triggerHandler('click');
+				else if ( this.dH )
+					this.dH.find('.AnyTime-hr23-btn').triggerHandler('click');
+				else if ( this.dDoM )
+					this.dDoM.find('.AnyTime-dom-btn-filled:last').triggerHandler('click');
+				else if ( this.dMo )
+					this.dMo.find('.AnyTime-mon12-btn').triggerHandler('click');
+				else if ( this.dY )
+					this.yAhead.triggerHandler('click');
+		    }
+		    else if ( key == 36 ) // HOME
+		    {
+		    	if ( this.fBtn.hasClass('AnyTime-mil-btn') || this.fBtn.hasClass('AnyTime-cent-btn') ||
+				    this.fBtn.hasClass('AnyTime-dec-btn') || this.fBtn.hasClass('AnyTime-yr-btn') ||
+				    this.fBtn.hasClass('AnyTime-era-btn') )
+				{
+		    		this.yDiv.find('.AnyTime-mil0-btn').triggerHandler('click');
+		    	}
+			    else if ( this.fBtn.hasClass('AnyTime-dom-btn') )
+		    	{
+		    		t = new Date(this.time.getTime());
+					t.setDate(1);
+			    	if ( event.ctrlKey )
+			    		t.setMonth(0);
+		    		this.keyDateChange(t);
+		    	}
+				else if ( this.dY )
+					this.yCur.triggerHandler('click');
+				else if ( this.dMo )
+					this.dMo.find('.AnyTime-mon1-btn').triggerHandler('click');
+				else if ( this.dDoM )
+					this.dDoM.find('.AnyTime-dom-btn-filled:first').triggerHandler('click');
+				else if ( this.dH )
+					this.dH.find('.AnyTime-hr0-btn').triggerHandler('click');
+		    	else if ( this.dM )
+					this.dM.find('.AnyTime-min00-btn').triggerHandler('click');
+		    	else if ( this.dS )
+					this.dS.find('.AnyTime-sec00-btn').triggerHandler('click');
+		    }
+		    else if ( key == 37 ) // left arrow
+		    {
+		    	if ( this.fBtn.hasClass('AnyTime-dom-btn') )
+		    		this.keyDateChange(new Date(this.time.getTime()-__oneDay));
+		    	else
+		    		this.keyBack();
+		    }
+		    else if ( key == 38 ) // up arrow
+		    {
+		    	if ( this.fBtn.hasClass('AnyTime-dom-btn') )
+		    		this.keyDateChange(new Date(this.time.getTime()-(7*__oneDay)));
+		    	else
+		    		this.keyBack();
+		    }
+		    else if ( key == 39 ) // right arrow
+		    {
+		    	if ( this.fBtn.hasClass('AnyTime-dom-btn') )
+		    		this.keyDateChange(new Date(this.time.getTime()+__oneDay));
+		    	else
+		    		this.keyAhead();
+		    }
+		    else if ( key == 40 ) // down arrow
+		    {
+		    	if ( this.fBtn.hasClass('AnyTime-dom-btn') )
+		    		this.keyDateChange(new Date(this.time.getTime()+(7*__oneDay)));
+		    	else
+		    		this.keyAhead();
+		    }
+		    else if ( ( ( key == 86 ) || ( key == 118 ) ) && event.ctrlKey )
+		    {
+		    	this.inp.val("").change();
+		    	var _this = this;
+		    	setTimeout( function() { _this.showPkr(null); }, 100 );	
+		    	return;
+		    }
+		    else
+    			this.showPkr(null);
+
+		    event.preventDefault();
+		
+		}, // .key()
+	
+		//---------------------------------------------------------------------
+		//  .keyAhead() is called by #key when a user presses the right or
+		//	down arrow.  It moves to the next appropriate button.
+		//---------------------------------------------------------------------
+		  
+		keyAhead: function()
+		{
+		   	if ( this.fBtn.hasClass('AnyTime-mil9-btn') )
+		   		this.yDiv.find('.AnyTime-cent0-btn').triggerHandler('click');
+		   	else if ( this.fBtn.hasClass('AnyTime-cent9-btn') )
+		   		this.yDiv.find('.AnyTime-dec0-btn').triggerHandler('click');
+		   	else if ( this.fBtn.hasClass('AnyTime-dec9-btn') )
+		   		this.yDiv.find('.AnyTime-yr0-btn').triggerHandler('click');
+		   	else if ( this.fBtn.hasClass('AnyTime-yr9-btn') )
+		   		this.yDiv.find('.AnyTime-bce-btn').triggerHandler('click');
+		   	else if ( this.fBtn.hasClass('AnyTime-sec9-btn') )
+		   		{}
+		   	else if ( this.fBtn.hasClass('AnyTime-sec50-btn') )
+		   		this.dS.find('.AnyTime-sec0-btn').triggerHandler('click');
+		   	else if ( this.fBtn.hasClass('AnyTime-min9-btn') )
+		   	{
+		   		if ( this.dS )
+		   			this.dS.find('.AnyTime-sec00-btn').triggerHandler('click');
+		   	}
+		   	else if ( this.fBtn.hasClass('AnyTime-min50-btn') )
+		   		this.dM.find('.AnyTime-min0-btn').triggerHandler('click');
+		   	else if ( this.fBtn.hasClass('AnyTime-hr23-btn') )
+		   	{
+		   		if ( this.dM )
+		   			this.dM.find('.AnyTime-min00-btn').triggerHandler('click');
+		   		else if ( this.dS )
+		   			this.dS.find('.AnyTime-sec00-btn').triggerHandler('click');
+		   	}
+		   	else if ( this.fBtn.hasClass('AnyTime-hr11-btn') )
+				this.dH.find('.AnyTime-hr12-btn').triggerHandler('click');
+		   	else if ( this.fBtn.hasClass('AnyTime-mon12-btn') )
+		   	{
+		   		if ( this.dDoM )
+		   			this.dDoM.AnyTime_clickCurrent();
+		   		else if ( this.dH )
+		   			this.dH.find('.AnyTime-hr0-btn').triggerHandler('click');
+		   		else if ( this.dM )
+		   			this.dM.find('.AnyTime-min00-btn').triggerHandler('click');
+		   		else if ( this.dS )
+		   			this.dS.find('.AnyTime-sec00-btn').triggerHandler('click');
+		   	}
+		   	else if ( this.fBtn.hasClass('AnyTime-yrs-ahead-btn') )
+		   	{
+		   		if ( this.dMo )
+		   			this.dMo.find('.AnyTime-mon1-btn').triggerHandler('click');
+		   		else if ( this.dH )
+		   			this.dH.find('.AnyTime-hr0-btn').triggerHandler('click');
+		   		else if ( this.dM )
+		   			this.dM.find('.AnyTime-min00-btn').triggerHandler('click');
+		   		else if ( this.dS )
+		   			this.dS.find('.AnyTime-sec00-btn').triggerHandler('click');
+		   	}
+		   	else if ( this.fBtn.hasClass('AnyTime-yr-cur-btn') )
+		        this.yNext.triggerHandler('click');
+		   	else
+				 this.fBtn.next().triggerHandler('click');
+		
+		}, // .keyAhead()
+		
+		  
+		//---------------------------------------------------------------------
+		//  .keyBack() is called by #key when a user presses the left or
+		//	up arrow. It moves to the previous appropriate button.
+		//---------------------------------------------------------------------
+		  
+		keyBack: function()
+		{
+		   	if ( this.fBtn.hasClass('AnyTime-cent0-btn') )
+		   		this.yDiv.find('.AnyTime-mil9-btn').triggerHandler('click');
+		   	else if ( this.fBtn.hasClass('AnyTime-dec0-btn') )
+		   		this.yDiv.find('.AnyTime-cent9-btn').triggerHandler('click');
+		   	else if ( this.fBtn.hasClass('AnyTime-yr0-btn') )
+		   		this.yDiv.find('.AnyTime-dec9-btn').triggerHandler('click');
+		   	else if ( this.fBtn.hasClass('AnyTime-bce-btn') )
+			   		this.yDiv.find('.AnyTime-yr9-btn').triggerHandler('click');
+		   	else if ( this.fBtn.hasClass('AnyTime-yr-cur-btn') )
+		        this.yPrior.triggerHandler('click');
+		   	else if ( this.fBtn.hasClass('AnyTime-mon1-btn') )
+		   	{
+		   		if ( this.dY )
+		   			this.yCur.triggerHandler('click');
+		   	}
+		   	else if ( this.fBtn.hasClass('AnyTime-hr0-btn') )
+		   	{
+		   		if ( this.dDoM )
+		   			this.dDoM.AnyTime_clickCurrent();
+		   		else if ( this.dMo )
+		   			this.dMo.find('.AnyTime-mon12-btn').triggerHandler('click');
+		   		else if ( this.dY )
+		   			this.yNext.triggerHandler('click');
+		   	}
+		   	else if ( this.fBtn.hasClass('AnyTime-hr12-btn') )
+		   		 this.dH.find('.AnyTime-hr11-btn').triggerHandler('click');
+		   	else if ( this.fBtn.hasClass('AnyTime-min00-btn') )
+		   	{
+		   		if ( this.dH )
+		   			this.dH.find('.AnyTime-hr23-btn').triggerHandler('click');
+		   		else if ( this.dDoM )
+		   			this.dDoM.AnyTime_clickCurrent();
+		   		else if ( this.dMo )
+		   			this.dMo.find('.AnyTime-mon12-btn').triggerHandler('click');
+		   		else if ( this.dY )
+		   			this.yNext.triggerHandler('click');
+		   	}
+		   	else if ( this.fBtn.hasClass('AnyTime-min0-btn') )
+		   		 this.dM.find('.AnyTime-min50-btn').triggerHandler('click');
+		   	else if ( this.fBtn.hasClass('AnyTime-sec00-btn') )
+		   	{
+		   		if ( this.dM )
+		   			this.dM.find('.AnyTime-min9-btn').triggerHandler('click');
+		   		else if ( this.dH )
+		   			this.dH.find('.AnyTime-hr23-btn').triggerHandler('click');
+		   		else if ( this.dDoM )
+		   			this.dDoM.AnyTime_clickCurrent();
+		   		else if ( this.dMo )
+		   			this.dMo.find('.AnyTime-mon12-btn').triggerHandler('click');
+		   		else if ( this.dY )
+		   			this.yNext.triggerHandler('click');
+		   	}
+		   	else if ( this.fBtn.hasClass('AnyTime-sec0-btn') )
+		   		 this.dS.find('.AnyTime-sec50-btn').triggerHandler('click');
+		   	else
+				 this.fBtn.prev().triggerHandler('click');
+		
+		}, // .keyBack()
+		
+		//---------------------------------------------------------------------
+		//  .keyDateChange() is called by #key when an direction key
+		//	(arrows/page/etc) is pressed while the Day-of-Month calendar has
+		//	focus. The current day is adjusted accordingly.
+		//---------------------------------------------------------------------
+		  
+		keyDateChange: function( newDate )
+		{
+			if ( this.fBtn.hasClass('AnyTime-dom-btn') )
+			{
+				this.set(newDate);
+				this.upd(null);
+				this.setFocus( this.dDoM.find('.AnyTime-cur-btn') );
+			}
+		},
+		  
+		//---------------------------------------------------------------------
+		//  .makeCloak() is called by .askOffset() and .askYear() to create
+		//  a cloak div.
+		//---------------------------------------------------------------------
+
+		makeCloak: function()
+		{
+			if ( ! this.cloak )
+			{
+		      this.cloak = $('<div class="AnyTime-cloak" style="position:absolute" />');
+		      this.div.append( this.cloak );
+		      this.cloak.click(
+		        function(e)
+		        {
+		        	if ( _this.oDiv && _this.oDiv.is(":visible") )
+		        		_this.dismissODiv(e);
+		        	else
+		        		_this.dismissYDiv(e);
+		        });
+		    }
+			else
+		      this.cloak.show();
+		},
+		
+		//---------------------------------------------------------------------
+		//  .newHour() is called when a user clicks an hour value.
+		//  It changes the date and updates the text field.
+		//---------------------------------------------------------------------
+		
+		newHour: function( event )
+		{
+		    var h;
+		    var t;
+		    var elem = $(event.target);
+		    if ( elem.hasClass("AnyTime-out-btn") )
+		    	return;
+		    if ( ! this.twelveHr )
+		      h = Number(elem.text());
+		    else
+		    {
+		      var str = elem.text();
+		      t = str.indexOf('a');
+		      if ( t < 0 )
+		      {
+		        t = Number(str.substr(0,str.indexOf('p')));
+		        h = ( (t==12) ? 12 : (t+12) );
+		      }
+		      else
+		      {
+		        t = Number(str.substr(0,t));
+		        h = ( (t==12) ? 0 : t );
+		      }
+		    }
+		    t = new Date(this.time.getTime());
+		    t.setHours(h);
+		    this.set(t);
+		    this.upd(elem);
+		    
+		}, // .newHour()
+		
+		//---------------------------------------------------------------------
+		//  .newOffset() is called when a user clicks the UTC offset (timezone)
+		//  (or +/- button) to shift the year.  It changes the date and updates
+		//  the text field.
+		//---------------------------------------------------------------------
+		
+		newOffset: function( event )
+		{
+		    if ( event.target == this.oSel[0] )
+			    this.askOffset(event);
+		    else
+		    {
+		      this.upd(this.oCur);
+		    }
+		},
+		
+		//---------------------------------------------------------------------
+		//  .newOPos() is called internally whenever a user clicks an offset
+		//  selection value.  It changes the date and updates the text field.
+		//---------------------------------------------------------------------
+		
+		newOPos: function( event )
+		{
+		    var elem = $(event.target);
+            this.offMin = elem[0].AnyTime_offMin;
+            this.offSI = elem[0].AnyTime_offSI;
+		    var t = new Date(this.time.getTime());
+		    this.set(t);
+		    this.updODiv(elem);
+		
+		}, // .newOPos()
+		
+		//---------------------------------------------------------------------
+		//  .newYear() is called when a user clicks a year (or one of the
+		//	"arrows") to shift the year.  It changes the date and updates the
+		//	text field.
+		//---------------------------------------------------------------------
+		
+		newYear: function( event )
+		{
+		    var elem = $(event.target);
+		    if ( elem.hasClass("AnyTime-out-btn") )
+		    	return;
+		    var txt = elem.text();
+		    if ( ( txt == '<' ) || ( txt == '&lt;' ) )
+		      this.askYear(event);
+		    else if ( ( txt == '>' ) || ( txt == '&gt;' ) )
+		      this.askYear(event);
+		    else
+		    {
+		      var t = new Date(this.time.getTime());
+		      t.setFullYear(Number(txt));
+		      this.set(t);
+		      this.upd(this.yCur);
+		    }
+		},
+		
+		//---------------------------------------------------------------------
+		//  .newYPos() is called internally whenever a user clicks a year
+		//  selection value.  It changes the date and updates the text field.
+		//---------------------------------------------------------------------
+		
+		newYPos: function( event )
+		{
+		    var elem = $(event.target);
+		    if ( elem.hasClass("AnyTime-out-btn") )
+		    	return;
+		    
+		    var era = 1;
+		    var year = this.time.getFullYear();
+		    if ( year < 0 )
+		    {
+		      era = (-1);
+		      year = 0 - year;
+		    }
+		    year = AnyTime.pad( year, 4 );
+		    if ( elem.hasClass('AnyTime-mil-btn') )
+		      year = elem.html() + year.substring(1,4);
+		    else if ( elem.hasClass('AnyTime-cent-btn') )
+		      year = year.substring(0,1) + elem.html() + year.substring(2,4);
+		    else if ( elem.hasClass('AnyTime-dec-btn') )
+		      year = year.substring(0,2) + elem.html() + year.substring(3,4);
+		    else
+		      year = year.substring(0,3) + elem.html();
+		    if ( year == '0000' )
+		      year = 1;
+		    var t = new Date(this.time.getTime());
+		    t.setFullYear( era * year );
+		    this.set(t);
+		    this.updYDiv(elem);
+		
+		}, // .newYPos()
+		
+		//---------------------------------------------------------------------
+		//  .onReady() initializes the picker after the page has loaded and,
+		//  if IE6, after the iframe has been created.
+		//---------------------------------------------------------------------
+		
+		onReady: function()
+		{
+			this.lostFocus = true;
+			if ( ! this.pop )
+				this.upd(null);
+			else 
+			{
+				if ( this.div.parent() != document.body )
+					this.div.appendTo( document.body );
+			}
+		},
+		
+		//---------------------------------------------------------------------
+		//  .pos() positions the picker, such as when it is displayed or
+		//	when the window is resized.
+		//---------------------------------------------------------------------
+		
+		pos: function(event) // note: event is ignored but this is a handler
+		{
+		    if ( this.pop )
+		    {
+		      var off = this.inp.offset();
+		      var bodyWidth = $(document.body).outerWidth(true);
+		      var pickerWidth = this.div.outerWidth(true);
+		      var left = off.left;
+		      if ( left + pickerWidth > bodyWidth - 20 )
+		        left = bodyWidth - ( pickerWidth + 20 );
+		      var top = off.top - this.div.outerHeight(true);
+		      if ( top < 0 )
+		        top = off.top + this.inp.outerHeight(true);
+		      this.div.css( { top: String(top)+'px', left: String(left<0?0:left)+'px' } );
+		    }
+		
+		    var wOff = this.div.offset();
+
+		    if ( this.oDiv && this.oDiv.is(":visible") )
+		    {
+		      var oOff = this.oLab.offset();
+		      if ( this.div.css('position') == 'absolute' )
+		      {
+		    	  oOff.top -= wOff.top;
+		          oOff.left = oOff.left - wOff.left;
+		    	  wOff = { top: 0, left: 0 };
+		      }
+		      var oW = this.oDiv.AnyTime_width(true);
+		      var wW = this.div.AnyTime_width(true);
+		      if ( oOff.left + oW > wOff.left + wW )
+		      {
+		    	  oOff.left = (wOff.left+wW)-oW;
+		    	  if ( oOff.left < 2 )
+		    		  oOff.left = 2;
+		      }
+
+		      var oH = this.oDiv.AnyTime_height(true);
+		      var wH = this.div.AnyTime_height(true);
+		      oOff.top += this.oLab.AnyTime_height(true);
+		      if ( oOff.top + oH > wOff.top + wH )
+		    	  oOff.top = oOff.top - oH;
+		      if ( oOff.top < wOff.top )
+		    	  oOff.top = wOff.top;
+
+		      this.oDiv.css( { top: oOff.top+'px', left: oOff.left+'px' } ) ;
+		    }
+
+		    else if ( this.yDiv && this.yDiv.is(":visible") )
+		    {
+		      var yOff = this.yLab.offset();
+		      if ( this.div.css('position') == 'absolute' )
+		      {
+		    	  yOff.top -= wOff.top;
+		          yOff.left = yOff.left - wOff.left;
+		    	  wOff = { top: 0, left: 0 };
+		      }
+		      yOff.left += ( (this.yLab.outerWidth(true)-this.yDiv.outerWidth(true)) / 2 );
+		      this.yDiv.css( { top: yOff.top+'px', left: yOff.left+'px' } ) ;
+		    }
+
+		    if ( this.cloak )
+			  this.cloak.css( { 
+		      	top: wOff.top+'px',
+		      	left: wOff.left+'px',
+		      	height: String(this.div.outerHeight(true)-2)+'px',
+		    	width: String(this.div.outerWidth(!$.browser.safari)-2)+'px'
+		    	} );
+		
+		}, // .pos()
+		
+		//---------------------------------------------------------------------
+		//  .set() changes the current time.  It returns true if the new
+		//	time is within the allowed range (if any).
+		//---------------------------------------------------------------------
+		
+		set: function(newTime)
+		{
+		    var t = newTime.getTime();
+		    if ( this.earliest && ( t < this.earliest ) )
+		      this.time = new Date(this.earliest);
+		    else if ( this.latest && ( t > this.latest ) )
+		      this.time = new Date(this.latest);
+		    else
+		      this.time = newTime;
+		},
+		  
+		//---------------------------------------------------------------------
+		//  .showPkr() displays the picker and sets the focus psuedo-
+		//	element. The current value in the input field is used to initialize
+		//	the picker.
+		//---------------------------------------------------------------------
+		
+		showPkr: function(event)
+		{
+			try
+		    {
+		      this.time = this.conv.parse(this.inp.val());
+		      this.offMin = this.conv.getUtcParseOffsetCaptured();
+		      this.offSI = this.conv.getUtcParseOffsetSubIndex();
+		    }
+		    catch ( e )
+		    {
+		      this.time = new Date();
+		    }
+		    this.set(this.time);
+		    this.upd(null);
+		    
+		    fBtn = null;
+		    var cb = '.AnyTime-cur-btn:first';
+		    if ( this.dDoM )
+		    	fBtn = this.dDoM.find(cb);
+			else if ( this.yCur )
+				fBtn = this.yCur;
+			else if ( this.dMo )
+				fBtn = this.dMo.find(cb);
+			else if ( this.dH )
+				fBtn = this.dH.find(cb);
+			else if ( this.dM )
+				fBtn = this.dM.find(cb);
+			else if ( this.dS )
+				fBtn = this.dS.find(cb);
+		
+		    this.setFocus(fBtn);
+		    this.pos(event);
+		
+			//  IE6 doesn't float popups over <select> elements unless an
+		    //	<iframe> is inserted between them!  So after the picker is
+		    //	made visible, move the <iframe> behind it.
+		    
+		    if ( this.pop && __iframe )
+		        setTimeout(
+		        	function()
+					{
+						var pos = _this.div.offset();
+						__iframe.css( {
+						    height: String(_this.div.outerHeight(true)) + 'px',
+						    left: String(pos.left) + 'px',
+						    position: 'absolute',
+						    top: String(pos.top) + 'px',
+						    width: String(_this.div.outerWidth(true)) + 'px'
+						    } );
+						__iframe.show();
+					}, 300 );
+		
+		}, // .showPkr()
+		
+		//---------------------------------------------------------------------
+		//  .upd() updates the picker's appearance.  It is called after
+		//	most events to make the picker reflect the currently-selected
+		//	values. fBtn is the psuedo-button to be given focus.
+		//---------------------------------------------------------------------
+		
+		upd: function(fBtn)
+		{
+		    var cmpLo = new Date(this.time.getTime());
+		    cmpLo.setMonth(0,1);
+		    cmpLo.setHours(0,0,0,0);
+		    var cmpHi = new Date(this.time.getTime());
+		    cmpHi.setMonth(11,31);
+		    cmpHi.setHours(23,59,59,999);
+
+		    //  Update year.
+		
+		    var current = this.time.getFullYear();
+		    if ( this.earliest && this.yPast )
+		    {
+				  cmpHi.setYear(current-2);
+			      if ( cmpHi.getTime() < this.earliest )
+			    	  this.yPast.addClass('AnyTime-out-btn ui-state-disabled');
+			      else
+			    	  this.yPast.removeClass('AnyTime-out-btn ui-state-disabled');
+		    }
+		    if ( this.yPrior )
+		    {
+		      this.yPrior.text(AnyTime.pad((current==1)?(-1):(current-1),4));
+		      if ( this.earliest )
+		      {
+				  cmpHi.setYear(current-1);
+			      if ( cmpHi.getTime() < this.earliest )
+			    	  this.yPrior.addClass('AnyTime-out-btn ui-state-disabled');
+			      else
+			    	  this.yPrior.removeClass('AnyTime-out-btn ui-state-disabled');
+		      }
+		    }
+		    if ( this.yCur )
+		      this.yCur.text(AnyTime.pad(current,4));
+		    if ( this.yNext )
+		    {
+		      this.yNext.text(AnyTime.pad((current==-1)?1:(current+1),4));
+		      if ( this.latest )
+		      {
+			      cmpLo.setYear(current+1);
+			      if ( cmpLo.getTime() > this.latest )
+			    	  this.yNext.addClass('AnyTime-out-btn ui-state-disabled');
+			      else
+			    	  this.yNext.removeClass('AnyTime-out-btn ui-state-disabled');
+		      }
+		    }
+		    if ( this.latest && this.yAhead )
+		    {
+				  cmpLo.setYear(current+2);
+			      if ( cmpLo.getTime() > this.latest )
+			    	  this.yAhead.addClass('AnyTime-out-btn ui-state-disabled');
+			      else
+			    	  this.yAhead.removeClass('AnyTime-out-btn ui-state-disabled');
+		    }
+		    
+		    //  Update month.
+		
+		    cmpLo.setFullYear( this.time.getFullYear() );
+		    cmpHi.setFullYear( this.time.getFullYear() );
+		    var i = 0;
+		    current = this.time.getMonth();
+		    $('#'+this.id+' .AnyTime-mon-btn').each(
+		      function()
+		      {
+		    	cmpLo.setMonth(i);
+				cmpHi.setDate(1);
+		    	cmpHi.setMonth(i+1);
+				cmpHi.setDate(0);
+		        $(this).AnyTime_current( i == current,
+		        		((!_this.earliest)||(cmpHi.getTime()>=_this.earliest)) &&
+		        		((!_this.latest)||(cmpLo.getTime()<=_this.latest)) );
+		        i++;
+		      } );
+		
+		    //  Update days.
+		
+		    cmpLo.setMonth( this.time.getMonth() );
+		    cmpHi.setMonth( this.time.getMonth(), 1 );
+		    current = this.time.getDate();
+		    var currentMonth = this.time.getMonth();
+		    var dow1 = cmpLo.getDay();
+		    if ( this.fDOW > dow1 )
+		      dow1 += 7;
+		    var wom = 0, dow=0;
+		    $('#'+this.id+' .AnyTime-wk').each(
+		      function()
+		      {
+		        dow = _this.fDOW;
+		        $(this).children().each(
+		          function()
+		          {
+		        	  if ( dow - _this.fDOW < 7 )
+		        	  {
+		        		  var td = $(this);
+				          if ( ((wom==0)&&(dow<dow1)) || (cmpLo.getMonth()!=currentMonth) )
+				          {
+				            td.html('&#160;');
+				            td.removeClass('AnyTime-dom-btn-filled AnyTime-cur-btn ui-state-default ui-state-highlight');
+				            td.addClass('AnyTime-dom-btn-empty');
+				            if ( wom ) // not first week
+				            {
+				            	if ( ( cmpLo.getDate() == 1 ) && ( dow != 0 ) )
+				            		td.addClass('AnyTime-dom-btn-empty-after-filled');
+				            	else
+				            		td.removeClass('AnyTime-dom-btn-empty-after-filled');
+				            	if ( cmpLo.getDate() <= 7 )
+				            		td.addClass('AnyTime-dom-btn-empty-below-filled');
+				            	else
+				            		td.removeClass('AnyTime-dom-btn-empty-below-filled');
+				                cmpLo.setDate(cmpLo.getDate()+1);
+				                cmpHi.setDate(cmpHi.getDate()+1);
+				            }
+				            else // first week
+				            {
+				            	td.addClass('AnyTime-dom-btn-empty-above-filled');
+				            	if ( dow == dow1 - 1 )
+				            		td.addClass('AnyTime-dom-btn-empty-before-filled');
+				            	else
+				            		td.removeClass('AnyTime-dom-btn-empty-before-filled');
+				            }
+				            td.addClass('ui-state-default ui-state-disabled');
+				          }
+				          else
+				          {
+				        	i = cmpLo.getDate();
+				            td.text(i);
+				            td.removeClass('AnyTime-dom-btn-empty AnyTime-dom-btn-empty-above-filled AnyTime-dom-btn-empty-before-filled '+
+				            				'AnyTime-dom-btn-empty-after-filled AnyTime-dom-btn-empty-below-filled ' +
+				            				'ui-state-default ui-state-disabled');
+				            td.addClass('AnyTime-dom-btn-filled ui-state-default');
+				            td.AnyTime_current( i == current,
+					        		((!_this.earliest)||(cmpHi.getTime()>=_this.earliest)) &&
+					        		((!_this.latest)||(cmpLo.getTime()<=_this.latest)) );
+				            cmpLo.setDate(i+1);
+				            cmpHi.setDate(i+1);
+				          }
+		        	  }
+		              dow++;
+		          } );
+		          wom++;
+		      } );
+
+		    //  Update hour.
+		
+		    cmpLo.setMonth( this.time.getMonth(), this.time.getDate() );
+		    cmpHi.setMonth( this.time.getMonth(), this.time.getDate() );
+		    var not12 = ! this.twelveHr;
+        var hr = this.time.getHours();
+		    $('#'+this.id+' .AnyTime-hr-btn').each(
+		      function()
+		      {
+		    	var html = this.innerHTML;
+		    	var i;
+		    	if ( not12 )
+		    		i = Number(html);
+		    	else
+		    	{
+			    	i = Number(html.substring(0,html.length-2) );
+		    		if ( html.charAt(html.length-2) == 'a' )
+		    		{
+		    			if ( i == 12 )
+		    				i = 0;
+		    		}
+		    		else if ( i < 12 )
+		    			i += 12;
+		    	}
+                cmpLo.setHours(i);
+                cmpHi.setHours(i);
+            $(this).AnyTime_current( hr == i,
+		        	((!_this.earliest)||(cmpHi.getTime()>=_this.earliest)) &&
+		        		((!_this.latest)||(cmpLo.getTime()<=_this.latest)) );
+            if ( i < 23 )
+		          cmpLo.setHours( cmpLo.getHours()+1 );
+		      } );
+		
+		    //  Update minute.
+		
+        cmpLo.setHours( this.time.getHours() );
+        cmpHi.setHours( this.time.getHours() );
+		    var units = this.time.getMinutes();
+		    var tens = String(Math.floor(units/10));
+		    var ones = String(units % 10);
+		    $('#'+this.id+' .AnyTime-min-ten-btn:not(.AnyTime-min-ten-btn-empty)').each(
+		      function()
+		      {
+		        $(this).AnyTime_current( this.innerHTML == tens,
+		        		((!_this.earliest)||(cmpHi.getTime()>=_this.earliest)) &&
+		        		((!_this.latest)||(cmpLo.getTime()<=_this.latest)) );
+            if ( cmpLo.getMinutes() < 50 )
+            {
+		        cmpLo.setMinutes( cmpLo.getMinutes()+10 );
+		        cmpHi.setMinutes( cmpHi.getMinutes()+10 );
+            }
+		      } );
+		    cmpLo.setMinutes( Math.floor(this.time.getMinutes()/10)*10 );
+		    cmpHi.setMinutes( Math.floor(this.time.getMinutes()/10)*10 );
+		    $('#'+this.id+' .AnyTime-min-one-btn:not(.AnyTime-min-one-btn-empty)').each(
+		      function()
+		      {
+		        $(this).AnyTime_current( this.innerHTML == ones,
+		        		((!_this.earliest)||(cmpHi.getTime()>=_this.earliest)) &&
+		        		((!_this.latest)||(cmpLo.getTime()<=_this.latest)) );
+		        cmpLo.setMinutes( cmpLo.getMinutes()+1 );
+		        cmpHi.setMinutes( cmpHi.getMinutes()+1 );
+		      } );
+		
+		    //  Update second.
+		
+		    cmpLo.setMinutes( this.time.getMinutes() );
+		    cmpHi.setMinutes( this.time.getMinutes() );
+		    units = this.time.getSeconds();
+		    tens = String(Math.floor(units/10));
+		    ones = String(units % 10);
+		    $('#'+this.id+' .AnyTime-sec-ten-btn:not(.AnyTime-sec-ten-btn-empty)').each(
+		      function()
+		      {
+		        $(this).AnyTime_current( this.innerHTML == tens,
+		        		((!_this.earliest)||(cmpHi.getTime()>=_this.earliest)) &&
+		        		((!_this.latest)||(cmpLo.getTime()<=_this.latest)) );
+            if ( cmpLo.getSeconds() < 50 )
+            {
+		        cmpLo.setSeconds( cmpLo.getSeconds()+10 );
+		        cmpHi.setSeconds( cmpHi.getSeconds()+10 );
+            }
+		      } );
+		    cmpLo.setSeconds( Math.floor(this.time.getSeconds()/10)*10 );
+		    cmpHi.setSeconds( Math.floor(this.time.getSeconds()/10)*10 );
+		    $('#'+this.id+' .AnyTime-sec-one-btn:not(.AnyTime-sec-one-btn-empty)').each(
+		      function()
+		      {
+		        $(this).AnyTime_current( this.innerHTML == ones,
+		        		((!_this.earliest)||(cmpHi.getTime()>=_this.earliest)) &&
+		        		((!_this.latest)||(cmpLo.getTime()<=_this.latest)) );
+		        cmpLo.setSeconds( cmpLo.getSeconds()+1 );
+		        cmpHi.setSeconds( cmpHi.getSeconds()+1 );
+		      } );
+
+		    //  Update offset (time zone).
+
+		    if ( this.oConv )
+		    {
+			    this.oConv.setUtcFormatOffsetAlleged(this.offMin);
+			    this.oConv.setUtcFormatOffsetSubIndex(this.offSI);
+			    var tzs = this.oConv.format(this.time);
+			    this.oCur.html( tzs );
+		    }
+
+		    //	Set the focus element, then size the picker according to its
+		    //	components, show the changes, and invoke Ajax if desired.
+		    
+		    if ( fBtn )
+		    	this.setFocus(fBtn);
+		
+            this.conv.setUtcFormatOffsetAlleged(this.offMin);
+		    this.conv.setUtcFormatOffsetSubIndex(this.offSI);
+		    this.inp.val(this.conv.format(this.time)).change();
+		    this.div.show();
+		
+		    var d, totH = 0, totW = 0, dYW = 0, dMoW = 0, dDoMW = 0;
+		    if ( this.dY )
+		    {
+		    	totW = dYW = this.dY.outerWidth(true);
+				totH = this.yLab.AnyTime_height(true) + this.dY.AnyTime_height(true);
+		    }
+		    if ( this.dMo )
+		    {
+		    	dMoW = this.dMo.outerWidth(true);
+		    	if ( dMoW > totW )
+		    		totW = dMoW;
+		    	totH += this.hMo.AnyTime_height(true) + this.dMo.AnyTime_height(true);
+		    }
+		    if ( this.dDoM )
+		    {
+			    dDoMW = this.dDoM.outerWidth(true);
+			    if ( dDoMW > totW )
+			    	totW = dDoMW;
+			    if ( __msie6 || __msie7 )
+			    {
+			    	if ( dMoW > dDoMW )
+			    		this.dDoM.css('width',String(dMoW)+'px');
+			    	else if ( dYW > dDoMW )
+			    		this.dDoM.css('width',String(dYW)+'px');
+			    }
+			    totH += this.hDoM.AnyTime_height(true) + this.dDoM.AnyTime_height(true);
+		    }
+		    if ( this.dD )
+		    {
+		    	this.dD.css( { width:String(totW)+'px', height:String(totH)+'px' } );
+		        totW += this.dMinW;
+		        totH += this.dMinH;
+		    }
+		
+		    var w = 0, h = 0, timeH = 0, timeW = 0;
+		    if ( this.dH )
+		    {
+		    	w = this.dH.outerWidth(true);
+		    	timeW += w + 1;
+		    	h = this.dH.AnyTime_height(true);
+		    	if ( h > timeH )
+		    		timeH = h;
+		    }
+		    if ( this.dM )
+		    {
+		        w = this.dM.outerWidth(true);
+		        timeW += w + 1;
+		        h = this.dM.AnyTime_height(true);
+		        if ( h > timeH )
+		        	timeH = h;
+		    }
+		    if ( this.dS )
+		    {
+		        w = this.dS.outerWidth(true);
+		        timeW += w + 1;
+		        h = this.dS.AnyTime_height(true);
+		        if ( h > timeH )
+		        	timeH = h;
+		    }
+		    if ( this.dO )
+		    {
+		        w = this.oMinW;
+		        if ( timeW < w+1 )
+		        	timeW = w+1;
+		        timeH += this.dO.AnyTime_height(true);
+		    }
+		    if ( this.dT )
+		    {
+		    	this.dT.css( { width:String(timeW)+'px', height:String(timeH)+'px' } );
+		    	timeW += this.tMinW + 1;
+		        timeH += this.tMinH;
+		    	totW += timeW;
+		    	if ( timeH > totH )
+		    		totH = timeH;
+			    if ( this.dO ) // stretch offset button if possible
+			    {
+			    	var dOW = this.dT.width()-(this.oMinW+1);
+			    	this.dO.css({width:String(dOW)+"px"});
+			    	this.oCur.css({width:String(dOW-(this.oListMinW+4))+"px"});
+			    }
+		    }
+		    	
+		    this.dB.css({height:String(totH)+'px',width:String(totW)+'px'});
+		
+		    totH += this.bMinH;
+		    totW += this.bMinW;
+		    totH += this.hTitle.AnyTime_height(true) + this.wMinH;
+		    totW += this.wMinW;
+		    if ( this.hTitle.outerWidth(true) > totW )
+		        totW = this.hTitle.outerWidth(true); // IE quirk
+		    this.div.css({height:String(totH)+'px',width:String(totW)+'px'});
+		
+		    if ( ! this.pop )
+		      this.ajax();
+		
+		}, // .upd()
+		
+		//---------------------------------------------------------------------
+		//  .updODiv() updates the UTC offset selector's appearance.  It is
+		//	called after most events to make the picker reflect the currently-
+		//	selected values. fBtn is the psuedo-button to be given focus.
+		//---------------------------------------------------------------------
+		
+		updODiv: function(fBtn)
+		{
+            var cur, matched = false, def = null;
+		    this.oDiv.find('.AnyTime-off-off-btn').each(
+		      function()
+		      {
+		    	  if ( this.AnyTime_offMin == _this.offMin )
+		    	  {
+		    		  if ( this.AnyTime_offSI == _this.offSI )
+		    			  $(this).AnyTime_current(matched=true,true);
+		    		  else
+		    	      {
+		    			  $(this).AnyTime_current(false,true);
+		    			  if ( def == null )
+			    			  def = $(this);
+		    	      }
+		    	  }
+		    	  else
+	    			  $(this).AnyTime_current(false,true);
+		      } );
+		    if ( ( ! matched ) && ( def != null ) )
+		    	def.AnyTime_current(true,true);
+		
+		    //  Show change
+		
+            this.conv.setUtcFormatOffsetAlleged(this.offMin);
+            this.conv.setUtcFormatOffsetSubIndex(this.offSI);
+		    this.inp.val(this.conv.format(this.time)).change();
+		    this.upd(fBtn);
+		
+		}, // .updODiv()
+
+		//---------------------------------------------------------------------
+		//  .updYDiv() updates the year selector's appearance.  It is
+		//	called after most events to make the picker reflect the currently-
+		//	selected values. fBtn is the psuedo-button to be given focus.
+		//---------------------------------------------------------------------
+		
+		updYDiv: function(fBtn)
+		{
+		    var i, legal;
+			var era = 1;
+		    var yearValue = this.time.getFullYear();
+		    if ( yearValue < 0 )
+		    {
+		      era = (-1);
+		      yearValue = 0 - yearValue;
+		    }
+		    yearValue = AnyTime.pad( yearValue, 4 );
+		    var eY = _this.earliest && new Date(_this.earliest).getFullYear();
+		    var lY = _this.latest && new Date(_this.latest).getFullYear();
+	    
+		    i = 0;
+		    this.yDiv.find('.AnyTime-mil-btn').each(
+		      function()
+		      {
+		    	legal = ( ((!_this.earliest)||(era*(i+(era<0?0:999))>=eY)) && ((!_this.latest)||(era*(i+(era>0?0:999))<=lY)) );
+		        $(this).AnyTime_current( this.innerHTML == yearValue.substring(0,1), legal );
+		        i += 1000;
+		      } );
+
+		    i = (Math.floor(yearValue/1000)*1000);
+		    this.yDiv.find('.AnyTime-cent-btn').each(
+		      function()
+		      {
+			    	legal = ( ((!_this.earliest)||(era*(i+(era<0?0:99))>=eY)) && ((!_this.latest)||(era*(i+(era>0?0:99))<=lY)) );
+		        $(this).AnyTime_current( this.innerHTML == yearValue.substring(1,2), legal );
+		        i += 100;
+		      } );
+
+		    i = (Math.floor(yearValue/100)*100);
+		    this.yDiv.find('.AnyTime-dec-btn').each(
+		      function()
+		      {
+			    	legal = ( ((!_this.earliest)||(era*(i+(era<0?0:9))>=eY)) && ((!_this.latest)||(era*(i+(era>0?0:9))<=lY)) );
+		        $(this).AnyTime_current( this.innerHTML == yearValue.substring(2,3), legal );
+		        i += 10;
+		      } );
+
+		    i = (Math.floor(yearValue/10)*10);
+		    this.yDiv.find('.AnyTime-yr-btn').each(
+		      function()
+		      {
+			    legal = ( ((!_this.earliest)||(era*i>=eY)) && ((!_this.latest)||(era*i<=lY)) );
+		        $(this).AnyTime_current( this.innerHTML == yearValue.substring(3), legal );
+		        i += 1;
+	          } );
+		    
+		    this.yDiv.find('.AnyTime-bce-btn').each(
+		      function()
+		      {
+		    	  $(this).AnyTime_current( era < 0, (!_this.earliest) || ( _this.earliest < 0 ) );
+		      } );
+		    this.yDiv.find('.AnyTime-ce-btn').each(
+		      function()
+		      {
+		    	$(this).AnyTime_current( era > 0, (!_this.latest) || ( _this.latest > 0 ) );
+		      } );
+		
+		    //  Show change
+		
+            this.conv.setUtcFormatOffsetAlleged(this.offMin);
+            this.conv.setUtcFormatOffsetSubIndex(this.offSI);
+		    this.inp.val(this.conv.format(this.time)).change();
+		    this.upd(fBtn);
+		
+		} // .updYDiv()
+
+	}; // __pickers[id] = ...
+	__pickers[id].initialize(id);
+	
+} // AnyTime.picker = 
+
+})(jQuery); // function($)...
+
+
+//Always start with comments (concat et tcet)
+/**
+ * 
+ */
+
+(function($) {
+	/**
+	 * Return true type of (differences between array an object
+	 */
+	$.kc_type_of = function(v) {
+	  if (typeof(v) == "object") {
+		if (v === null) return "null";
+		if (v.constructor == (new Array).constructor) return "array";
+		if (v.constructor == (new Date).constructor) return "date";
+		if (v.constructor == (new RegExp).constructor) return "regex";
+		return "object";
+	  }
+	  return typeof(v);
+	}
+	
+	
+	/**
+	 * Write a KaraCos field
+	 */
+	$.kc_write_kc_field = function(field,parent){
+		try {
+			field_value = "";
+			if (field.value) {
+				field_value = field.value;
+			}
+			if (field.formType) {
+				if (field.formType == 'TEXTAREA') {
+					parent.append("<div class='form_field_holder'></div>");
+					field_div = parent.children(':last');
+					if (field.title) {
+						field_div.append("<label for='' class='left'/>");
+						//"${field['name']}" class="left">${field['title']}</label>
+						field_div.children(':last').attr('for',field.name);
+						field_div.children(':last').append(field.title);
+					}
+
+					field_div.append("<textarea name=''/>");
+					field_div.children(':last').attr('name',field.name);
+					field_div.children(':last').attr('value',field_value);
+				}
+				if (field.formType == 'WYSIWYM') {
+					parent.append("<div class='form_field_holder'></div>");
+					field_div = parent.children(':last');
+					field_div.append("<p></p>");
+					label_p = field_div.children(':last');
+					if (field.title) {
+						label_p.children(':last').append(field.title);
+					}
+					field_div.append("<textarea name=''></textarea>");
+					area = field_div.children(':last');
+					area.attr('name',field.name);
+					area.attr('value',field_value);
+					//if (!(field.name in CKEDITOR.instances)) {
+						area.wymeditor({
+					        stylesheet: 'styles.css',
+					       // skin: 'twopanels',
+					        lang: 'fr', 
+					 	   });
+					//} else
+						//TOTO quelque chose
+						//CKEDITOR.instances[field.name];
+				}
+				if (field.formType == 'DATE') {
+					parent.append("<div class='form_field_holder'></div>");
+					field_div = parent.children(':last');
+					if (field.title) {
+						field_div.append("<label for='' class='left'/>");
+						//"${field['name']}" class="left">${field['title']}</label>
+						field_div.children(':last').attr('for',field.name);
+						field_div.children(':last').append(field.title);
+					}
+					field_div.append("<input class='datepicker' type='text'/>");
+					input_el = field_div.children(':last');
+					input_el.attr('id',"field_"+field.name);
+					input_el.attr('name',field.name);
+					input_el.attr('value',field_value);
+					input_el.AnyTime_picker(
+								{ format: "%Y-%m-%e", firstDOW: 1 } );
+				}
+					
+				if (field.formType == 'WYSIWYG') {
+					parent.append("<div class='form_field_holder'></div>");
+					field_div = parent.children(':last');
+					field_div.append("<p></p>");
+					label_p = field_div.children(':last');
+					if (field.title) {
+						label_p.children(':last').append(field.title);
+					}
+					field_div.append("<textarea name=''></textarea>");
+					area = field_div.children(':last');
+					area.attr('name',field.name);
+					area.attr('value',field_value);
+					if (!(field.name in CKEDITOR.instances)) {
+						area.ckeditor();
+					} else
+						//TOTO quelque chose
+						CKEDITOR.instances[field.name];
+				}
+			}
+			else {
+				parent.append("<div class='form_field_holder'></div>");
+				field_div = parent.children(':last');
+				if (field.title) {
+					field_div.append("<label for='' class='left'/>");
+					//"${field['name']}" class="left">${field['title']}</label>
+					field_div.children(':last').attr('for',field.name);
+					field_div.children(':last').append(field.title);
+				}
+				field_div.append("<input class='field' type='"+field.dataType+"' value='' name=''/>");
+				//field_div.children(':last').attr('type',); 
+				field_div.children(':last').attr('value',field_value);
+				field_div.children(':last').attr('name',field.name);
+			} 
+		} catch (err) {
+			// log to firebug console
+			console.log("%s: %o", "ERROR", err);
+		}
+
+	}
+	
+	/**
+	 * Write KaraCos json form
+	 * 
+	 */
+	$.kc_write_kc_form = function(form,action,acturl,parent){
+		try {
+			parent.append("<form enctype='multipart/form-data' method='POST' action='' class='main_form'></form>");
+			form_widget = parent.children(':last');
+			form_widget.attr("action", acturl);
+			form_widget.append("<fieldset></fieldset>");
+			fieldset = form_widget.children(':last');
+			fieldset.append("<input type='hidden' name='method' value=''/>");
+			fieldset.children(':last').attr("value", action);
+			fieldset.append("<legend></legend>");
+			if (form.title)
+				fieldset.children(':last').append(form.title);
+			if (form.notice) {
+				fieldset.append("<p></p>");
+				fieldset.children(':last').append(form.notice);
+			}
+			if (form.fields) {
+				var arLen=form.fields.length;
+				for ( var i=0, len=arLen; i<len; ++i ) {
+					$.kc_write_kc_field(form.fields[i],fieldset);
+				}
+			}
+			if (form.submit)
+				submit = form.submit;
+			else
+				submit = action;
+			fieldset.append("<p><input type='submit' class='button' value=''/></p>");
+			fieldset.children(':last').children(':last').attr('value',submit);
+		} catch (err) {
+			// log to firebug console
+			console.log("%s: %o", "ERROR", err);
+		}
+		};
+		
+	/**
+	 * Write KaraCos json action
+	 * 
+	 */	
+	$.kc_write_kc_action = function(action,parent){
+		try {
+			parent.html("");
+		} catch (err) {
+			console.log("%s: %o", "ERROR", err);
+		}
+		//parent.append($.toJSON(action));
+		try {
+			if (action.label){
+				parent.dialog( "option" ,"title", action.label);
+			}
+			//console only works in a firebug enabled browser....
+			//TODO: Create custom javascript log handler
+			//console.log("%s: %o", "INFO", action);
+			//parent.append('form type:');
+			//parent.append(typeof action.form);
+			//parent.append($.kc_type_of(action.form.fields));
+			if ($.kc_type_of(action.form) == "object") {
+				$.kc_write_kc_form(action.form, action.action, action.acturl, parent);
+			}
+			if ($.kc_type_of(action.form) == "array") {
+				var arLen=action.form.length;
+				for ( var i=0, len=arLen; i<len; ++i ) {
+					$.kc_write_kc_form(action['form'][i], action.action, action.acturl, parent);
+				}	
+			}	
+		} catch (err) {
+			// log to firebug console (bug if not firebug)
+			console.log("%s: %o", "ERROR", err);
+		}
+		};
+		
+		/**
+		 * 
+		 */
+		$.set_wysiwyg = function(area){
+			area.wysiwyg({
+			controls: {
+			  strikeThrough : { visible : true },
+			  underline     : { visible : true },
+			  
+			  separator00 : { visible : true },
+			  
+			  justifyLeft   : { visible : true },
+			  justifyCenter : { visible : true },
+			  justifyRight  : { visible : true },
+			  justifyFull   : { visible : true },
+			  
+			  separator01 : { visible : true },
+			  
+			  indent  : { visible : true },
+			  outdent : { visible : true },
+			  
+			  separator02 : { visible : true },
+			  
+			  subscript   : { visible : true },
+			  superscript : { visible : true },
+			  
+			  separator03 : { visible : true },
+			  
+			  undo : { visible : true },
+			  redo : { visible : true },
+			  
+			  separator04 : { visible : true },
+			  
+			  insertOrderedList    : { visible : true },
+			  insertUnorderedList  : { visible : true },
+			  insertHorizontalRule : { visible : true },
+			  
+			  h4mozilla : { visible : true && $.browser.mozilla, className : 'h4', command : 'heading', arguments : ['h4'], tags : ['h4'], tooltip : "Header 4" },
+			  h5mozilla : { visible : true && $.browser.mozilla, className : 'h5', command : 'heading', arguments : ['h5'], tags : ['h5'], tooltip : "Header 5" },
+			  h6mozilla : { visible : true && $.browser.mozilla, className : 'h6', command : 'heading', arguments : ['h6'], tags : ['h6'], tooltip : "Header 6" },
+			  
+			  h4 : { visible : true && !( $.browser.mozilla ), className : 'h4', command : 'formatBlock', arguments : ['<H4>'], tags : ['h4'], tooltip : "Header 4" },
+			  h5 : { visible : true && !( $.browser.mozilla ), className : 'h5', command : 'formatBlock', arguments : ['<H5>'], tags : ['h5'], tooltip : "Header 5" },
+			  h6 : { visible : true && !( $.browser.mozilla ), className : 'h6', command : 'formatBlock', arguments : ['<H6>'], tags : ['h6'], tooltip : "Header 6" },
+			  
+			  separator07 : { visible : true },
+			  
+			  cut   : { visible : true },
+			  copy  : { visible : true },
+			  paste : { visible : true }
+			}
+	  });
+	}
+	// ############################
+	})(jQuery);
+
+/*
+*	Class: fileUploader
+*	Use: Upload multiple files the jQuery way
+*	Original Author: Michael Laniba (http://pixelcone.com)
+*   Customized for KaraCos by Nicolas Karageuzian
+*	Version: 1.1
+*/
+
+(function($) {
+	$.fileUploader = {version: '1.0'};
+	$.fn.fileUploader = function(config){
+		var that = this;
+		config = $.extend({}, {
+			maxfiles: 1,
+			imageLoader: '',
+			buttonUpload: '#pxUpload',
+			buttonClear: '#pxClear',
+			successOutput: 'File Uploaded',
+			errorOutput: 'Failed',
+			inputName: 'att_file',
+			inputSize: 30,
+			allowedExtension: 'jpg|jpeg|gif|png',
+			callback: function(data){} // callback for each uploaded file
+		}, config);
+		
+		var itr = 0; // number of files to uploaded
+		var files = 0;
+		// public function
+		$.fileUploader.change = function(e){
+			$('#px_button input').removeAttr("disabled");
+			var fname = px.validateFile( $(e).val() );
+			if (fname == -1){
+				alert ("Invalid file!");
+				$(e).val("");
+				return false;
+			}
+			var imageLoader = '';
+			if ($.trim(config.imageLoader) != ''){
+				imageLoader = '<img src="'+ config.imageLoader +'" alt="uploader" />';
+			}
+			var display = '<div class="uploadData" id="pxupload'+ itr +'_text" title="pxupload'+ itr +'">' + 
+				'<div class="close">&nbsp;</div>' +
+				'<span class="fname">'+ fname +'</span>' +
+				'<span class="loader" style="display:none">'+ imageLoader +'</span>' +
+				'<div class="status">Pending...</div></div>';
+			$("#px_display").append(display);
+			$("#pxupload"+ itr +"_text").css("color", "#202020");
+			files++;
+			if ( (config.maxfiles == -1) || (files < config.maxfiles) ) {
+				px.appendForm();
+			}
+			$(e).hide();
+		};
+		
+		$(config.buttonUpload).click(function(){
+			if (itr >= 1){
+				$('#px_button input').attr("disabled","disabled");
+				$("#pxupload_form form").each(function(){
+					e = $(this);
+					var id = "#" + $(e).attr("id");
+					var input_id = id + "_input";
+					var input_val = $(input_id).attr("value");
+					console.log(input_val);
+					if (input_val != ""){
+						$(input_id).removeAttr("disabled");
+						$(id + "_text .status").text("Uploading...");
+						$(id + "_text").css("background-color", "#FFF0E1");
+						$(id + "_text").css("color", "#202020");
+						$(id + "_text .loader").show();
+						$(id + "_text .close").hide();
+						console.log("Submitting ");
+						console.log($(id));
+						$(id).submit();
+						$(id +"_frame").load(function(){
+							$(id + "_text .loader").hide();
+							// console.log($(this).contents().find("body").text());
+							data = $.evalJSON($(this).contents().find("body").text());
+							// console.log(data);
+							if (data.status == "success"){
+								$(id + "_text").css("background-color", "#F0F8FF");
+								config.callback(data);
+							}else{
+								$(id + "_text").css("background-color", "#FF0000");
+							}
+							$(id + "_text .status").html(data.message);
+							$(e).remove();
+							$(config.buttonClear).removeAttr("disabled");
+							
+							/*
+							 * up_output =
+							 * $(this).contents().find("#output").text();
+							 * up_output += '<br />' +
+							 * $(this).contents().find("#message").text();
+							 * 
+							 */
+						});
+					}
+				});
+			}
+		});
+		
+		$(".close").live("click", function(){
+			var id = "#";
+			id = id + $(this).parent().attr("title");
+			$(id+"_frame").remove();
+			$(id+"_text").fadeOut("slow",function(){
+				$(this).remove();
+			});
+			$(id).remove();
+			if (config.maxfiles != -1 && files == config.maxfiles ) {
+				px.appendForm();
+			}
+			files--;
+// $('#pxupload_form form input.pxupload').removeAttr("disabled");
+// $('#pxupload_form form input.pxupload').removeAttr("value");
+// $('#pxupload_form form input.pxupload').show();
+			// $('#pxupload_form input.pxupload').doLayout();
+			return false;
+		});
+		
+		$(config.buttonClear).click(function(){
+			$("#px_display").fadeOut("slow",function(){
+				$("#px_display").html("");
+				$("#pxupload_form").html("");
+				itr = 0;
+				files = 0;
+				px.appendForm();
+				$('#px_button input').attr("disabled","disabled");
+				$(this).show();
+			});
+		});
+		
+		// private function
+		var px = {
+			init: function(e){
+				var form = $(e).parents('form');
+				px.formAction = $(form).attr('action');
+				$(form).before(' \
+					<div id="pxupload_form"></div> \
+					<div id="px_display"></div> \
+					<div id="px_button"></div> \
+				');
+				$(config.buttonUpload+','+config.buttonClear).appendTo('#px_button');
+				if ( $(e).attr('name') != '' ){
+					config.inputName = $(e).attr('name');
+				}
+				if ( $(e).attr('size') != '' ){
+					config.inputSize = $(e).attr('size');
+				}
+				$(form).hide();
+				this.appendForm();
+			},
+			appendForm: function(){
+				itr++;
+				var formId = "pxupload" + itr;
+				var iframeId = "pxupload" + itr + "_frame";
+				var inputId = "pxupload" + itr + "_input";
+				var contents = '<form method="post" id="'+ formId +'" action="'+ px.formAction +'" enctype="multipart/form-data" target="'+ iframeId +'">' +
+				'<input type="file" name="'+ config.inputName +'" id="'+ inputId +'" class="pxupload" size="'+ config.inputSize +'" onchange="$.fileUploader.change(this);" />' +
+				'<input type="hidden" name="method" value="add_attachment"/>' +
+				'<input type="hidden" name="return_json" value="true"/>' +
+				'</form>' + 
+				'<iframe id="'+ iframeId +'" name="'+ iframeId +'" src="about:blank" style="display:none"></iframe>';
+				
+				$("#pxupload_form").append( contents );
+				
+			},
+			validateFile: function(file) {
+				if (file.indexOf('/') > -1){
+					file = file.substring(file.lastIndexOf('/') + 1);
+				}else if (file.indexOf('\\') > -1){
+					file = file.substring(file.lastIndexOf('\\') + 1);
+				}
+				// var extensions = /(.jpg|.jpeg|.gif|.png)$/i;
+				var extensions = new RegExp(config.allowedExtension + '$', 'i');
+				if (extensions.test(file)) {
+					return file;
+				} else {
+					return -1;
+				}
+			}
+		}
+		
+		px.init(this);
+		
+		return this;
+	}
+})(jQuery);
+/*
+* Aloha Editor
+* Author & Copyright (c) 2010 Gentics Software GmbH
+* aloha-sales@gentics.com
+* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*/
+GENTICS.Aloha.Format=new GENTICS.Aloha.Plugin("com.gentics.aloha.plugins.Format");GENTICS.Aloha.Format.languages=["en","de","fr","eo","fi","ru","it","pl"];GENTICS.Aloha.Format.config=["b","i","del","sub","sup","p","title","h1","h2","h3","h4","h5","h6","pre","removeFormat"];GENTICS.Aloha.Format.init=function(){this.initButtons();var that=this;GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha,"editableActivated",function(e,params){that.applyButtonConfig(params.editable.obj)})};GENTICS.Aloha.Format.applyButtonConfig=function(obj){config=this.getEditableConfig(obj);for(var button in this.buttons){if(jQuery.inArray(button,config)!=-1){this.buttons[button].button.show()}else{this.buttons[button].button.hide()}}for(var i in this.multiSplitItems){if(jQuery.inArray(this.multiSplitItems[i].name,config)!=-1){this.multiSplitButton.extButton.showItem(this.multiSplitItems[i].name)}else{this.multiSplitButton.extButton.hideItem(this.multiSplitItems[i].name)}}};GENTICS.Aloha.Format.initButtons=function(){var scope="GENTICS.Aloha.continuoustext";this.buttons={};var that=this;this.multiSplitItems=new Array();this.multiSplitButton;jQuery.each(GENTICS.Aloha.Format.config,function(j,button){switch(button){case"b":case"i":case"cite":case"q":case"code":case"abbr":case"del":case"sub":case"sup":that.buttons[button]={button:new GENTICS.Aloha.ui.Button({iconClass:"GENTICS_button GENTICS_button_"+button,size:"small",onclick:function(){if(GENTICS.Aloha.activeEditable){GENTICS.Aloha.activeEditable.obj[0].focus()}var markup=jQuery("<"+button+"></"+button+">");var rangeObject=GENTICS.Aloha.Selection.rangeObject;var foundMarkup=rangeObject.findMarkup(function(){return this.nodeName.toLowerCase()==markup.get(0).nodeName.toLowerCase()},GENTICS.Aloha.activeEditable.obj);if(foundMarkup){if(rangeObject.isCollapsed()){GENTICS.Utils.Dom.removeFromDOM(foundMarkup,rangeObject,true)}else{GENTICS.Utils.Dom.removeMarkup(rangeObject,markup,GENTICS.Aloha.activeEditable.obj)}}else{if(rangeObject.isCollapsed()){GENTICS.Utils.Dom.extendToWord(rangeObject)}GENTICS.Utils.Dom.addMarkup(rangeObject,markup)}rangeObject.select();return false},tooltip:that.i18n("button."+button+".tooltip"),toggle:true}),markup:jQuery("<"+button+"></"+button+">")};GENTICS.Aloha.FloatingMenu.addButton(scope,that.buttons[button].button,GENTICS.Aloha.i18n(GENTICS.Aloha,"floatingmenu.tab.format"),1);break;case"p":case"h1":case"h2":case"h3":case"h4":case"h5":case"h6":case"pre":that.multiSplitItems.push({name:button,tooltip:that.i18n("button."+button+".tooltip"),iconClass:"GENTICS_button "+that.i18n("GENTICS_button_"+button),markup:jQuery("<"+button+"></"+button+">"),click:function(){if(GENTICS.Aloha.activeEditable){GENTICS.Aloha.activeEditable.obj[0].focus()}GENTICS.Aloha.Selection.changeMarkupOnSelection(jQuery("<"+button+"></"+button+">"))}});break;case"removeFormat":that.multiSplitItems.push({name:button,text:that.i18n("button."+button+".text"),tooltip:that.i18n("button."+button+".tooltip"),iconClass:"GENTICS_button GENTICS_button_"+button,wide:true,click:function(){GENTICS.Aloha.Format.removeFormat()}});break;default:GENTICS.Aloha.log("warn",this,'Button "'+button+'" is not defined');break}});if(this.multiSplitItems.length>0){this.multiSplitButton=new GENTICS.Aloha.ui.MultiSplitButton({items:this.multiSplitItems});GENTICS.Aloha.FloatingMenu.addButton(scope,this.multiSplitButton,GENTICS.Aloha.i18n(GENTICS.Aloha,"floatingmenu.tab.format"),3)}GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha,"selectionChanged",function(event,rangeObject){jQuery.each(that.buttons,function(index,button){for(var i=0;i<rangeObject.markupEffectiveAtStart.length;i++){var effectiveMarkup=rangeObject.markupEffectiveAtStart[i];if(GENTICS.Aloha.Selection.standardTextLevelSemanticsComparator(effectiveMarkup,button.markup)){button.button.setPressed(true);var statusWasSet=true}}if(!statusWasSet){button.button.setPressed(false)}});if(that.multiSplitItems.length>0){var foundMultiSplit=false;for(var i=0;i<rangeObject.markupEffectiveAtStart.length&&!foundMultiSplit;i++){var effectiveMarkup=rangeObject.markupEffectiveAtStart[i];for(var j=0;j<that.multiSplitItems.length&&!foundMultiSplit;j++){var multiSplitItem=that.multiSplitItems[j];if(!multiSplitItem.markup){continue}if(GENTICS.Aloha.Selection.standardTextLevelSemanticsComparator(effectiveMarkup,multiSplitItem.markup)){that.multiSplitButton.setActiveItem(multiSplitItem.name);foundMultiSplit=true}}}if(!foundMultiSplit){that.multiSplitButton.setActiveItem(null)}}})};GENTICS.Aloha.Format.removeFormat=function(){GENTICS.Aloha.Selection.changeMarkupOnSelection(jQuery("<p></p>"));var formats=["b","i","cite","q","code","abbr","del","sub","sup"];var rangeObject=GENTICS.Aloha.Selection.rangeObject;var startObj=jQuery(rangeObject.startContainer);var limitObj=jQuery(rangeObject.limitObject);if(rangeObject.isCollapsed()||startObj===limitObj){return}var parent=startObj.parent();while(parent.get(0)!==limitObj.get(0)){var index=formats.indexOf(parent.get(0).nodeName.toLowerCase());parent=parent.parent();if(index!=-1){GENTICS.Aloha.Selection.changeMarkupOnSelection(jQuery("<"+formats[index]+"></"+formats[index]+">"));formats.splice(index,1)}}for(var i in formats){GENTICS.Aloha.Selection.changeMarkupOnSelection(jQuery("<"+formats[i]+"></"+formats[i]+">"));GENTICS.Aloha.Selection.changeMarkupOnSelection(jQuery("<"+formats[i]+"></"+formats[i]+">"))}};GENTICS.Aloha.Format.toString=function(){return"com.gentics.aloha.plugins.Format"};
+/*
+* Aloha Editor
+* Author & Copyright (c) 2010 Gentics Software GmbH
+* aloha-sales@gentics.com
+* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*/
+GENTICS.Aloha.TablePlugin=new GENTICS.Aloha.Plugin("com.gentics.aloha.plugins.Table");GENTICS.Aloha.TablePlugin.createLayer=undefined;GENTICS.Aloha.TablePlugin.languages=["en","de","fr","eo","fi","ru","it","pl"];GENTICS.Aloha.TablePlugin.config=["table"];GENTICS.Aloha.TablePlugin.TableRegistry=new Array();GENTICS.Aloha.TablePlugin.activeTable=undefined;GENTICS.Aloha.TablePlugin.parameters={className:"GENTICS_Aloha_Table",classSelectionRow:"GENTICS_Aloha_Table_selectColumn",classSelectionColumn:"GENTICS_Aloha_Table_selectRow",classLeftUpperCorner:"GENTICS_Aloha_Table_leftUpperCorner",classTableWrapper:"GENTICS_Aloha_Table_wrapper",classCellSelected:"GENTICS_Aloha_Cell_selected",selectionArea:10};GENTICS.Aloha.TablePlugin.config=new Object();GENTICS.Aloha.TablePlugin.init=function(){this.createLayer=new GENTICS.Aloha.Table.CreateLayer();var that=this;GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha,"editableCreated",function(event,editable){editable.obj.bind("mousedown",function(jqEvent){GENTICS.Aloha.TablePlugin.setFocusedTable(undefined)});editable.obj.find("table").each(function(){if(that.isEditableTable(this)){var table=new GENTICS.Aloha.Table(this);table.parentEditable=editable;table.activate();GENTICS.Aloha.TablePlugin.TableRegistry.push(table)}})});this.initTableButtons();GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha,"selectionChanged",function(event,properties){if(GENTICS.Aloha.activeEditable){var config=that.getEditableConfig(GENTICS.Aloha.activeEditable.obj);if(jQuery.inArray("table",config)!=-1&&GENTICS.Aloha.Selection.mayInsertTag("table")){that.createTableButton.show()}else{that.createTableButton.hide()}if(typeof GENTICS.Aloha.TableHelper.selectionType!=undefined){GENTICS.Aloha.FloatingMenu.setScope(that.getUID(GENTICS.Aloha.TableHelper.selectionType))}GENTICS.Aloha.FloatingMenu.doLayout()}});GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha,"editableDeactivated",function(event,properties){GENTICS.Aloha.TablePlugin.setFocusedTable(undefined);GENTICS.Aloha.TableHelper.unselectCells()})};GENTICS.Aloha.TablePlugin.isEditableTable=function(table){var parent=jQuery(table.parentNode);if(parent.attr("contenteditable")=="true"){return true}else{return false}};GENTICS.Aloha.TablePlugin.initTableButtons=function(){var that=this;this.createTableButton=new GENTICS.Aloha.ui.Button({iconClass:"GENTICS_button GENTICS_button_table",size:"small",tooltip:this.i18n("button.createtable.tooltip"),onclick:function(element,event){GENTICS.Aloha.TablePlugin.createDialog(element.btnEl.dom)}});GENTICS.Aloha.FloatingMenu.addButton("GENTICS.Aloha.continuoustext",this.createTableButton,GENTICS.Aloha.i18n(GENTICS.Aloha,"floatingmenu.tab.insert"),1);GENTICS.Aloha.FloatingMenu.createScope(this.getUID("row"),"GENTICS.Aloha.global");GENTICS.Aloha.FloatingMenu.createScope(this.getUID("column"),"GENTICS.Aloha.global");GENTICS.Aloha.FloatingMenu.addButton(this.getUID("column"),new GENTICS.Aloha.ui.Button({iconClass:"GENTICS_button GENTICS_button_addColumnLeft",size:"small",tooltip:this.i18n("button.addcolleft.tooltip"),onclick:function(){if(that.activeTable){that.activeTable.addColumnsLeft()}}}),GENTICS.Aloha.i18n(this,"floatingmenu.tab.table"),1);GENTICS.Aloha.FloatingMenu.addButton(this.getUID("column"),new GENTICS.Aloha.ui.Button({iconClass:"GENTICS_button GENTICS_button_addColumnRight",size:"small",tooltip:this.i18n("button.addcolright.tooltip"),onclick:function(){if(that.activeTable){that.activeTable.addColumnsRight()}}}),GENTICS.Aloha.i18n(this,"floatingmenu.tab.table"),1);GENTICS.Aloha.FloatingMenu.addButton(this.getUID("column"),new GENTICS.Aloha.ui.Button({iconClass:"GENTICS_button GENTICS_button_deleteColumns",size:"small",tooltip:this.i18n("button.delcols.tooltip"),onclick:function(){if(that.activeTable){var aTable=that.activeTable;GENTICS.Aloha.showMessage(new GENTICS.Aloha.Message({title:GENTICS.Aloha.i18n(that,"Table"),text:GENTICS.Aloha.i18n(that,"deletecolumns.confirm"),type:GENTICS.Aloha.Message.Type.CONFIRM,callback:function(sel){if(sel=="yes"){aTable.deleteColumns()}}}))}}}),GENTICS.Aloha.i18n(this,"floatingmenu.tab.table"),1);GENTICS.Aloha.FloatingMenu.addButton(this.getUID("row"),new GENTICS.Aloha.ui.Button({iconClass:"GENTICS_button GENTICS_button_addRowBefore",size:"small",tooltip:this.i18n("button.addrowbefore.tooltip"),onclick:function(){if(that.activeTable){that.activeTable.addRowsBefore(true)}}}),GENTICS.Aloha.i18n(this,"floatingmenu.tab.table"),1);GENTICS.Aloha.FloatingMenu.addButton(this.getUID("row"),new GENTICS.Aloha.ui.Button({iconClass:"GENTICS_button GENTICS_button_addRowAfter",size:"small",tooltip:this.i18n("button.addrowafter.tooltip"),onclick:function(){if(that.activeTable){that.activeTable.addRowsAfter(true)}}}),GENTICS.Aloha.i18n(this,"floatingmenu.tab.table"),1);GENTICS.Aloha.FloatingMenu.addButton(this.getUID("row"),new GENTICS.Aloha.ui.Button({iconClass:"GENTICS_button GENTICS_button_deleteRows",size:"small",tooltip:this.i18n("button.delrows.tooltip"),onclick:function(){if(that.activeTable){var aTable=that.activeTable;GENTICS.Aloha.showMessage(new GENTICS.Aloha.Message({title:GENTICS.Aloha.i18n(that,"Table"),text:GENTICS.Aloha.i18n(that,"deleterows.confirm"),type:GENTICS.Aloha.Message.Type.CONFIRM,callback:function(sel){if(sel=="yes"){aTable.deleteRows()}}}))}}}),GENTICS.Aloha.i18n(this,"floatingmenu.tab.table"),1)};GENTICS.Aloha.TablePlugin.createDialog=function(callingElement){this.createLayer.set("target",callingElement);this.createLayer.show()};GENTICS.Aloha.TablePlugin.createTable=function(cols,rows){if(GENTICS.Aloha.activeEditable!=null&&typeof GENTICS.Aloha.activeEditable.obj!="undefined"){var table=document.createElement("table");var tableId=table.id=GENTICS.Aloha.TableHelper.getNewTableID();var tbody=document.createElement("tbody");for(var i=0;i<rows;i++){var tr=document.createElement("tr");for(var j=0;j<cols;j++){var text=document.createTextNode("\u00a0");var td=document.createElement("td");td.appendChild(text);tr.appendChild(td)}tbody.appendChild(tr)}table.appendChild(tbody);GENTICS.Utils.Dom.insertIntoDOM(jQuery(table),GENTICS.Aloha.Selection.getRangeObject(),jQuery(GENTICS.Aloha.activeEditable.obj));var tableReloadedFromDOM=document.getElementById(tableId);var tableObj=new GENTICS.Aloha.Table(tableReloadedFromDOM);tableObj.parentEditable=GENTICS.Aloha.activeEditable;tableObj.activate();if(jQuery.browser.msie){window.setTimeout(function(){tableObj.cells[0].wrapper.get(0).focus()},20)}else{tableObj.cells[0].wrapper.get(0).focus()}GENTICS.Aloha.TablePlugin.TableRegistry.push(tableObj)}else{this.error("There is no active Editable where the table can be inserted!")}};GENTICS.Aloha.TablePlugin.setFocusedTable=function(focusTable){for(var i=0;i<GENTICS.Aloha.TablePlugin.TableRegistry.length;i++){GENTICS.Aloha.TablePlugin.TableRegistry[i].hasFocus=false}if(typeof focusTable!="undefined"){focusTable.hasFocus=true}GENTICS.Aloha.TablePlugin.activeTable=focusTable};GENTICS.Aloha.TablePlugin.error=function(msg){GENTICS.Aloha.Log.error(this,msg)};GENTICS.Aloha.TablePlugin.debug=function(msg){GENTICS.Aloha.Log.debug(this,msg)};GENTICS.Aloha.TablePlugin.info=function(msg){GENTICS.Aloha.Log.info(this,msg)};GENTICS.Aloha.TablePlugin.log=function(msg){GENTICS.Aloha.log("log",this,msg)};GENTICS.Aloha.TablePlugin.get=function(property){if(this.config[property]){return this.config[property]}if(this.parameters[property]){return this.parameters[property]}return undefined};GENTICS.Aloha.TablePlugin.set=function(key,value){if(this.config[key]){this.config[key]=value}else{this.parameters[key]=value}};GENTICS.Aloha.TablePlugin.makeClean=function(obj){obj.find("table").each(function(){var table=new GENTICS.Aloha.Table(this);table.deactivate()})};GENTICS.Aloha.TablePlugin.toString=function(){return this.prefix};GENTICS.Aloha.Table=function(table){this.obj=jQuery(table);var rows=this.obj.find("tr");var firstRow=jQuery(rows.get(0));this.numCols=firstRow.children("td, th").length;this.numRows=rows.length;this.cells=new Array();var rows=this.obj.find("tr");for(var i=0;i<rows.length;i++){var row=jQuery(rows[i]);var cols=row.children();for(var j=0;j<cols.length;j++){var col=cols[j];var Cell=new GENTICS.Aloha.Table.Cell(col,this);this.cells.push(Cell)}}};GENTICS.Aloha.Table.prototype.obj=undefined;GENTICS.Aloha.Table.prototype.tableWrapper=undefined;GENTICS.Aloha.Table.prototype.cells=undefined;GENTICS.Aloha.Table.prototype.numRows=undefined;GENTICS.Aloha.Table.prototype.numCols=undefined;GENTICS.Aloha.Table.prototype.isActive=false;GENTICS.Aloha.Table.prototype.hasFocus=false;GENTICS.Aloha.Table.prototype.parentEditable=undefined;GENTICS.Aloha.Table.prototype.mousedown=false;GENTICS.Aloha.Table.prototype.clickedColumnId=-1;GENTICS.Aloha.Table.prototype.clickedRowId=-1;GENTICS.Aloha.Table.prototype.columnsToSelect=new Array();GENTICS.Aloha.Table.prototype.rowsToSelect=new Array();GENTICS.Aloha.Table.prototype.fmPluginId=undefined;GENTICS.Aloha.Table.prototype.get=function(property){return GENTICS.Aloha.TablePlugin.get(property)};GENTICS.Aloha.Table.prototype.set=function(key,value){GENTICS.Aloha.TablePlugin.set(key,value)};GENTICS.Aloha.Table.prototype.activate=function(){if(this.isActive){return}var that=this;this.obj.addClass(this.get("className"));this.obj.attr("contenteditable","false");if(this.obj.attr("id")==""){this.obj.attr("id",GENTICS.Aloha.TableHelper.getNewTableID())}GENTICS.Aloha.TableHelper.selectionType=undefined;this.obj.bind("keydown",function(jqEvent){if(!jqEvent.ctrlKey&&!jqEvent.shiftKey){if(GENTICS.Aloha.TableHelper.selectedCells.length>0&&GENTICS.Aloha.TableHelper.selectedCells[0].length>0){GENTICS.Aloha.TableHelper.selectedCells[0][0].firstChild.focus()}}});this.obj.bind("click",function(e){e.stopPropagation();return false});this.obj.bind("mousedown",function(jqEvent){if(!that.hasFocus){that.focus()}setTimeout(function(){var firstCell=that.obj.find("tr:nth-child(2) td:nth-child(2)").children("div[contenteditable=true]").get(0);GENTICS.Aloha.TableHelper.unselectCells();jQuery(firstCell).get(0).focus()},5);jqEvent.stopPropagation();jqEvent.preventDefault();return false});var tableWrapper=jQuery('<div class="'+this.get("classTableWrapper")+'" contenteditable="false"></div>');this.obj.wrap(tableWrapper);var htmlTableWrapper=this.obj.parents("."+this.get("classTableWrapper"));htmlTableWrapper.get(0).onresizestart=function(e){return false};htmlTableWrapper.get(0).oncontrolselect=function(e){return false};this.tableWrapper=this.obj.parents("."+this.get("classTableWrapper")).get(0);jQuery(this.cells).each(function(){this.activate()});this.attachSelectionColumn();this.attachSelectionRow();this.attachLastCellEvents();this.isActive=true;GENTICS.Aloha.EventRegistry.trigger(new GENTICS.Aloha.Event("tableActivated",GENTICS.Aloha,[this]))};GENTICS.Aloha.Table.prototype.attachSelectionColumn=function(){var emptyCell=jQuery("<td>");emptyCell.html("\u00a0");var that=this;var rows=this.obj.context.rows;for(var i=0;i<rows.length;i++){var rowObj=jQuery(rows[i]);var columnToInsert=emptyCell.clone();columnToInsert.addClass(this.get("classSelectionColumn"));columnToInsert.css("width",this.get("selectionArea")+"px");rowObj.find("td:first").before(columnToInsert);var rowIndex=i+1;this.attachRowSelectionEventsToCell(columnToInsert)}};GENTICS.Aloha.Table.prototype.attachRowSelectionEventsToCell=function(cell){var that=this;cell.unbind("mousedown");cell.unbind("mouseover");cell.get(0).onselectstart=function(){return false};cell.bind("mousedown",function(e){that.rowSelectionMouseDown(e);that.focus();e.stopPropagation()});cell.bind("mouseover",function(e){that.rowSelectionMouseOver(e);e.preventDefault()})};GENTICS.Aloha.Table.prototype.rowSelectionMouseDown=function(jqEvent){this.mousedown=true;if(GENTICS.Aloha.TableHelper.selectedCells.length==0){this.rowsToSelect=new Array()}this.clickedRowId=jqEvent.currentTarget.parentNode.rowIndex;if(jqEvent.ctrlKey){var arrayIndex=jQuery.inArray(this.clickedRowId,this.rowsToSelect);if(arrayIndex>=0){this.rowsToSelect.splice(arrayIndex,1)}else{this.rowsToSelect.push(this.clickedRowId)}}else{if(jqEvent.shiftKey){this.rowsToSelect.sort(function(a,b){return a-b});var start=this.rowsToSelect[0];var end=this.clickedRowId;if(start>end){start=end;end=this.rowsToSelect[0]}this.rowsToSelect=new Array();for(var i=start;i<=end;i++){this.rowsToSelect.push(i)}}else{this.rowsToSelect=[this.clickedRowId]}}this.selectRows();jqEvent.preventDefault()};GENTICS.Aloha.Table.prototype.rowSelectionMouseOver=function(jqEvent){var rowIndex=jqEvent.currentTarget.parentNode.rowIndex;if(this.mousedown&&this.clickedRowId>=0){var indexInArray=jQuery.inArray(rowIndex,this.rowsToSelect);var start=(rowIndex<this.clickedRowId)?rowIndex:this.clickedRowId;var end=(rowIndex<this.clickedRowId)?this.clickedRowId:rowIndex;this.rowsToSelect=new Array();for(var i=start;i<=end;i++){this.rowsToSelect.push(i)}this.selectRows()}};GENTICS.Aloha.Table.prototype.attachSelectionRow=function(){var that=this;var emptyCell=jQuery("<td>");emptyCell.html("\u00a0");var numColumns=this.obj.context.rows[0].cells.length;var selectionRow=jQuery("<tr>");selectionRow.addClass(this.get("classSelectionRow"));selectionRow.css("height",this.get("selectionArea")+"px");for(var i=0;i<numColumns;i++){var columnToInsert=emptyCell.clone();if(i>0){this.attachColumnSelectEventsToCell(columnToInsert)}selectionRow.append(columnToInsert)}jQuery(document).bind("mouseup",function(e){that.mousedown=false;that.clickedColumnId=-1;that.clickedRowId=-1});selectionRow.find("td:first").addClass(this.get("classLeftUpperCorner"));this.obj.find("tr:first").before(selectionRow)};GENTICS.Aloha.Table.prototype.attachColumnSelectEventsToCell=function(cell){var that=this;cell.unbind("mousedown");cell.unbind("mouseover");cell.get(0).onselectstart=function(){return false};cell.bind("mousedown",function(e){that.columnSelectionMouseDown(e);that.focus();e.stopPropagation();return false});cell.bind("mouseover",function(e){that.columnSelectionMouseOver(e)})};GENTICS.Aloha.Table.prototype.columnSelectionMouseDown=function(jqEvent){this.mousedown=true;if(GENTICS.Aloha.TableHelper.selectedCells.length==0){this.columnsToSelect=new Array()}this.clickedColumnId=jqEvent.currentTarget.cellIndex;if(jqEvent.ctrlKey){var arrayIndex=jQuery.inArray(this.clickedColumnId,this.columnsToSelect);if(arrayIndex>=0){this.columnsToSelect.splice(arrayIndex,1)}else{this.columnsToSelect.push(this.clickedColumnId)}}else{if(jqEvent.shiftKey){this.columnsToSelect.sort(function(a,b){return a-b});var start=this.columnsToSelect[0];var end=this.clickedColumnId;if(start>end){start=end;end=this.columnsToSelect[0]}this.columnsToSelect=new Array();for(var i=start;i<=end;i++){this.columnsToSelect.push(i)}}else{this.columnsToSelect=[this.clickedColumnId]}}this.selectColumns();jqEvent.preventDefault()};GENTICS.Aloha.Table.prototype.columnSelectionMouseOver=function(jqEvent){var colIndex=jqEvent.currentTarget.cellIndex;if(this.mousedown&&this.clickedColumnId>0){var indexInArray=jQuery.inArray(colIndex,this.columnsToSelect);var start=(colIndex<this.clickedColumnId)?colIndex:this.clickedColumnId;var end=(colIndex<this.clickedColumnId)?this.clickedColumnId:colIndex;this.columnsToSelect=new Array();for(var i=start;i<=end;i++){this.columnsToSelect.push(i)}this.selectColumns()}};GENTICS.Aloha.Table.prototype.releaseLastCellEvents=function(){this.obj.find("tr:last td:last").unbind()};GENTICS.Aloha.Table.prototype.attachLastCellEvents=function(){var that=this;this.obj.find("tr:last td:last").bind("keydown",function(jqEvent){that.lastCellKeyDown(jqEvent)})};GENTICS.Aloha.Table.prototype.lastCellKeyDown=function(jqEvent){var KEYCODE_TAB=9;if(KEYCODE_TAB==jqEvent.keyCode&&!jqEvent.altKey&&!jqEvent.shiftKey&&!jqEvent.ctrlKey){this.addRowsAfter(false);jqEvent.stopPropagation();if(jQuery.browser.msie){this.obj.find("tr:last td:nth-child(1) div.GENTICS_Table_Cell_editable").get(0).focus();return false}}};GENTICS.Aloha.Table.prototype.deleteRows=function(){var rowIDs=new Array();var deleteTable=false;if(GENTICS.Aloha.TableHelper.selectedCells.length>0){for(var i=0;i<GENTICS.Aloha.TableHelper.selectedCells.length;i++){rowIDs.push(GENTICS.Aloha.TableHelper.selectedCells[i][0].parentNode.rowIndex)}}else{if(typeof GENTICS.Aloha.Table.Cell.lastActiveCell!="undefined"){rowIDs.push(GENTICS.Aloha.Table.Cell.lastActiveCell.obj.context.parentNode.rowIndex)}}if(rowIDs.length==this.numRows){deleteTable=true}if(deleteTable){var that=this;GENTICS.Aloha.showMessage(new GENTICS.Aloha.Message({title:GENTICS.Aloha.i18n(GENTICS.Aloha.TablePlugin,"Table"),text:GENTICS.Aloha.i18n(GENTICS.Aloha.TablePlugin,"deletetable.confirm"),type:GENTICS.Aloha.Message.Type.CONFIRM,callback:function(sel){if(sel=="yes"){that.deleteTable()}}}))}else{rowIDs.sort(function(a,b){return a-b});var focusRowId=rowIDs[0];if(focusRowId>(this.numRows-rowIDs.length)){focusRowId--}this.releaseLastCellEvents();var rows=this.obj.find("tr");var rows2delete=new Array();for(var i=0;i<rowIDs.length;i++){rows2delete.push(jQuery(rows[rowIDs[i]]))}for(var i=0;i<rows2delete.length;i++){var cols=rows2delete[i].children("td").toArray();for(var j=0;j<cols.length;j++){for(var m=0;m<this.cells.length;m++){if(cols[j]==this.cells[m].obj.get(0)){this.cells.splice(m,1);m=this.cells.length}}}}for(var i=0;i<rows2delete.length;i++){rows2delete[i].remove()}this.numRows-=rows2delete.length;if(jQuery.browser.msie){setTimeout(this.obj.find("tr:nth-child("+(focusRowId+1)+") td:nth-child(2) div.GENTICS_Table_Cell_editable").get(0).focus,5)}else{this.obj.find("tr:nth-child("+(focusRowId+1)+") td:nth-child(2) div.GENTICS_Table_Cell_editable").get(0).focus()}this.attachLastCellEvents();GENTICS.Aloha.TableHelper.unselectCells()}};GENTICS.Aloha.Table.prototype.deleteColumns=function(){var colIDs=new Array();var deleteTable=false;if(GENTICS.Aloha.TableHelper.selectedCells.length>0){for(var i=0;i<GENTICS.Aloha.TableHelper.selectedCells[0].length;i++){colIDs.push(GENTICS.Aloha.TableHelper.selectedCells[0][i].cellIndex)}}else{if(typeof GENTICS.Aloha.Table.Cell.lastActiveCell!="undefined"){colIDs.push(GENTICS.Aloha.Table.Cell.lastActiveCell.obj.context.cellIndex)}}if(colIDs.length==this.numCols){deleteTable=true}if(deleteTable){var that=this;GENTICS.Aloha.showMessage(new GENTICS.Aloha.Message({title:GENTICS.Aloha.i18n(GENTICS.Aloha.TablePlugin,"Table"),text:GENTICS.Aloha.i18n(GENTICS.Aloha.TablePlugin,"deletetable.confirm"),type:GENTICS.Aloha.Message.Type.CONFIRM,callback:function(sel){if(sel=="yes"){that.deleteTable()}}}))}else{colIDs.sort(function(a,b){return a-b});var focusColID=colIDs[0];if(focusColID>(this.numCols-colIDs.length)){focusColID--}this.releaseLastCellEvents();var rows=this.obj.find("tr");var cols2delete=new Array();for(var i=0;i<rows.length;i++){var cells=jQuery(rows[i]).children("td").toArray();for(var j=0;j<colIDs.length;j++){cols2delete.push(cells[colIDs[j]])}}for(var i=0;i<cols2delete.length;i++){for(var j=0;j<this.cells.length;j++){if(cols2delete[i]==this.cells[j].obj.get(0)){this.cells.splice(j,1);j=this.cells.length}}}for(var i=0;i<cols2delete.length;i++){jQuery(cols2delete[i]).remove()}this.numCols-=colIDs.length;if(jQuery.browser.msie){setTimeout(this.obj.find("tr:nth-child(2) td:nth-child("+(focusColID+1)+") div.GENTICS_Table_Cell_editable").get(0).focus,5)}else{this.obj.find("tr:nth-child(2) td:nth-child("+(focusColID+1)+") div.GENTICS_Table_Cell_editable").get(0).focus()}this.attachLastCellEvents();GENTICS.Aloha.TableHelper.unselectCells()}};GENTICS.Aloha.Table.prototype.deleteTable=function(){var deleteIndex=-1;for(var i=0;i<GENTICS.Aloha.TablePlugin.TableRegistry.length;i++){if(GENTICS.Aloha.TablePlugin.TableRegistry[i].obj.attr("id")==this.obj.attr("id")){deleteIndex=i;break}}if(deleteIndex>=0){this.deactivate();GENTICS.Aloha.TableHelper.selectionType=undefined;GENTICS.Aloha.TablePlugin.TableRegistry.splice(i,1);var newRange=GENTICS.Aloha.Selection.rangeObject;newRange.startContainer=newRange.endContainer=this.obj.get(0).parentNode;newRange.startOffset=newRange.endOffset=GENTICS.Utils.Dom.getIndexInParent(this.obj.get(0).parentNode);newRange.clearCaches();this.obj.remove();this.parentEditable.obj.focus();newRange.correctRange();newRange.select()}};GENTICS.Aloha.Table.prototype.addRowsBefore=function(highlightNewRows){this.addRows("before",highlightNewRows)};GENTICS.Aloha.Table.prototype.addRowsAfter=function(highlightNewRows){this.addRows("after",highlightNewRows)};GENTICS.Aloha.Table.prototype.addRows=function(position,highlightNewRows){if(typeof GENTICS.Aloha.TablePlugin.activeTable!="undefined"){this.releaseLastCellEvents();var that=this;var numCols=this.numCols;var rowsToInsert=1;var rowId=1;if(GENTICS.Aloha.TableHelper.selectedCells.length>0){rowsToInsert=GENTICS.Aloha.TableHelper.selectedCells.length;switch(position){case"before":if(GENTICS.Aloha.TableHelper.selectedCells[0].length){rowId=GENTICS.Aloha.TableHelper.selectedCells[0][0].parentNode.rowIndex}break;case"after":var lastRow=GENTICS.Aloha.TableHelper.selectedCells.length-1;if(GENTICS.Aloha.TableHelper.selectedCells[lastRow].length){rowId=GENTICS.Aloha.TableHelper.selectedCells[lastRow][0].parentNode.rowIndex}break}}else{if(typeof GENTICS.Aloha.Table.Cell.lastActiveCell!="undefined"){rowId=GENTICS.Aloha.Table.Cell.lastActiveCell.obj.context.parentNode.rowIndex}}var newRowIndex=rowId;if(position=="after"){newRowIndex+=1}var rowIdArray=new Array();for(var j=0;j<rowsToInsert;j++){rowIdArray.push(newRowIndex);var insertionRow=jQuery("<tr>");var selectionColumn=jQuery("<td>");selectionColumn.addClass(this.get("classSelectionColumn"));this.attachRowSelectionEventsToCell(selectionColumn);insertionRow.append(selectionColumn);for(i=0;i<numCols;i++){var newCol=jQuery("<td>");newCol.html("\u00a0");var cell=new GENTICS.Aloha.Table.Cell(newCol.get(0),GENTICS.Aloha.TablePlugin.activeTable);cell.activate();this.cells.push(cell);insertionRow.append(cell.obj)}var currentRow=jQuery(GENTICS.Aloha.TablePlugin.activeTable.obj.find("tr").get(rowId));switch(position){case"before":currentRow.before(insertionRow);break;case"after":currentRow.after(insertionRow);break;default:this.warn(this,"Wrong call of GENTICS.Aloha.Table.prototype.addRow!")}newRowIndex++;this.numRows++}GENTICS.Aloha.TableHelper.unselectCells();this.rowsToSelect=rowIdArray;if(highlightNewRows){this.selectRows()}this.attachLastCellEvents()}};GENTICS.Aloha.Table.prototype.addColumnsRight=function(){this.addColumns("right")};GENTICS.Aloha.Table.prototype.addColumnsLeft=function(){this.addColumns("left")};GENTICS.Aloha.Table.prototype.addColumns=function(position){if(typeof GENTICS.Aloha.TablePlugin.activeTable!="undefined"){this.releaseLastCellEvents();var that=this;var columnsToInsert=1;var colId=1;if(GENTICS.Aloha.TableHelper.selectedCells.length>0){columnsToInsert=GENTICS.Aloha.TableHelper.selectedCells[0].length;switch(position){case"left":if(GENTICS.Aloha.TableHelper.selectedCells[0].length){colId=GENTICS.Aloha.TableHelper.selectedCells[0][0].cellIndex}break;case"right":var lastColumn=GENTICS.Aloha.TableHelper.selectedCells[0].length-1;if(GENTICS.Aloha.TableHelper.selectedCells[0].length){colId=GENTICS.Aloha.TableHelper.selectedCells[0][lastColumn].cellIndex}break}}else{if(typeof GENTICS.Aloha.Table.Cell.lastActiveCell!="undefined"){colId=GENTICS.Aloha.Table.Cell.lastActiveCell.obj.context.cellIndex}}var newColId=colId;var emptyCell=jQuery("<td>");var rows=this.obj.find("tr");var colIdArray=new Array();for(var i=0;i<rows.length;i++){var currentColId=newColId;var row=rows[i];for(var j=0;j<columnsToInsert;j++){var cell=emptyCell.clone();cell.html("\u00a0");if(i==0){this.attachColumnSelectEventsToCell(cell)}else{cellObj=new GENTICS.Aloha.Table.Cell(cell.get(0),GENTICS.Aloha.TablePlugin.activeTable);this.cells.push(cellObj);cellObj.activate();cell=cellObj.obj}var insertionColumn=jQuery(jQuery(row).find("td").get(newColId));switch(position){case"left":if(jQuery.inArray(currentColId,colIdArray)<0){colIdArray.push(currentColId)}insertionColumn.before(cell);break;case"right":if(jQuery.inArray((currentColId+1),colIdArray)<0){colIdArray.push(currentColId+1)}insertionColumn.after(cell);break}currentColId++}}this.numCols+=columnsToInsert;GENTICS.Aloha.TableHelper.unselectCells();this.columnsToSelect=colIdArray;this.selectColumns();this.attachLastCellEvents()}};GENTICS.Aloha.Table.prototype.focus=function(){if(!this.hasFocus){if(!this.parentEditable.isActive){this.parentEditable.obj.focus()}GENTICS.Aloha.TablePlugin.setFocusedTable(this)}setTimeout("GENTICS.Aloha.Selection.updateSelection(false, true)",50)};GENTICS.Aloha.Table.prototype.focusOut=function(){if(this.hasFocus){this.hasFocus=false;GENTICS.Aloha.TablePlugin.setFocusedTable(undefined)}};GENTICS.Aloha.Table.prototype.selectColumns=function(){var selectClass=this.get("classCellSelected");GENTICS.Aloha.TableHelper.unselectCells();GENTICS.Aloha.TableHelper.selectionType="column";this.columnsToSelect.sort(function(a,b){return a-b});var rows=this.obj.find("tr").toArray();rows.shift();var toSelect=new Array();for(var i=0;i<rows.length;i++){var rowCells=rows[i].cells;var selectedCellsInCol=new Array();for(var j=0;j<this.columnsToSelect.length;j++){var colIndex=this.columnsToSelect[j];var cell=rowCells[colIndex];toSelect.push(cell);selectedCellsInCol.push(cell)}GENTICS.Aloha.TableHelper.selectedCells.push(selectedCellsInCol)}this.obj.find("div.GENTICS_Table_Cell_editable").blur();jQuery(toSelect).addClass(selectClass)};GENTICS.Aloha.Table.prototype.selectRows=function(){var selectClass=this.get("classCellSelected");GENTICS.Aloha.TableHelper.unselectCells();this.rowsToSelect.sort(function(a,b){return a-b});for(var i=0;i<this.rowsToSelect.length;i++){var rowId=this.rowsToSelect[i];var rowCells=jQuery(this.obj.find("tr").get(rowId).cells).toArray();rowCells.shift();GENTICS.Aloha.TableHelper.selectedCells.push(rowCells);jQuery(rowCells).addClass(this.get("classCellSelected"))}GENTICS.Aloha.TableHelper.selectionType="row";this.obj.find("div.GENTICS_Table_Cell_editable").blur()};GENTICS.Aloha.Table.prototype.deactivate=function(){this.obj.removeClass(this.get("className"));if(GENTICS.Aloha.trim(this.obj.attr("class"))==""){this.obj.removeAttr("class")}this.obj.removeAttr("contenteditable");this.obj.removeAttr("id");if(this.obj.parents("."+this.get("classTableWrapper")).length){this.obj.unwrap()}this.obj.find("tr."+this.get("classSelectionRow")+":first").remove();var that=this;jQuery.each(this.obj.context.rows,function(){jQuery(this).children("td."+that.get("classSelectionColumn")).remove()});this.obj.find("td, th").removeClass(this.get("classCellSelected"));this.obj.unbind();for(var i=0;i<this.cells.length;i++){var Cell=this.cells[i];Cell.deactivate()}};GENTICS.Aloha.Table.prototype.toString=function(){return"GENTICS.Aloha.Table"};GENTICS.Aloha.Table.Cell=function(originalTd,tableObj){this.obj=jQuery(originalTd);this.tableObj=tableObj};GENTICS.Aloha.Table.Cell.prototype.tableObj=undefined;GENTICS.Aloha.Table.Cell.prototype.obj=undefined;GENTICS.Aloha.Table.Cell.prototype.wrapper=undefined;GENTICS.Aloha.Table.Cell.prototype.hasFocus=false;GENTICS.Aloha.Table.Cell.activeCell=undefined;GENTICS.Aloha.Table.Cell.lastActiveCell=undefined;GENTICS.Aloha.Table.Cell.prototype.editableFocus=function(e){if(!this.hasFocus){this.tableObj.focus();GENTICS.Aloha.Table.Cell.activeCell=this;GENTICS.Aloha.Table.Cell.lastActiveCell=this;this.obj.addClass("GENTICS_Table_Cell_active");this.hasFocus=true;this.selectAll(this.wrapper.get(0));GENTICS.Aloha.TableHelper.selectionType=undefined}};GENTICS.Aloha.Table.Cell.prototype.editableBlur=function(jqEvent){GENTICS.Aloha.Table.Cell.activeCell=undefined;this.hasFocus=false;this.obj.removeClass("GENTICS_Table_Cell_active")};GENTICS.Aloha.Table.Cell.prototype.activate=function(){this.obj.wrapInner("<div/>");var wrapper=this.obj.children("div").eq(0);wrapper.attr("contenteditable","true");wrapper.addClass("GENTICS_Table_Cell_editable");var that=this;wrapper.bind("focus",function(jqEvent){if(jqEvent.currentTarget){jqEvent.currentTarget.indexOf=function(){return -1}}that.editableFocus(jqEvent)});wrapper.bind("mousedown",function(jqEvent){if(jqEvent.currentTarget){jqEvent.currentTarget.indexOf=function(){return -1}}that.editableMouseDown(jqEvent)});wrapper.bind("blur",function(jqEvent){that.editableBlur(jqEvent)});wrapper.bind("keyup",function(jqEvent){that.editableKeyUp(jqEvent)});wrapper.bind("keydown",function(jqEvent){that.editableKeyDown(jqEvent)});wrapper.GENTICS_contentEditableSelectionChange(function(event){GENTICS.Aloha.Selection.onChange(wrapper,event);return wrapper});this.obj.bind("mousedown",function(jqEvent){setTimeout(function(){that.wrapper.trigger("focus")},1);GENTICS.Aloha.TableHelper.unselectCells();jqEvent.stopPropagation()});this.obj.get(0).onselectstart=function(jqEvent){return false};this.wrapper=this.obj.children();this.wrapper.get(0).onselectstart=function(){window.event.cancelBubble=true};return this};GENTICS.Aloha.Table.Cell.prototype.deactivate=function(){var wrapper=this.obj.children(".GENTICS_Table_Cell_editable");if(wrapper.length){var innerHtml=wrapper.html();wrapper.unbind();wrapper.remove();this.obj.unbind("click");if(GENTICS.Aloha.trim(this.obj.attr("class"))==""){this.obj.removeAttr("class")}this.obj.html(innerHtml)}};GENTICS.Aloha.Table.Cell.prototype.toString=function(){return"GENTICS.Aloha.Table.Cell"};GENTICS.Aloha.Table.Cell.prototype.selectAll=function(editableNode){var e=(editableNode.jquery)?editableNode.get(0):editableNode;if(!jQuery.browser.msie){var s=window.getSelection();if(s.setBaseAndExtent){s.setBaseAndExtent(e,0,e,e.innerText.length-1)}else{if(window.opera&&e.innerHTML.substring(e.innerHTML.length-4)=="<BR>"){e.innerHTML=e.innerHTML+"&#160;"}var r=document.createRange();r.selectNodeContents(e);s.removeAllRanges();s.addRange(r)}}else{if(document.getSelection){var s=document.getSelection();var r=document.createRange();r.selectNodeContents(e);s.removeAllRanges();s.addRange(r)}else{if(document.selection){var r=document.body.createTextRange();r.moveToElementText(e);r.select()}}}GENTICS.Aloha.Selection.updateSelection(editableNode)};GENTICS.Aloha.Table.Cell.prototype.editableMouseDown=function(jqEvent){GENTICS.Aloha.TableHelper.unselectCells();if(this.tableObj.hasFocus){jqEvent.stopPropagation()}};GENTICS.Aloha.Table.Cell.prototype.editableKeyUp=function(jqEvent){this.checkForEmptyEvent(jqEvent)};GENTICS.Aloha.Table.Cell.prototype.editableKeyDown=function(jqEvent){this.checkForEmptyEvent(jqEvent);if(!jqEvent.ctrlKey&&!jqEvent.shiftKey){if(GENTICS.Aloha.TableHelper.selectedCells.length>0&&GENTICS.Aloha.TableHelper.selectedCells[0].length>0){GENTICS.Aloha.TableHelper.selectedCells[0][0].firstChild.focus();GENTICS.Aloha.TableHelper.unselectCells();jqEvent.stopPropagation()}}else{if(jqEvent.shiftKey&&GENTICS.Aloha.TableHelper.selectedCells.length>0){var KEYCODE_ARROWLEFT=37;var KEYCODE_ARROWUP=38;var KEYCODE_ARROWRIGHT=39;var KEYCODE_ARROWDOWN=40;switch(GENTICS.Aloha.TableHelper.selectionType){case"row":switch(jqEvent.keyCode){case KEYCODE_ARROWUP:var firstSelectedRow=GENTICS.Aloha.TableHelper.selectedCells[0][0].parentNode.rowIndex;if(firstSelectedRow>1){this.tableObj.rowsToSelect.push(firstSelectedRow-1)}break;case KEYCODE_ARROWDOWN:var lastRowIndex=GENTICS.Aloha.TableHelper.selectedCells.length-1;var lastSelectedRow=GENTICS.Aloha.TableHelper.selectedCells[lastRowIndex][0].parentNode.rowIndex;if(lastSelectedRow<this.tableObj.numRows){this.tableObj.rowsToSelect.push(lastSelectedRow+1)}break}this.tableObj.selectRows();break;case"column":switch(jqEvent.keyCode){case KEYCODE_ARROWLEFT:var firstColSelected=GENTICS.Aloha.TableHelper.selectedCells[0][0].cellIndex;if(firstColSelected>1){this.tableObj.columnsToSelect.push(firstColSelected-1)}break;case KEYCODE_ARROWRIGHT:var lastColIndex=GENTICS.Aloha.TableHelper.selectedCells[0].length-1;var lastColSelected=GENTICS.Aloha.TableHelper.selectedCells[0][lastColIndex].cellIndex;if(lastColSelected<this.tableObj.numCols){this.tableObj.columnsToSelect.push(lastColSelected+1)}break}this.tableObj.selectColumns();break}jqEvent.stopPropagation();jqEvent.preventDefault();return false}}};GENTICS.Aloha.Table.Cell.prototype.checkForEmptyEvent=function(jqEvent){if(jQuery(this.wrapper).children().length>0){return}var text=this.wrapper.text();if(text==""){this.wrapper.text("\u00a0");this.wrapper.get(0).blur();this.wrapper.get(0).focus()}};GENTICS.Aloha.Table.CreateLayer=function(){};GENTICS.Aloha.Table.CreateLayer.prototype.parameters={elemId:"GENTICS_Aloha_Table_createLayer",className:"GENTICS_Table_Createdialog",numX:10,numY:10,layer:undefined,target:undefined};GENTICS.Aloha.Table.CreateLayer.prototype.config=new Object();GENTICS.Aloha.Table.CreateLayer.prototype.visible=false;GENTICS.Aloha.Table.CreateLayer.prototype.show=function(){var layer=this.get("layer");if(layer==null){this.create()}else{this.setPosition(layer);layer.find("td").removeClass("hover");layer.show()}this.visible=true};GENTICS.Aloha.Table.CreateLayer.prototype.create=function(){var that=this;var layer=jQuery("<div></div>");layer.id=this.get("elemId");layer.addClass(this.get("className"));var table=jQuery("<table></table>");table.css("width",(this.get("numX")+6)*15);var tr;var td;for(var i=0;i<this.get("numY");i++){tr=jQuery("<tr></tr>");for(var j=0;j<this.get("numX");j++){td=jQuery("<td>\u00a0</td>");if(i==0&&j==0){td.addClass("hover")}td.bind("mouseover",{rowId:i,colId:j},function(e){that.handleMouseOver(e,table)});td.bind("click",{rowId:i,colId:j},function(e){var rows=e.data.rowId+1;var cols=e.data.colId+1;GENTICS.Aloha.TablePlugin.createTable(cols,rows);that.hide()});tr.append(td)}table.append(tr)}layer.append(table);this.set("layer",layer);this.setPosition();layer.bind("click",function(e){e.stopPropagation()}).mousedown(function(e){e.stopPropagation()});jQuery("body").append(layer).bind("click",function(e){if(e.target!=that.get("target")&&that.visible){that.hide()}})};GENTICS.Aloha.Table.CreateLayer.prototype.handleMouseOver=function(e,table){var rowId=e.data.rowId;var colId=e.data.colId;var innerRows=table.find("tr");for(var n=0;n<=innerRows.length;n++){var innerCells=jQuery(innerRows[n]).find("td");for(var k=0;k<=innerCells.length;k++){if(n<=rowId&&k<=colId){jQuery(innerCells[k]).addClass("hover")}else{jQuery(innerCells[k]).removeClass("hover")}}}};GENTICS.Aloha.Table.CreateLayer.prototype.setPosition=function(){var targetObj=jQuery(this.get("target"));var pos=targetObj.offset();this.get("layer").css("left",pos.left+"px");this.get("layer").css("top",(pos.top+targetObj.height())+"px")};GENTICS.Aloha.Table.CreateLayer.prototype.hide=function(){this.get("layer").hide();this.visible=false};GENTICS.Aloha.Table.CreateLayer.prototype.get=function(property){if(this.config[property]){return this.config[property]}if(this.parameters[property]){return this.parameters[property]}return undefined};GENTICS.Aloha.Table.CreateLayer.prototype.set=function(key,value){if(this.config[key]){this.config[key]=value}else{this.parameters[key]=value}};GENTICS.Aloha.TableHelper=function(){};GENTICS.Aloha.TableHelper.prototype.selectionType=undefined;GENTICS.Aloha.TableHelper.prototype.selectedCells=new Array();GENTICS.Aloha.TableHelper.prototype.unselectCells=function(){if(this.selectedCells.length>0){for(var i=0;i<this.selectedCells.length;i++){jQuery(this.selectedCells[i]).removeClass(GENTICS.Aloha.TablePlugin.get("classCellSelected"))}this.selectedCells=new Array();this.selectionType=undefined}};GENTICS.Aloha.TableHelper.prototype.getNewTableID=function(){var idPrefix="GENTICS_Table_";var factor=1000000;for(this.tableCounter;true;this.tableCounter++){var id=idPrefix+(Math.ceil(Math.random()*factor));for(var j=id.length;j<idPrefix.length+factor.toString().length;j++){id+="0"}if(!jQuery("#"+id).length){return id}}};GENTICS.Aloha.TableHelper=new GENTICS.Aloha.TableHelper();
+/*
+* Aloha Editor
+* Author & Copyright (c) 2010 Gentics Software GmbH
+* aloha-sales@gentics.com
+* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*/
+GENTICS.Aloha.ListPlugin=new GENTICS.Aloha.Plugin("com.gentics.aloha.plugins.List");GENTICS.Aloha.ListPlugin.languages=["en","de","fr","eo","fi","ru","it"];GENTICS.Aloha.ListPlugin.config=["ul","ol"];GENTICS.Aloha.ListPlugin.transformableElements={p:true,h1:true,h2:true,h3:true,h4:true,h5:true,h6:true,ul:true,ol:true};GENTICS.Aloha.ListPlugin.init=function(){var that=this;this.createUnorderedListButton=new GENTICS.Aloha.ui.Button({iconClass:"GENTICS_button GENTICS_button_ul",size:"small",tooltip:this.i18n("button.createulist.tooltip"),toggle:true,onclick:function(element,event){that.transformList(false)}});GENTICS.Aloha.FloatingMenu.addButton("GENTICS.Aloha.continuoustext",this.createUnorderedListButton,GENTICS.Aloha.i18n(GENTICS.Aloha,"floatingmenu.tab.format"),1);this.createOrderedListButton=new GENTICS.Aloha.ui.Button({iconClass:"GENTICS_button GENTICS_button_ol",size:"small",tooltip:this.i18n("button.createolist.tooltip"),toggle:true,onclick:function(element,event){that.transformList(true)}});GENTICS.Aloha.FloatingMenu.addButton("GENTICS.Aloha.continuoustext",this.createOrderedListButton,GENTICS.Aloha.i18n(GENTICS.Aloha,"floatingmenu.tab.format"),1);GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha,"selectionChanged",function(event,rangeObject){that.createUnorderedListButton.setPressed(false);that.createOrderedListButton.setPressed(false);for(var i=0;i<rangeObject.markupEffectiveAtStart.length;i++){var effectiveMarkup=rangeObject.markupEffectiveAtStart[i];if(GENTICS.Aloha.Selection.standardTextLevelSemanticsComparator(effectiveMarkup,jQuery("<ul></ul>"))){that.createUnorderedListButton.setPressed(true);break}if(GENTICS.Aloha.Selection.standardTextLevelSemanticsComparator(effectiveMarkup,jQuery("<ol></ol>"))){that.createOrderedListButton.setPressed(true);break}}if(GENTICS.Aloha.activeEditable){that.applyButtonConfig(GENTICS.Aloha.activeEditable.obj)}GENTICS.Aloha.FloatingMenu.doLayout()});GENTICS.Aloha.Markup.addKeyHandler(9,function(event){return that.processTab(event)})};GENTICS.Aloha.ListPlugin.applyButtonConfig=function(obj){var config=this.getEditableConfig(obj);if(jQuery.inArray("ul",config)!=-1&&GENTICS.Aloha.Selection.canTag1WrapTag2(GENTICS.Aloha.Selection.rangeObject.unmodifiableMarkupAtStart[0].nodeName,"ul")!=-1){this.createUnorderedListButton.show()}else{this.createUnorderedListButton.hide()}if(jQuery.inArray("ol",config)!=-1&&GENTICS.Aloha.Selection.canTag1WrapTag2(GENTICS.Aloha.Selection.rangeObject.unmodifiableMarkupAtStart[0].nodeName,"ol")!=-1){this.createOrderedListButton.show()}else{this.createOrderedListButton.hide()}};GENTICS.Aloha.ListPlugin.processTab=function(event){switch(event.keyCode){case 9:if(event.shiftKey){return this.outdentList()}else{return this.indentList()}}return true};GENTICS.Aloha.ListPlugin.getStartingDomObjectToTransform=function(){var rangeObject=GENTICS.Aloha.Selection.rangeObject;for(var i=0;i<rangeObject.markupEffectiveAtStart.length;i++){var effectiveMarkup=rangeObject.markupEffectiveAtStart[i];if(this.transformableElements[effectiveMarkup.nodeName.toLowerCase()]){return effectiveMarkup}}return false};GENTICS.Aloha.ListPlugin.getNearestSelectedListItem=function(){var rangeObject=GENTICS.Aloha.Selection.rangeObject;for(var i=0;i<rangeObject.markupEffectiveAtStart.length;i++){var effectiveMarkup=rangeObject.markupEffectiveAtStart[i];if(GENTICS.Utils.Dom.isListElement(effectiveMarkup)){return effectiveMarkup}}return false};GENTICS.Aloha.ListPlugin.transformList=function(ordered){var domToTransform=this.getStartingDomObjectToTransform();if(!domToTransform){GENTICS.Aloha.Selection.changeMarkupOnSelection(jQuery("<p></p>"));domToTransform=this.getStartingDomObjectToTransform();if(!domToTransform){GENTICS.Aloha.Log.error(this,"Could not transform selection into a list");return}}var nodeName=domToTransform.nodeName.toLowerCase();if(nodeName=="ul"&&!ordered){var jqList=jQuery(domToTransform);var jqParentList=jqList.parent();if(jqParentList.length>0&&GENTICS.Utils.Dom.isListElement(jqParentList.get(0))){jqList.children().unwrap()}else{var jqToTransform=jQuery(domToTransform);jQuery.each(jqToTransform.children("li"),function(index,li){var newPara=GENTICS.Aloha.Markup.transformDomObject(li,"p");newPara.after(newPara.children("ol,ul"))});jqToTransform.children().unwrap()}}else{if(nodeName=="ul"&&ordered){GENTICS.Aloha.Markup.transformDomObject(domToTransform,"ol");this.mergeAdjacentLists(jQuery(domToTransform))}else{if(nodeName=="ol"&&!ordered){GENTICS.Aloha.Markup.transformDomObject(domToTransform,"ul");this.mergeAdjacentLists(jQuery(domToTransform))}else{if(nodeName=="ol"&&ordered){var jqList=jQuery(domToTransform);var jqParentList=jqList.parent();if(jqParentList.length>0&&GENTICS.Utils.Dom.isListElement(jqParentList.get(0))){jqList.children().unwrap()}else{var jqToTransform=jQuery(domToTransform);jQuery.each(jqToTransform.children("li"),function(index,li){var newPara=GENTICS.Aloha.Markup.transformDomObject(li,"p");newPara.after(newPara.children("ol,ul"))});jqToTransform.children().unwrap()}}else{var selectedSiblings=GENTICS.Aloha.Selection.rangeObject.getSelectedSiblings(domToTransform);var jqList=ordered?jQuery("<ol></ol>"):jQuery("<ul></ul>");var jqNewLi=jQuery("<li></li>");jqList.append(jqNewLi);jQuery(domToTransform).contents().appendTo(jqNewLi);jQuery(domToTransform).replaceWith(jqList);if(selectedSiblings){var lastLi=false;for(var i=0;i<selectedSiblings.length;++i){if(GENTICS.Utils.Dom.isBlockLevelElement(selectedSiblings[i])){if(lastLi){lastLi=false}jqNewLi=GENTICS.Aloha.Markup.transformDomObject(selectedSiblings[i],"li");jqList.append(jqNewLi)}else{if(selectedSiblings[i].nodeType==3&&jQuery.trim(selectedSiblings[i].data).length==0){continue}if(!lastLi){lastLi=jQuery("<li></li>");jqList.append(lastLi)}lastLi.append(selectedSiblings[i])}}}this.mergeAdjacentLists(jqList)}}}}this.refreshSelection()};GENTICS.Aloha.ListPlugin.indentList=function(){var listItem=this.getNearestSelectedListItem();if(listItem){var jqItemBefore=jQuery(listItem).prev("li");if(jqItemBefore.length==0){return false}var jqOldList=jQuery(listItem).parent();var selectedSiblings=GENTICS.Aloha.Selection.rangeObject.getSelectedSiblings(listItem);var jqNewList=jQuery(listItem).parent().clone(false).empty();jqNewList.append(listItem);jqItemBefore.append(jqNewList);if(selectedSiblings){for(var i=0;i<selectedSiblings.length;++i){jqNewList.append(jQuery(selectedSiblings[i]))}}this.mergeAdjacentLists(jqNewList);this.refreshSelection();return false}return true};GENTICS.Aloha.ListPlugin.outdentList=function(){var listItem=this.getNearestSelectedListItem();if(listItem){var jqListItem=jQuery(listItem);var jqList=jqListItem.parent();var jqParentList=jqList.parents("ul,ol");var wrappingLi=jqList.parent("li");if(jqParentList.length>0&&GENTICS.Utils.Dom.isListElement(jqParentList.get(0))){var selectedSiblings=GENTICS.Aloha.Selection.rangeObject.getSelectedSiblings(listItem);if(selectedSiblings&&selectedSiblings.length>0){var lastSelected=jQuery(selectedSiblings[selectedSiblings.length-1])}else{var lastSelected=jqListItem}if(lastSelected.nextAll("li").length>0){var jqNewPostList=jqList.clone(false).empty();jqNewPostList.append(lastSelected.nextAll())}if(wrappingLi.length>0){if(typeof jqNewPostList!=="undefined"){jqListItem.append(jqNewPostList)}wrappingLi.after(jqListItem)}else{jqList.before(jqListItem)}if(selectedSiblings&&selectedSiblings.length>0){for(var i=selectedSiblings.length-1;i>=0;--i){jqListItem.after(jQuery(selectedSiblings[i]))}}if(jqList.contents("li").length==0){jqList.remove()}if(wrappingLi.length>0&&wrappingLi.contents().length==0){wrappingLi.remove()}this.refreshSelection()}return false}return true};GENTICS.Aloha.ListPlugin.refreshSelection=function(){if(GENTICS.Aloha.activeEditable){GENTICS.Aloha.activeEditable.obj[0].focus()}GENTICS.Aloha.Selection.rangeObject.update();GENTICS.Aloha.Selection.rangeObject.select();GENTICS.Aloha.Selection.updateSelection()};GENTICS.Aloha.ListPlugin.mergeAdjacentLists=function(jqList){var firstList=jqList.get(0);while(firstList.previousSibling&&firstList.previousSibling.nodeType==1&&firstList.previousSibling.nodeName==firstList.nodeName){firstList=firstList.previousSibling}jqList=jQuery(firstList);while(firstList.nextSibling&&((firstList.nextSibling.nodeType==1&&firstList.nextSibling.nodeName==firstList.nodeName)||(firstList.nextSibling.nodeType==3&&jQuery.trim(firstList.nextSibling.data).length==0))){var jqNextList=jQuery(firstList.nextSibling);if(firstList.nextSibling.nodeType==1){jqNextList.contents().appendTo(jqList)}jqNextList.remove()}};
+/*
+* Aloha Editor
+* Author & Copyright (c) 2010 Gentics Software GmbH
+* aloha-sales@gentics.com
+* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*/
+GENTICS.Aloha.Link=new GENTICS.Aloha.Plugin("com.gentics.aloha.plugins.Link");GENTICS.Aloha.Link.languages=["en","de","fr","ru","pl"];GENTICS.Aloha.Link.config=["a"];GENTICS.Aloha.Link.targetregex="";GENTICS.Aloha.Link.target="";GENTICS.Aloha.Link.cssclassregex="";GENTICS.Aloha.Link.cssclass="";GENTICS.Aloha.Link.objectTypeFilter=[];GENTICS.Aloha.Link.init=function(){if(GENTICS.Aloha.Link.settings.targetregex!=undefined){GENTICS.Aloha.Link.targetregex=GENTICS.Aloha.Link.settings.targetregex}if(GENTICS.Aloha.Link.settings.target!=undefined){GENTICS.Aloha.Link.target=GENTICS.Aloha.Link.settings.target}if(GENTICS.Aloha.Link.settings.cssclassregex!=undefined){GENTICS.Aloha.Link.cssclassregex=GENTICS.Aloha.Link.settings.cssclassregex}if(GENTICS.Aloha.Link.settings.cssclass!=undefined){GENTICS.Aloha.Link.cssclass=GENTICS.Aloha.Link.settings.cssclass}if(GENTICS.Aloha.Link.settings.objectTypeFilter!=undefined){GENTICS.Aloha.Link.objectTypeFilter=GENTICS.Aloha.Link.settings.objectTypeFilter}this.createButtons();this.subscribeEvents();this.bindInteractions()};GENTICS.Aloha.Link.createButtons=function(){var that=this;this.formatLinkButton=new GENTICS.Aloha.ui.Button({iconClass:"GENTICS_button GENTICS_button_a",size:"small",onclick:function(){that.formatLink()},tooltip:this.i18n("button.addlink.tooltip"),toggle:true});GENTICS.Aloha.FloatingMenu.addButton("GENTICS.Aloha.continuoustext",this.formatLinkButton,GENTICS.Aloha.i18n(GENTICS.Aloha,"floatingmenu.tab.format"),1);this.insertLinkButton=new GENTICS.Aloha.ui.Button({iconClass:"GENTICS_button GENTICS_button_a",size:"small",onclick:function(){that.insertLink(false)},tooltip:this.i18n("button.addlink.tooltip"),toggle:false});GENTICS.Aloha.FloatingMenu.addButton("GENTICS.Aloha.continuoustext",this.insertLinkButton,GENTICS.Aloha.i18n(GENTICS.Aloha,"floatingmenu.tab.insert"),1);GENTICS.Aloha.FloatingMenu.createScope(this.getUID("link"),"GENTICS.Aloha.continuoustext");this.hrefField=new GENTICS.Aloha.ui.AttributeField();this.hrefField.setObjectTypeFilter([GENTICS.Aloha.Link.objectTypeFilter]);GENTICS.Aloha.FloatingMenu.addButton(this.getUID("link"),this.hrefField,this.i18n("floatingmenu.tab.link"),1);this.formatLinkButton=new GENTICS.Aloha.ui.Button({iconClass:"GENTICS_button GENTICS_button_a_remove",size:"small",onclick:function(){that.removeLink()},tooltip:this.i18n("button.removelink.tooltip")});GENTICS.Aloha.FloatingMenu.addButton(this.getUID("link"),this.formatLinkButton,this.i18n("floatingmenu.tab.link"),1)};GENTICS.Aloha.Link.bindInteractions=function(){var that=this;this.hrefField.addListener("keyup",function(obj,event){if(event.keyCode==27){var curval=that.hrefField.getQueryValue();if(curval[0]=="/"||curval.match(/^.*\.([a-z]){2,4}$/i)||curval[0]=="#"||curval.match(/^htt.*/i)){}else{}}that.srcChange()});this.hrefField.addListener("blur",function(obj,event){if(this.getValue()==""){that.removeLink()}});for(var i=0;i<GENTICS.Aloha.editables.length;i++){GENTICS.Aloha.editables[i].obj.keydown(function(e){if((e.metaKey||e.ctrlKey)&&e.which==76){if(that.findLinkMarkup()){GENTICS.Aloha.FloatingMenu.userActivatedTab=that.i18n("floatingmenu.tab.link");GENTICS.Aloha.FloatingMenu.doLayout();that.hrefField.focus()}else{that.insertLink()}return false}});GENTICS.Aloha.editables[i].obj.find("a").each(function(i){jQuery(this).mouseenter(function(e){GENTICS.Aloha.Log.debug(GENTICS.Aloha.Link,"mouse over link.");that.mouseOverLink=this;that.updateMousePointer()});jQuery(this).mouseleave(function(e){GENTICS.Aloha.Log.debug(GENTICS.Aloha.Link,"mouse left link.");that.mouseOverLink=null;that.updateMousePointer()});jQuery(this).click(function(e){if(e.metaKey){GENTICS.Aloha.activeEditable.blur();setTimeout(function(){location.href=e.target},0);e.stopPropagation();return false}})})}jQuery(document).keydown(function(e){GENTICS.Aloha.Log.debug(GENTICS.Aloha.Link,"Meta key down.");that.metaKey=e.metaKey;that.updateMousePointer()});jQuery(document).keyup(function(e){GENTICS.Aloha.Log.debug(GENTICS.Aloha.Link,"Meta key up.");that.metaKey=e.metaKey;that.updateMousePointer()})};GENTICS.Aloha.Link.updateMousePointer=function(){if(this.metaKey&&this.mouseOverLink){GENTICS.Aloha.Log.debug(GENTICS.Aloha.Link,"set pointer");jQuery(this.mouseOverLink).removeClass("GENTICS_link_text");jQuery(this.mouseOverLink).addClass("GENTICS_link_pointer")}else{jQuery(this.mouseOverLink).removeClass("GENTICS_link_pointer");jQuery(this.mouseOverLink).addClass("GENTICS_link_text")}};GENTICS.Aloha.Link.subscribeEvents=function(){var that=this;GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha,"selectionChanged",function(event,rangeObject){var config=that.getEditableConfig(GENTICS.Aloha.activeEditable.obj);if(jQuery.inArray("a",config)!=-1){that.formatLinkButton.show();that.insertLinkButton.show()}else{that.formatLinkButton.hide();that.insertLinkButton.hide();return}var foundMarkup=that.findLinkMarkup(rangeObject);if(foundMarkup){that.insertLinkButton.hide();that.formatLinkButton.setPressed(true);GENTICS.Aloha.FloatingMenu.setScope(that.getUID("link"));that.hrefField.setTargetObject(foundMarkup,"href")}else{that.formatLinkButton.setPressed(false);that.hrefField.setTargetObject(null)}GENTICS.Aloha.FloatingMenu.doLayout()})};GENTICS.Aloha.Link.findLinkMarkup=function(range){if(typeof range=="undefined"){var range=GENTICS.Aloha.Selection.getRangeObject()}return range.findMarkup(function(){return this.nodeName.toLowerCase()=="a"},GENTICS.Aloha.activeEditable.obj)};GENTICS.Aloha.Link.formatLink=function(){var range=GENTICS.Aloha.Selection.getRangeObject();if(GENTICS.Aloha.activeEditable){if(this.findLinkMarkup(range)){this.removeLink()}else{this.insertLink()}}};GENTICS.Aloha.Link.insertLink=function(extendToWord){if(this.findLinkMarkup(range)){return}GENTICS.Aloha.FloatingMenu.userActivatedTab=this.i18n("floatingmenu.tab.link");var range=GENTICS.Aloha.Selection.getRangeObject();if(range.isCollapsed()&&extendToWord!=false){GENTICS.Utils.Dom.extendToWord(range)}if(range.isCollapsed()){var linkText=this.i18n("newlink.defaulttext");var newLink=jQuery('<a href="">'+linkText+"</a>");GENTICS.Utils.Dom.insertIntoDOM(newLink,range,jQuery(GENTICS.Aloha.activeEditable.obj));range.startContainer=range.endContainer=newLink.contents().get(0);range.startOffset=0;range.endOffset=linkText.length}else{var newLink=jQuery('<a href=""></a>');GENTICS.Utils.Dom.addMarkup(range,newLink,false)}range.select();this.hrefField.focus();this.srcChange()};GENTICS.Aloha.Link.removeLink=function(){var range=GENTICS.Aloha.Selection.getRangeObject();var foundMarkup=this.findLinkMarkup();if(foundMarkup){GENTICS.Utils.Dom.removeFromDOM(foundMarkup,range,true);GENTICS.Aloha.activeEditable.obj[0].focus();range.select()}};GENTICS.Aloha.Link.srcChange=function(){this.hrefField.setAttribute("target",this.target,this.targetregex,this.hrefField.getQueryValue());this.hrefField.setAttribute("class",this.cssclass,this.cssclassregex,this.hrefField.getQueryValue())};GENTICS.Aloha.Link.makeClean=function(obj){obj.find("a").each(function(){jQuery(this).removeClass("GENTICS_link_pointer");jQuery(this).removeClass("GENTICS_link_text")})};
+/*
+* Aloha Img plugin
+* This plugin is a contribution of Nicolas Karageuzian
+* Licensed unter the terms of AGPL http://www.gnu.org/licenses/agpl-3.0.html
+*/
+if(typeof KaraCos=="undefined"||!KaraCos){var KaraCos={}}KaraCos.Img=new GENTICS.Aloha.Plugin("org.karacos.aloha.Img");KaraCos.Img.languages=["en","fr"];KaraCos.Img.config=["img"];KaraCos.Img.init=function(){var that=this;that.initImage();that.bindInteractions();that.subscribeEvents()};KaraCos.Img.resourceObjectTypes=[];KaraCos.Img.PropsWindow=KaraCos.Img.initImage=function(){var that=this;this.insertImgButton=new GENTICS.Aloha.ui.Button({label:"IMG",size:"small",onclick:function(){that.insertImg()},tooltip:that.i18n("button.addimg.tooltip"),toggle:false});GENTICS.Aloha.FloatingMenu.addButton("GENTICS.Aloha.continuoustext",this.insertImgButton,GENTICS.Aloha.i18n(GENTICS.Aloha,"floatingmenu.tab.insert"),1);GENTICS.Aloha.FloatingMenu.createScope(this.getUID("img"),"GENTICS.Aloha.continuoustext");var alignLeftButton=new GENTICS.Aloha.ui.Button({iconClass:"GENTICS_button karacos_img_align_left",size:"small",onclick:function(){var img=that.findImgMarkup();jQuery(img).css("float","left")},tooltip:that.i18n("button.img.align.left.tooltip")});var alignRightButton=new GENTICS.Aloha.ui.Button({iconClass:"GENTICS_button karacos_img_align_right",size:"small",onclick:function(){var img=that.findImgMarkup();jQuery(img).css("float","right")},tooltip:that.i18n("button.img.align.right.tooltip")});var alignNoneButton=new GENTICS.Aloha.ui.Button({iconClass:"GENTICS_button karacos_img_align_none",size:"small",onclick:function(){var img=that.findImgMarkup();jQuery(img).css("float","")},tooltip:that.i18n("button.img.align.none.tooltip")});var imgSrcLabel=new GENTICS.Aloha.ui.Button({label:that.i18n("field.img.src.label"),tooltip:that.i18n("field.img.src.tooltip"),size:"small",});this.imgSrcField=new GENTICS.Aloha.ui.AttributeField({});this.imgSrcField.setObjectTypeFilter(KaraCos.Img.resourceObjectTypes);var imgTitleLabel=new GENTICS.Aloha.ui.Button({label:that.i18n("field.img.title.label"),tooltip:that.i18n("field.img.title.tooltip"),size:"small",});this.imgTitleField=new GENTICS.Aloha.ui.AttributeField({});this.imgTitleField.setObjectTypeFilter([KaraCos.Img.resourceObjectTypes]);GENTICS.Aloha.FloatingMenu.addButton(this.getUID("img"),this.imgSrcField,this.i18n("floatingmenu.tab.img"),1);GENTICS.Aloha.FloatingMenu.addButton(this.getUID("img"),alignRightButton,this.i18n("floatingmenu.tab.img"),1);GENTICS.Aloha.FloatingMenu.addButton(this.getUID("img"),alignLeftButton,this.i18n("floatingmenu.tab.img"),1);GENTICS.Aloha.FloatingMenu.addButton(this.getUID("img"),alignNoneButton,this.i18n("floatingmenu.tab.img"),1);GENTICS.Aloha.FloatingMenu.addButton(this.getUID("img"),this.imgTitleField,this.i18n("floatingmenu.tab.img"),1)};KaraCos.Img.bindInteractions=function(){var that=this;this.imgSrcField.addListener("keyup",function(obj,event){that.srcChange()});this.imgSrcField.addListener("blur",function(obj,event){if(this.getValue()==""){}})};KaraCos.Img.subscribeEvents=function(){var that=this;GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha,"selectionChanged",function(event,rangeObject){var foundMarkup=that.findImgMarkup(rangeObject);var config=that.getEditableConfig(GENTICS.Aloha.activeEditable.obj);if(jQuery.inArray("img",config)!=-1){that.insertImgButton.show()}else{that.insertImgButton.hide();return}if(foundMarkup){that.insertImgButton.hide();GENTICS.Aloha.FloatingMenu.setScope(that.getUID("img"));that.imgSrcField.setTargetObject(foundMarkup,"src");that.imgTitleField.setTargetObject(foundMarkup,"title");that.imgSrcField.focus();GENTICS.Aloha.FloatingMenu.userActivatedTab=that.i18n("floatingmenu.tab.img")}else{that.imgSrcField.setTargetObject(null)}GENTICS.Aloha.FloatingMenu.doLayout()})};KaraCos.Img.findImgMarkup=function(range){if(typeof range=="undefined"){var range=GENTICS.Aloha.Selection.getRangeObject()}try{if(range.startContainer){if(range.startContainer.childNodes){if(range.startOffset){if(range.startContainer.childNodes[range.startOffset]){if(range.startContainer.childNodes[range.startOffset].nodeName.toLowerCase()=="img"){result=range.startContainer.childNodes[range.startOffset];if(!result.css){result.css=""}if(!result.title){result.title=""}if(!result.src){result.src=""}return result}}}}}}catch(e){}return null};KaraCos.Img.insertImg=function(){var range=GENTICS.Aloha.Selection.getRangeObject();if(range.isCollapsed()){var newImg=jQuery('<img src="" title="" style=""></img>');GENTICS.Utils.Dom.insertIntoDOM(newImg,range,jQuery(GENTICS.Aloha.activeEditable.obj))}else{alert("img cannot markup a selection")}};KaraCos.Img.srcChange=function(){};
+if(typeof KaraCos=="undefined"||!KaraCos){alert("org.karacos.aloha.Img plugin is required")}KaraCos.Plugin=new GENTICS.Aloha.Plugin("org.karacos.aloha.Plugin");KaraCos.Plugin.languages=["en","fr"];KaraCos.Plugin.config=["img"];KaraCos.Plugin.init=function(){this.pagedata={};var that=this;that.add_attachment=null;if(that.settings.instance_url==undefined){that.settings.instance_url=""}url_href=that.settings.instance_url+"/get_user_actions_forms";$.ajax({url:url_href,dataType:"json",context:document.body,async:false,success:function(data){GENTICS.Aloha.Log.info(that,data);that.user_actions=[];that.edit_page=false;if(data.status=="success"){GENTICS.Aloha.Log.info(that,"successful result");that.rsdata=data.data}},});if(that.rsdata){len=that.rsdata.actions.length;for(var i=0;i<len;++i){that.user_actions[i]=that.rsdata.actions[i].action;if(that.rsdata.actions[i].action==that.settings.edit_content_action){that.edit_page=true;that.edit_page_action=that.rsdata.actions[i]}else{if(that.rsdata.actions[i].action=="add_attachment"){that.add_attachment=that.rsdata.actions[i]}if(that.rsdata.actions[i].action=="_att"){that._att=that.rsdata.actions[i]}if(that.rsdata.actions[i].label){var actionButton=new GENTICS.Aloha.ui.Button({label:that.rsdata.actions[i].label,onclick:function(){if(this.actiondata.form&&this.actiondata.action!="register"){$.kc_write_kc_action(this.actiondata,$("#dialog_window"));$("#dialog_window").dialog("open")}else{document.location=this.instance_url+"/"+this.actiondata.action}}});actionButton.actiondata=that.rsdata.actions[i];actionButton.instance_url=that.settings.instance_url;GENTICS.Aloha.Log.info(that,"processing action button creation "+that.rsdata.actions[i].label);GENTICS.Aloha.Ribbon.addButton(actionButton)}}}if(that.edit_page){GENTICS.Aloha.Log.info(that,that.edit_page_action);len=that.edit_page_action.form.fields.length;for(var i=0;i<len;++i){field=that.edit_page_action.form.fields[i];fieldvalue="";if(field.value){fieldvalue=field.value}that.pagedata[field.name]=fieldvalue}var editMore=new GENTICS.Aloha.ui.Button({label:that.i18n("editMore"),onclick:function(){that.editMore()}});GENTICS.Aloha.Ribbon.addButton(editMore);var saveButton=new GENTICS.Aloha.ui.Button({label:that.i18n("save"),onclick:function(){that.save()}});GENTICS.Aloha.Ribbon.addButton(saveButton)}}GENTICS.Aloha.Log.info(that,that);that.initImage();that.bindInteractions();that.subscribeEvents()};KaraCos.Plugin.resourceObjectTypes=[];KaraCos.Plugin.initImage=function(){var that=this;if(that.add_attachment!=null){that.imgUploadButton=new GENTICS.Aloha.ui.Button({label:that.i18n("button.uploadimg.label"),size:"small",onclick:function(){GENTICS.Aloha.FloatingMenu.obj.hide();$.kc_write_kc_action(this.add_attachment,$("#dialog_window"));$("#dialog_window input.field").fileUploader({imageLoader:"",buttonUpload:"#dialog_window input.button",buttonClear:"#pxClear",successOutput:"File Uploaded",errorOutput:"Failed",inputName:"att_file",inputSize:30,allowedExtension:"jpg|jpeg|png|gif",callback:function(data){$("#dialog_window").dialog("close");that.targetImg.src=data.data;GENTICS.Aloha.FloatingMenu.obj.show()}});$("#dialog_window").dialog("open")},tooltip:that.i18n("button.uploadimg.tooltip"),toggle:false});that.imgUploadButton.add_attachment=that.add_attachment;GENTICS.Aloha.FloatingMenu.addButton(KaraCos.Img.getUID("img"),this.imgUploadButton,this.i18n("floatingmenu.tab.img"),3);that.imgChooseButton=new GENTICS.Aloha.ui.Button({label:that.i18n("button.chooseimg.label"),size:"small",onclick:function(){$("#dialog_window").html("");GENTICS.Aloha.FloatingMenu.obj.hide();$("#dialog_window").append("<ul></ul>");$("#dialog_window ul").css({"list-style":"none outside none",position:"relative","text-align":"left"});url_href=that.settings.instance_url+"/_att";thatbtn=this;$.ajax({url:url_href,dataType:"json",context:document.body,async:false,success:function(data){thatbtn._att=data},});$.each(this._att.form.fields[0].values,function(id,value){$("#dialog_window ul").append('<li><img id="img'+id+'_img" class="imgselector" "src="'+value.value+'" style="width: 64px; height: 64px;"/></li>')});$("#dialog_window ul li").css({display:"block",position:"relative",});$(".imgselector").click(function(){img=$(this);that.targetImg.src=this.src;$("#dialog_window").dialog("close");GENTICS.Aloha.FloatingMenu.obj.show()});$("#dialog_window").dialog("open")},tooltip:that.i18n("button.choose.tooltip"),toggle:false});GENTICS.Aloha.FloatingMenu.addButton(KaraCos.Img.getUID("img"),this.imgChooseButton,this.i18n("floatingmenu.tab.img"),3)}};KaraCos.Plugin.bindInteractions=function(){var that=this};KaraCos.Plugin.subscribeEvents=function(){var that=this;GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha,"selectionChanged",function(event,rangeObject){if(!that.tab_panel_width){that.tab_panel_width=GENTICS.Aloha.FloatingMenu.extTabPanel.getWidth()}if(that.add_attachment!=null){var foundImgMarkup=KaraCos.Img.findImgMarkup(rangeObject);if(foundImgMarkup!=null){that.targetImg=foundImgMarkup}else{}GENTICS.Aloha.FloatingMenu.doLayout()}if(GENTICS.Aloha.FloatingMenu.userActivatedTab==KaraCos.Img.i18n("floatingmenu.tab.img")){GENTICS.Aloha.FloatingMenu.extTabPanel.setWidth(450)}else{GENTICS.Aloha.FloatingMenu.extTabPanel.setWidth(that.tab_panel_width)}})};KaraCos.Plugin.srcChange=function(){};KaraCos.Plugin.editMore=function(){};KaraCos.Plugin.save=function(){config=this.settings.idfieldsref;var content="";var that=this;jQuery.each(GENTICS.Aloha.editables,function(index,editable){that.pagedata[config[editable.getId()]]=editable.getContents();content=content+"Editable ID: "+config[editable.getId()]+"\nHTML code: "+editable.getContents()+"\n\n"});$.ajax({url:that.settings.instance_url,dataType:"json",contentType:"application/json",data:$.toJSON({method:that.settings.edit_content_action,id:1,params:that.pagedata,}),context:document.body,type:"POST",success:function(data){GENTICS.Aloha.Log.info(that,data)},});GENTICS.Aloha.Log.info(that,that)};
+/*
+* Aloha Editor
+* Author & Copyright (c) 2010 Gentics Software GmbH
+* aloha-sales@gentics.com
+* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*/
+GENTICS.Aloha.HighlightEditables=new GENTICS.Aloha.Plugin("com.gentics.aloha.plugins.highlighteditables");GENTICS.Aloha.HighlightEditables.init=function(){var that=this;GENTICS.Utils.Position.addMouseMoveCallback(function(){for(var i=0;i<GENTICS.Aloha.editables.length;i++){var editable=GENTICS.Aloha.editables[i];if(!GENTICS.Aloha.activeEditable&&!editable.isDisabled()){editable.obj.addClass("GENTICS_editable_highlight")}}});GENTICS.Utils.Position.addMouseStopCallback(function(){that.fade()});GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha,"editableActivated",function(jEvent,aEvent){aEvent.editable.obj.addClass("GENTICS_editable_active");that.fade()});GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha,"editableDeactivated",function(jEvent,aEvent){aEvent.editable.obj.removeClass("GENTICS_editable_active")})};GENTICS.Aloha.HighlightEditables.fade=function(){for(var i=0;i<GENTICS.Aloha.editables.length;i++){var editable=GENTICS.Aloha.editables[i].obj;if(editable.hasClass("GENTICS_editable_highlight")){editable.removeClass("GENTICS_editable_highlight").css("outline","5px solid #FFE767").animate({outlineWidth:"0px"},300,"swing",function(){jQuery(this).css("outline","")})}}};

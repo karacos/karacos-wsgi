@@ -1,3 +1,0 @@
-js/jquery-ui-1.8.custom.min.js
-js/anytime.js
-js/karacos-forms.js
