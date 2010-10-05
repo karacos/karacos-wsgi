@@ -62,7 +62,9 @@ class Dispatcher(object):
             instid = session['backlinks'][blid][1]
             method = session['backlinks'][blid][2]
             self.log.debug("Backlink : %s" % session['backlinks'][blid])
-            if str(request.__method__.func.func_name) == str(method) and str(response.__instance__.id) == str(instid):
+            argslen = len(request.__args__) + len(request.__kwds__)
+            if argslen > 0:
+                assert str(request.__method__.func.func_name) == str(method) and str(response.__instance__.id) == str(instid)
                 self.log.info("Processing backlink %s" % forward)
                 backlinks = session['backlinks']
                 del backlinks[blid]
