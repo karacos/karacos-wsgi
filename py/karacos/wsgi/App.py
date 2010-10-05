@@ -55,8 +55,19 @@ class Dispatcher(object):
         session = karacos.serving.get_session()
         self.log.debug("RENDER : Response object has body '%s'" % response.body[:200])
         #if response.__action__ == None:
+        self.log.info("Checking backlinks %s" % session['backlinks'])
         if len(session['backlinks']) > 0:
-            raise Redirect(session['backlinks'].pop(), 302, _("Action processing redirect backlink"))
+            blid = len(session['backlinks']) -1
+            forward = session['backlinks'][blid][0]
+            instid = session['backlinks'][blid][1]
+            method = session['backlinks'][blid][2]
+            self.log.debug("Backlink : %s" % session['backlinks'][blid])
+            if str(request.__method__.func.func_name) == str(method) and str(response.__instance__.id) == str(instid):
+                self.log.info("Processing backlink %s" % forward)
+                backlinks = session['backlinks']
+                del backlinks[blid]
+                session['backlinks'] = backlinks
+                raise Redirect(forward, 302, _("Action processing redirect backlink"))
         if response.body == '':
             if (request.headers['Accept'].find('text/html') >= 0 or
                 request.headers['Accept'].find('application/xhtml+xml') >= 0):
@@ -89,7 +100,11 @@ class Dispatcher(object):
                                                 result = None,
                                                 action = e.method.get_action(e.instance))
                 if e.backlink != None:
-                    session['backlinks'].append(e.backlink)
+                    backlinks = session['backlinks']
+                    backlink = (e.backlink,e.instance.id,e.method.func.func_name)
+                    backlinks.append(backlink)
+                    session['backlinks'] = backlinks
+                    self.log.info("Setting backlinks : %s" % session['backlinks'] )
         else:
             response.body = template.render(instance = domain,
                                             result = {'status': 'failure',
