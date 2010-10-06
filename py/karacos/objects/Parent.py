@@ -328,6 +328,43 @@ class Parent(KcDocument):
         }
         """
     
+    @karacos._db.ViewsProcessor.isview('self', 'javascript')
+    def _get_web_childrens_data_for_id(self, userid, groups):
+        """
+        function(doc) {
+         parent = "%s";
+         userid = "%s";
+         groups = %s;
+         if (doc.parent_id == parent && doc.WebType && !("_deleted" in doc && doc._deleted == true)) {
+            emitdoc = false ;
+            for(var i = 0; i <= groups.length; i++)
+                if (doc.ACL[groups[i]])
+                    if (doc.ACL[groups[i]].join().search(/w_browse/) != -1)
+                        emitdoc = true;
+            if (doc.ACL[userid])
+                if (doc.ACL[userid].join().search(/w_browse/) != -1)
+                    emitdoc = true;
+            if (emitdoc) {
+                var docdata = {};
+                if (doc.label)
+                    docdata['label'] = doc.label;
+                else
+                    docdata['label'] = doc.name;
+                docdata['webType'] = doc.WebType;
+                emit(doc.name,docdata);
+                }
+            }
+        }
+        """
+    def get_web_childrens_data_for_id(self):
+        """
+        """
+        userid = self.__domain__.get_user_auth()
+        results = self._get_web_childrens_data_for_id(userid.get_auth_id(), json.dumps(userid.get_groups()))
+        result = {}
+        for item in results:
+            result[item.key] = item.value
+        return result
     
     def get_web_childrens_for_id(self):
         """
@@ -338,12 +375,14 @@ class Parent(KcDocument):
         for item in results:
             result[item.key] = item.value
         return result
-
     @karacos._db.isaction
     def w_browse(self):
         return self.get_web_childrens_for_id()
         
-
+    @karacos._db.isaction
+    def w_browse_types(self):
+        return self.get_web_childrens_data_for_id()
+    
     def _create_child_node(self, *args, **kw): #data=None,type=None,base=False):
         assert 'data' in kw
         data = kw['data']

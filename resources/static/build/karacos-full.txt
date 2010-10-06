@@ -55,4 +55,5 @@ aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.Link/plugin.js
 aloha-nka-fork/WebContent/plugins/eu.iksproject.plugins.Loader/plugin.js
 aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Img/plugin.js
 aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Plugin/plugin.js
+aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Plugin/explorer.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.HighlightEditables/plugin.js

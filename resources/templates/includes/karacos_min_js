@@ -1,6 +1,6 @@
 <% import karacos %>
-% if karacos.config.get('system','mode') != 'dev':
-	<script>GENTICS_Aloha_base="/_browser/aloha/";</script>
+% if karacos.config.get('system','mode').strip().lower() != 'dev':
+	<script>GENTICS_Aloha_base="/_browser/karacos/";</script>
 	<script type="text/javascript" src="/_browser/karacos-min-yuimin.js"></script>
 % else :
 <script>GENTICS_Aloha_base="/_browser/aloha-nka-fork/WebContent/";</script>

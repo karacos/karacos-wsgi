@@ -1,10 +1,16 @@
 <% import karacos %>
 % if karacos.config.get('system','mode').strip().lower() != 'dev':
-	<script>GENTICS_Aloha_base="/_browser/karacos/";</script>
-	<script type="text/javascript" src="/_browser/karacos-full-yuimin.js"></script>
+	<script>
+		GENTICS_Aloha_base="/_browser/karacos/";
+		KaraCos_mode='karacos_prod';
+	</script>
+	<script type="text/javascript" src="/_browser/karacos-full-debug.js"></script>
 	% else :
 <!-- DEV MODE ACTIVATED, LOADING resources -->
-<script>GENTICS_Aloha_base="/_browser/aloha-nka-fork/WebContent/";</script>
+	<script>
+	GENTICS_Aloha_base="/_browser/aloha-nka-fork/WebContent/";
+	KaraCos_mode='karacos_dev';
+	</script>
 	<%include file="/includes/aloha_dev_js"/>
 	<script type="text/javascript" src="/_browser/js/jquery-ui-1.8.5.custom.min.js"></script>
 	<script type="text/javascript" src="/_browser/js/anytime.js"></script>
@@ -14,6 +20,7 @@
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.Table/plugin.js"></script>
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.List/plugin.js"></script>
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.Link/plugin.js"></script>
+	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/eu.iksproject.plugins.Loader/plugin.js"></script>
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Img/plugin.js"></script>
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Plugin/plugin.js"></script>
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.HighlightEditables/plugin.js"></script>
