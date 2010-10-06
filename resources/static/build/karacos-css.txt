@@ -1,3 +1,10 @@
+css/aloha.css
+deps/extjs/resources/css/ext-all.css
+deps/extjs/resources/css/xtheme-gray.css
+deps/prettyPhoto/resources/css/prettyPhoto.css
+plugins/com.gentics.aloha.plugins.Table/resources/table.css
+plugins/com.gentics.aloha.plugins.Link/css/Link.css
+plugins/com.gentics.aloha.plugins.HighlightEditables/css/HighlightEditables.css
 fileuploader/fileUploader.css
 js/anytime.css
 aloha/plugins/org.karacos.aloha.Img/resources/style.css

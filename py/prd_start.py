@@ -20,5 +20,5 @@ if __name__ == '__main__':
         def run(self):
             self.server.serve_forever()
     
-    wsgirefsrv = wsgiregserver('default',61080)
+    wsgirefsrv = wsgiregserver('prd_conf',61180)
     wsgirefsrv.start()

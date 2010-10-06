@@ -1,0 +1,14 @@
+# you can process this file via your command line :
+# sh .README-aloha-dev
+# REQUIREMENTS : git (apt-get install git-core)
+
+# In order for dev mode to run, you need a copy of the karacos branch
+# of aloha-editor. Follow the following instructions :
+# check out my git fork of aloha for dev mode :
+#
+git clone git://github.com/nka11/Aloha-Editor.git aloha-nka-fork
+#
+# Move to branch karacos
+cd aloha-nka-fork
+git checkout karacos
+

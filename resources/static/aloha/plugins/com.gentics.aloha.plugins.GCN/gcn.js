@@ -1,7 +1,0 @@
-/*
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
-*/
-if(!GENTICS.Aloha.Repositories){GENTICS.Aloha.Repositories={}}GENTICS.Aloha.Repositories.gcn=new GENTICS.Aloha.Repository("com.gentics.aloha.repositories.gcn");GENTICS.Aloha.Repositories.gcn.init=function(){var that=this};GENTICS.Aloha.Repositories.gcn.query=function(queryString,objectTypeFilter,filter,inFolderId,orderBy,maxItems,skipCount,renditionFilter,callback){var that=this;callback.call(that,[])};GENTICS.Aloha.Repositories.gcn.getChildren=function(objectTypeFilter,filter,inFolderId,inTreeId,orderBy,maxItems,skipCount,renditionFilter,callback){var that=this;var request={url:"http://dev42.office:99/CNPortletapp/rest/folder/getNavigationObject/",type:"POST",body:{folderId:384},success:function(data){var items=[];if(data){for(var i=0;i<data.length;++i){items.push({id:data[i].id,displayName:data[i].name,repositoryId:that.repositoryId,objectType:data[i].cls,url:data[i].publishDir,hasMoreItems:(data[i].subFolders.length>0)})}}callback.call(that,items)}};GENTICS.Aloha.GCN.settings.sid="D2vAPXCX4ucQ6QH";GENTICS.Aloha.GCN.performRESTRequest(request)};

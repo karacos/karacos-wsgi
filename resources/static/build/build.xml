@@ -23,7 +23,7 @@
 		<concat destfile="${outdir}/${filename}-debug.js" append="false" force="yes" fixlastline="true">
 			<filelist dir="${srcdir}/" files="${includes}" />
 		</concat>
-		<delete file="${outdir}/out/compressorFull.log"/>
+		<delete file="${outdir}/out/compressorFull.log" />
 		<java jar="deps/${compressor}" fork="true" failonerror="true" output="${outdir}/build/compressorFull.log" append="true">
 			<arg line="--type js -o ${outdir}/${filename}-yuimin.js --nomunge --verbose --charset UTF-8 ${outdir}/${filename}-debug.js" />
 			<classpath refid="minify.classpath" />
@@ -65,7 +65,13 @@
 		<antcall target="jsminify">
 		</antcall>
 		-->
-
+		<mkdir dir="${outdir}/karacos" />
+		<copy todir="${outdir}/karacos">
+			<fileset dir="${srcdir}/aloha-nka-fork/WebContent">
+				<include name="**/*" />
+				<exclude name="**/*.js" />
+			</fileset>
+		</copy>
 	</target>
 
 	<!-- ================================= 
