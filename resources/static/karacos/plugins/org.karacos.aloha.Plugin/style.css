@@ -1,3 +1,51 @@
 .karacos_file_image .x-tree-node-icon{
-	background-image:url(images/page_colors.gif);
+	background-image:url(images/image.gif);
+}
+
+.karacos_file_sound .x-tree-node-icon{
+	background-image:url(images/page_sound.gif);
+}
+
+.karacos_file_domain .x-tree-node-icon{
+	background-image:url(images/icon_home.gif);
+}
+.karacos_explorer_Resource .x-tree-node-icon{
+	background-image:url(images/page_html.gif);
+}
+
+.karacos_explorer_Manager .x-tree-node-icon{
+	background-image:url(images/icon_settings.gif);
+}
+
+.karacos_explorer_AuthManager .x-tree-node-icon{
+	background-image:url(images/icon_user.gif);
+}
+
+.karacos_explorer_WebNode .x-tree-node-icon{
+	background-image:url(images/folder_page.gif);
+}
+
+.karacos_explorer_Artist .x-tree-node-icon{
+	background-image:url(images/page_user.gif);
+}
+.karacos_explorer_Artists .x-tree-node-icon{
+	background-image:url(images/list_users.gif);
+}
+.karacos_explorer_ArtistProject .x-tree-node-icon{
+	background-image:url(images/page_component.gif);
+}
+.karacos_explorer_AudioTrack .x-tree-node-icon{
+	background-image:url(images/page_sound.gif);
+}
+.karacos_explorer_Store .x-tree-node-icon{
+	background-image:url(images/list_packages.gif);
+}
+.karacos_explorer_Entry .x-tree-node-icon{
+	background-image:url(images/note.gif);
+}
+.karacos_explorer_Newsletter .x-tree-node-icon{
+	background-image:url(images/page_tag_red.gif);
+}
+.karacos_explorer_InvestItem .x-tree-node-icon{
+	background-image:url(images/icon_package_open.gif);
 }

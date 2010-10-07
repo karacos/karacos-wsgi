@@ -131,7 +131,6 @@ class Parent(KcDocument):
             base = karacos.db.sysdb[data['base_id']]
             #self.base = base
         
-              
         #assert base != None or parent != None, "at least one of parent or base parameter must be specified"
         
         
@@ -146,6 +145,9 @@ class Parent(KcDocument):
         karacos.db['Document'].__init__(self, data=data)
         self.log.debug("Parent.__init__")
         self.__childrens__ = Childrens(self)
+        for user in self['ACL'].keys():
+            if 'w_browse_types' not in self['ACL'][user]:
+                self['ACL'][user].append('w_browse_types')
         self.log.debug("Parent.__init__ END: %s" % self.__dict__)
         
     def add_child(self, child):
@@ -350,7 +352,7 @@ class Parent(KcDocument):
                     docdata['label'] = doc.label;
                 else
                     docdata['label'] = doc.name;
-                docdata['webType'] = doc.WebType;
+                    docdata['webType'] = doc.WebType;
                 emit(doc.name,docdata);
                 }
             }

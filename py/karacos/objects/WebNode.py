@@ -38,14 +38,6 @@ class WebNode(karacos.db['Node']):
     
     __metaclass__ = karacos.db['WebMeta']
     
-    @karacos._db.isaction
-    def reset_admin_ACL(self):
-        self._update_item()
-        admin = self.__domain__.get_user_by_name(username='admin@%s' % self.__domain__['name'])
-        self['ACL'][admin.get_auth_id()] = self.get_actions()
-        self.save()
-        return {'status':'success', 'message':_("adm actions reset"),'data':''}
-    
     @staticmethod
     def create(parent=None, base=None,data=None):
         assert isinstance(data,dict)
