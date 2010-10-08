@@ -1,0 +1,82 @@
+.karacos_file_image .x-tree-node-icon{
+	background-image:url(images/image.png);
+}
+
+.karacos_file_sound .x-tree-node-icon{
+	background-image:url(images/music.png);
+}
+
+.karacos_file_domain .x-tree-node-icon{
+	background-image:url(images/server.png);
+}
+.karacos_explorer_Resource .x-tree-node-icon{
+	background-image:url(images/type_Resource.png);
+}
+
+.karacos_explorer_Manager .x-tree-node-icon{
+	background-image:url(images/type_Manager.png);
+}
+
+.karacos_explorer_AuthManager .x-tree-node-icon{
+	background-image:url(images/type_AuthManager.png);
+}
+
+.karacos_explorer_WebNode .x-tree-node-icon{
+	background-image:url(images/type_WebNode.png);
+}
+
+.karacos_explorer_Artist .x-tree-node-icon{
+	background-image:url(images/page_user.gif);
+}
+.karacos_explorer_Artists .x-tree-node-icon{
+	background-image:url(images/list_users.gif);
+}
+.karacos_explorer_ArtistProject .x-tree-node-icon{
+	background-image:url(images/page_component.gif);
+}
+.karacos_explorer_AudioTrack .x-tree-node-icon{
+	background-image:url(images/type_Audiotrack.png);
+}
+.karacos_explorer_Store .x-tree-node-icon{
+	background-image:url(images/list_packages.gif);
+}
+.karacos_explorer_Entry .x-tree-node-icon{
+	background-image:url(images/type_Entry.png);
+}
+.karacos_explorer_Newsletter .x-tree-node-icon{
+	background-image:url(images/type_Newsletter.png);
+}
+.karacos_explorer_InvestItem .x-tree-node-icon{
+	background-image:url(images/type_InvestItem.png);
+}
+.karacos-explorer-thumb {
+	width: 64px;
+	height: 64px;
+	vertical-align: middle;
+	margin-left:28px;
+	}
+.karacos-explorer-thumb-wrap {
+	display:block;
+	float:left;
+	width: 120px;
+	height: 77px;
+	text-align: center;
+	}
+.karacos_action_set_ACL {
+	background-image:url(images/shield.png);
+	}
+.karacos_action_create_resource {
+	background-image:url(images/add.png);
+	}
+.karacos_action_create_child_node {
+	background-image:url(images/add.png);
+	}
+.karacos_action_add_attachment {
+	background-image:url(images/page_add.png);
+	}
+.karacos_action_delete {
+	background-image:url(images/cross.png);
+	}
+.karacos_action_edit_content {
+	background-image:url(images/pencil.png);
+	}

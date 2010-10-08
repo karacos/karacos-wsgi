@@ -89858,12 +89858,11 @@ if(typeof KaraCos=="undefined"||!KaraCos)
 	alert('org.karacos.aloha.Img plugin is required');
     }
 KaraCos.Plugin=new GENTICS.Aloha.Plugin("org.karacos.aloha.Plugin");
-
-if (typeof KaraCos_mode != "undefined" ||KaraCos_mode) {
+/*if (typeof KaraCos_mode != "undefined" ||KaraCos_mode) {
 	if (KaraCos_mode != 'karacos_prod') {
 		eu.iksproject.LoaderPlugin.loadAsset('org.karacos.aloha.Plugin', 'explorer', 'js');
 	}
-}
+}*/
 eu.iksproject.LoaderPlugin.loadAsset('org.karacos.aloha.Plugin', 'style', 'css');
 KaraCos.Plugin.languages=["en","fr"];
 KaraCos.Plugin.config = ['img'];
@@ -89883,7 +89882,7 @@ KaraCos.Plugin.init=function(){
 	GENTICS.Aloha.Ribbon.addButton(
 		new GENTICS.Aloha.ui.Button({label:"EXPLORER",
 			onclick:function(){
-			KaraCos.Explorer.DomainExplorer.show(this);
+			KaraCos.Explorer.domainExplorer.show(this);
 		}})
 	);
 	url_href = that.settings['instance_url'] + "/get_user_actions_forms";
@@ -90138,250 +90137,11 @@ KaraCos.Plugin.save=function(){
     },});
 	GENTICS.Aloha.Log.info(that,that);
   };
-/**
- * KaraCos integrated plugin for Aloha
- * Copyright 2010 Nicolas Karageuzian
- * Domain explorer
- * 
- *
- */
-KaraCos.Explorer = {};
-
-/**
- * KaraCos async tree node
- */
-KaraCos.Explorer.TreeNode = function(config) {
-	Ext.apply(this, config);
-	KaraCos.Explorer.TreeNode.superclass.constructor.call(this);
-};
-
-Ext.extend( KaraCos.Explorer.TreeLoader, Ext.tree.TreeNode, {
-	getMenu: function(loader){
-		if(!this.menu){ // create context menu on first right click
-			items = [];
-		    var url_href = "/get_user_actions_forms";
-			if (node.id != '/') {
-				url_href = node.id + "/get_user_actions_forms";
-			}
-			jQuery.ajax({ url: url_href,
-		    	dataType: "json",
-		    	context: document.body,
-		    	async: false, // plugin init should wait for success b4 continuing
-		        success: function(data) {
-		    		jQuery.each(data.data.actions, function(k,v) {
-		    			// Iterate over actions
-		    			menuItem = {
-		    					id: this.id + v.action,
-		    					iconCls:'karacos_action_'+ v.action,
-		    					scope: loader
-		    					//  handler: this.showWindow,
-		    			};
-		    			if (v.label) {
-		    				menuItem.text = v.label;
-		    			} else {
-		    				menuItem.text = v.action;
-		    			}
-		    			item = new Ext.menu.Item(menuItem);
-		    			items.push(item);
-		    			item.form = v.form;
-					
-		    		}); // end iterate
-				
-				}
-			});// ajax get_user_actions_forms
-			this.menu = new Ext.menu.Menu({
-				id:'feeds-ctx',
-				items: items
-			});
-			this.menu.on('hide', loader.onContextHide, loader);
-		} // if not node menu
-	return node.menu;	
-	},
-});
-
-/**
- * Tree Loader
- */
-KaraCos.Explorer.TreeLoader = function(config) {
-	Ext.apply(this, config);
-	KaraCos.Explorer.TreeLoader.superclass.constructor.call(this);
-};
-
-Ext.extend( KaraCos.Explorer.TreeLoader, Ext.tree.TreeLoader, {
-	
-	directFn : function(node, callback, scope) {
-			var response = {
-					status: true,
-					argument: {callback: callback, node: node}
-			};
-			var url_href = "/w_browse_types";
-			if (node != '/') {
-				url_href = node + "/w_browse_types";
-			}
-			var items = [];
-			jQuery.ajax({ url: url_href,
-		    	dataType: "json",
-		    	context: document.body,
-		    	async: false, // plugin init should wait for success b4 continuing
-		        success: function(data) {
-					jQuery.each(data,function(k,v){
-						id = "/";
-						if (node != '/') {
-							id = node + '/' + k;
-						} else {
-							id = '/' + k;
-						}
-						item = {id:id,text: k};
-						item.cls = 'karacos_explorer_' + v.webType;
-						items.push(item);
-					});
-				},
-			}); // $.ajax for browse_childrens
-			if (node != '/') {
-				url_href = node + "/_att";
-				jQuery.ajax({ url: url_href,
-			    	dataType: "json",
-			    	context: document.body,
-			    	async: false, // plugin init should wait for success b4 continuing
-			        success: function(data) {
-						jQuery.each(data.form.fields[0].values, function(id,value) {
-							item = {text: value.label,leaf:true};
-							var imgreg = /.*\.(jpg)|(gif)|(jpeg)|(png)$/;
-							var match = value.value.toLowerCase().match(imgreg);
-							if ( match != null) {
-								item.cls = 'karacos_file_image';
-							}
-							var sndreg = /.*\.(mp3)|(ogg)|(m4a)|(aac)$/;
-							var match = value.value.toLowerCase().match(sndreg);
-							if ( match != null) {
-								item.cls = 'karacos_file_sound';
-							}
-							items.push(item);
-						});
-					}, //success
-					failure: function(data) {}, // do nothing
-				
-				}); //ajax
-			} // note != /
-			
-			callback(items,response);
-		}, // directFn
-	createNode : function(attr){
-	        // apply baseAttrs, nice idea Corey!
-	        if(this.baseAttrs){
-	            Ext.applyIf(attr, this.baseAttrs);
-	        }
-	        if(this.applyLoader !== false && !attr.loader){
-	            attr.loader = this;
-	        }
-	        if(Ext.isString(attr.uiProvider)){
-	           attr.uiProvider = this.uiProviders[attr.uiProvider] || eval(attr.uiProvider);
-	        }
-	        
-            return attr.leaf ?
-                        new Ext.tree.TreeNode(attr) :
-                        new KaraCos.Explorer.TreeNode(attr);
-        
-	    },
-}); // TreeLoader
-
-/////////////////// Domain Tree Class
-
-/**
- * KaraCos Domain Tree constructor
- */
-KaraCos.Explorer.DomainTree = function(config) {
-	Ext.apply(this, config);
-	KaraCos.Explorer.DomainTree.superclass.constructor.call(this);
-	domainRoot = new KaraCos.Explorer.TreeNode({
-	    text: '/', 
-	    draggable:true, // disable root node dragging
-	    id:'/',
-	    cls: 'karacos_file_domain',
-	});
-	this.setRootNode(domainRoot);
-	this.on('contextmenu', this.onContextMenu, this);
-	
-}
-/**
- * KaraCos domain Tree class
- * 
- */
-Ext.extend(KaraCos.Explorer.DomainTree, Ext.tree.TreePanel, {
-	onContextMenu : function(node, e){
-			var that = this;
-			if(this.ctxNode){
-		        this.ctxNode.ui.removeClass('x-node-ctx');
-		        this.ctxNode = null;
-		    }
-		    if(!node.isLeaf()){
-		        this.ctxNode = node;
-		        this.ctxNode.ui.addClass('x-node-ctx');
-		        node.getMenu(this).showAt(e.getXY());
-		        
-		    }
-		},
-	onContextHide : function(){
-	    if(this.ctxNode){
-		        this.ctxNode.ui.removeClass('x-node-ctx');
-		        this.ctxNode = null;
-		    }
-		},
-	
 
 
-});
 
-/**
- * 
- * 
- */
-KaraCos.Explorer.ItemTabPanel = new Ext.TabPanel({
-    region: 'center',
-    margins:'3 3 3 0', 
-    activeTab: 0,
-    defaults:{autoScroll:true},
 
-    items:[{
-        title: 'Bogus Tab',
-        html: ''
-    },{
-        title: 'Another Tab',
-        html: ''
-    },{
-        title: 'Closable Tab',
-        html: '',
-        closable:true
-    }]
-});
-/**
- * Main explorer window for admin
- * 
- * 
- */
-KaraCos.Explorer.DomainExplorer = new Ext.Window({
-    title: 'Explorer',
-    width:600,
-    height:350,
-    //border:false,
-    plain:true,
-    layout: 'border',
-    closeAction: 'hide',
-    items: [new KaraCos.Explorer.DomainTree({
-					title: 'Navigation',
-				    region: 'west',
-				    animate:true, 
-				    autoScroll:true,
-				    loader: new KaraCos.Explorer.TreeLoader({dataUrl:'/'}),//KaraCos.Explorer.TreeLoader({dataUrl:'/'}),
-				    enableDD:true,
-				    containerScroll: true,
-				    border: false,
-				    width: 250,
-				    height: 300,
-				    dropConfig: {appendOnly:true}
-				}),
-            KaraCos.Explorer.ItemTabPanel]
-});
+
 
 
 
