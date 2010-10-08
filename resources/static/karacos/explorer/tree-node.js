@@ -5,11 +5,7 @@
  * 
  *
  */
-if(typeof KaraCos=="undefined"||!KaraCos)
-    {
-    var KaraCos={};
-    }
-KaraCos.Explorer = {};
+Ext.namespace('KaraCos.Explorer');
 
 /**
  * KaraCos async tree node

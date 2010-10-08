@@ -18,6 +18,8 @@
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-toolbars-debug.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-menu-debug.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-forms-debug.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-grid-foundation-debug.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-grid-editor-debug.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/utils/jquery.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/utils/lang.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/utils/range.js"></script>

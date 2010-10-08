@@ -18,6 +18,7 @@
 	<script type="text/javascript" src="/_browser/js/karacos.fileUploader.js"></script>
 	<script type="text/javascript" src="/_browser/karacos/explorer/tree-node.js"></script>
 	<script type="text/javascript" src="/_browser/karacos/explorer/tree-panel.js"></script>
+	<script type="text/javascript" src="/_browser/karacos/explorer/node-content-panel.js"></script>
 	<script type="text/javascript" src="/_browser/karacos/explorer/node-panel.js"></script>
 	<script type="text/javascript" src="/_browser/karacos/explorer/explorer.js"></script>
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.Format/plugin.js"></script>
@@ -27,6 +28,10 @@
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/eu.iksproject.plugins.Loader/plugin.js"></script>
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Img/plugin.js"></script>
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Plugin/plugin.js"></script>
+##	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.GCN/gcn.js"></script>
+##	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.GCN/page.js"></script>
+	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.GCN/ui-resource-selector.js"></script>
+##	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.GCN/plugin.js"></script>
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.HighlightEditables/plugin.js"></script>
 ##	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.TOC/plugin.js"></script>	
 	<link rel="stylesheet" href="/_browser/karacos/explorer/style.css" type="text/css" />

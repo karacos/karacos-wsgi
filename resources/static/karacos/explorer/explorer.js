@@ -3,6 +3,21 @@
  * 
  * 
  */
+/*Ext.override(Ext.dd.DDProxy, {
+    startDrag: function(x, y) {
+        var dragEl = Ext.get(this.getDragEl());
+        var el = Ext.get(this.getEl());
+ 
+        dragEl.applyStyles({border:'','z-index':2000});
+        dragEl.update(el.dom.innerHTML);
+        dragEl.addClass(el.dom.className + ' dd-proxy');
+    },
+    
+
+}); */
+
+Ext.namespace('KaraCos.Explorer');
+
 KaraCos.Explorer.DomainExplorer = function(config) {
 	Ext.apply(this, config);
 	this.treePanel = new KaraCos.Explorer.DomainTree({
@@ -23,6 +38,7 @@ KaraCos.Explorer.DomainExplorer = function(config) {
 	this.treePanel.on('nodeselected',this.onTreeSelection, this);
 	 
 	this.tabPanel = new KaraCos.Explorer.ItemTabPanel({
+		title: 'Content',
 		region: 'center',
 		margins:'3 3 3 0', 
 		activeTab: 0,

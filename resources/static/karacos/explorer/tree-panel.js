@@ -1,5 +1,5 @@
 /////////////////// Domain Tree Class
-
+Ext.namespace('KaraCos.Explorer');
 /**
  * KaraCos Domain Tree constructor
  */
