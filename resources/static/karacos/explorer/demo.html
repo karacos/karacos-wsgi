@@ -1,0 +1,249 @@
+<html>
+<head>
+<title>Ext JS Awesome Uploader</title>
+<link rel="stylesheet" type="text/css" href="ext-all.css" />
+<link rel="stylesheet" type="text/css" href="Ext.ux.form.FileUploadField.css" />
+<link rel="stylesheet" type="text/css" href="AwesomeUploader.css" />
+</head>
+<style>
+body {
+	margin: 40px;
+	font-family: arial;
+}
+pre {
+	background: none;
+	font-family: Courier New, Lucida Console;
+	font-style: normal;
+}
+</style>
+<body>
+<h1>Awesome Uploader (Ext JS Component)</h1>
+<BR>
+This is a 3-in-1 uploader that uses Firefox 3.6+ / Chrome 5+ <b>drag and drop</b>, flash-based <a href="http://www.swfupload.org/">swfupload</a>, or a standard HTML file upload field to give the best user experience possible for file uploads.<BR>
+<BR>
+<h2>Features:</h2>
+Multiple simultaneous uploads (via drag and drop and standard file upload only)<BR>
+Progress bar (Drag and Drop and Flash based upload only)<BR>
+Very extensible<BR>
+<BR>
+The PHP required to handle these uploads (the same code that powers this page) is also included!<BR>
+<BR>
+The Awesome Uploader detects if flash is available, using swfupload to allow a multiple file selection dialogue. If flash is not available a normal HTML file upload field is used.<BR>
+<BR>
+Drag and drop uploads use <a href="http://www.w3.org/TR/XMLHttpRequest2/">XMLHttpRequest2</a> and the <a href="http://www.w3.org/TR/FileAPI/">File API</a> to send files as the raw body of the request. <b>NOTE: This is different from standard multi-part form uploads!</b><BR>
+SWFUpload and HTML file uploads use standard multi-part form uploads.<BR>
+<BR>
+For all uploads, the server response should be a JSON object with a success property. If there is an error, there should also be an "error" property.<BR>
+If all uploads succeed: {"success":true}<BR>
+If an upload fails: {"success":false,"error":"Reason for error!"}<BR>
+Upon failure, the "Reason for error!" part will be displayed in a message box.<BR>
+<BR>
+<script type="text/javascript" src="ext-base.js"></script>
+<script type="text/javascript" src="ext-all.js"></script>
+
+<script type="text/javascript" src="Ext.ux.form.FileUploadField.js"></script>
+<script type="text/javascript" src="Ext.ux.XHRUpload.js"></script>
+<script type="text/javascript" src="swfupload.js"></script>
+<script type="text/javascript" src="swfupload.swfobject.js"></script>
+<script type="text/javascript" src="AwesomeUploader.js"></script>
+<script type="text/javascript">
+
+Ext.BLANK_IMAGE_URL = '/inc/js/ext-3.2.1/resources/images/default/s.gif';
+
+Ext.onReady(function(){
+
+	Ext.QuickTips.init();
+
+	var AwesomeUploaderInstance1 = new AwesomeUploader({
+		title:'Ext JS Super Uploader'
+		,renderTo:'container1'
+		,frame:true
+		,width:500
+		,height:300
+	});
+	
+	var AwesomeUploaderInstance2 = new Ext.Panel({
+		title:'Awesome Uploader via xtype'
+		,renderTo:'container2'
+		,frame:true
+		,width:500
+		,height:200
+		,items:{
+			xtype:'awesomeuploader'
+			,gridHeight:100
+			,height:160
+			,listeners:{
+				scope:this
+				,fileupload:function(uploader, success, result){
+					if(success){
+						Ext.Msg.alert('File Uploaded!','A file has been uploaded!');
+					}
+				}
+			}
+		}
+	});
+});
+</script>
+<b>If you are using firefox 3.6+ or Chrome 5+, drag a file from your desktop into here:</b><BR>
+<div id="container1"></div>
+<BR>
+<pre lang="javascript">
+	var AwesomeUploaderInstance1 = new AwesomeUploader({
+		title:'Ext JS Super Uploader'
+		,renderTo:'container1'
+		,frame:true
+		,width:500
+		,height:300
+	});
+</pre>
+<BR>
+<div id="container2"></div>
+<BR>
+<pre lang="javascript">
+	var AwesomeUploaderInstance2 = new Ext.Panel({
+		title:'Awesome Uploader via xtype'
+		,renderTo:'container2'
+		,frame:true
+		,width:500
+		,height:200
+		,items:{
+			xtype:'awesomeuploader'
+			,gridHeight:100
+			,height:160
+			,listeners:{
+				scope:this
+				,fileupload:function(uploader, success, result){
+					if(success){
+						Ext.Msg.alert('File Uploaded!','A file has been uploaded!');
+					}
+				}
+			}
+		}
+	});
+</pre>
+<BR>
+<h2>Configuration Options & Defaults</h2>
+<style type="text/css">.
+table.au-propstable {
+	border-collapse:collapse;
+	border-spacing: 0px 0px;
+}
+td.au-prop, td.au_value, td.au_desc {
+	padding: 2px;
+	border-spacing: 0px 0px;
+	border: 1px solid black;
+	border-collapse:collapse;
+}
+tr.au-head {
+	font-weight:bolder;
+}
+td.au-prop  {
+	text-align:left;
+}
+td.au_value  {
+	text-align:left;
+}
+td.au_desc  {
+	text-align:left;
+}
+</style>
+<table class="au-propstable">
+<tr class="au-head"><td class="au-prop">Configuration</td><td class="au_value">Default Value</td><td class="au_desc">Description</td></tr>
+<tr><td class="au-prop">awesomeUploaderRoot</td><td class="au_value">''</td><td class="au_desc">Path to all awesomeuploader resources. This is added to beginning of the path of all resources.</td></tr>
+<tr><td class="au-prop">maxFileSizeBytes</td><td class="au_value">3145728 (3 MiB)</td><td class="au_desc">Maximum file size in bytes</td></tr>
+<tr><td class="au-prop">extraPostData</td><td class="au_value">{ }</td><td class="au_desc">Object of additional post data to send along with upload</td></tr>
+<tr><td class="au-prop" colspan=3><B>NOTE:</b> For drag and drop uploads, extraPostData only works in Firefox 3.6+, and the not-yet-released Chrome 6.<BR><BR><b>WHY?</b> multipart/form-data uploads (required to add additional parameters) requires the File API, which is only supported by Firefox 3.6 currently.</td></tr>
+<tr><td class="au-prop">xhrSendMultiPartFormData</td><td class="au_value">false</td><td class="au_desc">Send multipart/form-data uploads for drag and drop rather than sending the file as the entire request body. Only Firefox 3.6 compatible. See above note.</td></tr>
+<tr><td class="au-prop">xhrFilePostName</td><td class="au_value">'Filedata'</td><td class="au_desc">Name of post parameter for drag and drop file upload. Only used if xhrSendMultiPartFormData=true. See above note.</td></tr>
+<tr><td class="au-prop">supressPopups</td><td class="au_value">false</td><td class="au_desc">Do not show built-in popups like "This file is too big" or "Error uploading file".</td></tr>
+<tr><td class="au-prop">flashButtonHeight</td><td class="au_value">'22'</td><td class="au_desc">Height of flash button</td></tr>
+<tr><td class="au-prop">flashButtonWidth</td><td class="au_value">'56'</td><td class="au_desc">Width of flash button</td></tr>
+<tr><td class="au-prop">flashButtonSprite</td><td class="au_value">'swfupload_browse_button_trans_56x22.PNG'</td><td class="au_desc">Sprite used for flash button</td></tr>
+<tr><td class="au-prop">flashUploadFilePostName</td><td class="au_value">'Filedata'</td><td class="au_desc">POST variable name for flash name</td></tr>
+<tr><td class="au-prop">flashSwfUploadPath</td><td class="au_value">'swfupload.swf'</td><td class="au_desc">path to swfupload.swf file</td></tr>
+<!-- <tr><td class="au-prop">flashSwfUploadFileSizeLimit</td><td class="au_value">'3 MB'</td><td class="au_desc"></td></tr> -->
+<tr><td class="au-prop">flashSwfUploadFileTypes</td><td class="au_value">'*.*'</td><td class="au_desc">File name mask for file types allowed by swfupload</td></tr>
+<tr><td class="au-prop">flashSwfUploadFileTypesDescription</td><td class="au_value">'All Files'</td><td class="au_desc">Description of above mask</td></tr>
+<tr><td class="au-prop">flashUploadUrl</td><td class="au_value">'upload.php'</td><td class="au_desc">URL that swfupload should send file to</td></tr>
+<tr><td class="au-prop">gridWidth</td><td class="au_value">420</td><td class="au_desc">grid width of file list</td></tr>
+<tr><td class="au-prop">gridHeight</td><td class="au_value">200</td><td class="au_desc">grid height of file list</td></tr>
+<tr><td class="au-prop">iconStatusAborted</td><td class="au_value">'cross.png'</td><td class="au_desc">icon for aborted status</td></tr>
+<tr><td class="au-prop">iconStatusDone</td><td class="au_value">'tick.png'</td><td class="au_desc">icon for done status</td></tr>
+<tr><td class="au-prop">iconStatusError</td><td class="au_value">'cross.png'</td><td class="au_desc">icon for error status</td></tr>
+<tr><td class="au-prop">iconStatusPending</td><td class="au_value">'hourglass.png'</td><td class="au_desc">icon for pending status</td></tr>
+<tr><td class="au-prop">iconStatusSending</td><td class="au_value">'loading.gif'</td><td class="au_desc">icon for sending status</td></tr>
+<tr><td class="au-prop">standardUploadFilePostName</td><td class="au_value">'Filedata'</td><td class="au_desc">POST variable name for standard uploader</td></tr>
+<tr><td class="au-prop">standardUploadUrl</td><td class="au_value">'upload.php'</td><td class="au_desc">URL that stanard file upload should send file to</td></tr>
+<tr><td class="au-prop">xhrFileNameHeader</td><td class="au_value">'X-File-Name'</td><td class="au_desc">Header name used to send file name for drag and drop (XHR2) upload</td></tr>
+<tr><td class="au-prop">xhrUploadUrl</td><td class="au_value">'xhrupload.php'</td><td class="au_desc">URL that drag and drop (XHR2) upload should send file to</td></tr>
+</table>
+<BR>
+<BR>
+<h2>Events</h2>
+<table class="au-propstable">
+<tr><td class="au-prop">fileupload</td><td class="au_value">Fired after an upload succeeds or fails</td></tr>
+<tr><td class="au-prop" colspan=2>fireEvent(Object thisUploader, Bool uploadSuccessful, Object serverResponse)<BR>
+Bool uploadSuccessful - indicates success or failure of upload<BR>
+Object serverResponse - response from server. will at minimum have a property "error" if an error occurs</td></tr>
+<tr><td class="au-prop">fileselectionerror</td><td class="au_value">Fired if a file a selected file is larger than the maxiumum allowed</td></tr>
+<tr><td class="au-prop" colspan=2>fireEvent(String message)<BR>
+"message" will be 'File size exceeds allowed limit.' if drag and drop is the source, or if the File API is available on the standard upload field.<BR>
+This also fires if the swfupload "file_queue_error_handler" is called. Possible error messages from swfupload include:<BR>
+'QUEUE LIMIT EXCEEDED'<BR>
+'FILE EXCEEDS SIZE LIMIT'<BR>
+'ZERO BYTE FILE'<BR>
+'INVALID FILETYPE' <BR></td></tr>
+</table>
+<BR>
+<h2><a href="awesomeuploader_v1.2.zip">Download Awesome Uploader v1.2</a> (50 Kib)</h2><BR>
+&nbsp;&nbsp;&nbsp;&nbsp;Includes all files necessary for this plugin including icons and PHP backend example.<BR>
+<BR>
+<h2>Project History</h2>
+2010-07-13 v1.2<BR>
+Renamed config  "standardUploadPath" to: "standardUploadUrl" for consistency<BR>
+Removed config flashSwfUploadFileSizeLimit<BR>
+added config maxFileSizeBytes<BR>
+added config extraPostData:{ } to send POST variables along with an upload<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;NOTE: Only works in swfupload and standard upload across all browsers<BR>
+added config supressPopups (Bool) to disable showing messages<BR>
+added config xhrSendMultiPartFormData (WARNING: Firefox 3.6+ only!)<BR>
+added config xhrFilePostName (Only works when dragDropSendMultiPartFormData=true)<BR>
+added event fileSelectionError<BR>
+<BR>
+2010-07-09 v1.1<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;Added "awesomeUploaderRoot" property<BR>
+<BR>
+2010-07-07 Initial Release v1.0<BR>
+<BR>
+<h2>Released under BSD License</h2>
+<hr style="width:50%; text-align:left; margin: 0 auto 0 0;">
+<BR>
+Awesome Uploader<BR>
+<BR>
+Copyright (c) 2010, Andrew Rymarczyk<BR>
+All rights reserved.<BR>
+<BR>
+Redistribution and use in source and minified, compiled or otherwise obfuscated <BR>
+form, with or without modification, are permitted provided that the following <BR>
+conditions are met:<BR>
+<BR>
+&nbsp;&nbsp;* Redistributions of source code must retain the above copyright notice, <BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this list of conditions and the following disclaimer.<BR>
+&nbsp;&nbsp;* Redistributions in minified, compiled or otherwise obfuscated form must <BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;reproduce the above copyright notice, this list of conditions and the <BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;following disclaimer in the documentation and/or other materials <BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;provided with the distribution.<BR>
+<BR>
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND <BR>
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED <BR>
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE <BR>
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE <BR>
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL <BR>
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR <BR>
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER <BR>
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,<BR> 
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE<BR> 
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.<BR>
+<BR>
+<hr style="width:50%; text-align:left; margin: 0 auto 0 0;">
+<BR>

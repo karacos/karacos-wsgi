@@ -10,6 +10,7 @@
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/data-json-debug.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/data-list-views-debug.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/ext-dd-debug.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/resizable-debug.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/window-debug.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-buttons-debug.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-tabs-debug.js"></script>

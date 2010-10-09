@@ -205,11 +205,13 @@ class WebNode(karacos.db['Node']):
         if 'return_json' in kwds:
             request.headers['Accept'] = 'application/json'
             response = karacos.serving.get_response()
-            response.headers['Content-Type'] = 'text/html'
+            response.headers['Content-Type'] = 'application/json'
             response.__headers_type_set__ = True
         assert 'att_file' in kwds
-        
-        result = self._add_attachment(request.POST.get('att_file'))
+        base64=False
+        if 'base64' in kwds:
+            base64=True
+        result = self._add_attachment(kwds['att_file'],base64) #request.POST.get('att_file'))
         #size = 0
         #while True:
         #    data = att_file.file.read(8192)

@@ -23,6 +23,10 @@ Ext.extend( KaraCos.Explorer.TreeNode, Ext.tree.AsyncTreeNode, {
  * 
  */
 KaraCos.Explorer.nodeItems = {};
+KaraCos.Explorer.refreshNodeItems = function(url) {
+	delete KaraCos.Explorer.nodeItems[url];
+	return KaraCos.Explorer.getNodeItems(url);
+};
 KaraCos.Explorer.getNodeItems = function(url) {
 	try {
 		return KaraCos.Explorer.nodeItems[url].items;
@@ -64,11 +68,11 @@ KaraCos.Explorer.getNodeItems = function(url) {
 		    	async: false, // plugin init should wait for success b4 continuing
 		        success: function(data) {
 					jQuery.each(data.form.fields[0].values, function(id,value) {
-						t_url = "/";
+						t_url = "\/";
 						if (url != '/') {
-							t_url = url + '/' + value.value;
+							t_url = url + '\/' + value.value;
 						} else {
-							t_url = '/' + value.value;
+							t_url = '\/' + value.value;
 						}
 						item = {id: t_url,
 								text: value.label,

@@ -1,0 +1,8 @@
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery-1.4.2.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery.json-2.2.min.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery.getUrlParam.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/prettyPhoto/jquery.prettyPhoto.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery.cookie.js"></script>
+  <script type="text/javascript" src="/_browser/karacos/explorer/ext-jquery-adapter.js"></script>
+ 	<script type="text/javascript" src="/_browser/karacos/explorer/ext-all.js"></script>
+ 	

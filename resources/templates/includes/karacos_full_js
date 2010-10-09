@@ -11,11 +11,12 @@
 	GENTICS_Aloha_base="/_browser/aloha-nka-fork/WebContent/";
 	KaraCos_mode='karacos_dev';
 	</script>
-	<%include file="/includes/aloha_dev_js"/>
+<%include file="/includes/aloha_dev_js"/>
+##<%include file="/includes/noaloha_dev"/>
 	<script type="text/javascript" src="/_browser/js/jquery-ui-1.8.5.custom.min.js"></script>
 	<script type="text/javascript" src="/_browser/js/anytime.js"></script>
 	<script type="text/javascript" src="/_browser/js/karacos-forms.js"></script>
-	<script type="text/javascript" src="/_browser/js/karacos.fileUploader.js"></script>
+	<script type="text/javascript" src="/_browser/karacos/explorer/Ext.ux.XHRUpload.js"></script>
 	<script type="text/javascript" src="/_browser/karacos/explorer/tree-node.js"></script>
 	<script type="text/javascript" src="/_browser/karacos/explorer/tree-panel.js"></script>
 	<script type="text/javascript" src="/_browser/karacos/explorer/node-content-panel.js"></script>

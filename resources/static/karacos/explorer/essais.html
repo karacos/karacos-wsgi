@@ -1,0 +1,110 @@
+<html>
+<head>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery-1.4.2.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery.json-2.2.min.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery.getUrlParam.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/prettyPhoto/jquery.prettyPhoto.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery.cookie.js"></script>
+  <script type="text/javascript" src="/_browser/karacos/explorer/ext-jquery-adapter.js"></script>
+  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery.json-2.2.min.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery.getUrlParam.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/prettyPhoto/jquery.prettyPhoto.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery.cookie.js"></script>
+  <script type="text/javascript" src="/_browser/karacos/explorer/ext-jquery-adapter.js"></script>
+ 	<script type="text/javascript" src="/_browser/karacos/explorer/ext-all.js"></script>
+ <link rel="stylesheet" type="text/css" href="ext-all.css" />
+<link rel="stylesheet" type="text/css" href="Ext.ux.form.FileUploadField.css" />
+<link rel="stylesheet" type="text/css" href="AwesomeUploader.css" />
+ <script>
+ $(function(){
+	 panel = new Ext.Panel({
+			title:'My test panel'
+			,initDnDUploader:function(){
+			
+			//==================
+			// Attach drag and drop listeners to document body
+			// this prevents incorrect drops, reloading the page with the dropped item
+			// This may or may not be helpful
+			if(!document.body.BodyDragSinker){
+				document.body.BodyDragSinker = true;
+				
+				var body = Ext.fly(document.body);
+				body.on({
+					dragenter:function(event){
+						return true;
+					}
+					,dragleave:function(event){
+						return true;
+					}
+					,dragover:function(event){
+						event.stopEvent();
+						return true;
+					}
+					,drop:function(event){
+						//console.log(event);
+						event.stopEvent();
+						return true;
+					}
+				});
+			}
+			// end body events
+			//==================
+			console.log(this.el);
+			$('#'+this.el.id).get(0).addEventListener('drop', function(event){
+				console.log(event);
+				event.stopEvent();
+				return true;
+				}, false);
+			
+			/*
+			this.el.on({
+				dragenter:function(event){
+					event.browserEvent.dataTransfer.dropEffect = 'move';
+					return true;
+				}
+				,dragover:function(event){
+					event.browserEvent.dataTransfer.dropEffect = 'move';
+					event.stopEvent();
+					return true;
+				}
+				,drop:{
+					scope:this
+					,fn:function(event){
+					console.log(event);
+						event.stopEvent();
+						var files = event.browserEvent.dataTransfer.files;
+		
+						if(files === undefined){
+							return true;
+						}
+						var len = files.length;
+						while(--len >= 0){
+							//this.processDnDFileUpload(files[len]);
+						}
+					}
+				}
+			}); */
+			panel.doLayout();
+		}, // initDnd
+		});
+ var window = new Ext.Window({
+	 title:'My test Window'
+	, items: [panel], //items
+ });
+ panel.on('render',function(e){
+		e.initDnDUploader();								
+	});
+ var button = Ext.get('show-btn');
+
+ button.on('click', function(){
+	 window.show(this);
+ });
+ });
+ </script>
+ 
+ </head>
+ <body>
+ <div id="show-btn">show</div>
+ <div id="container1"></div>
+ </body>
+ </html>

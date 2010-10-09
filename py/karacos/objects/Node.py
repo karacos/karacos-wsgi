@@ -87,10 +87,16 @@ class Node(karacos.db['Child']):
         self.log.debug("Node.__init__ ")
         self.__domain__ = self.__parent__.__domain__
     
-    def _add_attachment(self, att_file=None):
+    def _add_attachment(self, att_file=None,base64=False):
+        request = karacos.serving.get_request()
         new_file_name = os.path.join(self.get_att_dir(),att_file.filename)
         new_file = open(new_file_name,'wb')
-        new_file.write(att_file.file.read())
+        self.log.info(request.headers)
+        if base64:
+            import base64
+            new_file.write(base64.b64decode(att_file.file.read()))
+        else:
+            new_file.write(att_file.file.read())
         new_file.flush()
         new_file.close()
         return {"status":"success", "data": "/_atts/%s/%s"%(self.id,att_file.filename),

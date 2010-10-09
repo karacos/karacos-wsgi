@@ -35,8 +35,6 @@ KaraCos.Explorer.DomainExplorer = function(config) {
 	});
 	console.log(this);
 	
-	this.treePanel.on('nodeselected',this.onTreeSelection, this);
-	 
 	this.tabPanel = new KaraCos.Explorer.ItemTabPanel({
 		title: 'Content',
 		region: 'center',
@@ -44,15 +42,16 @@ KaraCos.Explorer.DomainExplorer = function(config) {
 		activeTab: 0,
 		defaults:{autoScroll:true},
 	});
-	this.items = [this.treePanel,this.tabPanel];
+	this.items = [this.treePanel,this.tabPanel];	 
 	KaraCos.Explorer.DomainExplorer.superclass.constructor.call(this);
+	this.treePanel.on('nodeselected',this.onTreeSelection, this);
 };
 
 Ext.extend(KaraCos.Explorer.DomainExplorer, Ext.Window, {
 	onTreeSelection: function(node) {
-		items = KaraCos.Explorer.getNodeItems(node.id);
 		//this.contentElementsStore
-		this.tabPanel.contentElementsStore.loadData(items);
+		this.tabPanel.nodeSelected(node);
+		//this.tabPanel.contentElementsStore.loadData(items);
 	},
 });
 KaraCos.Explorer.domainExplorer = new KaraCos.Explorer.DomainExplorer({

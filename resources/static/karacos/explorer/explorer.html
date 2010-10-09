@@ -1,0 +1,34 @@
+<html>
+<head>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery-1.4.2.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery.json-2.2.min.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery.getUrlParam.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/prettyPhoto/jquery.prettyPhoto.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery.cookie.js"></script>
+  <script type="text/javascript" src="/_browser/karacos/explorer/ext-jquery-adapter.js"></script>
+ 	<script type="text/javascript" src="/_browser/karacos/explorer/ext-all.js"></script>
+ 	<script type="text/javascript" src="/_browser/karacos/explorer/Ext.ux.XHRUpload.js"></script>
+ 	<script type="text/javascript" src="/_browser/karacos/explorer/tree-node.js"></script>
+	<script type="text/javascript" src="/_browser/karacos/explorer/tree-panel.js"></script>
+	<script type="text/javascript" src="/_browser/karacos/explorer/node-content-panel.js"></script>
+	<script type="text/javascript" src="/_browser/karacos/explorer/node-panel.js"></script>
+	<script type="text/javascript" src="/_browser/karacos/explorer/explorer.js"></script>
+ 	<link rel="stylesheet" href="/_browser/karacos/explorer/style.css" type="text/css" />
+ <link rel="stylesheet" href="/_browser/karacos/explorer/ext-all.css" type="text/css" />
+ 
+<script language="javascript">
+Ext.onReady(function(){
+    var win;
+    var button = Ext.get('show-btn');
+
+    button.on('click', function(){
+        // create the window on the first click and reuse on subsequent clicks
+        KaraCos.Explorer.domainExplorer.show(this);
+    });
+});
+</script>
+</head>
+<body>
+<div id='show-btn'>Show Explorer</div>
+</body>
+</html>
