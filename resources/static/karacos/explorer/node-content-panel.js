@@ -41,15 +41,23 @@ KaraCos.Explorer.NodeContentPanel = function(config) {
 };
 Ext.extend(KaraCos.Explorer.NodeContentPanel, Ext.Panel, {
 	initDnDUploader:function(panel){
-			var that = this;
+			var that = panel;
+			console.log(panel);
 			//==================
 			// Attach drag and drop listeners to document body
 			// this prevents incorrect drops, reloading the page with the dropped item
 			// This may or may not be helpful
-			if(!document.body.BodyDragSinker){
+			
+			 if(!document.body.BodyDragSinker){
+				 console.log("Processing body event sink");
 				document.body.BodyDragSinker = true;
 				
 				var body = Ext.fly(document.body);
+				//$('body').get(0).addEventListener('drop', function(event){
+				//	console.log(event);
+				//	event.stopEvent();
+				//	return true;
+				//});
 				body.on({
 					dragenter:function(event){
 						return true;
@@ -59,44 +67,53 @@ Ext.extend(KaraCos.Explorer.NodeContentPanel, Ext.Panel, {
 					}
 					,dragover:function(event){
 						event.stopEvent();
+						//console.log(event);
+						
 						return true;
 					}
 					,drop:function(event){
-						//console.log(event);
+						console.log(event);
 						event.stopEvent();
+						
 						return true;
 					}
 				});
 			}
 			// end body events
 			//==================
-			
-			$('#'+panel.el.id).get(0).addEventListener('drop', function(event){
+			console.log(panel);
+			jQuery('#'+panel.el.id).get(0).addEventListener('drop', function(event){
+				//event.sink = true;
 				console.log(event);
-				var files = event.dataTransfer.files;
-				if(files === undefined){
+				 var files = event.dataTransfer.files;
+				 var count = files.length;
+	            // if no files where dropped, use default handler
+	            if (count < 1) {
+					//event.sink = false;
 					return true;
 				}
 				var len = files.length;
 				node = that.linkedNode;
 				while(--len >= 0){
-					that.processFileUpload(files[len], node);
+					panel.processFileUpload(files[len], node);
 				}
+				return false;
 			}, false);
 			
 		}, // initDnd
 		processFileUpload: function(file, node) {
 			console.log(file);
-			var url_href = "/add_attachment";
+			var url_href = "/";
 			if (node.id != '/') {
-				url_href = node.id + "/add_attachment";
+				url_href = node.id + "/";
 			}
 			upload = new Ext.ux.XHRUpload({
 				url: url_href
 				,filePostName:'att_file'
 				,fileNameHeader:'X-File-Name'
 				,extraPostData:{'return_json':'','base64':''}
-				,sendMultiPartFormData:true
+				,extraHeaders:{'Accept':'application/json'}
+				,sendMultiPartFormData:false
 				,file:file
 				,listeners:{
 					scope:this

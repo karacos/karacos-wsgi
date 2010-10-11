@@ -86009,6 +86009,639 @@ AnyTime.picker = function( id, options )
 		return this;
 	}
 })(jQuery);
+
+/*
+Awesome Uploader
+Ext.ux.XHRUpload JavaScript Class
+
+Copyright (c) 2010, Andrew Rymarczyk
+All rights reserved.
+
+Redistribution and use in source and minified, compiled or otherwise obfuscated 
+form, with or without modification, are permitted provided that the following 
+conditions are met:
+
+	* Redistributions of source code must retain the above copyright notice, 
+		this list of conditions and the following disclaimer.
+	* Redistributions in minified, compiled or otherwise obfuscated form must 
+		reproduce the above copyright notice, this list of conditions and the 
+		following disclaimer in the documentation and/or other materials 
+		provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+// API Specs:
+// http://www.w3.org/TR/XMLHttpRequest/
+// http://www.w3.org/TR/XMLHttpRequest2/
+// http://www.w3.org/TR/progress-events/
+
+// Browser Implementation Details:
+// FROM: https://developer.mozilla.org/en/DOM/File
+// https://developer.mozilla.org/en/Using_files_from_web_applications
+// https://developer.mozilla.org/En/DragDrop/DataTransfer
+// https://developer.mozilla.org/en/DOM/FileList
+// "NOTE: The File object as implemented by Gecko offers several non-standard methods for reading the contents of the file. These should not be used, as they will prevent your web application from being used in other browsers, as well as in future versions of Gecko, which will likely remove these methods."
+// NOTE: fileObj.getAsBinary() is deprecated according to the mozilla docs!
+
+// Can optionally follow RFC2388
+// RFC2388 - Returning Values from Forms: multipart/form-data
+// http://www.faqs.org/rfcs/rfc2388.html
+// This allows additional POST params to be sent with file upload, and also simplifies the backend upload handler becuase a single script can be used for drag and drop, flash, and standard uploads
+// NOTE: This is currently only supported by Firefox 1.6, Chrome 6 should be released soon and will also be supported.
+
+Ext.ns('Ext.ux');
+
+Ext.ux.XHRUpload = function(config){
+	Ext.apply(this, config, {
+		method: 'POST'
+		,fileNameHeader: 'X-File-Name'
+		,filePostName:'fileName'
+		,contentTypeHeader: 'text/plain; charset=x-user-defined-binary'
+		,extraPostData:{}
+		,xhrExtraPostDataPrefix:'extraPostData_'
+		,sendMultiPartFormData:false
+	});
+	this.addEvents( //extend the xhr's progress events to here
+		'loadstart',
+		'progress',
+		'abort',
+		'error',
+		'load',
+		'loadend'
+	);
+	Ext.ux.XHRUpload.superclass.constructor.call(this);
+};
+
+Ext.extend(Ext.ux.XHRUpload, Ext.util.Observable,{
+	send:function(config){
+		Ext.apply(this, config);
+		
+		this.xhr = new XMLHttpRequest();
+		this.xhr.addEventListener('loadstart', this.relayXHREvent.createDelegate(this), false);
+		this.xhr.addEventListener('progress', this.relayXHREvent.createDelegate(this), false);
+		this.xhr.addEventListener('progressabort', this.relayXHREvent.createDelegate(this), false);
+		this.xhr.addEventListener('error', this.relayXHREvent.createDelegate(this), false);
+		this.xhr.addEventListener('load', this.relayXHREvent.createDelegate(this), false);
+		this.xhr.addEventListener('loadend', this.relayXHREvent.createDelegate(this), false);
+		
+		this.xhr.upload.addEventListener('loadstart', this.relayUploadEvent.createDelegate(this), false);
+		this.xhr.upload.addEventListener('progress', this.relayUploadEvent.createDelegate(this), false);
+		this.xhr.upload.addEventListener('progressabort', this.relayUploadEvent.createDelegate(this), false);
+		this.xhr.upload.addEventListener('error', this.relayUploadEvent.createDelegate(this), false);
+		this.xhr.upload.addEventListener('load', this.relayUploadEvent.createDelegate(this), false);
+		this.xhr.upload.addEventListener('loadend', this.relayUploadEvent.createDelegate(this), false);
+
+		this.xhr.open(this.method, this.url, true);
+		
+		if(typeof(FileReader) !== 'undefined' && this.sendMultiPartFormData ){
+			//currently this is firefox only, chrome 6 will support this in the future
+			this.reader = new FileReader();
+			this.reader.addEventListener('load', this.sendFileUpload.createDelegate(this), false);
+			this.reader.readAsBinaryString(this.file);
+			return true;	
+		}
+		//This will work in both Firefox 1.6 and Chrome 5
+		this.xhr.overrideMimeType(this.contentTypeHeader);
+		this.xhr.setRequestHeader(this.fileNameHeader, this.file.name);
+		for(attr in this.extraPostData){
+			this.xhr.setRequestHeader(this.xhrExtraPostDataPrefix + attr, this.extraPostData[attr]);
+		}
+		//xhr.setRequestHeader('X-File-Size', files.size); //this may be useful
+		this.xhr.send(this.file);
+		return true;
+		
+	}
+	,sendFileUpload:function(){
+
+		var boundary = (1000000000000+Math.floor(Math.random()*8999999999998)).toString(),
+			data = '';
+		
+		for(attr in this.extraPostData){
+			data += '--'+boundary + '\r\nContent-Disposition: form-data; name="' + attr + '"\r\ncontent-type: text/plain;\r\n\r\n'+this.extraPostData[attr]+'\r\n';
+		}
+		
+		//window.btoa(binaryData)
+		//Creates a base-64 encoded ASCII string from a string of binary data. 
+		//https://developer.mozilla.org/en/DOM/window.btoa
+		//Firefox and Chrome only!!
+		
+		data += '--'+boundary + '\r\nContent-Disposition: form-data; name="' + this.filePostName + '"; filename="' + this.file.name + '"\r\nContent-Type: '+this.file.type+'\r\nContent-Transfer-Encoding: base64\r\n\r\n' + window.btoa(this.reader.result) + '\r\n'+'--'+boundary+'--\r\n\r\n';
+		
+		this.xhr.setRequestHeader('Content-Type', 'multipart/form-data; boundary='+boundary);
+		this.xhr.send(data);
+	}
+	,relayUploadEvent:function(event){
+		this.fireEvent('upload'+event.type, event);
+	}
+	,relayXHREvent:function(event){
+		this.fireEvent(event.type, event);
+	}
+});
+/**
+ * KaraCos integrated plugin for Aloha
+ * Copyright 2010 Nicolas Karageuzian
+ * Domain explorer
+ * 
+ *
+ */
+Ext.namespace('KaraCos.Explorer');
+
+/**
+ * KaraCos async tree node
+ */
+KaraCos.Explorer.TreeNode = function(config) {
+	Ext.apply(this, config);
+	KaraCos.Explorer.TreeNode.superclass.constructor.call(this);
+};
+
+Ext.extend( KaraCos.Explorer.TreeNode, Ext.tree.AsyncTreeNode, {
+	
+});
+
+/**
+ * 
+ */
+KaraCos.Explorer.nodeItems = {};
+KaraCos.Explorer.refreshNodeItems = function(url) {
+	delete KaraCos.Explorer.nodeItems[url];
+	return KaraCos.Explorer.getNodeItems(url);
+};
+KaraCos.Explorer.getNodeItems = function(url) {
+	try {
+		return KaraCos.Explorer.nodeItems[url].items;
+	} catch(e) {
+		var items = [];
+		var url_href = "/w_browse_types";
+		if (url != '/') {
+			url_href = url + "/w_browse_types";
+		}
+		jQuery.ajax({ url: url_href,
+			dataType: "json",
+			context: document.body,
+			async: false, // plugin init should wait for success b4 continuing
+		    success: function(data) {
+				jQuery.each(data,function(k,v){
+					t_url = "/";
+					if (url != '/') {
+						t_url = url + '/' + k;
+					} else {
+						t_url = '/' + k;
+					}
+					item = {text: k,
+							id: t_url,
+							cls : 'karacos_explorer_' + v.webType,
+							parent_url:url,
+							imgsrc: '/_browser/karacos/explorer/images/type_' + v.webType + '.png',
+							imgstyle: 'width:16px;height:16px',
+							kc_link_href: t_url,
+					};
+					items.push(item);
+				});
+			},
+		}); // $.ajax for browse_childrens
+		if (url != '/') {
+			url_href = url + "/_att";
+			jQuery.ajax({ url: url_href,
+		    	dataType: "json",
+		    	context: document.body,
+		    	async: false, // plugin init should wait for success b4 continuing
+		        success: function(data) {
+					jQuery.each(data.form.fields[0].values, function(id,value) {
+						t_url = "\/";
+						if (url != '/') {
+							t_url = url + '\/' + value.value;
+						} else {
+							t_url = '\/' + value.value;
+						}
+						item = {id: t_url,
+								text: value.label,
+								leaf:true,
+								parent_url:url};
+						var imgreg = /.*(\.jpg)|(\.gif)|(\.jpeg)|(\.png)$/;
+						var match = value.value.toLowerCase().match(imgreg);
+						if ( match != null) {
+							item.cls = 'karacos_file_image';
+							item.imgsrc = value.value;
+							item.imgstyle = 'width:64px;height:64px';
+						}
+						var sndreg = /.*(\.mp3)|(\.ogg)|(\.m4a)|(\.aac)$/;
+						var match = value.value.toLowerCase().match(sndreg);
+						if ( match != null) {
+							item.cls = 'karacos_file_sound';
+							item.imgsrc = '/_browser/karacos/explorer/images/type_AudioTrack.png';
+							item.imgstyle = 'width:16px;height:16px';
+							item.kc_link_href = value.value;
+						}
+						if (!item.imgsrc) {
+							item.imgsrc = '/_browser/karacos/explorer/images/page_package.gif';
+							item.imgstyle = 'width:16px;height:16px';
+							item.kc_link_href = value.value;
+						}
+						items.push(item);
+					});
+				}, //success
+				failure: function(data) {}, // do nothing
+			
+			}); //ajax
+		} //
+		KaraCos.Explorer.nodeItems[url] = {items : items};
+		return KaraCos.Explorer.nodeItems[url].items;
+	} //catch
+}
+
+/**
+ * Tree Loader
+ */
+KaraCos.Explorer.TreeLoader = function(config) {
+	Ext.apply(this, config);
+	KaraCos.Explorer.TreeLoader.superclass.constructor.call(this);
+};
+
+Ext.extend( KaraCos.Explorer.TreeLoader, Ext.tree.TreeLoader, {
+	directFn : function(url, callback, scope) {
+			var response = {
+					status: true,
+					argument: {callback: callback, node: url}
+			};
+			items = KaraCos.Explorer.getNodeItems(url);
+			
+			callback(items,response);
+		}, // directFn
+}); // TreeLoader
+/////////////////// Domain Tree Class
+Ext.namespace('KaraCos.Explorer');
+/**
+ * KaraCos Domain Tree constructor
+ */
+KaraCos.Explorer.DomainTree = function(config) {
+	Ext.apply(this, config);
+	KaraCos.Explorer.DomainTree.superclass.constructor.call(this);
+//	domainRoot = new KaraCos.Explorer.TreeNode({
+	domainRoot = new Ext.tree.AsyncTreeNode({
+	    text: '/', 
+	    draggable:true, // disable root node dragging
+	    cls: 'karacos_file_domain',
+	    id: '\/',
+	});
+//	domainRoot.url = '/';
+	this.setRootNode(domainRoot);
+	this.getSelectionModel().on('selectionchange', this.onSelectionChange, this);
+	this.addEvents({nodeselected:true});
+
+	this.on('contextmenu', this.onContextMenu, this);
+	
+};
+/**
+ * KaraCos domain Tree class
+ * 
+ */
+Ext.extend(KaraCos.Explorer.DomainTree, Ext.tree.TreePanel, {
+	onContextMenu : function(node, e){
+			var that = this;
+			if(this.ctxNode){
+		        this.ctxNode.ui.removeClass('x-node-ctx');
+		        this.ctxNode = null;
+		    }
+		    if(!node.isLeaf()){
+		        this.ctxNode = node;
+		        this.ctxNode.ui.addClass('x-node-ctx');
+		        this.getNodeMenu(node).showAt(e.getXY());
+		        
+		    }
+		},
+	onSelectionChange: function(sm, node){
+			console.log(sm);
+			console.log(node);
+	        if(node){
+	            this.fireEvent('nodeselected', node.attributes);
+	        }
+    },
+	onContextHide : function(){
+	    if(this.ctxNode){
+		        this.ctxNode.ui.removeClass('x-node-ctx');
+		        this.ctxNode = null;
+		    }
+		},
+	
+	getNodeMenu: function(node,focus){
+			var that = this;
+			if(!node.menu){ // create context menu on first right click
+				items = [];
+			    var url_href = "/get_user_actions_forms";
+				if (node.id != '/') {
+					url_href = node.id + "/get_user_actions_forms";
+				}
+				jQuery.ajax({ url: url_href,
+			    	dataType: "json",
+			    	context: document.body,
+			    	async: false, // plugin init should wait for success b4 continuing
+			        success: function(data) {
+			    		jQuery.each(data.data.actions, function(k,v) {
+			    			// Iterate over actions
+			    			menuItem = {
+			    					id: node.id + '\/' + v.action,
+			    					iconCls:'karacos_action_'+ v.action,
+			    					scope: this
+			    					//  handler: this.showWindow,
+			    			};
+			    			if (v.label) {
+			    				menuItem.text = v.label;
+			    			} else {
+			    				menuItem.text = v.action;
+			    			}
+			    			item = new Ext.menu.Item(menuItem);
+			    			items.push(item);
+			    			item.form = v.form;
+						
+			    		}); // end iterate
+					
+					}
+				});// ajax get_user_actions_forms
+				this.menu = new Ext.menu.Menu({
+					id:'feeds-ctx',
+					items: items
+				});
+				this.menu.on('hide', this.onContextHide, this);
+			} // if not node menu
+		return this.menu;
+		}
+
+});
+Ext.namespace('KaraCos.Explorer');
+/**
+ * Node Content panel with dropZone
+ * 
+ */
+KaraCos.Explorer.NodeContentPanel = function(config) {
+	
+	Ext.apply(this, config);
+			
+	// unique store for all tabs
+	var tpl = new Ext.XTemplate(
+		    '<tpl for=".">',
+		        '<div class="karacos-explorer-thumb-wrap">',
+		        '<div class="karacos-explorer-thumb"><img src="{imgsrc}" style="width: 64px;height: 64px;" title="{text}"/></div>',
+		        '<span class="x-editable">{text}</span></div>',
+		    '</tpl>',
+		    '<div class="x-clear"></div>'
+		);
+	this.tpl = tpl;
+	this.ContentGrid = new Ext.DataView({
+        store: config.store,
+        tpl: tpl,
+        autoHeight:true,
+        multiSelect: true,
+        overClass:'karacos-content',
+        itemSelector:'div.thumb-wrap',
+        title:'Node content',
+        emptyText: 'Nothing to display'
+    });
+	this.items = [this.ContentGrid];
+	
+	KaraCos.Explorer.NodeContentPanel.superclass.constructor.call(this);
+	// Initialize panel
+	this.addEvents('fileupload','fileselectionerror' );
+	this.on('render', function(e){
+					e.initDnDUploader(e);								
+				});
+	this.on('fileupload', function(e){
+		console.log(e);								
+	});
+};
+Ext.extend(KaraCos.Explorer.NodeContentPanel, Ext.Panel, {
+	initDnDUploader:function(panel){
+			var that = this;
+			//==================
+			// Attach drag and drop listeners to document body
+			// this prevents incorrect drops, reloading the page with the dropped item
+			// This may or may not be helpful
+			if(!document.body.BodyDragSinker){
+				document.body.BodyDragSinker = true;
+				
+				var body = Ext.fly(document.body);
+				body.on({
+					dragenter:function(event){
+						return true;
+					}
+					,dragleave:function(event){
+						return true;
+					}
+					,dragover:function(event){
+						event.stopEvent();
+						return true;
+					}
+					,drop:function(event){
+						//console.log(event);
+						event.stopEvent();
+						return true;
+					}
+				});
+			}
+			// end body events
+			//==================
+			
+			$('#'+panel.el.id).get(0).addEventListener('drop', function(event){
+				console.log(event);
+				var files = event.dataTransfer.files;
+				if(files === undefined){
+					return true;
+				}
+				var len = files.length;
+				node = that.linkedNode;
+				while(--len >= 0){
+					that.processFileUpload(files[len], node);
+				}
+			}, false);
+			
+		}, // initDnd
+		processFileUpload: function(file, node) {
+			console.log(file);
+			var url_href = "/add_attachment";
+			if (node.id != '/') {
+				url_href = node.id + "/add_attachment";
+			}
+			upload = new Ext.ux.XHRUpload({
+				url: url_href
+				,filePostName:'att_file'
+				,fileNameHeader:'X-File-Name'
+				,extraPostData:{'return_json':'','base64':''}
+				,sendMultiPartFormData:true
+				,file:file
+				,listeners:{
+					scope:this
+					,uploadloadstart:function(event){
+						//this.updateFile(fileRec, 'status', 'Sending');
+					}
+					,uploadprogress:function(event){
+						//this.updateFile(fileRec, 'progress', Math.round((event.loaded / event.total)*100));
+					}
+					// XHR Events
+					,loadstart:function(event){
+						//this.updateFile(fileRec, 'status', 'Sending');
+					}
+					,progress:function(event){
+						//fileRec.set('progress', Math.round((event.loaded / event.total)*100) );
+						//fileRec.commit();
+					}
+					,abort:function(event){
+						//this.updateFile(fileRec, 'status', 'Aborted');
+						that.fireEvent('fileupload', this, false, {error:'XHR upload aborted'});
+					}
+					,error:function(event){
+						//this.updateFile(fileRec, 'status', 'Error');
+						that.fireEvent('fileupload', this, false, {error:'XHR upload error'});
+					}
+					,load:function(event){
+						
+						try{
+							var result = Ext.util.JSON.decode(upload.xhr.responseText);//throws a SyntaxError.
+						} catch(e) {
+							Ext.MessageBox.show({
+								buttons: Ext.MessageBox.OK
+								,icon: Ext.MessageBox.ERROR
+								,modal:false
+								,title:'Upload Error!'
+								,msg:'Invalid JSON Data Returned!<BR><BR>Please refresh the page to try again.'
+							});
+							//this.updateFile(fileRec, 'status', 'Error');
+							this.fireEvent('fileupload', this, false, {error:'Invalid JSON returned'});
+							return true;
+						} // catch
+						if ( result.success ) {
+							var record = this.store.recordType( {
+								id:'',
+								text:file.name,
+								imgsrc:result.data,
+								imgstyle:'width:64px;height:64px'
+							});
+							this.fireEvent('fileupload', this, true, result);
+							that.fireEvent('fileupload', this, true, result);
+						}else{
+							//this.fileAlert('<BR>'+file.name+'<BR><b>'+result.error+'</b><BR>');
+							//this.updateFile(fileRec, 'status', 'Error');
+							this.fireEvent('fileupload', this, false, result);
+						}
+					} // load
+					} // listener
+			}); //XHRUpload
+			upload.send();
+		} // ProcessFileUpload
+});
+/**
+ * Node tabbed panel
+ * 
+ */
+Ext.namespace('KaraCos.Explorer');
+KaraCos.Explorer.ItemTabPanel = function(config) {
+	Ext.apply(this, config);
+	// unique store for all tabs
+	this.contentElementsStore = new Ext.data.JsonStore({
+        fields: ['id','text','imgsrc','imgstyle']
+
+	});
+	that = this;
+	this.nodeContentPanel = new KaraCos.Explorer.NodeContentPanel({
+		store: this.contentElementsStore,
+        autoHeight:true,
+        title:'Node content',
+        });
+	this.items = [this.nodeContentPanel];
+	KaraCos.Explorer.ItemTabPanel.superclass.constructor.call(this);
+	this.nodeContentPanel.getNode = function() {
+		console.log("getNode");
+		console.log(that.linkedNode);
+		return that.linkedNode;
+	};
+	this.nodeContentPanel.on('fileupload',this.refresh, this);
+};
+Ext.extend(KaraCos.Explorer.ItemTabPanel, Ext.TabPanel, {
+	nodeSelected: function(node) {
+		items = KaraCos.Explorer.getNodeItems(node.id);
+		this.linkedNode = node;
+		this.contentElementsStore.loadData(items);
+		this.nodeContentPanel.linkedNode = node;
+	},
+	refresh: function(file, result) {
+		console.log(file);
+		items = KaraCos.Explorer.refreshNodeItems(this.linkedNode.id);
+		this.contentElementsStore.loadData(items);
+	}
+});
+/**
+ * Main explorer Panel for admin
+ * 
+ * 
+ */
+/*Ext.override(Ext.dd.DDProxy, {
+    startDrag: function(x, y) {
+        var dragEl = Ext.get(this.getDragEl());
+        var el = Ext.get(this.getEl());
+ 
+        dragEl.applyStyles({border:'','z-index':2000});
+        dragEl.update(el.dom.innerHTML);
+        dragEl.addClass(el.dom.className + ' dd-proxy');
+    },
+    
+
+}); */
+
+Ext.namespace('KaraCos.Explorer');
+
+KaraCos.Explorer.DomainExplorer = function(config) {
+	Ext.apply(this, config);
+	this.treePanel = new KaraCos.Explorer.DomainTree({
+		title: 'Navigation',
+	    region: 'west',
+	    animate:true, 
+	    autoScroll:true,
+	    loader: new KaraCos.Explorer.TreeLoader({dataUrl:'/'}),//KaraCos.Explorer.TreeLoader({dataUrl:'/'}),
+	    enableDD:true,
+	    containerScroll: true,
+	    border: false,
+	    width: 250,
+	    height: 300,
+	    dropConfig: {appendOnly:true}
+	});
+	console.log(this);
+	
+	this.tabPanel = new KaraCos.Explorer.ItemTabPanel({
+		title: 'Content',
+		region: 'center',
+		margins:'3 3 3 0', 
+		activeTab: 0,
+		defaults:{autoScroll:true},
+	});
+	this.items = [this.treePanel,this.tabPanel];	 
+	KaraCos.Explorer.DomainExplorer.superclass.constructor.call(this);
+	this.treePanel.on('nodeselected',this.onTreeSelection, this);
+};
+
+Ext.extend(KaraCos.Explorer.DomainExplorer, Ext.Window, {
+	onTreeSelection: function(node) {
+		//this.contentElementsStore
+		this.tabPanel.nodeSelected(node);
+		//this.tabPanel.contentElementsStore.loadData(items);
+	},
+});
+KaraCos.Explorer.domainExplorer = new KaraCos.Explorer.DomainExplorer({
+    title: 'Explorer',
+    width:600,
+    height:350,
+    //border:false,
+    plain:true,
+    layout: 'border',
+    closeAction: 'hide',
+});
 /*!
 * Aloha Editor
 * Author & Copyright (c) 2010 Gentics Software GmbH
@@ -89647,7 +90280,7 @@ KaraCos.Img.init=function(){
    }; // END INIT
 
 KaraCos.Img.resourceObjectTypes = [];
-KaraCos.Img.PropsWindow = 
+//KaraCos.Img.PropsWindow = 
 KaraCos.Img.initImage = function() {
 	var that = this;
 	this.insertImgButton = new GENTICS.Aloha.ui.Button({
@@ -89815,7 +90448,7 @@ KaraCos.Img.findImgMarkup = function ( range ) {
 			if (! result.src) result.src = "";
 			return result;
 		}
-	} catch (e) {}
+	} catch (e) {console.log(e);}
     return null;
     
 };
@@ -89855,7 +90488,7 @@ KaraCos.Img.srcChange = function () {
 */
 if(typeof KaraCos=="undefined"||!KaraCos)
     {
-	alert('org.karacos.aloha.Img plugin is required');
+	alert('KaraCos must be loaded');
     }
 KaraCos.Plugin=new GENTICS.Aloha.Plugin("org.karacos.aloha.Plugin");
 /*if (typeof KaraCos_mode != "undefined" ||KaraCos_mode) {
@@ -89880,7 +90513,14 @@ KaraCos.Plugin.init=function(){
 	}
 	
 	GENTICS.Aloha.Ribbon.addButton(
-		new GENTICS.Aloha.ui.Button({label:"EXPLORER",
+			new GENTICS.Aloha.ui.Button({
+				'iconClass': 'GENTICS_button karacos_explorer_icon',
+				id: 'show-btn',
+				})
+		);
+	GENTICS.Aloha.Ribbon.addButton(
+		new GENTICS.Aloha.ui.Button({
+			'iconClass': 'GENTICS_button karacos_explorer_icon',
 			onclick:function(){
 			KaraCos.Explorer.domainExplorer.show(this);
 		}})
@@ -89914,7 +90554,8 @@ KaraCos.Plugin.init=function(){
 				if (that.rsdata.actions[i].action == "_att") {
 					that._att = that.rsdata.actions[i];
 				}
-				if (that.rsdata.actions[i].label) {
+				/* 
+				 * if (that.rsdata.actions[i].label) {
 					var actionButton=new GENTICS.Aloha.ui.Button({label:that.rsdata.actions[i].label,
 						onclick:function(){ // When a button is clicked :
 						if (this.actiondata.form && this.actiondata.action != 'register') {
@@ -89929,7 +90570,8 @@ KaraCos.Plugin.init=function(){
 					GENTICS.Aloha.Log.info(that,"processing action button creation " + that.rsdata.actions[i].label );
 					GENTICS.Aloha.Ribbon.addButton(actionButton);
 					// actionButton.show();
-				}
+				} 
+				*/
 			}
 			// GENTICS.Aloha.Ribbon.toolbar.render();
 			// GENTICS.Aloha.Ribbon.toolbar.show();
@@ -89961,7 +90603,7 @@ KaraCos.Plugin.init=function(){
 		} // if data.status == "success"
 	GENTICS.Aloha.Log.info(that,that);
 	//console.log(that);
-	// $.ajax
+	// $.ajax 
 	that.initImage();
 	that.bindInteractions();
 	that.subscribeEvents();
@@ -90011,44 +90653,10 @@ KaraCos.Plugin.initImage = function() {
 	    		3
 	    );
 	    that.imgChooseButton = new GENTICS.Aloha.ui.Button({
-	    	'label' : that.i18n('button.chooseimg.label'),
+	    	'iconClass': 'GENTICS_button karacos_explorer_icon',
 	    	'size' : 'small',
 	    	'onclick' : function () { 
-	    		$('#dialog_window').html("");
-	    		GENTICS.Aloha.FloatingMenu.obj.hide();
-	    		$('#dialog_window').append("<ul></ul>");
-	    		$('#dialog_window ul').css({'list-style':'none outside none',
-	    				'position':'relative',
-	    				'text-align':'left'});
-
-	    		url_href = that.settings['instance_url'] + "/_att";
-	    		thatbtn = this;
-	    		$.ajax({ url: url_href,
-	    	    	dataType: "json",
-	    	    	context: document.body,
-	    	    	async: false, // plugin init should wait for success b4 continuing
-	    	        success: function(data) {
-	    					thatbtn._att = data;
-	    					//console.log(data);
-	    				},// success on get_user_actions_forms
-	    		});
-	    		$.each(this._att.form.fields[0].values, function(id,value) {
-	    			$('#dialog_window ul').append('<li><img id="img'
-	    					+ id + '_img" class="imgselector" "src="' + value.value
-	    					+ '" style="width: 64px; height: 64px;"/></li>')
-	    		});
-	    		
-	    		$('#dialog_window ul li').css({'display':'block',
-	    			'position':'relative',
-	    			});
-	    		$(".imgselector").click(function() {
-	    			img = $(this);
-	    			that.targetImg.src = this.src;
-	    			$('#dialog_window').dialog('close');
-	    			GENTICS.Aloha.FloatingMenu.obj.show();
-	    		});
-	    		$('#dialog_window').dialog('open');
-	    		
+	    	KaraCos.Explorer.domainExplorer.show(this);
 	    },
 	    	'tooltip' : that.i18n('button.choose.tooltip'),
 	    	'toggle' : false
@@ -90072,7 +90680,6 @@ KaraCos.Plugin.subscribeEvents = function () {
 	
     // add the event handler for selection change
     GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha, 'selectionChanged', function(event, rangeObject) {
-    	if (!that.tab_panel_width) that.tab_panel_width = GENTICS.Aloha.FloatingMenu.extTabPanel.getWidth();
     	if (that.add_attachment != null) {
 	    	var foundImgMarkup = KaraCos.Img.findImgMarkup( rangeObject );
 	        if ( foundImgMarkup != null ) {
@@ -90082,15 +90689,10 @@ KaraCos.Plugin.subscribeEvents = function () {
 //	        	that.targetImg = null;
 	        }
 	    	// TODO this should not be necessary here!
-	    	GENTICS.Aloha.FloatingMenu.doLayout();
+	        GENTICS.Aloha.FloatingMenu.doLayout();
+	        GENTICS.Aloha.FloatingMenu.obj.show();
     	}
-    	if ( GENTICS.Aloha.FloatingMenu.userActivatedTab == KaraCos.Img.i18n('floatingmenu.tab.img') ) {
-    		// extend tabPanel width for img tab
-    		GENTICS.Aloha.FloatingMenu.extTabPanel.setWidth(450);
-    	} else {
-    		GENTICS.Aloha.FloatingMenu.extTabPanel.setWidth(that.tab_panel_width);
-    		
-    	}
+    	
     });
     	
 	
@@ -90137,14 +90739,6 @@ KaraCos.Plugin.save=function(){
     },});
 	GENTICS.Aloha.Log.info(that,that);
   };
-
-
-
-
-
-
-
-
 /*!
 * Aloha Editor
 * Author & Copyright (c) 2010 Gentics Software GmbH

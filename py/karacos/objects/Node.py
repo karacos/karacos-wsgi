@@ -94,9 +94,15 @@ class Node(karacos.db['Child']):
         self.log.info(request.headers)
         if base64:
             import base64
-            new_file.write(base64.b64decode(att_file.file.read()))
+            if 'file' in dir(att_file):
+                new_file.write(base64.b64decode(att_file.file.read()))
+            elif 'file_body'in dir(att_file):
+                new_file.write(base64.b64decode(att_file.file_body))
         else:
-            new_file.write(att_file.file.read())
+            if 'file' in dir(att_file):
+                new_file.write(att_file.file.read())
+            elif 'file_body'in dir(att_file):
+                new_file.write(att_file.file_body)
         new_file.flush()
         new_file.close()
         return {"status":"success", "data": "/_atts/%s/%s"%(self.id,att_file.filename),

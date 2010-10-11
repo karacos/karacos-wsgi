@@ -48,6 +48,12 @@ js/jquery-ui-1.8.5.custom.min.js
 js/anytime.js
 js/karacos-forms.js
 js/karacos.fileUploader.js
+karacos/explorer/Ext.ux.XHRUpload.js
+karacos/explorer/tree-node.js
+karacos/explorer/tree-panel.js
+karacos/explorer/node-content-panel.js
+karacos/explorer/node-panel.js
+karacos/explorer/explorer.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.Format/plugin.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.Table/plugin.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.List/plugin.js
@@ -55,5 +61,4 @@ aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.Link/plugin.js
 aloha-nka-fork/WebContent/plugins/eu.iksproject.plugins.Loader/plugin.js
 aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Img/plugin.js
 aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Plugin/plugin.js
-aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Plugin/explorer.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.HighlightEditables/plugin.js

@@ -14,6 +14,7 @@ import sys, traceback
 from karacos.lib import static
 from karacos.http.jsonrpc import *
 import cStringIO
+from io import StringIO
 
 class Dispatcher(object):
     '''
@@ -119,8 +120,15 @@ class Dispatcher(object):
         self.log.debug("process_request %s" % dir(request.params))
         self.log.debug(request.headers['Content-Type'])
         
-        
-        if (request.headers['Accept'].find('text/html') >= 0 or
+        # If post with type != application/json, application/xml, ou multipart/form-data,
+        # then it's a file upload.
+        if (request.method == "POST" and
+            request.headers['Content-Type'].find('multipart/form-data') < 0 and
+            request.headers['Content-Type'].find('application/json') < 0 and
+            request.headers['Content-Type'].find('application/x-www-form-urlencoded') < 0 and
+            request.headers['Content-Type'].find('application/xml') < 0) :
+            self.process_file_upload(request,response)  
+        elif (request.headers['Accept'].find('text/html') >= 0 or
                 request.headers['Accept'].find('application/xhtml+xml') >= 0):
             self.process_http_params(request,response)
         elif request.headers['Accept'].find('application/json') >= 0:
@@ -143,10 +151,34 @@ class Dispatcher(object):
             else:
                 self.process_json_params(request,response)
         """
-        
         self.process_action(request, response)
         
-    
+    def process_file_upload(self,request,response):
+        self.log.info("Processing direct file upload")
+        assert request.__method__ == None
+        assert response.__instance__ != None
+        assert 'X-File-Name' in request.headers
+        assert 'Content-Type' in request.headers
+        if 'add_attachment' not in response.__instance__._get_actions():
+            raise HTTPError(404, "Upload unavailable here")
+        request.__method__ = response.__instance__.get_action('add_attachment')
+        base64 = False
+        if request.headers['Content-Type'].find('base64') >= 0:
+            base64 = True
+        content_type = request.headers['Content-Type']
+        if request.headers['Content-Type'].find(';') >=0:
+            content_type = request.headers['Content-Type'].split(';')[0]
+        file_param = karacos.container()
+        file_param.filename = request.headers['X-File-Name']
+        file_param.file_body = request.body
+        request.__kwds__ = {'att_file':file_param,
+                            'base64':base64,
+                            'content_type': content_type
+                            }
+        self.process_method_params(request.__method__)
+        self.ckeck_method_params('add_attachment', request)
+        
+        
     def process_http_params(self,request,response):
         """
         """

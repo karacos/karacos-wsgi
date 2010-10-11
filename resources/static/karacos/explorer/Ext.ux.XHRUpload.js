@@ -57,6 +57,7 @@ Ext.ux.XHRUpload = function(config){
 		,filePostName:'fileName'
 		,contentTypeHeader: 'text/plain; charset=x-user-defined-binary'
 		,extraPostData:{}
+		,extraHeaders:{}
 		,xhrExtraPostDataPrefix:'extraPostData_'
 		,sendMultiPartFormData:false
 	});
@@ -102,7 +103,11 @@ Ext.extend(Ext.ux.XHRUpload, Ext.util.Observable,{
 		//This will work in both Firefox 1.6 and Chrome 5
 		this.xhr.overrideMimeType(this.contentTypeHeader);
 		this.xhr.setRequestHeader(this.fileNameHeader, this.file.name);
-		for(attr in this.extraPostData){
+		console.log(this.xhr);
+		for (var attr in this.extraHeaders){
+			this.xhr.setRequestHeader(attr,this.extraHeaders[attr]);
+		}
+		for(var attr in this.extraPostData){
 			this.xhr.setRequestHeader(this.xhrExtraPostDataPrefix + attr, this.extraPostData[attr]);
 		}
 		//xhr.setRequestHeader('X-File-Size', files.size); //this may be useful

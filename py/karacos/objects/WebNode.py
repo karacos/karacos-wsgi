@@ -199,6 +199,7 @@ class WebNode(karacos.db['Node']):
         self._publish_node()
         return {'status': 'success', 'message': _('WebNode is public now')}
     
+    
     @karacos._db.isaction
     def add_attachment(self, *args, **kwds):
         request = karacos.serving.get_request()
@@ -210,7 +211,11 @@ class WebNode(karacos.db['Node']):
         assert 'att_file' in kwds
         base64=False
         if 'base64' in kwds:
-            base64=True
+            if type(kwds['base64']) == bool:
+                base64 = kwds['base64']
+            else:
+                base64=True
+        filename = None
         result = self._add_attachment(kwds['att_file'],base64) #request.POST.get('att_file'))
         #size = 0
         #while True:
