@@ -48,12 +48,12 @@ KaraCos.Explorer.sinkBodyEvents = function() {
  * @param id : id of element where drop is done
  * @param url : destination url for POST request
  */
-KaraCos.Explorer.bindUploadDropFile = function(id,url,listeners) {
+KaraCos.Explorer.bindUploadDropFile = function(panel,url,listeners) {
 	KaraCos.Explorer.sinkBodyEvents();
 	if (!listeners || listeners == undefined) {
 		listeners = {};
 	}
-	jQuery('#'+id).get(0).addEventListener('drop', function(event){
+	jQuery('#'+panel.el.id).get(0).addEventListener('drop', function(event){
 		//event.sink = true;
 		//console.log(event);
 		 var files = event.dataTransfer.files;
@@ -73,7 +73,7 @@ KaraCos.Explorer.bindUploadDropFile = function(id,url,listeners) {
 		});
 		var t_url = "";
 		if (typeof url == 'function') {
-			t_url = url();
+			t_url = url(panel);
 		} else {
 			t_url = url;
 		}
@@ -85,7 +85,7 @@ KaraCos.Explorer.bindUploadDropFile = function(id,url,listeners) {
 				,extraPostData:{'return_json':'','base64':''}
 				,extraHeaders:{'Accept':'application/json'}
 				,sendMultiPartFormData:false
-				,file:file
+				,file:files[len]
 				,listeners:listeners
 			}); //XHRUpload
 			upload.send();

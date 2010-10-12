@@ -101,16 +101,10 @@ Ext.extend(KaraCos.Explorer.NodeContentPanel, Ext.Panel, {
 				} // load
 			}; // listener
 			
-			KaraCos.Explorer.bindUploadDropFile(panel.el.id,this.getNodeUrl,listeners);
+			KaraCos.Explorer.bindUploadDropFile(panel,this.getNodeUrl,listeners);
 		}, // initDnd
-		getNodeUrl: function() {
-			url = panel.this.linkedNode.id;
-			t_url = "/";
-			if (url != '/') {
-				t_url = url + '/' + k;
-			} else {
-				t_url = '/' + k;
-			}
+		getNodeUrl: function(panel) {
+			url = panel.linkedNode.id;
 			return url;
 		}
 			
