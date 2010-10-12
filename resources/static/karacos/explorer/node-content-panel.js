@@ -39,139 +39,79 @@ KaraCos.Explorer.NodeContentPanel = function(config) {
 		console.log(e);								
 	});
 };
+
 Ext.extend(KaraCos.Explorer.NodeContentPanel, Ext.Panel, {
 	initDnDUploader:function(panel){
 			var that = panel;
-			console.log(panel);
-			//==================
-			// Attach drag and drop listeners to document body
-			// this prevents incorrect drops, reloading the page with the dropped item
-			// This may or may not be helpful
-			
-			 if(!document.body.BodyDragSinker){
-				 console.log("Processing body event sink");
-				document.body.BodyDragSinker = true;
-				
-				var body = Ext.fly(document.body);
-				//$('body').get(0).addEventListener('drop', function(event){
-				//	console.log(event);
-				//	event.stopEvent();
-				//	return true;
-				//});
-				body.on({
-					dragenter:function(event){
-						return true;
-					}
-					,dragleave:function(event){
-						return true;
-					}
-					,dragover:function(event){
-						event.stopEvent();
-						//console.log(event);
-						
-						return true;
-					}
-					,drop:function(event){
-						console.log(event);
-						event.stopEvent();
-						
-						return true;
-					}
-				});
-			}
-			// end body events
-			//==================
-			console.log(panel);
-			jQuery('#'+panel.el.id).get(0).addEventListener('drop', function(event){
-				//event.sink = true;
-				console.log(event);
-				 var files = event.dataTransfer.files;
-				 var count = files.length;
-	            // if no files where dropped, use default handler
-	            if (count < 1) {
-					//event.sink = false;
-					return true;
+			KaraCos.Explorer.sinkBodyEvents();
+			// define listeners for upload action
+			listeners = {
+				scope:panel
+				,uploadloadstart:function(event){
+					//this.updateFile(fileRec, 'status', 'Sending');
 				}
-				var len = files.length;
-				node = that.linkedNode;
-				while(--len >= 0){
-					panel.processFileUpload(files[len], node);
+				,uploadprogress:function(event){
+					//this.updateFile(fileRec, 'progress', Math.round((event.loaded / event.total)*100));
 				}
-				return false;
-			}, false);
-			
-		}, // initDnd
-		processFileUpload: function(file, node) {
-			console.log(file);
-			var url_href = "/";
-			if (node.id != '/') {
-				url_href = node.id + "/";
-			}
-			upload = new Ext.ux.XHRUpload({
-				url: url_href
-				,filePostName:'att_file'
-				,fileNameHeader:'X-File-Name'
-				,extraPostData:{'return_json':'','base64':''}
-				,extraHeaders:{'Accept':'application/json'}
-				,sendMultiPartFormData:false
-				,file:file
-				,listeners:{
-					scope:this
-					,uploadloadstart:function(event){
-						//this.updateFile(fileRec, 'status', 'Sending');
-					}
-					,uploadprogress:function(event){
-						//this.updateFile(fileRec, 'progress', Math.round((event.loaded / event.total)*100));
-					}
-					// XHR Events
-					,loadstart:function(event){
-						//this.updateFile(fileRec, 'status', 'Sending');
-					}
-					,progress:function(event){
-						//fileRec.set('progress', Math.round((event.loaded / event.total)*100) );
-						//fileRec.commit();
-					}
-					,abort:function(event){
-						//this.updateFile(fileRec, 'status', 'Aborted');
-						that.fireEvent('fileupload', this, false, {error:'XHR upload aborted'});
-					}
-					,error:function(event){
+				// XHR Events
+				,loadstart:function(event){
+					//this.updateFile(fileRec, 'status', 'Sending');
+				}
+				,progress:function(event){
+					//fileRec.set('progress', Math.round((event.loaded / event.total)*100) );
+					//fileRec.commit();
+				}
+				,abort:function(event){
+					//this.updateFile(fileRec, 'status', 'Aborted');
+					panel.fireEvent('fileupload', panel, false, {error:'XHR upload aborted'});
+				}
+				,error:function(event){
+					//this.updateFile(fileRec, 'status', 'Error');
+					panel.fireEvent('fileupload', panel, false, {error:'XHR upload error'});
+				}
+				,load:function(event){
+					
+					try{
+						var result = Ext.util.JSON.decode(upload.xhr.responseText);//throws a SyntaxError.
+					} catch(e) {
+						Ext.MessageBox.show({
+							buttons: Ext.MessageBox.OK
+							,icon: Ext.MessageBox.ERROR
+							,modal:false
+							,title:'Upload Error!'
+							,msg:'Invalid JSON Data Returned!<BR><BR>Please refresh the page to try again.'
+						});
 						//this.updateFile(fileRec, 'status', 'Error');
-						that.fireEvent('fileupload', this, false, {error:'XHR upload error'});
+						panel.fireEvent('fileupload', panel, false, {error:'Invalid JSON returned'});
+						return true;
+					} // catch
+					if ( result.success ) {
+						var record = panel.store.recordType( {
+							id:'',
+							text:result.data,
+							imgsrc:result.data,
+							imgstyle:'width:64px;height:64px'
+						});
+						panel.fireEvent('fileupload', panel, true, result);
+					}else{
+						//this.fileAlert('<BR>'+file.name+'<BR><b>'+result.error+'</b><BR>');
+						//this.updateFile(fileRec, 'status', 'Error');
+						panel.fireEvent('fileupload', panel, false, result);
 					}
-					,load:function(event){
-						
-						try{
-							var result = Ext.util.JSON.decode(upload.xhr.responseText);//throws a SyntaxError.
-						} catch(e) {
-							Ext.MessageBox.show({
-								buttons: Ext.MessageBox.OK
-								,icon: Ext.MessageBox.ERROR
-								,modal:false
-								,title:'Upload Error!'
-								,msg:'Invalid JSON Data Returned!<BR><BR>Please refresh the page to try again.'
-							});
-							//this.updateFile(fileRec, 'status', 'Error');
-							this.fireEvent('fileupload', this, false, {error:'Invalid JSON returned'});
-							return true;
-						} // catch
-						if ( result.success ) {
-							var record = this.store.recordType( {
-								id:'',
-								text:file.name,
-								imgsrc:result.data,
-								imgstyle:'width:64px;height:64px'
-							});
-							this.fireEvent('fileupload', this, true, result);
-							that.fireEvent('fileupload', this, true, result);
-						}else{
-							//this.fileAlert('<BR>'+file.name+'<BR><b>'+result.error+'</b><BR>');
-							//this.updateFile(fileRec, 'status', 'Error');
-							this.fireEvent('fileupload', this, false, result);
-						}
-					} // load
-					} // listener
-			}); //XHRUpload
-			upload.send();
-		} // ProcessFileUpload
+				} // load
+			}; // listener
+			
+			KaraCos.Explorer.bindUploadDropFile(panel.el.id,this.getNodeUrl,listeners);
+		}, // initDnd
+		getNodeUrl: function() {
+			url = panel.this.linkedNode.id;
+			t_url = "/";
+			if (url != '/') {
+				t_url = url + '/' + k;
+			} else {
+				t_url = '/' + k;
+			}
+			return url;
+		}
+			
 });

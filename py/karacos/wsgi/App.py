@@ -122,12 +122,13 @@ class Dispatcher(object):
         
         # If post with type != application/json, application/xml, ou multipart/form-data,
         # then it's a file upload.
-        if (request.method == "POST" and
-            request.headers['Content-Type'].find('multipart/form-data') < 0 and
-            request.headers['Content-Type'].find('application/json') < 0 and
-            request.headers['Content-Type'].find('application/x-www-form-urlencoded') < 0 and
-            request.headers['Content-Type'].find('application/xml') < 0) :
-            self.process_file_upload(request,response)  
+        if (request.method == "POST" and            # 
+            'X-File-Name' in request.headers ) :    # This is a XRH upload request
+            #request.headers['Content-Type'].find('multipart/form-data') < 0 and
+            #request.headers['Content-Type'].find('application/json') < 0 and
+            #request.headers['Content-Type'].find('application/x-www-form-urlencoded') < 0 and
+            #request.headers['Content-Type'].find('application/xml') < 0) :
+            self.process_file_upload(request,response)
         elif (request.headers['Accept'].find('text/html') >= 0 or
                 request.headers['Accept'].find('application/xhtml+xml') >= 0):
             self.process_http_params(request,response)
@@ -135,22 +136,6 @@ class Dispatcher(object):
             self.process_json_params(request,response)
         elif request.headers['Accept'].find('application/xml') >= 0:
             self.process_xml_params(request,response)
-        """
-        if request.headers['Content-Type'].find("application/json")<0:
-            #c pas du json
-            if request.headers['Content-Type'].find("application/xml")<0:
-                self.process_http_params(request,response)
-            else:
-                if response.__result__ != None or response.__action__ != None:
-                    raise HTTPError(status=400, message="Bad request")
-                else:
-                    self.process_xml_params(request,response)
-        else:
-            if response.__result__ != None or response.__action__ != None:
-                raise HTTPError(status=400, message="Bad request")
-            else:
-                self.process_json_params(request,response)
-        """
         self.process_action(request, response)
         
     def process_file_upload(self,request,response):
