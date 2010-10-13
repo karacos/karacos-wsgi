@@ -1,10 +1,10 @@
 <% import karacos %>
 % if karacos.config.get('system','mode').strip().lower() != 'dev':
 	<script>
-		GENTICS_Aloha_base="/_browser/karacos/";
+		GENTICS_Aloha_base="_browser/karacos/";
 		KaraCos_mode='karacos_prod';
 	</script>
-	<script type="text/javascript" src="/_browser/karacos-full-debug.js"></script>
+	<script type="text/javascript" src="/_browser/karacos-full-min.js"></script>
 	% else :
 <!-- DEV MODE ACTIVATED, LOADING resources -->
 	<script>

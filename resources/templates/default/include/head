@@ -1,3 +1,6 @@
+<% user_auth = instance.__domain__.get_user_auth() %>
+<% isstaff = 'anonymous@%s' % instance.__domain__['name'] != user_auth['name'] %>
+
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <meta http-equiv="cache-control" content="no-cache" />
@@ -14,34 +17,18 @@
   <link rel="stylesheet" type="text/css" media="screen,projection,print" href="/_browser/themes/multiflex37/css/layout4_text.css" />
   <link rel="stylesheet" type="text/css" media="screen,projection,print" href="/_browser/jquery-ui/themes/base/jquery.ui.all.css" />
   <link rel="icon" type="image/x-icon" href="/multiflex37/img/favicon.ico" />
-<script type="text/javascript" src="/_browser/js/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="/_browser/js/jquery-ui-1.8.custom.min.js"></script>
-<script type="text/javascript" src="/_browser/js/jquery.json-2.2.js"></script>
-<script type="text/javascript" src="/_browser/js/jquery.FCKEditor.pack.js"></script>
-<script type="text/javascript" src="/_browser/js/jquery.wysiwyg.js"></script>
-<script type="text/javascript" src="/_browser/wymeditor/jquery.wymeditor.min.js"></script>
-
-<script type="text/javascript" src="/_browser/js/karacos-forms.js"></script>
-<script type="text/javascript" src="/_browser/ckeditor/ckeditor.js"></script> 
-<script type="text/javascript" src="/_browser/ckeditor/adapters/jquery.js"></script>
-  <title>
+% if isstaff:
+  	<%include file="/includes/karacos_full_js"/>
+  	% else:
+  	<%include file="/includes/karacos_min_js"/>
+  	% endif  <title>
   % if 'title' in instance:
         ${instance['title']}
 		% else:
 			Bienvenue
 		% endif
 </title>
-<script type="text/javascript">
-                  $(function(){
-		  $("textarea.ck").ckeditor();
-		  })
-		  $("textarea.wym").wymeditor({
-	        stylesheet: 'styles.css',
-	        skin: 'twopanels',
-	        lang: 'fr', 
-	 	   });
 
-</script>
 
 	% if 'head_bloc' in instance.__domain__:
 		${instance.__domain__['head_bloc']}

@@ -14,7 +14,7 @@
 	<target name="makedirs">
 		<mkdir dir="tmpdir" />
 	</target>
-
+	<taskdef name="jsmin" classname="net.matthaynes.jsmin.JSMin_Task" classpath="deps/jsmin.0.2.4.jar" />
 	<target name="compress_files" depends="makedirs">
 		<copy file="${filename}.txt" todir="${tmpdir}" overwrite="true" />
 		<fixcrlf file="${tmpdir}/${filename}.txt" eol="unix" />
@@ -24,6 +24,7 @@
 			<filelist dir="${srcdir}/" files="${includes}" />
 		</concat>
 		<delete file="${outdir}/out/compressorFull.log" />
+		<jsmin destfile="${outdir}/${filename}-min.js" srcfile="${outdir}/${filename}-debug.js"></jsmin>
 		<java jar="deps/${compressor}" fork="true" failonerror="true" output="${outdir}/build/compressorFull.log" append="true">
 			<arg line="--type js -o ${outdir}/${filename}-yuimin.js --nomunge --verbose --charset UTF-8 ${outdir}/${filename}-debug.js" />
 			<classpath refid="minify.classpath" />
@@ -53,10 +54,10 @@
          ================================= -->
 	<target name="all" depends="clean" description="description">
 		<antcall target="compress_files">
-			<param name="filename" value="karacos-min" />
+			<param name="filename" value="karacos-full" />
 		</antcall>
 		<antcall target="compress_files">
-			<param name="filename" value="karacos-full" />
+			<param name="filename" value="karacos-min" />
 		</antcall>
 		<!--
 		-->

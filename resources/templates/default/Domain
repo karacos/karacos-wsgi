@@ -1,21 +1,84 @@
+<% user_auth = instance.__domain__.get_user_auth() %>
+<% isstaff = 'anonymous@%s' % instance.__domain__['name'] != user_auth['name'] %>
 
+% if isstaff:
+<script language="javascript">
+	$(function(){ 
+	GENTICS.Aloha.settings = {
+	   'i18n' : {
+	     'current' : 'fr'
+	   },
+	   'base' : GENTICS_Aloha_base,
+	   'ribbon' : true,
+	   'plugins': {
+	   				"org.karacos.aloha.Plugin": { 
+	   				instance_url : "",
+	   				% if isstaff:
+		   				edit_content_action : "edit_content",
+		   			% endif
+	   				idfieldsref : {
+							domain_title	: "title",
+							domain_content 	: "content"
+					  	}},
+					"com.gentics.aloha.plugins.Link": {
+								config : [ 'a' ],
+							  	editables : {
+								'#domain_title'	: [  ]
+							  	},
+							  	targetregex : '^(?!.*${instance.__domain__['fqdn']}).*',
+							  	target : '_blank',
+							  	},
+					"com.gentics.aloha.plugins.List": {
+						editables : {
+								'#domain_title'	: [  ]
+							  	}
+					},
+					"com.gentics.aloha.plugins.Table": {
+						editables : {
+								'#domain_title'	: [  ]
+							  	}
+					},
+		   			"com.gentics.aloha.plugins.Format": { 
+						config : [ 'b', 'i','u','del','sub','sup', 'p', 'title', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'removeFormat'],
+					  	editables : {
+							'#domain_title'	: [ ], // no formatting allowed
+							'#domain_content' 	: [ 'b', 'i', 'u', 'del', 'sub', 'sup','removeFormat'  ] // just basic formattings, no headers, etc.
+					  	}
+					} // plugin
+				} // plugins
+				
+		}; //Aloha.Settings
+		 % if isstaff:
+			$("#domain_title").aloha();
+			$("#domain_content").aloha();
+		% endif
+
+});
+
+	</script>
+% endif
 <div class="main-content">
 	% if 'content' in instance:
-		<h1 class="block">
-		% if 'title' in instance:
-        ${instance['title']}
+		<h1 class="block" id="domain_title">
+		% if 'title' in instance and instance['title'] != '':
+        	${instance['title']}
 		% else:
 			Bienvenue sur le domaine ${instance['name']}
 		% endif
 		</h1>
 		
         <div class="column1-unit">
-        <p>${instance['content']}</p>
-        <p class="details">| 
-        % if 'owner' in instance:
-        	Owner : <a href="#">${instance['owner']}</a> | 
-        %endif
-        Categories: <a href="#">General</a> | Comments: <a href="#">73</a> |</p>
+        <div id="domain_content">
+        
+		% if 'content' in instance and instance['content'] != '':
+			${instance['content']}
+		% else:
+			<p>No content found</p>
+		% endif
+		
+        </div>
+        
+        
           
         </div>
 	% endif

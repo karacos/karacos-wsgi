@@ -10,6 +10,7 @@ aloha-nka-fork/WebContent/deps/extjs/data-foundation-debug.js
 aloha-nka-fork/WebContent/deps/extjs/data-json-debug.js
 aloha-nka-fork/WebContent/deps/extjs/data-list-views-debug.js
 aloha-nka-fork/WebContent/deps/extjs/ext-dd-debug.js
+aloha-nka-fork/WebContent/deps/extjs/resizable-debug.js
 aloha-nka-fork/WebContent/deps/extjs/window-debug.js
 aloha-nka-fork/WebContent/deps/extjs/pkg-buttons-debug.js
 aloha-nka-fork/WebContent/deps/extjs/pkg-tabs-debug.js
@@ -18,6 +19,8 @@ aloha-nka-fork/WebContent/deps/extjs/pkg-tree-debug.js
 aloha-nka-fork/WebContent/deps/extjs/pkg-toolbars-debug.js
 aloha-nka-fork/WebContent/deps/extjs/pkg-menu-debug.js
 aloha-nka-fork/WebContent/deps/extjs/pkg-forms-debug.js
+aloha-nka-fork/WebContent/deps/extjs/pkg-grid-foundation-debug.js
+aloha-nka-fork/WebContent/deps/extjs/pkg-grid-editor-debug.js
 aloha-nka-fork/WebContent/utils/jquery.js
 aloha-nka-fork/WebContent/utils/lang.js
 aloha-nka-fork/WebContent/utils/range.js
@@ -44,11 +47,13 @@ aloha-nka-fork/WebContent/core/selection.js
 aloha-nka-fork/WebContent/core/sidebar.js
 aloha-nka-fork/WebContent/core/repositorymanager.js
 aloha-nka-fork/WebContent/core/repository.js
+aloha-nka-fork/WebContent/core/ui-browser.js
 js/jquery-ui-1.8.5.custom.min.js
 js/anytime.js
 js/karacos-forms.js
-js/karacos.fileUploader.js
 karacos/explorer/Ext.ux.XHRUpload.js
+karacos/explorer/lazyRepository.js
+karacos/explorer/ui-bindings.js
 karacos/explorer/tree-node.js
 karacos/explorer/tree-panel.js
 karacos/explorer/node-content-panel.js
