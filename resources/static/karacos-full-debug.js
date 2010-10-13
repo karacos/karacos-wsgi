@@ -97532,28 +97532,38 @@ KaraCos.Plugin.editMore=function(){
  * save page content
  */
 KaraCos.Plugin.save=function(){
-	config = this.settings['idfieldsref'];
-    var content="";
-    var that = this;
-	jQuery.each(GENTICS.Aloha.editables,
-	            function(index,editable){
-			that.pagedata[config[editable.getId()]] = editable.getContents();
-	        content=content+"Editable ID: "+config[editable.getId()]+"\nHTML code: "+editable.getContents()+"\n\n";
-	        });
-	$.ajax({ url: that.settings['instance_url'],
-    	dataType: "json",
-    	contentType: 'application/json',
-    	data: $.toJSON({
-    		'method' : that.settings['edit_content_action'],
-    		'id' : 1,
-    		'params' : that.pagedata,
-    	}),
-    	context: document.body,
-    	type: "POST",
-        success: function(data) {
-		GENTICS.Aloha.Log.info(that,data);
-    },});
-	GENTICS.Aloha.Log.info(that,that);
+	try {
+		GENTICS.Aloha.Log.info("Starting KaraCos Save function");
+		config = this.settings['idfieldsref'];
+	    var content="";
+	    var that = this;
+		jQuery.each(GENTICS.Aloha.editables,
+		            function(index,editable){
+				that.pagedata[config[editable.getId()]] = editable.getContents();
+		        content=content+"Editable ID: "+config[editable.getId()]+"\nHTML code: "+editable.getContents()+"\n\n";
+		        });
+		url = that.settings['instance_url'];
+		if (url == "") {
+			url = "/";
+		}
+		$.ajax({ url: url,
+	    	dataType: "json",
+	    	contentType: 'application/json',
+	    	data: $.toJSON({
+	    		'method' : that.settings['edit_content_action'],
+	    		'id' : 1,
+	    		'params' : that.pagedata,
+	    	}),
+	    	context: document.body,
+	    	type: "POST",
+	        success: function(data) {
+			GENTICS.Aloha.Log.info(that,data);
+	    },});
+		GENTICS.Aloha.Log.info(that,that);
+	} catch(error) {
+		console.log(error);
+		GENTICS.Aloha.Log.error(error);
+	}
   };
 
 /*!
