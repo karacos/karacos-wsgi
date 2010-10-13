@@ -1,3 +1,62 @@
+<% user_auth = instance.__domain__.get_user_auth() %>
+<% isstaff = 'anonymous@%s' % instance.__domain__['name'] != user_auth['name'] %>
+
+% if isstaff:
+<script language="javascript">
+	$(function(){ 
+	GENTICS.Aloha.settings = {
+	   'i18n' : {
+	     'current' : 'fr'
+	   },
+	   'base' : 'http://${instance.__domain__['fqdn']}/' + GENTICS_Aloha_base,
+	   'ribbon' : true,
+	   'plugins': {
+	   				"org.karacos.aloha.Plugin": { 
+	   				instance_url : "http://${instance.__domain__['fqdn']}",
+	   				% if isstaff:
+		   				edit_content_action : "edit_content",
+		   			% endif
+	   				idfieldsref : {
+							resource_title	: "title",
+							resource_content 	: "content"
+					  	}},
+					"com.gentics.aloha.plugins.Link": {
+								config : [ 'a' ],
+							  	editables : {
+								'#resource_title'	: [  ]
+							  	},
+							  	targetregex : '^(?!.*${instance.__domain__['fqdn']}).*',
+							  	target : '_blank',
+							  	},
+					"com.gentics.aloha.plugins.List": {
+						editables : {
+								'#resource_title'	: [  ]
+							  	}
+					},
+					"com.gentics.aloha.plugins.Table": {
+						editables : {
+								'#resource_title'	: [  ]
+							  	}
+					},
+		   			"com.gentics.aloha.plugins.Format": { 
+						config : [ 'b', 'i','u','del','sub','sup', 'p', 'title', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'removeFormat'],
+					  	editables : {
+							'#resource_title'	: [ ], // no formatting allowed
+							'#resource_content' 	: [ 'b', 'i', 'u', 'del', 'sub', 'sup','removeFormat'  ] // just basic formattings, no headers, etc.
+					  	}
+					} // plugin
+				} // plugins
+				
+		}; //Aloha.Settings
+		 % if isstaff:
+			$("#resource_title").aloha();
+			$("#resource_content").aloha();
+		% endif
+
+});
+
+	</script>
+% endif
 <%def name="show_field(field)">
 	<tr><td>${field['title']}</td>
 	<% type = "" %>
@@ -23,7 +82,7 @@
 	</table>
 	</form>
 </%def>
-	<h1>
+	<h1 id="resource_title">
 	% if 'title' in instance:
 		${instance['title']}
 	% else:
@@ -41,13 +100,13 @@
 		% endfor
 		</ul>
 	% endif
-	
+	<div id="resource_content">
 	% if 'content' in instance:
 		${instance['content']}
 	% else:
-		No content found
+		<p>No content found</p>
 	% endif
-	
+	</div>
 	<ul>
 	<% childrens = instance.get_web_childrens_for_id() %>
 	% for child in childrens.keys():
