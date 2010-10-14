@@ -17,7 +17,6 @@
 }); */
 
 Ext.namespace('KaraCos.Explorer');
-
 KaraCos.Explorer.DomainExplorer = function(config) {
 	Ext.apply(this, config);
 	this.treePanel = new KaraCos.Explorer.DomainTree({

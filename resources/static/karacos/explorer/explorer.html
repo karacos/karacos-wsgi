@@ -22,7 +22,7 @@
 Ext.onReady(function(){
     var win;
     var button = Ext.get('show-btn');
-
+    KaraCos.Explorer.sinkBodyEvents();
     button.on('click', function(){
         // create the window on the first click and reuse on subsequent clicks
         KaraCos.Explorer.domainExplorer.show(this);
@@ -30,7 +30,7 @@ Ext.onReady(function(){
 });
 </script>
 </head>
-<body>
+<body id="body">
 <div id='show-btn'>Show Explorer</div>
 </body>
 </html>

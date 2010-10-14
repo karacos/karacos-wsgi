@@ -43,8 +43,6 @@ KaraCos.Explorer.NodeContentPanel = function(config) {
 Ext.extend(KaraCos.Explorer.NodeContentPanel, Ext.Panel, {
 	initDnDUploader:function(panel){
 			var that = panel;
-			KaraCos.Explorer.sinkBodyEvents();
-			// define listeners for upload action
 			listeners = {
 				scope:panel
 				,uploadloadstart:function(event){
