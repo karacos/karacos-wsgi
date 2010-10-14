@@ -8,14 +8,12 @@
 	   'i18n' : {
 	     'current' : 'fr'
 	   },
-	   'base' : 'http://${instance.__domain__['fqdn']}/' + GENTICS_Aloha_base,
+	   'base' : GENTICS_Aloha_base,
 	   'ribbon' : true,
 	   'plugins': {
 	   				"org.karacos.aloha.Plugin": { 
-	   				instance_url : "http://${instance.__domain__['fqdn']}",
-	   				% if isstaff:
-		   				edit_content_action : "edit_content",
-		   			% endif
+	   				instance_url : "${instance._get_action_url()}",
+	   				edit_content_action : "edit_content",
 	   				idfieldsref : {
 							resource_title	: "title",
 							resource_content 	: "content"
