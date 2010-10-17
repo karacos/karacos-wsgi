@@ -1,65 +1,7 @@
 
 Ext.namespace('KaraCos.Explorer');
 
-KaraCos.Explorer.sinkBodyEvents = function() {
-	//==================
-	// Attach drag and drop listeners to document body
-	// this prevents incorrect drops, reloading the page with the dropped item
-	// This may or may not be helpful
-	
-	 if (!document.body.BodyDragSinker){
-		 console.log("Processing body event sink");
-		 document.body.BodyDragSinker = true;
-		 
-		 var body = Ext.fly(document.body);
-		 body.on({
-			dragenter:function(event){
-				return true;
-			}
-			,dragleave:function(event){
-				return true;
-			}
-			,dragover:function(event){				
-				event.stopEvent();
-				return false;
-			}
-			,drop:function(event){
-				try {
-					//console.log('ext event');
-					console.log(event);
-					//alert("drop event, body sinker");
-					if (event.browserEvent.originalEvent.sink) {
-						event.browserEvent.stopPropagation();
-						event.preventDefault();
-						event.stopPropagation();
-						event.stopEvent();
-					}
-				} catch (error) {
-					console.log(error);
-					alert('error');
-				}
-				// event.nikohack();
-				return true;
-			}
-		});
-		/*jQuery('body').get(0).addEventListener('drop', function(event){
-			alert('drop event');
-			//event.stopEvent(); //not compatible, causes error stack, but stops the event (or not)
-			return false;
-			//event.stopEvent();
-			//return true;
-		}, false); */
-	 
-		//$('body').get(0).addEventListener('drop', function(event){
-		//	console.log(event);
-		//	event.stopEvent();
-		//	return true;
-		//});
-
-	} // if
-	// end body events
-	//================== 
-};
+KaraCos.Explorer.sinkBodyEvents = 
 
 /**
  * Upload dropped file to dest using XRH HTML5 file POST

@@ -58,12 +58,13 @@ karacos/explorer/tree-node.js
 karacos/explorer/tree-panel.js
 karacos/explorer/node-content-panel.js
 karacos/explorer/node-panel.js
+karacos/explorer/Uploader.js
 karacos/explorer/explorer.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.Format/plugin.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.Table/plugin.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.List/plugin.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.Link/plugin.js
 aloha-nka-fork/WebContent/plugins/eu.iksproject.plugins.Loader/plugin.js
-aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Img/plugin.js
+aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.Image/plugin.js
 aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Plugin/plugin.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.HighlightEditables/plugin.js
