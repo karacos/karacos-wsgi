@@ -5,9 +5,15 @@
 Ext.namespace('KaraCos.Explorer');
 KaraCos.Explorer.Uploader = function(config) {
 	this.initialConfig = config;
+	this.iconStatusPending = KaraCos_Explorer_base+'images/hourglass.png'
+	this.iconStatusSending = KaraCos_Explorer_base+'images/loading.gif'
+	this.iconStatusAborted = KaraCos_Explorer_base+'images/cross.png'
+	this.iconStatusError = KaraCos_Explorer_base+'images/cross.png'
+	this.iconStatusDone = KaraCos_Explorer_base+'images/tick.png'
 	Ext.apply(this, config);
 	var fields = ['id', 'name', 'size', 'status', 'progress'];
 	this.fileRecord = Ext.data.Record.create(fields);
+	var that = this;
 	this.fileGrid = new Ext.grid.GridPanel({
 				/*
 				x:0
@@ -24,11 +30,11 @@ KaraCos.Explorer.Uploader = function(config) {
 				}),
 				columns:[
 					{header:'File Name',dataIndex:'name', width:150}
-					,{header:'Size',dataIndex:'size', width:60}//, renderer:Ext.util.Format.fileSize}
-					,{header:'&nbsp;',dataIndex:'status', width:30}//, scope:this, renderer:this.statusIconRenderer}
+					,{header:'Size',dataIndex:'size', width:60, renderer:Ext.util.Format.fileSize}
+					,{header:'&nbsp;',dataIndex:'status', width:30, scope:that, renderer:that.statusIconRenderer}
 					,{header:'Status',dataIndex:'status', width:60}
-					,{header:'Progress',dataIndex:'progress'}//,scope:this, renderer:this.progressBarColumnRenderer}
-				]
+					,{header:'Progress',dataIndex:'progress',scope:that, renderer:that.progressBarColumnRenderer}
+				],
 				/*,listeners:{
 					render:{
 						scope:this
@@ -46,6 +52,36 @@ KaraCos.Explorer.Uploader = function(config) {
  * Class description
  */
 Ext.extend(KaraCos.Explorer.Uploader, Ext.Window, {
+	statusIconRenderer:function(value){
+		switch(value){
+		default:
+			return value;
+		case 'Pending':
+			return '<img src="'+this.iconStatusPending+'" width=16 height=16>';
+		case 'Sending':
+			return '<img src="'+this.iconStatusSending+'" width=16 height=16>';
+		case 'Aborted':
+			return '<img src="'+this.iconStatusAborted+'" width=16 height=16>';
+		case 'Error':
+			return '<img src="'+this.iconStatusError+'" width=16 height=16>';
+		case 'Done':
+			return '<img src="'+this.iconStatusDone+'" width=16 height=16>';
+		}
+	},
+	progressBarColumnTemplate: new Ext.XTemplate(
+			'<div class="ux-progress-cell-inner ux-progress-cell-inner-center ux-progress-cell-foreground">',
+				'<div>{value} %</div>',
+			'</div>',
+			'<div class="ux-progress-cell-inner ux-progress-cell-inner-center ux-progress-cell-background" style="left:{value}%">',
+				'<div style="left:-{value}%">{value} %</div>',
+			'</div>'
+    ),
+	progressBarColumnRenderer:function(value, meta, record, rowIndex, colIndex, store){
+        meta.css += ' x-grid3-td-progress-cell';
+		return this.progressBarColumnTemplate.apply({
+			value: value
+		});
+	},
 	/*
 	uploadListeners:{
 		scope:this

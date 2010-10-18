@@ -1,7 +1,8 @@
 <% import karacos %>
 % if karacos.config.get('system','mode').strip().lower() != 'dev':
 	<script>
-		GENTICS_Aloha_base="_browser/karacos/";
+		GENTICS_Aloha_base="/_browser/karacos/";
+		KaraCos_Explorer_base="/_browser/karacos/explorer/";
 		KaraCos_mode='karacos_prod';
 	</script>
 	<script type="text/javascript" src="/_browser/karacos-full-min.js"></script>
@@ -9,6 +10,7 @@
 <!-- DEV MODE ACTIVATED, LOADING resources -->
 	<script>
 	GENTICS_Aloha_base="/_browser/aloha-nka-fork/WebContent/";
+	KaraCos_Explorer_base="/_browser/karacos/explorer/";
 	KaraCos_mode='karacos_dev';
 	</script>
 <%include file="/includes/aloha_dev_js"/>

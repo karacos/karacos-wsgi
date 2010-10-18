@@ -80,3 +80,73 @@
 .karacos_action_edit_content {
 	background-image:url(images/pencil.png);
 	}
+
+
+
+/* Uploader settings */
+.x-grid3-td-progress-cell {
+    padding: 0;
+}
+
+.x-grid3-td-progress-cell .x-grid3-cell-inner {
+    padding: 0;
+    position: relative;
+    height: 21px;
+}
+
+.x-grid3-cell-inner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+.x-grid3-cell-background {
+    background: #E0E8F3; /*url(../../resources/images/default/qtip/bg.gif) repeat-x scroll 0 -1px;*/
+    white-space: nowrap;
+}
+.x-grid3-td-progress-cell .low {
+    background: #11aa11;
+}
+.x-grid3-td-progress-cell .medium {
+    background: #f1fa1a;
+}
+.x-grid3-td-progress-cell .high {
+    background: #ee1111;
+}
+
+.ux-progress-cell-foreground {
+    color: #000;
+    background-color: #9CBFEE;
+    white-space: nowrap;
+    overflow: hidden
+}
+
+.ux-progress-cell-inner-right {
+    text-align: right;
+}
+
+.ux-progress-cell-inner-center {
+    text-align: center;
+}
+
+.ux-progress-cell .ux-progress-cell-inner div {
+    padding: 3px 0 0 4px;
+}
+
+.ux-progress-cell-inner-right div {
+    padding: 3px 4px 0 0;
+    position: relative;
+}
+
+.ux-progress-cell-inner-center div {
+    padding: 3px 0 0 0;
+    position: relative;
+}
+
+.ux-progress-cell-inner-left div {
+    padding: 3px 0 0 4px;
+    position: relative;
+}
