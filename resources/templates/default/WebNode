@@ -16,14 +16,14 @@
 	   										 'upload': {'url': "",
 	   										 			'file_name_param':"",
 	   										 			'additional_params': {"location":""},
-				   										'www-encoded': false },
+				   										'www-encoded': false }}},
 					  	editables : {
 							'#resource_title'	: [  ]
 					  	},
 	   				},
 	   				"com.gentics.aloha.plugins.Image": {
 	   					config : { 'img': { 'max_width': '50px',
-	   										'max_height': '50px' },
+	   										'max_height': '50px' }},
 					  	editables : {
 							'#resource_title'	: [  ]
 					  	},
