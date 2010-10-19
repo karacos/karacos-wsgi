@@ -11,6 +11,23 @@
 	   'base' : GENTICS_Aloha_base,
 	   'ribbon' : true,
 	   'plugins': {
+	   				"com.gentics.aloha.plugins.DragnDropFile": {
+	   					config : { 'drop' : {'max_file_size': '200000',
+	   										 'upload': {'url': "",
+	   										 			'file_name_param':"",
+	   										 			'additional_params': {"location":""},
+				   										'www-encoded': false },
+					  	editables : {
+							'#resource_title'	: [  ]
+					  	},
+	   				},
+	   				"com.gentics.aloha.plugins.Image": {
+	   					config : { 'img': { 'max_width': '50px',
+	   										'max_height': '50px' },
+					  	editables : {
+							'#resource_title'	: [  ]
+					  	},
+	   				},
 	   				"org.karacos.aloha.Plugin": { 
 	   				instance_url : "",
 	   				% if isstaff:

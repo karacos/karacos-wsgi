@@ -84,6 +84,13 @@
 
 
 /* Uploader settings */
+
+div.x-grid3-header-offset {
+	display: none;
+	} 
+div.karacos_uploader_status_icon {
+	position: relative;
+	}
 .x-grid3-td-progress-cell {
     padding: 0;
 }
@@ -95,7 +102,8 @@
 }
 
 .x-grid3-cell-inner {
-    position: absolute;
+	display: bloc;
+    position: relative;
     top: 0;
     left: 0;
     height: 100%;

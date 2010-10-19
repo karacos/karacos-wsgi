@@ -35,14 +35,6 @@ KaraCos.Explorer.Uploader = function(config) {
 					,{header:'Status',dataIndex:'status', width:60}
 					,{header:'Progress',dataIndex:'progress',scope:that, renderer:that.progressBarColumnRenderer}
 				],
-				/*,listeners:{
-					render:{
-						scope:this
-						,fn:function(){
-							this.fileGrid = this.items.items[1];							
-						}	
-					}
-				} // listeners */
 			});
 	this.items = [this.fileGrid];
 	KaraCos.Explorer.Uploader.superclass.constructor.call(this);
@@ -57,15 +49,15 @@ Ext.extend(KaraCos.Explorer.Uploader, Ext.Window, {
 		default:
 			return value;
 		case 'Pending':
-			return '<img src="'+this.iconStatusPending+'" width=16 height=16>';
+			return '<div class="karacos_uploader_status_icon"><img src="'+this.iconStatusPending+'" width=16 height=16></div>';
 		case 'Sending':
-			return '<img src="'+this.iconStatusSending+'" width=16 height=16>';
+			return '<div class="karacos_uploader_status_icon"><img src="'+this.iconStatusSending+'" width=16 height=16></div>';
 		case 'Aborted':
-			return '<img src="'+this.iconStatusAborted+'" width=16 height=16>';
+			return '<div class="karacos_uploader_status_icon"><img src="'+this.iconStatusAborted+'" width=16 height=16></div>';
 		case 'Error':
-			return '<img src="'+this.iconStatusError+'" width=16 height=16>';
+			return '<div class="karacos_uploader_status_icon"><img src="'+this.iconStatusError+'" width=16 height=16></div>';
 		case 'Done':
-			return '<img src="'+this.iconStatusDone+'" width=16 height=16>';
+			return '<div class="karacos_uploader_status_icon"><img src="'+this.iconStatusDone+'" width=16 height=16></div>';
 		}
 	},
 	progressBarColumnTemplate: new Ext.XTemplate(
@@ -155,21 +147,88 @@ Ext.extend(KaraCos.Explorer.Uploader, Ext.Window, {
 			,progress: '0'
 			,complete: '0'
 		});
-		var fileRec = new this.fileRecord(file);
-		this.fileGrid.store.add(fileRec);
-		/*
-		upload = new Ext.ux.XHRUpload({
-			url: t_url
-			,filePostName:'att_file'
-			,fileNameHeader:'X-File-Name'
-			,extraPostData:{'return_json':'','base64':''}
-			,extraHeaders:{'Accept':'application/json'}
-			,sendMultiPartFormData:false
-			,file:files[len]
-			,listeners:this.uploadListeners
-		}); //XHRUpload
-		 * 
-		 */
+		try {
+			var fileRec = new this.fileRecord(file);
+			this.fileGrid.store.add(fileRec);
+			fileRec.file = file;
+			/*
+			upload = new Ext.ux.XHRUpload({
+				url: t_url
+				,filePostName:'att_file'
+				,fileNameHeader:'X-File-Name'
+				,extraHeaders:{'Accept':'application/json'}
+				,sendMultiPartFormData:false
+				,file:file
+				,listeners:{
+					scope:this
+					,uploadloadstart:function(event){
+						this.updateFile(fileRec, 'status', 'Sending');
+					}
+					,uploadprogress:function(event){
+						this.updateFile(fileRec, 'progress', Math.round((event.loaded / event.total)*100));
+					}
+					// XHR Events
+					,loadstart:function(event){
+						this.updateFile(fileRec, 'status', 'Sending');
+					}
+					,progress:function(event){
+						fileRec.set('progress', Math.round((event.loaded / event.total)*100) );
+						fileRec.commit();
+					}
+					,abort:function(event){
+						this.updateFile(fileRec, 'status', 'Aborted');
+						this.fireEvent('fileupload', this, false, {error:'XHR upload aborted'});
+					}
+					,error:function(event){
+						this.updateFile(fileRec, 'status', 'Error');
+						this.fireEvent('fileupload', this, false, {error:'XHR upload error'});
+					}
+					,load:function(event){
+						
+						try{
+							var result = Ext.util.JSON.decode(upload.xhr.responseText);//throws a SyntaxError.
+						}catch(e){
+							Ext.MessageBox.show({
+								buttons: Ext.MessageBox.OK
+								,icon: Ext.MessageBox.ERROR
+								,modal:false
+								,title:'Upload Error!'
+								,msg:'Invalid JSON Data Returned!<BR><BR>Please refresh the page to try again.'
+							});
+							this.updateFile(fileRec, 'status', 'Error');
+							this.fireEvent('fileupload', this, false, {error:'Invalid JSON returned'});
+							return true;
+						}
+						if( result.success ){
+							fileRec.set('progress', 100 );
+							fileRec.set('status', 'Done');
+							fileRec.commit();						
+							this.fireEvent('fileupload', this, true, result);
+						}else{
+							this.fileAlert('<BR>'+file.name+'<BR><b>'+result.error+'</b><BR>');
+							this.updateFile(fileRec, 'status', 'Error');
+							this.fireEvent('fileupload', this, false, result);
+						}
+					} // on load
+				}, // listeners
+			}); //XHRUpload
+			 * 
+			 */
+		 
+		} catch (error) {
+			//TODO : error handling
+			console.log(error);
+		}
 	}
 	
+});
+
+KaraCos.Explorer.uploadWindow = new KaraCos.Explorer.Uploader({
+    title: 'KaraCos Uploader',
+    width:435,
+    height:140,
+    //border:false,
+    plain:true,
+    layout: 'border',
+    closeAction: 'hide',
 });
