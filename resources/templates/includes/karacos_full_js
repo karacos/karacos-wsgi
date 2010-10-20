@@ -33,6 +33,7 @@
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.Link/plugin.js"></script>
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/eu.iksproject.plugins.Loader/plugin.js"></script>
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.Image/plugin.js"></script>
+	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.DragnDropFiles/plugin.js"></script>
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Plugin/plugin.js"></script>
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Plugin/Repository.js"></script>
 
