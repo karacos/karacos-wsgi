@@ -11,7 +11,7 @@
 	   'base' : GENTICS_Aloha_base,
 	   'ribbon' : true,
 	   'plugins': {
-	   				"com.gentics.aloha.plugins.DragnDropFiles": {
+	   				"com.gentics.aloha.plugins.DragAndDropFiles": {
 	   					config : { 'drop' : {'max_file_size': '200000',
 	   										 'upload': {'url': "",
 	   										 			'file_name_param':"",
