@@ -34,7 +34,7 @@ KaraCos.Explorer.Uploader = function(config) {
 					,{header:'&nbsp;',dataIndex:'status', width:30, scope:that, renderer:that.statusIconRenderer}
 					,{header:'Status',dataIndex:'status', width:60}
 					,{header:'Progress',dataIndex:'progress',scope:that, renderer:that.progressBarColumnRenderer}
-				],
+				]
 			});
 	this.items = [this.fileGrid];
 	KaraCos.Explorer.Uploader.superclass.constructor.call(this);

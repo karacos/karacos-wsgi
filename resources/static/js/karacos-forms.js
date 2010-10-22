@@ -59,7 +59,7 @@
 						area.wymeditor({
 					        stylesheet: 'styles.css',
 					       // skin: 'twopanels',
-					        lang: 'fr', 
+					        lang: 'fr'
 					 	   });
 					//} else
 						//TOTO quelque chose

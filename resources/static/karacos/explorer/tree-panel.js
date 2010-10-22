@@ -11,7 +11,7 @@ KaraCos.Explorer.DomainTree = function(config) {
 	    text: '/', 
 	    draggable:true, // disable root node dragging
 	    cls: 'karacos_file_domain',
-	    id: '\/',
+	    id: '\/'
 	});
 //	domainRoot.url = '/';
 	this.setRootNode(domainRoot);

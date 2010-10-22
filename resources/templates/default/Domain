@@ -43,7 +43,7 @@
 								'#domain_title'	: [  ]
 							  	},
 							  	targetregex : '^(?!.*${instance.__domain__['fqdn']}).*',
-							  	target : '_blank',
+							  	target : '_blank'
 							  	},
 					"com.gentics.aloha.plugins.List": {
 						editables : {

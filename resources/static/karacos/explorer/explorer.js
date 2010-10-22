@@ -39,7 +39,7 @@ KaraCos.Explorer.DomainExplorer = function(config) {
 		region: 'center',
 		margins:'3 3 3 0', 
 		activeTab: 0,
-		defaults:{autoScroll:true},
+		defaults:{autoScroll:true}
 	});
 	this.items = [this.treePanel,this.tabPanel];	 
 	KaraCos.Explorer.DomainExplorer.superclass.constructor.call(this);
@@ -51,7 +51,7 @@ Ext.extend(KaraCos.Explorer.DomainExplorer, Ext.Window, {
 		//this.contentElementsStore
 		this.tabPanel.nodeSelected(node);
 		//this.tabPanel.contentElementsStore.loadData(items);
-	},
+	}
 });
 KaraCos.Explorer.domainExplorer = new KaraCos.Explorer.DomainExplorer({
     title: 'Explorer',

@@ -14,7 +14,7 @@ KaraCos.Explorer.ItemTabPanel = function(config) {
 	this.nodeContentPanel = new KaraCos.Explorer.NodeContentPanel({
 		store: this.contentElementsStore,
         autoHeight:true,
-        title:'Node content',
+        title:'Node content'
         });
 	this.items = [this.nodeContentPanel];
 	KaraCos.Explorer.ItemTabPanel.superclass.constructor.call(this);

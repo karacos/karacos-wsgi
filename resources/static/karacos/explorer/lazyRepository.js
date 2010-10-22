@@ -35,11 +35,11 @@ KaraCos.Explorer.getNodeItems = function(url) {
 							parent_url:url,
 							imgsrc: '/_browser/karacos/explorer/images/type_' + v.webType + '.png',
 							imgstyle: 'width:16px;height:16px',
-							kc_link_href: t_url,
+							kc_link_href: t_url
 					};
 					items.push(item);
 				});
-			},
+			}
 		}); // $.ajax for browse_childrens
 		if (url != '/') {
 			url_href = url + "/_att";
@@ -82,7 +82,7 @@ KaraCos.Explorer.getNodeItems = function(url) {
 						items.push(item);
 					});
 				}, //success
-				failure: function(data) {}, // do nothing
+				failure: function(data) {} // do nothing
 			
 			}); //ajax
 		} //
