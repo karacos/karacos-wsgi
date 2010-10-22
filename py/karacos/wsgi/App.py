@@ -79,6 +79,8 @@ class Dispatcher(object):
                 self.render_json(response)
             elif request.headers['Accept'].find('application/xml') >= 0:
                 self.render_xml(response)
+            else:
+                self.render_html(response)
 
     def process_error(self,e,exc_info):
         """
@@ -136,6 +138,8 @@ class Dispatcher(object):
             self.process_json_params(request,response)
         elif request.headers['Accept'].find('application/xml') >= 0:
             self.process_xml_params(request,response)
+        else:
+            self.process_http_params(request,response)
         self.process_action(request, response)
         
     def process_file_upload(self,request,response):

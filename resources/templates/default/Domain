@@ -19,14 +19,14 @@
 				   										'www-encoded': false }}},
 					  	editables : {
 							'#domain_title'	: {}
-					  	},
+					  	}
 	   				},
 	   				"com.gentics.aloha.plugins.Image": {
 	   					config : { 'img': { 'max_width': '50px',
 	   										'max_height': '50px' }},
 					  	editables : {
 							'#domain_title'	: {}
-					  	},
+					  	}
 	   				},
 	   				"org.karacos.aloha.Plugin": { 
 	   				instance_url : "",
