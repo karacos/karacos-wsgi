@@ -1,0 +1,9 @@
+[submodule "resources/static/aloha-nka-fork"]
+	path = resources/static/aloha-nka-fork
+	url = http://github.com/nka11/Aloha-Editor.git
+[submodule "apps/menestrel"]
+	path = apps/menestrel
+	url = http://git.gitorious.org/karacos2-wsgi-web-applications-engine/menestrel-app.git
+[submodule "apps/store"]
+	path = apps/store
+	url = http://git.gitorious.org/karacos2-wsgi-web-applications-engine/store-app.git
