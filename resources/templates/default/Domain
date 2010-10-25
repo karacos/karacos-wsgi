@@ -86,13 +86,14 @@
 		
         <div class="column1-unit">
         <div id="domain_content">
+		<p>
         
 		% if 'content' in instance and instance['content'] != '':
 			${instance['content']}
 		% else:
-			<p>No content found</p>
+			No content found
 		% endif
-		
+		</p>
         </div>
         
         
