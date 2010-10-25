@@ -105,7 +105,7 @@ class Node(karacos.db['Child']):
                 new_file.write(att_file.file_body)
         new_file.flush()
         new_file.close()
-        return {"status":"success", "data": "/_atts/%s/%s"%(self.id,att_file.filename),
+        return {"success":True,"status":"success", "data": "/_atts/%s/%s"%(self.id,att_file.filename),
                 "message": "%s has been successfully writen" % att_file.filename }
     def get_att_dir(self):
         att_dirname = os.path.join(karacos._srvdir,'_atts',self.id)
