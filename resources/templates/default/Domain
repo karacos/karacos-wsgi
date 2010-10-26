@@ -13,10 +13,13 @@
 	   'plugins': {
 	   				"com.gentics.aloha.plugins.DragAndDropFiles": {
 	   					config : { 'drop' : {'max_file_size': '200000',
-	   										 'upload': {'url': "",
-	   										 			'file_name_param':"",
-	   										 			'additional_params': {"location":""},
-				   										'www-encoded': false }}},
+	   										 'upload': {'uploader_class':'GENTICS.Aloha.Uploader',
+	   										 			'config': {
+		   										 			'url': '/content/',
+		   										 			'file_name_param':"",
+		   										 			'extra_headers':{'Accept':'application/json'},
+		   										 			'additional_params': {"location":""},
+					   										'www-encoded': false }}}},
 					  	editables : {
 							'#domain_title'	: {}
 					  	}

@@ -117,7 +117,7 @@
 		</ul>
 	% endif
 	<div id="resource_content">
-	% if 'content' in instance:
+	% if 'content' in instance and instance['content'] != "":
 		${instance['content']}
 	% else:
 		<p>No content found</p>
