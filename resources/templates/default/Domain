@@ -13,7 +13,7 @@
 	   'plugins': {
 	   				"com.gentics.aloha.plugins.DragAndDropFiles": {
 	   					config : { 'drop' : {'max_file_size': '200000',
-	   										 'upload': {//'uploader_class':GENTICS.Aloha.Uploader,
+	   										 'upload': {'uploader_class':'GENTICS.Aloha.Uploader',
 	   										 			'config': {
 		   										 			'url': '/content/',
 		   										 			'extra_headers':{'Accept':'application/json'},
@@ -27,7 +27,14 @@
 	   					config : { 'img': { 'max_width': '50px',
 	   										'max_height': '50px' }},
 					  	editables : {
-							'#domain_title'	: {}
+							'#domain_title'	: {},
+							'#domain_content': { 'drop' : {'max_file_size': '200000',
+	   										 'upload': {'uploader_class':'GENTICS.Aloha.Uploader',
+	   										 			'config': {
+		   										 			'url': '/content/',
+		   										 			'extra_headers':{'Accept':'application/json'},
+		   										 			'additional_params': {"location":""},
+					   										'www-encoded': false }}}}
 					  	}
 	   				},
 	   				"org.karacos.aloha.Plugin": { 
