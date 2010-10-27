@@ -5,6 +5,7 @@
 <script language="javascript">
 	$(function(){ 
 	GENTICS.Aloha.settings = {
+	logLevels: {'error': true, 'warn': true, 'info': true, 'debug': true},
 	   'i18n' : {
 	     'current' : 'fr'
 	   },
@@ -20,13 +21,6 @@
 		   										 			'additional_params': {"location":""},
 					   										'www-encoded': false }}}},
 					  	editables : {
-							'#domain_title'	: {}
-					  	}
-	   				},
-	   				"com.gentics.aloha.plugins.Image": {
-	   					config : { 'img': { 'max_width': '50px',
-	   										'max_height': '50px' }},
-					  	editables : {
 							'#domain_title'	: {},
 							'#domain_content': { 'drop' : {'max_file_size': '200000',
 	   										 'upload': {'uploader_class':'GENTICS.Aloha.Uploader',
@@ -35,6 +29,14 @@
 		   										 			'extra_headers':{'Accept':'application/json'},
 		   										 			'additional_params': {"location":""},
 					   										'www-encoded': false }}}}
+					  	}
+	   				},
+	   				"com.gentics.aloha.plugins.Image": {
+	   					config : { 'img': { 'max_width': '50px',
+	   										'max_height': '50px' }},
+					  	editables : {
+							'#domain_title'	: {}
+							
 					  	}
 	   				},
 	   				"org.karacos.aloha.Plugin": { 

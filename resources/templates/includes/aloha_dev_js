@@ -47,5 +47,6 @@
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/sidebar.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/repositorymanager.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/repository.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/repositoryobjects.js"></script>
   <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/ui-browser.js"></script>
 	

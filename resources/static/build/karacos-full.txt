@@ -47,6 +47,7 @@ aloha-nka-fork/WebContent/core/selection.js
 aloha-nka-fork/WebContent/core/sidebar.js
 aloha-nka-fork/WebContent/core/repositorymanager.js
 aloha-nka-fork/WebContent/core/repository.js
+aloha-nka-fork/WebContent/core/repositoryobjects.js
 aloha-nka-fork/WebContent/core/ui-browser.js
 js/jquery-ui-1.8.5.custom.min.js
 js/anytime.js
@@ -68,6 +69,7 @@ aloha-nka-fork/WebContent/plugins/eu.iksproject.plugins.Loader/plugin.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.Image/plugin.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.DragnDropFiles/deps/Ext.ux.XHRUpload.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.DragnDropFiles/lib/uploader.js
+aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.DragnDropFiles/lib/UploadRepository.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.DragnDropFiles/plugin.js
 aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Plugin/plugin.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.HighlightEditables/plugin.js
