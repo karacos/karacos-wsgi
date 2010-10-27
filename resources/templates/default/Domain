@@ -16,7 +16,7 @@
 	   					config : { 'drop' : {'max_file_size': '200000',
 	   										 'upload': {'uploader_class':'GENTICS.Aloha.Uploader',
 	   										 			'config': {
-		   										 			'url': '/content/',
+		   										 			'url': '/',
 		   										 			'extra_headers':{'Accept':'application/json'},
 		   										 			'additional_params': {"location":""},
 					   										'www-encoded': false }}}},
