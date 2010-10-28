@@ -69,7 +69,7 @@ aloha-nka-fork/WebContent/plugins/eu.iksproject.plugins.Loader/plugin.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.Image/plugin.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.DragnDropFiles/deps/Ext.ux.XHRUpload.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.DragnDropFiles/lib/uploader.js
-aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.DragnDropFiles/lib/UploadRepository.js
+aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.DragnDropFiles/lib/DropFilesRepository.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.DragnDropFiles/plugin.js
 aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Plugin/plugin.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.HighlightEditables/plugin.js
