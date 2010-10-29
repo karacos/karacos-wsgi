@@ -19,7 +19,7 @@
 		   										 			'url': '/',
 		   										 			'extra_headers':{'Accept':'application/json'},
 		   										 			'additional_params': {"location":""},
-					   										'www-encoded': false }}}},
+					   										'www_encoded': false }}}},
 					  	editables : {
 							'#domain_title'	: {},
 							'#domain_content': { 'drop' : {'max_file_size': '200000',
@@ -28,7 +28,7 @@
 		   										 			'url': '/content/',
 		   										 			'extra_headers':{'Accept':'application/json'},
 		   										 			'additional_params': {"location":""},
-					   										'www-encoded': false }}}}
+					   										'www_encoded': false }}}}
 					  	}
 	   				},
 	   				"com.gentics.aloha.plugins.Image": {
