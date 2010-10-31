@@ -9,13 +9,20 @@
 				   "com.gentics.aloha.plugins.DragAndDropFiles": {
 	   					config : { 'drop' : {'max_file_size': '200000',
 	   										 'max_file_count': 2,
-	   										 'upload': {'url': "",
+	   										 'upload': {'url': "${instance._get_action_url()}",
 	   										 			'file_name_param':"",
 	   										 			'extra_headers':{'Accept':'application/json'},
 				   										'www_encoded': false }}},
 					  	editables : {
-							'#resource_title'	: [  ]
-					  	},
+							'#resource_title'	: [  ],
+							'#resource_content': { 'drop' : {'max_file_size': '200000',
+	   										 'upload': {
+	   										 			'config': {
+		   										 			'url': '${instance._get_action_url()}',
+		   										 			'extra_headers':{'Accept':'application/json'},
+					   										'www_encoded': false }}}}
+				   							
+					  	}
 	   				},
 	   				"com.gentics.aloha.plugins.Image": {
 	   					config : { 'img': { 'max_width': '50px',

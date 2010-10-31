@@ -1,5 +1,5 @@
 /*!
- * jQuery JavaScript Library v1.4.2
+ * jQuery JavaScript Library v1.4.3
  * http://jquery.com/
  *
  * Copyright 2010, John Resig
@@ -11,9 +11,13 @@
  * Copyright 2010, The Dojo Foundation
  * Released under the MIT, BSD, and GPL Licenses.
  *
- * Date: Sat Feb 13 22:33:48 2010 -0500
+ * Date: Thu Oct 14 23:10:06 2010 -0400
  */
 (function( window, undefined ) {
+
+// Use the correct document accordingly with window argument (sandbox)
+var document = window.document;
+var jQuery = (function() {
 
 // Define a local copy of jQuery
 var jQuery = function( selector, context ) {
@@ -27,27 +31,44 @@ var jQuery = function( selector, context ) {
 	// Map over the $ in case of overwrite
 	_$ = window.$,
 
-	// Use the correct document accordingly with window argument (sandbox)
-	document = window.document,
-
 	// A central reference to the root jQuery(document)
 	rootjQuery,
 
 	// A simple way to check for HTML strings or ID strings
 	// (both of which we optimize for)
-	quickExpr = /^[^<]*(<[\w\W]+>)[^>]*$|^#([\w-]+)$/,
+	quickExpr = /^(?:[^<]*(<[\w\W]+>)[^>]*$|#([\w\-]+)$)/,
 
 	// Is it a simple selector
 	isSimple = /^.[^:#\[\.,]*$/,
 
 	// Check if a string has a non-whitespace character in it
 	rnotwhite = /\S/,
+	rwhite = /\s/,
 
 	// Used for trimming whitespace
-	rtrim = /^(\s|\u00A0)+|(\s|\u00A0)+$/g,
+	trimLeft = /^\s+/,
+	trimRight = /\s+$/,
+
+	// Check for non-word characters
+	rnonword = /\W/,
+
+	// Check for digits
+	rdigit = /\d/,
 
 	// Match a standalone tag
 	rsingleTag = /^<(\w+)\s*\/?>(?:<\/\1>)?$/,
+
+	// JSON RegExp
+	rvalidchars = /^[\],:{}\s]*$/,
+	rvalidescape = /\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,
+	rvalidtokens = /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,
+	rvalidbraces = /(?:^|:|,)(?:\s*\[)+/g,
+
+	// Useragent RegExp
+	rwebkit = /(webkit)[ \/]([\w.]+)/,
+	ropera = /(opera)(?:.*version)?[ \/]([\w.]+)/,
+	rmsie = /(msie) ([\w.]+)/,
+	rmozilla = /(mozilla)(?:.*? rv:([\w.]+))?/,
 
 	// Keep a UserAgent string for use with jQuery.browser
 	userAgent = navigator.userAgent,
@@ -66,10 +87,14 @@ var jQuery = function( selector, context ) {
 
 	// Save a reference to some core methods
 	toString = Object.prototype.toString,
-	hasOwnProperty = Object.prototype.hasOwnProperty,
+	hasOwn = Object.prototype.hasOwnProperty,
 	push = Array.prototype.push,
 	slice = Array.prototype.slice,
-	indexOf = Array.prototype.indexOf;
+	trim = String.prototype.trim,
+	indexOf = Array.prototype.indexOf,
+	
+	// [[Class]] -> type pairs
+	class2type = {};
 
 jQuery.fn = jQuery.prototype = {
 	init: function( selector, context ) {
@@ -88,7 +113,7 @@ jQuery.fn = jQuery.prototype = {
 		}
 		
 		// The body element only exists once, optimize finding it
-		if ( selector === "body" && !context ) {
+		if ( selector === "body" && !context && document.body ) {
 			this.context = document;
 			this[0] = document.body;
 			this.selector = "body";
@@ -122,7 +147,7 @@ jQuery.fn = jQuery.prototype = {
 						}
 
 					} else {
-						ret = buildFragment( [ match[1] ], [ doc ] );
+						ret = jQuery.buildFragment( [ match[1] ], [ doc ] );
 						selector = (ret.cacheable ? ret.fragment.cloneNode(true) : ret.fragment).childNodes;
 					}
 					
@@ -132,7 +157,9 @@ jQuery.fn = jQuery.prototype = {
 				} else {
 					elem = document.getElementById( match[2] );
 
-					if ( elem ) {
+					// Check parentNode to catch when Blackberry 4.6 returns
+					// nodes that are no longer in the document #6963
+					if ( elem && elem.parentNode ) {
 						// Handle the case where IE and Opera return items
 						// by name instead of ID
 						if ( elem.id !== match[2] ) {
@@ -150,7 +177,7 @@ jQuery.fn = jQuery.prototype = {
 				}
 
 			// HANDLE: $("TAG")
-			} else if ( !context && /^\w+$/.test( selector ) ) {
+			} else if ( !context && !rnonword.test( selector ) ) {
 				this.selector = selector;
 				this.context = document;
 				selector = document.getElementsByTagName( selector );
@@ -184,7 +211,7 @@ jQuery.fn = jQuery.prototype = {
 	selector: "",
 
 	// The current version of jQuery being used
-	jquery: "1.4.2",
+	jquery: "1.4.3",
 
 	// The default length of a jQuery object is 0
 	length: 0,
@@ -304,7 +331,7 @@ jQuery.fn.init.prototype = jQuery.fn;
 
 jQuery.extend = jQuery.fn.extend = function() {
 	// copy reference to target object
-	var target = arguments[0] || {}, i = 1, length = arguments.length, deep = false, options, name, src, copy;
+	var target = arguments[0] || {}, i = 1, length = arguments.length, deep = false, options, name, src, copy, copyIsArray;
 
 	// Handle a deep copy situation
 	if ( typeof target === "boolean" ) {
@@ -338,10 +365,15 @@ jQuery.extend = jQuery.fn.extend = function() {
 					continue;
 				}
 
-				// Recurse if we're merging object literal values or arrays
-				if ( deep && copy && ( jQuery.isPlainObject(copy) || jQuery.isArray(copy) ) ) {
-					var clone = src && ( jQuery.isPlainObject(src) || jQuery.isArray(src) ) ? src
-						: jQuery.isArray(copy) ? [] : {};
+				// Recurse if we're merging plain objects or arrays
+				if ( deep && copy && ( jQuery.isPlainObject(copy) || (copyIsArray = jQuery.isArray(copy)) ) ) {
+					if ( copyIsArray ) {
+						copyIsArray = false;
+						clone = src && jQuery.isArray(src) ? src : [];
+
+					} else {
+						clone = src && jQuery.isPlainObject(src) ? src : {};
+					}
 
 					// Never move original objects, clone them
 					target[ name ] = jQuery.extend( deep, clone, copy );
@@ -371,18 +403,32 @@ jQuery.extend({
 	
 	// Is the DOM ready to be used? Set to true once it occurs.
 	isReady: false,
+
+	// A counter to track how many items to wait for before
+	// the ready event fires. See #6781
+	readyWait: 1,
 	
 	// Handle when the DOM is ready
-	ready: function() {
+	ready: function( wait ) {
+		// A third-party is pushing the ready event forwards
+		if ( wait === true ) {
+			jQuery.readyWait--;
+		}
+
 		// Make sure that the DOM is not already loaded
-		if ( !jQuery.isReady ) {
+		if ( !jQuery.readyWait || (wait !== true && !jQuery.isReady) ) {
 			// Make sure body exists, at least, in case IE gets a little overzealous (ticket #5443).
 			if ( !document.body ) {
-				return setTimeout( jQuery.ready, 13 );
+				return setTimeout( jQuery.ready, 1 );
 			}
 
 			// Remember that the DOM is ready
 			jQuery.isReady = true;
+
+			// If a normal DOM Ready event fired, decrement, and wait if need be
+			if ( wait !== true && --jQuery.readyWait > 0 ) {
+				return;
+			}
 
 			// If there are functions bound, to execute
 			if ( readyList ) {
@@ -413,7 +459,8 @@ jQuery.extend({
 		// Catch cases where $(document).ready() is called after the
 		// browser event has already occurred.
 		if ( document.readyState === "complete" ) {
-			return jQuery.ready();
+			// Handle it asynchronously to allow scripts the opportunity to delay ready
+			return setTimeout( jQuery.ready, 1 );
 		}
 
 		// Mozilla, Opera and webkit nightlies currently support this event
@@ -451,25 +498,40 @@ jQuery.extend({
 	// Since version 1.3, DOM methods and functions like alert
 	// aren't supported. They return false on IE (#2968).
 	isFunction: function( obj ) {
-		return toString.call(obj) === "[object Function]";
+		return jQuery.type(obj) === "function";
 	},
 
-	isArray: function( obj ) {
-		return toString.call(obj) === "[object Array]";
+	isArray: Array.isArray || function( obj ) {
+		return jQuery.type(obj) === "array";
+	},
+
+	// A crude way of determining if an object is a window
+	isWindow: function( obj ) {
+		return obj && typeof obj === "object" && "setInterval" in obj;
+	},
+
+	isNaN: function( obj ) {
+		return obj == null || !rdigit.test( obj ) || isNaN( obj );
+	},
+
+	type: function( obj ) {
+		return obj == null ?
+			String( obj ) :
+			class2type[ toString.call(obj) ] || "object";
 	},
 
 	isPlainObject: function( obj ) {
 		// Must be an Object.
 		// Because of IE, we also have to check the presence of the constructor property.
 		// Make sure that DOM nodes and window objects don't pass through, as well
-		if ( !obj || toString.call(obj) !== "[object Object]" || obj.nodeType || obj.setInterval ) {
+		if ( !obj || jQuery.type(obj) !== "object" || obj.nodeType || jQuery.isWindow( obj ) ) {
 			return false;
 		}
 		
 		// Not own constructor property must be Object
-		if ( obj.constructor
-			&& !hasOwnProperty.call(obj, "constructor")
-			&& !hasOwnProperty.call(obj.constructor.prototype, "isPrototypeOf") ) {
+		if ( obj.constructor &&
+			!hasOwn.call(obj, "constructor") &&
+			!hasOwn.call(obj.constructor.prototype, "isPrototypeOf") ) {
 			return false;
 		}
 		
@@ -479,7 +541,7 @@ jQuery.extend({
 		var key;
 		for ( key in obj ) {}
 		
-		return key === undefined || hasOwnProperty.call( obj, key );
+		return key === undefined || hasOwn.call( obj, key );
 	},
 
 	isEmptyObject: function( obj ) {
@@ -503,9 +565,9 @@ jQuery.extend({
 		
 		// Make sure the incoming data is actual JSON
 		// Logic borrowed from http://json.org/json2.js
-		if ( /^[\],:{}\s]*$/.test(data.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, "@")
-			.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, "]")
-			.replace(/(?:^|:|,)(?:\s*\[)+/g, "")) ) {
+		if ( rvalidchars.test(data.replace(rvalidescape, "@")
+			.replace(rvalidtokens, "]")
+			.replace(rvalidbraces, "")) ) {
 
 			// Try to use the native JSON parser first
 			return window.JSON && window.JSON.parse ?
@@ -584,9 +646,20 @@ jQuery.extend({
 		return object;
 	},
 
-	trim: function( text ) {
-		return (text || "").replace( rtrim, "" );
-	},
+	// Use native String.trim function wherever possible
+	trim: trim ?
+		function( text ) {
+			return text == null ?
+				"" :
+				trim.call( text );
+		} :
+
+		// Otherwise use our own trimming functionality
+		function( text ) {
+			return text == null ?
+				"" :
+				text.toString().replace( trimLeft, "" ).replace( trimRight, "" );
+		},
 
 	// results is for internal usage only
 	makeArray: function( array, results ) {
@@ -596,7 +669,10 @@ jQuery.extend({
 			// The window, strings (and functions) also have 'length'
 			// The extra typeof function check is to prevent crashes
 			// in Safari 2 (See: #3039)
-			if ( array.length == null || typeof array === "string" || jQuery.isFunction(array) || (typeof array !== "function" && array.setInterval) ) {
+			// Tweaked logic slightly to handle Blackberry 4.7 RegExp issues #6930
+			var type = jQuery.type(array);
+
+			if ( array.length == null || type === "string" || type === "function" || type === "regexp" || jQuery.isWindow( array ) ) {
 				push.call( ret, array );
 			} else {
 				jQuery.merge( ret, array );
@@ -640,12 +716,14 @@ jQuery.extend({
 	},
 
 	grep: function( elems, callback, inv ) {
-		var ret = [];
+		var ret = [], retVal;
+		inv = !!inv;
 
 		// Go through the array, only saving the items
 		// that pass the validator function
 		for ( var i = 0, length = elems.length; i < length; i++ ) {
-			if ( !inv !== !callback( elems[ i ], i ) ) {
+			retVal = !!callback( elems[ i ], i );
+			if ( inv !== retVal ) {
 				ret.push( elems[ i ] );
 			}
 		}
@@ -701,21 +779,59 @@ jQuery.extend({
 		return proxy;
 	},
 
+	// Mutifunctional method to get and set values to a collection
+	// The value/s can be optionally by executed if its a function
+	access: function( elems, key, value, exec, fn, pass ) {
+		var length = elems.length;
+	
+		// Setting many attributes
+		if ( typeof key === "object" ) {
+			for ( var k in key ) {
+				jQuery.access( elems, k, key[k], exec, fn, value );
+			}
+			return elems;
+		}
+	
+		// Setting one attribute
+		if ( value !== undefined ) {
+			// Optionally, function values get executed if exec is true
+			exec = !pass && exec && jQuery.isFunction(value);
+		
+			for ( var i = 0; i < length; i++ ) {
+				fn( elems[i], key, exec ? value.call( elems[i], i, fn( elems[i], key ) ) : value, pass );
+			}
+		
+			return elems;
+		}
+	
+		// Getting an attribute
+		return length ? fn( elems[0], key ) : undefined;
+	},
+
+	now: function() {
+		return (new Date()).getTime();
+	},
+
 	// Use of jQuery.browser is frowned upon.
 	// More details: http://docs.jquery.com/Utilities/jQuery.browser
 	uaMatch: function( ua ) {
 		ua = ua.toLowerCase();
 
-		var match = /(webkit)[ \/]([\w.]+)/.exec( ua ) ||
-			/(opera)(?:.*version)?[ \/]([\w.]+)/.exec( ua ) ||
-			/(msie) ([\w.]+)/.exec( ua ) ||
-			!/compatible/.test( ua ) && /(mozilla)(?:.*? rv:([\w.]+))?/.exec( ua ) ||
-		  	[];
+		var match = rwebkit.exec( ua ) ||
+			ropera.exec( ua ) ||
+			rmsie.exec( ua ) ||
+			ua.indexOf("compatible") < 0 && rmozilla.exec( ua ) ||
+			[];
 
 		return { browser: match[1] || "", version: match[2] || "0" };
 	},
 
 	browser: {}
+});
+
+// Populate the class2type map
+jQuery.each("Boolean Number String Function Array Date RegExp Object".split(" "), function(i, name) {
+	class2type[ "[object " + name + "]" ] = name.toLowerCase();
 });
 
 browserMatch = jQuery.uaMatch( userAgent );
@@ -733,6 +849,13 @@ if ( indexOf ) {
 	jQuery.inArray = function( elem, array ) {
 		return indexOf.call( array, elem );
 	};
+}
+
+// Verify that \s matches non-breaking spaces
+// (IE fails on this test)
+if ( !rwhite.test( "\xA0" ) ) {
+	trimLeft = /^[\s\xA0]+/;
+	trimRight = /[\s\xA0]+$/;
 }
 
 // All jQuery objects should point back to these
@@ -765,7 +888,7 @@ function doScrollCheck() {
 		// If IE is used, use the trick by Diego Perini
 		// http://javascript.nwbox.com/IEContentLoaded/
 		document.documentElement.doScroll("left");
-	} catch( error ) {
+	} catch(e) {
 		setTimeout( doScrollCheck, 1 );
 		return;
 	}
@@ -774,54 +897,12 @@ function doScrollCheck() {
 	jQuery.ready();
 }
 
-function evalScript( i, elem ) {
-	if ( elem.src ) {
-		jQuery.ajax({
-			url: elem.src,
-			async: false,
-			dataType: "script"
-		});
-	} else {
-		jQuery.globalEval( elem.text || elem.textContent || elem.innerHTML || "" );
-	}
+// Expose jQuery to the global object
+return (window.jQuery = window.$ = jQuery);
 
-	if ( elem.parentNode ) {
-		elem.parentNode.removeChild( elem );
-	}
-}
+})();
 
-// Mutifunctional method to get and set values to a collection
-// The value/s can be optionally by executed if its a function
-function access( elems, key, value, exec, fn, pass ) {
-	var length = elems.length;
-	
-	// Setting many attributes
-	if ( typeof key === "object" ) {
-		for ( var k in key ) {
-			access( elems, k, key[k], exec, fn, value );
-		}
-		return elems;
-	}
-	
-	// Setting one attribute
-	if ( value !== undefined ) {
-		// Optionally, function values get executed if exec is true
-		exec = !pass && exec && jQuery.isFunction(value);
-		
-		for ( var i = 0; i < length; i++ ) {
-			fn( elems[i], key, exec ? value.call( elems[i], i, fn( elems[i], key ) ) : value, pass );
-		}
-		
-		return elems;
-	}
-	
-	// Getting an attribute
-	return length ? fn( elems[0], key ) : undefined;
-}
 
-function now() {
-	return (new Date).getTime();
-}
 (function() {
 
 	jQuery.support = {};
@@ -829,13 +910,15 @@ function now() {
 	var root = document.documentElement,
 		script = document.createElement("script"),
 		div = document.createElement("div"),
-		id = "script" + now();
+		id = "script" + jQuery.now();
 
 	div.style.display = "none";
 	div.innerHTML = "   <link/><table></table><a href='/a' style='color:red;float:left;opacity:.55;'>a</a><input type='checkbox'/>";
 
 	var all = div.getElementsByTagName("*"),
-		a = div.getElementsByTagName("a")[0];
+		a = div.getElementsByTagName("a")[0],
+		select = document.createElement("select"),
+		opt = select.appendChild( document.createElement("option") );
 
 	// Can't get basic test support
 	if ( !all || !all.length || !a ) {
@@ -878,17 +961,23 @@ function now() {
 
 		// Make sure that a selected-by-default option has a working selected property.
 		// (WebKit defaults to false instead of true, IE too, if it's in an optgroup)
-		optSelected: document.createElement("select").appendChild( document.createElement("option") ).selected,
-
-		parentNode: div.removeChild( div.appendChild( document.createElement("div") ) ).parentNode === null,
+		optSelected: opt.selected,
 
 		// Will be defined later
-		deleteExpando: true,
+		optDisabled: false,
 		checkClone: false,
 		scriptEval: false,
 		noCloneEvent: true,
-		boxModel: null
+		boxModel: null,
+		inlineBlockNeedsLayout: false,
+		shrinkWrapBlocks: false,
+		reliableHiddenOffsets: true
 	};
+
+	// Make sure that the options inside disabled selects aren't marked as disabled
+	// (WebKit marks them as diabled)
+	select.disabled = true;
+	jQuery.support.optDisabled = !opt.disabled;
 
 	script.type = "text/javascript";
 	try {
@@ -903,15 +992,6 @@ function now() {
 	if ( window[ id ] ) {
 		jQuery.support.scriptEval = true;
 		delete window[ id ];
-	}
-
-	// Test to see if it's possible to delete an expando from an element
-	// Fails in Internet Explorer
-	try {
-		delete script.test;
-	
-	} catch(e) {
-		jQuery.support.deleteExpando = false;
 	}
 
 	root.removeChild( script );
@@ -943,27 +1023,63 @@ function now() {
 
 		document.body.appendChild( div );
 		jQuery.boxModel = jQuery.support.boxModel = div.offsetWidth === 2;
-		document.body.removeChild( div ).style.display = 'none';
 
-		div = null;
+		if ( "zoom" in div.style ) {
+			// Check if natively block-level elements act like inline-block
+			// elements when setting their display to 'inline' and giving
+			// them layout
+			// (IE < 8 does this)
+			div.style.display = "inline";
+			div.style.zoom = 1;
+			jQuery.support.inlineBlockNeedsLayout = div.offsetWidth === 2;
+
+			// Check if elements with layout shrink-wrap their children
+			// (IE 6 does this)
+			div.style.display = "";
+			div.innerHTML = "<div style='width:4px;'></div>";
+			jQuery.support.shrinkWrapBlocks = div.offsetWidth !== 2;
+		}
+
+		div.innerHTML = "<table><tr><td style='padding:0;display:none'></td><td>t</td></tr></table>";
+		var tds = div.getElementsByTagName("td");
+
+		// Check if table cells still have offsetWidth/Height when they are set
+		// to display:none and there are still other visible table cells in a
+		// table row; if so, offsetWidth/Height are not reliable for use when
+		// determining if an element has been hidden directly using
+		// display:none (it is still safe to use offsets if a parent element is
+		// hidden; don safety goggles and see bug #4512 for more information).
+		// (only IE 8 fails this test)
+		jQuery.support.reliableHiddenOffsets = tds[0].offsetHeight === 0;
+
+		tds[0].style.display = "";
+		tds[1].style.display = "none";
+
+		// Check if empty table cells still have offsetWidth/Height
+		// (IE < 8 fail this test)
+		jQuery.support.reliableHiddenOffsets = jQuery.support.reliableHiddenOffsets && tds[0].offsetHeight === 0;
+		div.innerHTML = "";
+
+		document.body.removeChild( div ).style.display = "none";
+		div = tds = null;
 	});
 
 	// Technique from Juriy Zaytsev
 	// http://thinkweb2.com/projects/prototype/detecting-event-support-without-browser-sniffing/
-	var eventSupported = function( eventName ) { 
-		var el = document.createElement("div"); 
-		eventName = "on" + eventName; 
+	var eventSupported = function( eventName ) {
+		var el = document.createElement("div");
+		eventName = "on" + eventName;
 
-		var isSupported = (eventName in el); 
-		if ( !isSupported ) { 
-			el.setAttribute(eventName, "return;"); 
-			isSupported = typeof el[eventName] === "function"; 
-		} 
-		el = null; 
+		var isSupported = (eventName in el);
+		if ( !isSupported ) {
+			el.setAttribute(eventName, "return;");
+			isSupported = typeof el[eventName] === "function";
+		}
+		el = null;
 
-		return isSupported; 
+		return isSupported;
 	};
-	
+
 	jQuery.support.submitBubbles = eventSupported("submit");
 	jQuery.support.changeBubbles = eventSupported("change");
 
@@ -983,23 +1099,33 @@ jQuery.props = {
 	usemap: "useMap",
 	frameborder: "frameBorder"
 };
-var expando = "jQuery" + now(), uuid = 0, windowData = {};
+
+
+
+
+var windowData = {},
+	rbrace = /^(?:\{.*\}|\[.*\])$/;
 
 jQuery.extend({
 	cache: {},
-	
-	expando:expando,
+
+	// Please use with caution
+	uuid: 0,
+
+	// Unique for each copy of jQuery on the page	
+	expando: "jQuery" + jQuery.now(),
 
 	// The following elements throw uncatchable exceptions if you
 	// attempt to add expando properties to them.
 	noData: {
 		"embed": true,
-		"object": true,
+		// Ban all objects except for Flash (which handle expandos)
+		"object": "clsid:D27CDB6E-AE6D-11cf-96B8-444553540000",
 		"applet": true
 	},
 
 	data: function( elem, name, data ) {
-		if ( elem.nodeName && jQuery.noData[elem.nodeName.toLowerCase()] ) {
+		if ( !jQuery.acceptData( elem ) ) {
 			return;
 		}
 
@@ -1007,29 +1133,38 @@ jQuery.extend({
 			windowData :
 			elem;
 
-		var id = elem[ expando ], cache = jQuery.cache, thisCache;
+		var isNode = elem.nodeType,
+			id = isNode ? elem[ jQuery.expando ] : null,
+			cache = jQuery.cache, thisCache;
 
-		if ( !id && typeof name === "string" && data === undefined ) {
-			return null;
+		if ( isNode && !id && typeof name === "string" && data === undefined ) {
+			return;
 		}
 
+		// Get the data from the object directly
+		if ( !isNode ) {
+			cache = elem;
+
 		// Compute a unique ID for the element
-		if ( !id ) { 
-			id = ++uuid;
+		} else if ( !id ) {
+			elem[ jQuery.expando ] = id = ++jQuery.uuid;
 		}
 
 		// Avoid generating a new cache unless none exists and we
 		// want to manipulate it.
 		if ( typeof name === "object" ) {
-			elem[ expando ] = id;
-			thisCache = cache[ id ] = jQuery.extend(true, {}, name);
+			if ( isNode ) {
+				cache[ id ] = jQuery.extend(cache[ id ], name);
 
-		} else if ( !cache[ id ] ) {
-			elem[ expando ] = id;
+			} else {
+				jQuery.extend( cache, name );
+			}
+
+		} else if ( isNode && !cache[ id ] ) {
 			cache[ id ] = {};
 		}
 
-		thisCache = cache[ id ];
+		thisCache = isNode ? cache[ id ] : cache;
 
 		// Prevent overriding the named cache with undefined values
 		if ( data !== undefined ) {
@@ -1040,7 +1175,7 @@ jQuery.extend({
 	},
 
 	removeData: function( elem, name ) {
-		if ( elem.nodeName && jQuery.noData[elem.nodeName.toLowerCase()] ) {
+		if ( !jQuery.acceptData( elem ) ) {
 			return;
 		}
 
@@ -1048,7 +1183,10 @@ jQuery.extend({
 			windowData :
 			elem;
 
-		var id = elem[ expando ], cache = jQuery.cache, thisCache = cache[ id ];
+		var isNode = elem.nodeType,
+			id = isNode ? elem[ jQuery.expando ] : elem,
+			cache = jQuery.cache,
+			thisCache = isNode ? cache[ id ] : id;
 
 		// If we want to remove a specific section of the element's data
 		if ( name ) {
@@ -1057,30 +1195,50 @@ jQuery.extend({
 				delete thisCache[ name ];
 
 				// If we've removed all the data, remove the element's cache
-				if ( jQuery.isEmptyObject(thisCache) ) {
+				if ( isNode && jQuery.isEmptyObject(thisCache) ) {
 					jQuery.removeData( elem );
 				}
 			}
 
 		// Otherwise, we want to remove all of the element's data
 		} else {
-			if ( jQuery.support.deleteExpando ) {
+			if ( isNode && jQuery.support.deleteExpando ) {
 				delete elem[ jQuery.expando ];
 
 			} else if ( elem.removeAttribute ) {
 				elem.removeAttribute( jQuery.expando );
-			}
 
 			// Completely remove the data cache
-			delete cache[ id ];
+			} else if ( isNode ) {
+				delete cache[ id ];
+
+			// Remove all fields from the object
+			} else {
+				for ( var n in elem ) {
+					delete elem[ n ];
+				}
+			}
 		}
+	},
+
+	// A method for determining if a DOM node can handle the data expando
+	acceptData: function( elem ) {
+		if ( elem.nodeName ) {
+			var match = jQuery.noData[ elem.nodeName.toLowerCase() ];
+
+			if ( match ) {
+				return !(match === true || elem.getAttribute("classid") !== match);
+			}
+		}
+
+		return true;
 	}
 });
 
 jQuery.fn.extend({
 	data: function( key, value ) {
-		if ( typeof key === "undefined" && this.length ) {
-			return jQuery.data( this[0] );
+		if ( typeof key === "undefined" ) {
+			return this.length ? jQuery.data( this[0] ) : null;
 
 		} else if ( typeof key === "object" ) {
 			return this.each(function() {
@@ -1094,15 +1252,42 @@ jQuery.fn.extend({
 		if ( value === undefined ) {
 			var data = this.triggerHandler("getData" + parts[1] + "!", [parts[0]]);
 
+			// Try to fetch any internally stored data first
 			if ( data === undefined && this.length ) {
 				data = jQuery.data( this[0], key );
+
+				// If nothing was found internally, try to fetch any
+				// data from the HTML5 data-* attribute
+				if ( data === undefined && this[0].nodeType === 1 ) {
+					data = this[0].getAttribute( "data-" + key );
+
+					if ( typeof data === "string" ) {
+						try {
+							data = data === "true" ? true :
+								data === "false" ? false :
+								data === "null" ? null :
+								!jQuery.isNaN( data ) ? parseFloat( data ) :
+								rbrace.test( data ) ? jQuery.parseJSON( data ) :
+								data;
+						} catch( e ) {}
+
+					} else {
+						data = undefined;
+					}
+				}
 			}
+
 			return data === undefined && parts[1] ?
 				this.data( parts[0] ) :
 				data;
+
 		} else {
-			return this.trigger("setData" + parts[1] + "!", [parts[0], value]).each(function() {
+			return this.each(function() {
+				var $this = jQuery( this ), args = [ parts[0], value ];
+
+				$this.triggerHandler( "setData" + parts[1] + "!", args );
 				jQuery.data( this, key, value );
+				$this.triggerHandler( "changeData" + parts[1] + "!", args );
 			});
 		}
 	},
@@ -1113,6 +1298,10 @@ jQuery.fn.extend({
 		});
 	}
 });
+
+
+
+
 jQuery.extend({
 	queue: function( elem, type, data ) {
 		if ( !elem ) {
@@ -1171,7 +1360,7 @@ jQuery.fn.extend({
 		if ( data === undefined ) {
 			return jQuery.queue( this[0], type );
 		}
-		return this.each(function( i, elem ) {
+		return this.each(function( i ) {
 			var queue = jQuery.queue( this, type, data );
 
 			if ( type === "fx" && queue[0] !== "inprogress" ) {
@@ -1203,18 +1392,22 @@ jQuery.fn.extend({
 		return this.queue( type || "fx", [] );
 	}
 });
+
+
+
+
 var rclass = /[\n\t]/g,
-	rspace = /\s+/,
+	rspaces = /\s+/,
 	rreturn = /\r/g,
-	rspecialurl = /href|src|style/,
-	rtype = /(button|input)/i,
-	rfocusable = /(button|input|object|select|textarea)/i,
-	rclickable = /^(a|area)$/i,
-	rradiocheck = /radio|checkbox/;
+	rspecialurl = /^(?:href|src|style)$/,
+	rtype = /^(?:button|input)$/i,
+	rfocusable = /^(?:button|input|object|select|textarea)$/i,
+	rclickable = /^a(?:rea)?$/i,
+	rradiocheck = /^(?:radio|checkbox)$/i;
 
 jQuery.fn.extend({
 	attr: function( name, value ) {
-		return access( this, name, value, true, jQuery.attr );
+		return jQuery.access( this, name, value, true, jQuery.attr );
 	},
 
 	removeAttr: function( name, fn ) {
@@ -1235,7 +1428,7 @@ jQuery.fn.extend({
 		}
 
 		if ( value && typeof value === "string" ) {
-			var classNames = (value || "").split( rspace );
+			var classNames = (value || "").split( rspaces );
 
 			for ( var i = 0, l = this.length; i < l; i++ ) {
 				var elem = this[i];
@@ -1269,7 +1462,7 @@ jQuery.fn.extend({
 		}
 
 		if ( (value && typeof value === "string") || value === undefined ) {
-			var classNames = (value || "").split(rspace);
+			var classNames = (value || "").split( rspaces );
 
 			for ( var i = 0, l = this.length; i < l; i++ ) {
 				var elem = this[i];
@@ -1307,7 +1500,7 @@ jQuery.fn.extend({
 				// toggle individual class names
 				var className, i = 0, self = jQuery(this),
 					state = stateVal,
-					classNames = value.split( rspace );
+					classNames = value.split( rspaces );
 
 				while ( (className = classNames[ i++ ]) ) {
 					// check each className given, space seperated list
@@ -1339,12 +1532,15 @@ jQuery.fn.extend({
 	},
 
 	val: function( value ) {
-		if ( value === undefined ) {
+		if ( !arguments.length ) {
 			var elem = this[0];
 
 			if ( elem ) {
 				if ( jQuery.nodeName( elem, "option" ) ) {
-					return (elem.attributes.value || {}).specified ? elem.value : elem.text;
+					// attributes.value is undefined in Blackberry 4.7 but
+					// uses .value. See #6932
+					var val = elem.attributes.value;
+					return !val || val.specified ? elem.value : elem.text;
 				}
 
 				// We need to handle select boxes special
@@ -1363,8 +1559,11 @@ jQuery.fn.extend({
 					for ( var i = one ? index : 0, max = one ? index + 1 : options.length; i < max; i++ ) {
 						var option = options[ i ];
 
-						if ( option.selected ) {
-							// Get the specifc value for the option
+						// Don't return options that are disabled or in a disabled optgroup
+						if ( option.selected && (jQuery.support.optDisabled ? !option.disabled : option.getAttribute("disabled") === null) && 
+								(!option.parentNode.disabled || !jQuery.nodeName( option.parentNode, "optgroup" )) ) {
+
+							// Get the specific value for the option
 							value = jQuery(option).val();
 
 							// We don't need an array for one selects
@@ -1407,10 +1606,15 @@ jQuery.fn.extend({
 				val = value.call(this, i, self.val());
 			}
 
-			// Typecast each time if the value is a Function and the appended
-			// value is therefore different each time.
-			if ( typeof val === "number" ) {
+			// Treat null/undefined as ""; convert numbers to string
+			if ( val == null ) {
+				val = "";
+			} else if ( typeof val === "number" ) {
 				val += "";
+			} else if ( jQuery.isArray(val) ) {
+				val = jQuery.map(val, function (value) {
+					return value == null ? "" : value + "";
+				});
 			}
 
 			if ( jQuery.isArray(val) && rradiocheck.test( this.type ) ) {
@@ -1483,14 +1687,22 @@ jQuery.extend({
 			}
 
 			// If applicable, access the attribute via the DOM 0 way
-			if ( name in elem && notxml && !special ) {
+			// 'in' checks fail in Blackberry 4.7 #6931
+			if ( (name in elem || elem[ name ] !== undefined) && notxml && !special ) {
 				if ( set ) {
 					// We can't allow the type property to be changed (since it causes problems in IE)
 					if ( name === "type" && rtype.test( elem.nodeName ) && elem.parentNode ) {
 						jQuery.error( "type property can't be changed" );
 					}
 
-					elem[ name ] = value;
+					if ( value === null ) {
+						if ( elem.nodeType === 1 ) {
+							elem.removeAttribute( name );
+						}
+
+					} else {
+						elem[ name ] = value;
+					}
 				}
 
 				// browsers index elements by id/name on forms, give priority to attributes.
@@ -1526,6 +1738,12 @@ jQuery.extend({
 				elem.setAttribute( name, "" + value );
 			}
 
+			// Ensure that missing attributes return undefined
+			// Blackberry 4.7 returns "" from getAttribute #6938
+			if ( !elem.attributes[ name ] && (elem.hasAttribute && !elem.hasAttribute( name )) ) {
+				return undefined;
+			}
+
 			var attr = !jQuery.support.hrefNormalized && notxml && special ?
 					// Some attributes require a special call on IE
 					elem.getAttribute( name, 2 ) :
@@ -1534,18 +1752,21 @@ jQuery.extend({
 			// Non-existent attributes return null, we normalize to undefined
 			return attr === null ? undefined : attr;
 		}
-
-		// elem is actually elem.style ... set the style
-		// Using attr for specific style information is now deprecated. Use style instead.
-		return jQuery.style( elem, name, value );
 	}
 });
+
+
+
+
 var rnamespaces = /\.(.*)$/,
+	rformElems = /^(?:textarea|input|select)$/i,
+	rperiod = /\./g,
+	rspace = / /g,
+	rescape = /[^\w\s.|`]/g,
 	fcleanup = function( nm ) {
-		return nm.replace(/[^\w\s\.\|`]/g, function( ch ) {
-			return "\\" + ch;
-		});
-	};
+		return nm.replace(rescape, "\\$&");
+	},
+	focusCounts = { focusin: 0, focusout: 0 };
 
 /*
  * A number of helper functions used for managing events.
@@ -1563,8 +1784,12 @@ jQuery.event = {
 
 		// For whatever reason, IE has trouble passing the window object
 		// around, causing it to be cloned in the process
-		if ( elem.setInterval && ( elem !== window && !elem.frameElement ) ) {
+		if ( jQuery.isWindow( elem ) && ( elem !== window && !elem.frameElement ) ) {
 			elem = window;
+		}
+
+		if ( handler === false ) {
+			handler = returnFalse;
 		}
 
 		var handleObjIn, handleObj;
@@ -1588,8 +1813,28 @@ jQuery.event = {
 			return;
 		}
 
-		var events = elemData.events = elemData.events || {},
-			eventHandle = elemData.handle, eventHandle;
+		// Use a key less likely to result in collisions for plain JS objects.
+		// Fixes bug #7150.
+		var eventKey = elem.nodeType ? "events" : "__events__",
+			events = elemData[ eventKey ],
+			eventHandle = elemData.handle;
+			
+		if ( typeof events === "function" ) {
+			// On plain objects events is a fn that holds the the data
+			// which prevents this data from being JSON serialized
+			// the function does not need to be called, it just contains the data
+			eventHandle = events.handle;
+			events = events.events;
+
+		} else if ( !events ) {
+			if ( !elem.nodeType ) {
+				// On plain objects, create a fn that acts as the holder
+				// of the values to avoid JSON serialization of event data
+				elemData[ eventKey ] = elemData = function(){};
+			}
+
+			elemData.events = events = {};
+		}
 
 		if ( !eventHandle ) {
 			elemData.handle = eventHandle = function() {
@@ -1628,7 +1873,9 @@ jQuery.event = {
 			}
 
 			handleObj.type = type;
-			handleObj.guid = handler.guid;
+			if ( !handleObj.guid ) {
+				handleObj.guid = handler.guid;
+			}
 
 			// Get the current list of functions bound to this event
 			var handlers = events[ type ],
@@ -1680,12 +1927,22 @@ jQuery.event = {
 			return;
 		}
 
-		var ret, type, fn, i = 0, all, namespaces, namespace, special, eventType, handleObj, origType,
+		if ( handler === false ) {
+			handler = returnFalse;
+		}
+
+		var ret, type, fn, j, i = 0, all, namespaces, namespace, special, eventType, handleObj, origType,
+			eventKey = elem.nodeType ? "events" : "__events__",
 			elemData = jQuery.data( elem ),
-			events = elemData && elemData.events;
+			events = elemData && elemData[ eventKey ];
 
 		if ( !elemData || !events ) {
 			return;
+		}
+		
+		if ( typeof events === "function" ) {
+			elemData = events;
+			events = events.events;
 		}
 
 		// types is actually an event object here
@@ -1721,7 +1978,7 @@ jQuery.event = {
 				type = namespaces.shift();
 
 				namespace = new RegExp("(^|\\.)" + 
-					jQuery.map( namespaces.slice(0).sort(), fcleanup ).join("\\.(?:.*\\.)?") + "(\\.|$)")
+					jQuery.map( namespaces.slice(0).sort(), fcleanup ).join("\\.(?:.*\\.)?") + "(\\.|$)");
 			}
 
 			eventType = events[ type ];
@@ -1731,7 +1988,7 @@ jQuery.event = {
 			}
 
 			if ( !handler ) {
-				for ( var j = 0; j < eventType.length; j++ ) {
+				for ( j = 0; j < eventType.length; j++ ) {
 					handleObj = eventType[ j ];
 
 					if ( all || namespace.test( handleObj.namespace ) ) {
@@ -1745,7 +2002,7 @@ jQuery.event = {
 
 			special = jQuery.event.special[ type ] || {};
 
-			for ( var j = pos || 0; j < eventType.length; j++ ) {
+			for ( j = pos || 0; j < eventType.length; j++ ) {
 				handleObj = eventType[ j ];
 
 				if ( handler.guid === handleObj.guid ) {
@@ -1769,7 +2026,7 @@ jQuery.event = {
 			// remove generic event handler if no more handlers exist
 			if ( eventType.length === 0 || pos != null && eventType.length === 1 ) {
 				if ( !special.teardown || special.teardown.call( elem, namespaces ) === false ) {
-					removeEvent( elem, type, elemData.handle );
+					jQuery.removeEvent( elem, type, elemData.handle );
 				}
 
 				ret = null;
@@ -1787,7 +2044,10 @@ jQuery.event = {
 			delete elemData.events;
 			delete elemData.handle;
 
-			if ( jQuery.isEmptyObject( elemData ) ) {
+			if ( typeof elemData === "function" ) {
+				jQuery.removeData( elem, eventKey );
+
+			} else if ( jQuery.isEmptyObject( elemData ) ) {
 				jQuery.removeData( elem );
 			}
 		}
@@ -1802,7 +2062,7 @@ jQuery.event = {
 		if ( !bubbling ) {
 			event = typeof event === "object" ?
 				// jQuery.Event object
-				event[expando] ? event :
+				event[ jQuery.expando ] ? event :
 				// Object literal
 				jQuery.extend( jQuery.Event(type), event ) :
 				// Just the event type (string)
@@ -1847,7 +2107,10 @@ jQuery.event = {
 		event.currentTarget = elem;
 
 		// Trigger the event, it is assumed that "handle" is a function
-		var handle = jQuery.data( elem, "handle" );
+		var handle = elem.nodeType ?
+			jQuery.data( elem, "handle" ) :
+			(jQuery.data( elem, "__events__" ) || {}).handle;
+
 		if ( handle ) {
 			handle.apply( elem, data );
 		}
@@ -1859,41 +2122,42 @@ jQuery.event = {
 			if ( !(elem && elem.nodeName && jQuery.noData[elem.nodeName.toLowerCase()]) ) {
 				if ( elem[ "on" + type ] && elem[ "on" + type ].apply( elem, data ) === false ) {
 					event.result = false;
+					event.preventDefault();
 				}
 			}
 
 		// prevent IE from throwing an error for some elements with some event types, see #3533
-		} catch (e) {}
+		} catch (inlineError) {}
 
 		if ( !event.isPropagationStopped() && parent ) {
 			jQuery.event.trigger( event, data, parent, true );
 
 		} else if ( !event.isDefaultPrevented() ) {
-			var target = event.target, old,
-				isClick = jQuery.nodeName(target, "a") && type === "click",
-				special = jQuery.event.special[ type ] || {};
+			var target = event.target, old, targetType = type.replace(rnamespaces, ""),
+				isClick = jQuery.nodeName(target, "a") && targetType === "click",
+				special = jQuery.event.special[ targetType ] || {};
 
 			if ( (!special._default || special._default.call( elem, event ) === false) && 
 				!isClick && !(target && target.nodeName && jQuery.noData[target.nodeName.toLowerCase()]) ) {
 
 				try {
-					if ( target[ type ] ) {
+					if ( target[ targetType ] ) {
 						// Make sure that we don't accidentally re-trigger the onFOO events
-						old = target[ "on" + type ];
+						old = target[ "on" + targetType ];
 
 						if ( old ) {
-							target[ "on" + type ] = null;
+							target[ "on" + targetType ] = null;
 						}
 
 						jQuery.event.triggered = true;
-						target[ type ]();
+						target[ targetType ]();
 					}
 
 				// prevent IE from throwing an error for some elements with some event types, see #3533
-				} catch (e) {}
+				} catch (triggerError) {}
 
 				if ( old ) {
-					target[ "on" + type ] = old;
+					target[ "on" + targetType ] = old;
 				}
 
 				jQuery.event.triggered = false;
@@ -1902,9 +2166,9 @@ jQuery.event = {
 	},
 
 	handle: function( event ) {
-		var all, handlers, namespaces, namespace, events;
+		var all, handlers, namespaces, namespace_sort = [], namespace_re, events, args = jQuery.makeArray( arguments );
 
-		event = arguments[0] = jQuery.event.fix( event || window.event );
+		event = args[0] = jQuery.event.fix( event || window.event );
 		event.currentTarget = this;
 
 		// Namespaced event handlers
@@ -1913,10 +2177,19 @@ jQuery.event = {
 		if ( !all ) {
 			namespaces = event.type.split(".");
 			event.type = namespaces.shift();
-			namespace = new RegExp("(^|\\.)" + namespaces.slice(0).sort().join("\\.(?:.*\\.)?") + "(\\.|$)");
+			namespace_sort = namespaces.slice(0).sort();
+			namespace_re = new RegExp("(^|\\.)" + namespace_sort.join("\\.(?:.*\\.)?") + "(\\.|$)");
 		}
 
-		var events = jQuery.data(this, "events"), handlers = events[ event.type ];
+		event.namespace = event.namespace || namespace_sort.join(".");
+
+		events = jQuery.data(this, this.nodeType ? "events" : "__events__");
+
+		if ( typeof events === "function" ) {
+			events = events.events;
+		}
+
+		handlers = (events || {})[ event.type ];
 
 		if ( events && handlers ) {
 			// Clone the handlers to prevent manipulation
@@ -1926,14 +2199,14 @@ jQuery.event = {
 				var handleObj = handlers[ j ];
 
 				// Filter the functions by class
-				if ( all || namespace.test( handleObj.namespace ) ) {
+				if ( all || namespace_re.test( handleObj.namespace ) ) {
 					// Pass in a reference to the handler function itself
 					// So that we can later remove it
 					event.handler = handleObj.handler;
 					event.data = handleObj.data;
 					event.handleObj = handleObj;
 	
-					var ret = handleObj.handler.apply( this, arguments );
+					var ret = handleObj.handler.apply( this, args );
 
 					if ( ret !== undefined ) {
 						event.result = ret;
@@ -1953,10 +2226,10 @@ jQuery.event = {
 		return event.result;
 	},
 
-	props: "altKey attrChange attrName bubbles button cancelable charCode clientX clientY ctrlKey currentTarget data detail eventPhase fromElement handler keyCode layerX layerY metaKey newValue offsetX offsetY originalTarget pageX pageY prevValue relatedNode relatedTarget screenX screenY shiftKey srcElement target toElement view wheelDelta which".split(" "),
+	props: "altKey attrChange attrName bubbles button cancelable charCode clientX clientY ctrlKey currentTarget data detail eventPhase fromElement handler keyCode layerX layerY metaKey newValue offsetX offsetY pageX pageY prevValue relatedNode relatedTarget screenX screenY shiftKey srcElement target toElement view wheelDelta which".split(" "),
 
 	fix: function( event ) {
-		if ( event[ expando ] ) {
+		if ( event[ jQuery.expando ] ) {
 			return event;
 		}
 
@@ -1993,8 +2266,8 @@ jQuery.event = {
 		}
 
 		// Add which for key events
-		if ( !event.which && ((event.charCode || event.charCode === 0) ? event.charCode : event.keyCode) ) {
-			event.which = event.charCode || event.keyCode;
+		if ( event.which == null && (event.charCode != null || event.keyCode != null) ) {
+			event.which = event.charCode != null ? event.charCode : event.keyCode;
 		}
 
 		// Add metaKey to non-Mac browsers (use ctrl for PC's and Meta for Macs)
@@ -2026,36 +2299,24 @@ jQuery.event = {
 
 		live: {
 			add: function( handleObj ) {
-				jQuery.event.add( this, handleObj.origType, jQuery.extend({}, handleObj, {handler: liveHandler}) ); 
+				jQuery.event.add( this,
+					liveConvert( handleObj.origType, handleObj.selector ),
+					jQuery.extend({}, handleObj, {handler: liveHandler, guid: handleObj.handler.guid}) ); 
 			},
 
 			remove: function( handleObj ) {
-				var remove = true,
-					type = handleObj.origType.replace(rnamespaces, "");
-				
-				jQuery.each( jQuery.data(this, "events").live || [], function() {
-					if ( type === this.origType.replace(rnamespaces, "") ) {
-						remove = false;
-						return false;
-					}
-				});
-
-				if ( remove ) {
-					jQuery.event.remove( this, handleObj.origType, liveHandler );
-				}
+				jQuery.event.remove( this, liveConvert( handleObj.origType, handleObj.selector ), handleObj );
 			}
-
 		},
 
 		beforeunload: {
 			setup: function( data, namespaces, eventHandle ) {
 				// We only want to do this special case on windows
-				if ( this.setInterval ) {
+				if ( jQuery.isWindow( this ) ) {
 					this.onbeforeunload = eventHandle;
 				}
-
-				return false;
 			},
+
 			teardown: function( namespaces, eventHandle ) {
 				if ( this.onbeforeunload === eventHandle ) {
 					this.onbeforeunload = null;
@@ -2065,12 +2326,16 @@ jQuery.event = {
 	}
 };
 
-var removeEvent = document.removeEventListener ?
+jQuery.removeEvent = document.removeEventListener ?
 	function( elem, type, handle ) {
-		elem.removeEventListener( type, handle, false );
+		if ( elem.removeEventListener ) {
+			elem.removeEventListener( type, handle, false );
+		}
 	} : 
 	function( elem, type, handle ) {
-		elem.detachEvent( "on" + type, handle );
+		if ( elem.detachEvent ) {
+			elem.detachEvent( "on" + type, handle );
+		}
 	};
 
 jQuery.Event = function( src ) {
@@ -2090,10 +2355,10 @@ jQuery.Event = function( src ) {
 
 	// timeStamp is buggy for some events on Firefox(#3843)
 	// So we won't rely on the native value
-	this.timeStamp = now();
+	this.timeStamp = jQuery.now();
 
 	// Mark it as fixed
-	this[ expando ] = true;
+	this[ jQuery.expando ] = true;
 };
 
 function returnFalse() {
@@ -2117,9 +2382,11 @@ jQuery.Event.prototype = {
 		// if preventDefault exists run it on the original event
 		if ( e.preventDefault ) {
 			e.preventDefault();
-		}
+
 		// otherwise set the returnValue property of the original event to false (IE)
-		e.returnValue = false;
+		} else {
+			e.returnValue = false;
+		}
 	},
 	stopPropagation: function() {
 		this.isPropagationStopped = returnTrue;
@@ -2202,6 +2469,7 @@ if ( !jQuery.support.submitBubbles ) {
 					var elem = e.target, type = elem.type;
 
 					if ( (type === "submit" || type === "image") && jQuery( elem ).closest("form").length ) {
+						e.liveFired = undefined;
 						return trigger( "submit", this, arguments );
 					}
 				});
@@ -2210,6 +2478,7 @@ if ( !jQuery.support.submitBubbles ) {
 					var elem = e.target, type = elem.type;
 
 					if ( (type === "text" || type === "password") && jQuery( elem ).closest("form").length && e.keyCode === 13 ) {
+						e.liveFired = undefined;
 						return trigger( "submit", this, arguments );
 					}
 				});
@@ -2229,9 +2498,7 @@ if ( !jQuery.support.submitBubbles ) {
 // change delegation, happens here so we have bind.
 if ( !jQuery.support.changeBubbles ) {
 
-	var formElems = /textarea|input|select/i,
-
-	changeFilters,
+	var changeFilters,
 
 	getVal = function( elem ) {
 		var type = elem.type, val = elem.value;
@@ -2256,7 +2523,7 @@ if ( !jQuery.support.changeBubbles ) {
 	testChange = function testChange( e ) {
 		var elem = e.target, data, val;
 
-		if ( !formElems.test( elem.nodeName ) || elem.readOnly ) {
+		if ( !rformElems.test( elem.nodeName ) || elem.readOnly ) {
 			return;
 		}
 
@@ -2274,6 +2541,7 @@ if ( !jQuery.support.changeBubbles ) {
 
 		if ( data != null || val ) {
 			e.type = "change";
+			e.liveFired = undefined;
 			return jQuery.event.trigger( e, arguments[1], elem );
 		}
 	};
@@ -2281,6 +2549,8 @@ if ( !jQuery.support.changeBubbles ) {
 	jQuery.event.special.change = {
 		filters: {
 			focusout: testChange, 
+
+			beforedeactivate: testChange,
 
 			click: function( e ) {
 				var elem = e.target, type = elem.type;
@@ -2304,7 +2574,7 @@ if ( !jQuery.support.changeBubbles ) {
 
 			// Beforeactivate happens also before the previous element is blurred
 			// with this event you can't trigger a change event, but you can store
-			// information/focus[in] is not needed anymore
+			// information
 			beforeactivate: function( e ) {
 				var elem = e.target;
 				jQuery.data( elem, "_change_data", getVal(elem) );
@@ -2320,17 +2590,20 @@ if ( !jQuery.support.changeBubbles ) {
 				jQuery.event.add( this, type + ".specialChange", changeFilters[type] );
 			}
 
-			return formElems.test( this.nodeName );
+			return rformElems.test( this.nodeName );
 		},
 
 		teardown: function( namespaces ) {
 			jQuery.event.remove( this, ".specialChange" );
 
-			return formElems.test( this.nodeName );
+			return rformElems.test( this.nodeName );
 		}
 	};
 
 	changeFilters = jQuery.event.special.change.filters;
+
+	// Handle when the input is .focus()'d
+	changeFilters.focus = changeFilters.beforeactivate;
 }
 
 function trigger( type, elem, args ) {
@@ -2343,17 +2616,21 @@ if ( document.addEventListener ) {
 	jQuery.each({ focus: "focusin", blur: "focusout" }, function( orig, fix ) {
 		jQuery.event.special[ fix ] = {
 			setup: function() {
-				this.addEventListener( orig, handler, true );
+				if ( focusCounts[fix]++ === 0 ) {
+					document.addEventListener( orig, handler, true );
+				}
 			}, 
 			teardown: function() { 
-				this.removeEventListener( orig, handler, true );
+				if ( --focusCounts[fix] === 0 ) {
+					document.removeEventListener( orig, handler, true );
+				}
 			}
 		};
 
 		function handler( e ) { 
 			e = jQuery.event.fix( e );
 			e.type = fix;
-			return jQuery.event.handle.call( this, e );
+			return jQuery.event.trigger( e, null, e.target );
 		}
 	});
 }
@@ -2368,7 +2645,7 @@ jQuery.each(["bind", "one"], function( i, name ) {
 			return this;
 		}
 		
-		if ( jQuery.isFunction( data ) ) {
+		if ( jQuery.isFunction( data ) || data === false ) {
 			fn = data;
 			data = undefined;
 		}
@@ -2476,6 +2753,14 @@ jQuery.each(["live", "die"], function( i, name ) {
 		var type, i = 0, match, namespaces, preType,
 			selector = origSelector || this.selector,
 			context = origSelector ? this : jQuery( this.context );
+		
+		if ( typeof types === "object" && !types.preventDefault ) {
+			for ( var key in types ) {
+				context[ name ]( key, data, types[key], selector );
+			}
+			
+			return this;
+		}
 
 		if ( jQuery.isFunction( data ) ) {
 			fn = data;
@@ -2510,29 +2795,37 @@ jQuery.each(["live", "die"], function( i, name ) {
 
 			if ( name === "live" ) {
 				// bind live handler
-				context.each(function(){
-					jQuery.event.add( this, liveConvert( type, selector ),
+				for ( var j = 0, l = context.length; j < l; j++ ) {
+					jQuery.event.add( context[j], "live." + liveConvert( type, selector ),
 						{ data: data, selector: selector, handler: fn, origType: type, origHandler: fn, preType: preType } );
-				});
+				}
 
 			} else {
 				// unbind live handler
-				context.unbind( liveConvert( type, selector ), fn );
+				context.unbind( "live." + liveConvert( type, selector ), fn );
 			}
 		}
 		
 		return this;
-	}
+	};
 });
 
 function liveHandler( event ) {
-	var stop, elems = [], selectors = [], args = arguments,
-		related, match, handleObj, elem, j, i, l, data,
-		events = jQuery.data( this, "events" );
+	var stop, maxLevel, elems = [], selectors = [],
+		related, match, handleObj, elem, j, i, l, data, close, namespace, ret,
+		events = jQuery.data( this, this.nodeType ? "events" : "__events__" );
+
+	if ( typeof events === "function" ) {
+		events = events.events;
+	}
 
 	// Make sure we avoid non-left-click bubbling in Firefox (#3861)
 	if ( event.liveFired === this || !events || !events.live || event.button && event.type === "click" ) {
 		return;
+	}
+
+	if ( event.namespace ) {
+		namespace = new RegExp("(^|\\.)" + event.namespace.split(".").join("\\.(?:.*\\.)?") + "(\\.|$)");
 	}
 
 	event.liveFired = this;
@@ -2553,20 +2846,23 @@ function liveHandler( event ) {
 	match = jQuery( event.target ).closest( selectors, event.currentTarget );
 
 	for ( i = 0, l = match.length; i < l; i++ ) {
+		close = match[i];
+
 		for ( j = 0; j < live.length; j++ ) {
 			handleObj = live[j];
 
-			if ( match[i].selector === handleObj.selector ) {
-				elem = match[i].elem;
+			if ( close.selector === handleObj.selector && (!namespace || namespace.test( handleObj.namespace )) ) {
+				elem = close.elem;
 				related = null;
 
 				// Those two events require additional checking
 				if ( handleObj.preType === "mouseenter" || handleObj.preType === "mouseleave" ) {
+					event.type = handleObj.preType;
 					related = jQuery( event.relatedTarget ).closest( handleObj.selector )[0];
 				}
 
 				if ( !related || related !== elem ) {
-					elems.push({ elem: elem, handleObj: handleObj });
+					elems.push({ elem: elem, handleObj: handleObj, level: close.level });
 				}
 			}
 		}
@@ -2574,13 +2870,23 @@ function liveHandler( event ) {
 
 	for ( i = 0, l = elems.length; i < l; i++ ) {
 		match = elems[i];
+
+		if ( maxLevel && match.level > maxLevel ) {
+			break;
+		}
+
 		event.currentTarget = match.elem;
 		event.data = match.handleObj.data;
 		event.handleObj = match.handleObj;
 
-		if ( match.handleObj.origHandler.apply( match.elem, args ) === false ) {
-			stop = false;
-			break;
+		ret = match.handleObj.origHandler.apply( match.elem, arguments );
+
+		if ( ret === false || event.isPropagationStopped() ) {
+			maxLevel = match.level;
+
+			if ( ret === false ) {
+				stop = false;
+			}
 		}
 	}
 
@@ -2588,7 +2894,7 @@ function liveHandler( event ) {
 }
 
 function liveConvert( type, selector ) {
-	return "live." + (type && type !== "*" ? type + "." : "") + selector.replace(/\./g, "`").replace(/ /g, "&");
+	return (type && type !== "*" ? type + "." : "") + selector.replace(rperiod, "`").replace(rspace, "&");
 }
 
 jQuery.each( ("blur focus focusin focusout load resize scroll unload click dblclick " +
@@ -2596,8 +2902,15 @@ jQuery.each( ("blur focus focusin focusout load resize scroll unload click dblcl
 	"change select submit keydown keypress keyup error").split(" "), function( i, name ) {
 
 	// Handle event binding
-	jQuery.fn[ name ] = function( fn ) {
-		return fn ? this.bind( name, fn ) : this.trigger( name );
+	jQuery.fn[ name ] = function( data, fn ) {
+		if ( fn == null ) {
+			fn = data;
+			data = null;
+		}
+
+		return arguments.length > 0 ?
+			this.bind( name, data, fn ) :
+			this.trigger( name );
 	};
 
 	if ( jQuery.attrFn ) {
@@ -2610,7 +2923,7 @@ jQuery.each( ("blur focus focusin focusout load resize scroll unload click dblcl
 // More info:
 //  - http://isaacschlueter.com/2006/10/msie-memory-leaks/
 if ( window.attachEvent && !window.addEventListener ) {
-	window.attachEvent("onunload", function() {
+	jQuery(window).bind("unload", function() {
 		for ( var id in jQuery.cache ) {
 			if ( jQuery.cache[ id ].handle ) {
 				// Try/Catch is to handle iframes being unloaded, see #4280
@@ -2621,6 +2934,8 @@ if ( window.attachEvent && !window.addEventListener ) {
 		}
 	});
 }
+
+
 /*!
  * Sizzle CSS Selector Engine - v1.0
  *  Copyright 2009, The Dojo Foundation
@@ -2629,7 +2944,7 @@ if ( window.attachEvent && !window.addEventListener ) {
  */
 (function(){
 
-var chunker = /((?:\((?:\([^()]+\)|[^()]+)+\)|\[(?:\[[^[\]]*\]|['"][^'"]*['"]|[^[\]'"]+)+\]|\\.|[^ >+~,(\[\\]+)+|[>+~])(\s*,\s*)?((?:.|\r|\n)*)/g,
+var chunker = /((?:\((?:\([^()]+\)|[^()]+)+\)|\[(?:\[[^\[\]]*\]|['"][^'"]*['"]|[^\[\]'"]+)+\]|\\.|[^ >+~,(\[\\]+)+|[>+~])(\s*,\s*)?((?:.|\r|\n)*)/g,
 	done = 0,
 	toString = Object.prototype.toString,
 	hasDuplicate = false,
@@ -2646,7 +2961,9 @@ var chunker = /((?:\((?:\([^()]+\)|[^()]+)+\)|\[(?:\[[^[\]]*\]|['"][^'"]*['"]|[^
 
 var Sizzle = function(selector, context, results, seed) {
 	results = results || [];
-	var origContext = context = context || document;
+	context = context || document;
+
+	var origContext = context;
 
 	if ( context.nodeType !== 1 && context.nodeType !== 9 ) {
 		return [];
@@ -2656,20 +2973,25 @@ var Sizzle = function(selector, context, results, seed) {
 		return results;
 	}
 
-	var parts = [], m, set, checkSet, extra, prune = true, contextXML = isXML(context),
-		soFar = selector;
+	var parts = [], m, set, checkSet, extra, prune = true, contextXML = Sizzle.isXML(context),
+		soFar = selector, ret, cur, pop, i;
 	
 	// Reset the position of the chunker regexp (start from head)
-	while ( (chunker.exec(""), m = chunker.exec(soFar)) !== null ) {
-		soFar = m[3];
+	do {
+		chunker.exec("");
+		m = chunker.exec(soFar);
+
+		if ( m ) {
+			soFar = m[3];
 		
-		parts.push( m[1] );
+			parts.push( m[1] );
 		
-		if ( m[2] ) {
-			extra = m[3];
-			break;
+			if ( m[2] ) {
+				extra = m[3];
+				break;
+			}
 		}
-	}
+	} while ( m );
 
 	if ( parts.length > 1 && origPOS.exec( selector ) ) {
 		if ( parts.length === 2 && Expr.relative[ parts[0] ] ) {
@@ -2694,12 +3016,12 @@ var Sizzle = function(selector, context, results, seed) {
 		// (but not if it'll be faster if the inner selector is an ID)
 		if ( !seed && parts.length > 1 && context.nodeType === 9 && !contextXML &&
 				Expr.match.ID.test(parts[0]) && !Expr.match.ID.test(parts[parts.length - 1]) ) {
-			var ret = Sizzle.find( parts.shift(), context, contextXML );
+			ret = Sizzle.find( parts.shift(), context, contextXML );
 			context = ret.expr ? Sizzle.filter( ret.expr, ret.set )[0] : ret.set[0];
 		}
 
 		if ( context ) {
-			var ret = seed ?
+			ret = seed ?
 				{ expr: parts.pop(), set: makeArray(seed) } :
 				Sizzle.find( parts.pop(), parts.length === 1 && (parts[0] === "~" || parts[0] === "+") && context.parentNode ? context.parentNode : context, contextXML );
 			set = ret.expr ? Sizzle.filter( ret.expr, ret.set ) : ret.set;
@@ -2711,7 +3033,8 @@ var Sizzle = function(selector, context, results, seed) {
 			}
 
 			while ( parts.length ) {
-				var cur = parts.pop(), pop = cur;
+				cur = parts.pop();
+				pop = cur;
 
 				if ( !Expr.relative[ cur ] ) {
 					cur = "";
@@ -2742,13 +3065,13 @@ var Sizzle = function(selector, context, results, seed) {
 		if ( !prune ) {
 			results.push.apply( results, checkSet );
 		} else if ( context && context.nodeType === 1 ) {
-			for ( var i = 0; checkSet[i] != null; i++ ) {
-				if ( checkSet[i] && (checkSet[i] === true || checkSet[i].nodeType === 1 && contains(context, checkSet[i])) ) {
+			for ( i = 0; checkSet[i] != null; i++ ) {
+				if ( checkSet[i] && (checkSet[i] === true || checkSet[i].nodeType === 1 && Sizzle.contains(context, checkSet[i])) ) {
 					results.push( set[i] );
 				}
 			}
 		} else {
-			for ( var i = 0; checkSet[i] != null; i++ ) {
+			for ( i = 0; checkSet[i] != null; i++ ) {
 				if ( checkSet[i] && checkSet[i].nodeType === 1 ) {
 					results.push( set[i] );
 				}
@@ -2787,8 +3110,12 @@ Sizzle.matches = function(expr, set){
 	return Sizzle(expr, null, null, set);
 };
 
+Sizzle.matchesSelector = function(node, expr){
+	return Sizzle(expr, null, null, [node]).length > 0;
+};
+
 Sizzle.find = function(expr, context, isXML){
-	var set, match;
+	var set;
 
 	if ( !expr ) {
 		return [];
@@ -2821,7 +3148,7 @@ Sizzle.find = function(expr, context, isXML){
 
 Sizzle.filter = function(expr, set, inplace, not){
 	var old = expr, result = [], curLoop = set, match, anyFound,
-		isXMLFilter = set && set[0] && isXML(set[0]);
+		isXMLFilter = set && set[0] && Sizzle.isXML(set[0]);
 
 	while ( expr && set.length ) {
 		for ( var type in Expr.filter ) {
@@ -2907,14 +3234,14 @@ Sizzle.error = function( msg ) {
 var Expr = Sizzle.selectors = {
 	order: [ "ID", "NAME", "TAG" ],
 	match: {
-		ID: /#((?:[\w\u00c0-\uFFFF-]|\\.)+)/,
-		CLASS: /\.((?:[\w\u00c0-\uFFFF-]|\\.)+)/,
-		NAME: /\[name=['"]*((?:[\w\u00c0-\uFFFF-]|\\.)+)['"]*\]/,
-		ATTR: /\[\s*((?:[\w\u00c0-\uFFFF-]|\\.)+)\s*(?:(\S?=)\s*(['"]*)(.*?)\3|)\s*\]/,
-		TAG: /^((?:[\w\u00c0-\uFFFF\*-]|\\.)+)/,
-		CHILD: /:(only|nth|last|first)-child(?:\((even|odd|[\dn+-]*)\))?/,
-		POS: /:(nth|eq|gt|lt|first|last|even|odd)(?:\((\d*)\))?(?=[^-]|$)/,
-		PSEUDO: /:((?:[\w\u00c0-\uFFFF-]|\\.)+)(?:\((['"]?)((?:\([^\)]+\)|[^\(\)]*)+)\2\))?/
+		ID: /#((?:[\w\u00c0-\uFFFF\-]|\\.)+)/,
+		CLASS: /\.((?:[\w\u00c0-\uFFFF\-]|\\.)+)/,
+		NAME: /\[name=['"]*((?:[\w\u00c0-\uFFFF\-]|\\.)+)['"]*\]/,
+		ATTR: /\[\s*((?:[\w\u00c0-\uFFFF\-]|\\.)+)\s*(?:(\S?=)\s*(['"]*)(.*?)\3|)\s*\]/,
+		TAG: /^((?:[\w\u00c0-\uFFFF\*\-]|\\.)+)/,
+		CHILD: /:(only|nth|last|first)-child(?:\((even|odd|[\dn+\-]*)\))?/,
+		POS: /:(nth|eq|gt|lt|first|last|even|odd)(?:\((\d*)\))?(?=[^\-]|$)/,
+		PSEUDO: /:((?:[\w\u00c0-\uFFFF\-]|\\.)+)(?:\((['"]?)((?:\([^\)]+\)|[^\(\)]*)+)\2\))?/
 	},
 	leftMatch: {},
 	attrMap: {
@@ -2951,21 +3278,22 @@ var Expr = Sizzle.selectors = {
 			}
 		},
 		">": function(checkSet, part){
-			var isPartStr = typeof part === "string";
+			var isPartStr = typeof part === "string",
+				elem, i = 0, l = checkSet.length;
 
 			if ( isPartStr && !/\W/.test(part) ) {
 				part = part.toLowerCase();
 
-				for ( var i = 0, l = checkSet.length; i < l; i++ ) {
-					var elem = checkSet[i];
+				for ( ; i < l; i++ ) {
+					elem = checkSet[i];
 					if ( elem ) {
 						var parent = elem.parentNode;
 						checkSet[i] = parent.nodeName.toLowerCase() === part ? parent : false;
 					}
 				}
 			} else {
-				for ( var i = 0, l = checkSet.length; i < l; i++ ) {
-					var elem = checkSet[i];
+				for ( ; i < l; i++ ) {
+					elem = checkSet[i];
 					if ( elem ) {
 						checkSet[i] = isPartStr ?
 							elem.parentNode :
@@ -2979,20 +3307,22 @@ var Expr = Sizzle.selectors = {
 			}
 		},
 		"": function(checkSet, part, isXML){
-			var doneName = done++, checkFn = dirCheck;
+			var doneName = done++, checkFn = dirCheck, nodeCheck;
 
 			if ( typeof part === "string" && !/\W/.test(part) ) {
-				var nodeCheck = part = part.toLowerCase();
+				part = part.toLowerCase();
+				nodeCheck = part;
 				checkFn = dirNodeCheck;
 			}
 
 			checkFn("parentNode", part, doneName, checkSet, nodeCheck, isXML);
 		},
 		"~": function(checkSet, part, isXML){
-			var doneName = done++, checkFn = dirCheck;
+			var doneName = done++, checkFn = dirCheck, nodeCheck;
 
 			if ( typeof part === "string" && !/\W/.test(part) ) {
-				var nodeCheck = part = part.toLowerCase();
+				part = part.toLowerCase();
+				nodeCheck = part;
 				checkFn = dirNodeCheck;
 			}
 
@@ -3003,7 +3333,9 @@ var Expr = Sizzle.selectors = {
 		ID: function(match, context, isXML){
 			if ( typeof context.getElementById !== "undefined" && !isXML ) {
 				var m = context.getElementById(match[1]);
-				return m ? [m] : [];
+				// Check parentNode to catch when Blackberry 4.6 returns
+				// nodes that are no longer in the document #6963
+				return m && m.parentNode ? [m] : [];
 			}
 		},
 		NAME: function(match, context){
@@ -3130,7 +3462,7 @@ var Expr = Sizzle.selectors = {
 			return !!Sizzle( match[3], elem ).length;
 		},
 		header: function(elem){
-			return /h\d/i.test( elem.nodeName );
+			return (/h\d/i).test( elem.nodeName );
 		},
 		text: function(elem){
 			return "text" === elem.type;
@@ -3160,7 +3492,7 @@ var Expr = Sizzle.selectors = {
 			return "button" === elem.type || elem.nodeName.toLowerCase() === "button";
 		},
 		input: function(elem){
-			return /input|select|textarea|button/i.test(elem.nodeName);
+			return (/input|select|textarea|button/i).test(elem.nodeName);
 		}
 	},
 	setFilters: {
@@ -3196,12 +3528,12 @@ var Expr = Sizzle.selectors = {
 			if ( filter ) {
 				return filter( elem, i, match, array );
 			} else if ( name === "contains" ) {
-				return (elem.textContent || elem.innerText || getText([ elem ]) || "").indexOf(match[3]) >= 0;
+				return (elem.textContent || elem.innerText || Sizzle.getText([ elem ]) || "").indexOf(match[3]) >= 0;
 			} else if ( name === "not" ) {
 				var not = match[3];
 
-				for ( var i = 0, l = not.length; i < l; i++ ) {
-					if ( not[i] === elem ) {
+				for ( var j = 0, l = not.length; j < l; j++ ) {
+					if ( not[j] === elem ) {
 						return false;
 					}
 				}
@@ -3311,13 +3643,14 @@ var Expr = Sizzle.selectors = {
 	}
 };
 
-var origPOS = Expr.match.POS;
+var origPOS = Expr.match.POS,
+	fescape = function(all, num){
+		return "\\" + (num - 0 + 1);
+	};
 
 for ( var type in Expr.match ) {
-	Expr.match[ type ] = new RegExp( Expr.match[ type ].source + /(?![^\[]*\])(?![^\(]*\))/.source );
-	Expr.leftMatch[ type ] = new RegExp( /(^(?:.|\r|\n)*?)/.source + Expr.match[ type ].source.replace(/\\(\d+)/g, function(all, num){
-		return "\\" + (num - 0 + 1);
-	}));
+	Expr.match[ type ] = new RegExp( Expr.match[ type ].source + (/(?![^\[]*\])(?![^\(]*\))/.source) );
+	Expr.leftMatch[ type ] = new RegExp( /(^(?:.|\r|\n)*?)/.source + Expr.match[ type ].source.replace(/\\(\d+)/g, fescape) );
 }
 
 var makeArray = function(array, results) {
@@ -3341,17 +3674,17 @@ try {
 // Provide a fallback method if it does not work
 } catch(e){
 	makeArray = function(array, results) {
-		var ret = results || [];
+		var ret = results || [], i = 0;
 
 		if ( toString.call(array) === "[object Array]" ) {
 			Array.prototype.push.apply( ret, array );
 		} else {
 			if ( typeof array.length === "number" ) {
-				for ( var i = 0, l = array.length; i < l; i++ ) {
+				for ( var l = array.length; i < l; i++ ) {
 					ret.push( array[i] );
 				}
 			} else {
-				for ( var i = 0; array[i]; i++ ) {
+				for ( ; array[i]; i++ ) {
 					ret.push( array[i] );
 				}
 			}
@@ -3361,62 +3694,94 @@ try {
 	};
 }
 
-var sortOrder;
+var sortOrder, siblingCheck;
 
 if ( document.documentElement.compareDocumentPosition ) {
 	sortOrder = function( a, b ) {
+		if ( a === b ) {
+			hasDuplicate = true;
+			return 0;
+		}
+
 		if ( !a.compareDocumentPosition || !b.compareDocumentPosition ) {
-			if ( a == b ) {
-				hasDuplicate = true;
-			}
 			return a.compareDocumentPosition ? -1 : 1;
 		}
 
-		var ret = a.compareDocumentPosition(b) & 4 ? -1 : a === b ? 0 : 1;
-		if ( ret === 0 ) {
-			hasDuplicate = true;
-		}
-		return ret;
+		return a.compareDocumentPosition(b) & 4 ? -1 : 1;
 	};
-} else if ( "sourceIndex" in document.documentElement ) {
+} else {
 	sortOrder = function( a, b ) {
-		if ( !a.sourceIndex || !b.sourceIndex ) {
-			if ( a == b ) {
-				hasDuplicate = true;
-			}
-			return a.sourceIndex ? -1 : 1;
+		var ap = [], bp = [], aup = a.parentNode, bup = b.parentNode,
+			cur = aup, al, bl;
+
+		// The nodes are identical, we can exit early
+		if ( a === b ) {
+			hasDuplicate = true;
+			return 0;
+
+		// If the nodes are siblings (or identical) we can do a quick check
+		} else if ( aup === bup ) {
+			return siblingCheck( a, b );
+
+		// If no parents were found then the nodes are disconnected
+		} else if ( !aup ) {
+			return -1;
+
+		} else if ( !bup ) {
+			return 1;
 		}
 
-		var ret = a.sourceIndex - b.sourceIndex;
-		if ( ret === 0 ) {
-			hasDuplicate = true;
-		}
-		return ret;
-	};
-} else if ( document.createRange ) {
-	sortOrder = function( a, b ) {
-		if ( !a.ownerDocument || !b.ownerDocument ) {
-			if ( a == b ) {
-				hasDuplicate = true;
-			}
-			return a.ownerDocument ? -1 : 1;
+		// Otherwise they're somewhere else in the tree so we need
+		// to build up a full list of the parentNodes for comparison
+		while ( cur ) {
+			ap.unshift( cur );
+			cur = cur.parentNode;
 		}
 
-		var aRange = a.ownerDocument.createRange(), bRange = b.ownerDocument.createRange();
-		aRange.setStart(a, 0);
-		aRange.setEnd(a, 0);
-		bRange.setStart(b, 0);
-		bRange.setEnd(b, 0);
-		var ret = aRange.compareBoundaryPoints(Range.START_TO_END, bRange);
-		if ( ret === 0 ) {
-			hasDuplicate = true;
+		cur = bup;
+
+		while ( cur ) {
+			bp.unshift( cur );
+			cur = cur.parentNode;
 		}
-		return ret;
+
+		al = ap.length;
+		bl = bp.length;
+
+		// Start walking down the tree looking for a discrepancy
+		for ( var i = 0; i < al && i < bl; i++ ) {
+			if ( ap[i] !== bp[i] ) {
+				return siblingCheck( ap[i], bp[i] );
+			}
+		}
+
+		// We ended someplace up the tree so do a sibling check
+		return i === al ?
+			siblingCheck( a, bp[i], -1 ) :
+			siblingCheck( ap[i], b, 1 );
+	};
+
+	siblingCheck = function( a, b, ret ) {
+		if ( a === b ) {
+			return ret;
+		}
+
+		var cur = a.nextSibling;
+
+		while ( cur ) {
+			if ( cur === b ) {
+				return -1;
+			}
+
+			cur = cur.nextSibling;
+		}
+
+		return 1;
 	};
 }
 
 // Utility function for retreiving the text value of an array of DOM nodes
-function getText( elems ) {
+Sizzle.getText = function( elems ) {
 	var ret = "", elem;
 
 	for ( var i = 0; elems[i]; i++ ) {
@@ -3428,19 +3793,19 @@ function getText( elems ) {
 
 		// Traverse everything else, except comment nodes
 		} else if ( elem.nodeType !== 8 ) {
-			ret += getText( elem.childNodes );
+			ret += Sizzle.getText( elem.childNodes );
 		}
 	}
 
 	return ret;
-}
+};
 
 // Check to see if the browser returns elements by name when
 // querying by getElementById (and provide a workaround)
 (function(){
 	// We're going to inject a fake input element with a specified name
 	var form = document.createElement("div"),
-		id = "script" + (new Date).getTime();
+		id = "script" + (new Date()).getTime();
 	form.innerHTML = "<a name='" + id + "'/>";
 
 	// Inject it into the root element, check its status, and remove it quickly
@@ -3525,10 +3890,32 @@ if ( document.querySelectorAll ) {
 
 			// Only use querySelectorAll on non-XML documents
 			// (ID selectors don't work in non-HTML documents)
-			if ( !seed && context.nodeType === 9 && !isXML(context) ) {
-				try {
-					return makeArray( context.querySelectorAll(query), extra );
-				} catch(e){}
+			if ( !seed && !Sizzle.isXML(context) ) {
+				if ( context.nodeType === 9 ) {
+					try {
+						return makeArray( context.querySelectorAll(query), extra );
+					} catch(qsaError) {}
+
+				// qSA works strangely on Element-rooted queries
+				// We can work around this by specifying an extra ID on the root
+				// and working up from there (Thanks to Andrew Dupont for the technique)
+				// IE 8 doesn't work on object elements
+				} else if ( context.nodeType === 1 && context.nodeName.toLowerCase() !== "object" ) {
+					var old = context.id, id = context.id = "__sizzle__";
+
+					try {
+						return makeArray( context.querySelectorAll( "#" + id + " " + query ), extra );
+
+					} catch(pseudoError) {
+					} finally {
+						if ( old ) {
+							context.id = old;
+
+						} else {
+							context.removeAttribute( "id" );
+						}
+					}
+				}
 			}
 		
 			return oldSizzle(query, context, extra, seed);
@@ -3541,6 +3928,33 @@ if ( document.querySelectorAll ) {
 		div = null; // release memory in IE
 	})();
 }
+
+(function(){
+	var html = document.documentElement,
+		matches = html.matchesSelector || html.mozMatchesSelector || html.webkitMatchesSelector || html.msMatchesSelector,
+		pseudoWorks = false;
+
+	try {
+		// This should fail with an exception
+		// Gecko does not error, returns false instead
+		matches.call( document.documentElement, ":sizzle" );
+	
+	} catch( pseudoError ) {
+		pseudoWorks = true;
+	}
+
+	if ( matches ) {
+		Sizzle.matchesSelector = function( node, expr ) {
+				try { 
+					if ( pseudoWorks || !Expr.match.PSEUDO.test( expr ) ) {
+						return matches.call( node, expr );
+					}
+				} catch(e) {}
+
+				return Sizzle(expr, null, null, [node]).length > 0;
+		};
+	}
+})();
 
 (function(){
 	var div = document.createElement("div");
@@ -3639,13 +4053,13 @@ function dirCheck( dir, cur, doneName, checkSet, nodeCheck, isXML ) {
 	}
 }
 
-var contains = document.compareDocumentPosition ? function(a, b){
-	return !!(a.compareDocumentPosition(b) & 16);
-} : function(a, b){
+Sizzle.contains = document.documentElement.contains ? function(a, b){
 	return a !== b && (a.contains ? a.contains(b) : true);
+} : function(a, b){
+	return !!(a.compareDocumentPosition(b) & 16);
 };
 
-var isXML = function(elem){
+Sizzle.isXML = function(elem){
 	// documentElement is verified for cases where it doesn't yet exist
 	// (such as loading iframes in IE - #4833) 
 	var documentElement = (elem ? elem.ownerDocument || elem : 0).documentElement;
@@ -3677,49 +4091,21 @@ jQuery.find = Sizzle;
 jQuery.expr = Sizzle.selectors;
 jQuery.expr[":"] = jQuery.expr.filters;
 jQuery.unique = Sizzle.uniqueSort;
-jQuery.text = getText;
-jQuery.isXMLDoc = isXML;
-jQuery.contains = contains;
+jQuery.text = Sizzle.getText;
+jQuery.isXMLDoc = Sizzle.isXML;
+jQuery.contains = Sizzle.contains;
 
-return;
-
-window.Sizzle = Sizzle;
 
 })();
+
+
 var runtil = /Until$/,
 	rparentsprev = /^(?:parents|prevUntil|prevAll)/,
 	// Note: This RegExp should be improved, or likely pulled from Sizzle
 	rmultiselector = /,/,
-	slice = Array.prototype.slice;
-
-// Implement the identical functionality for filter and not
-var winnow = function( elements, qualifier, keep ) {
-	if ( jQuery.isFunction( qualifier ) ) {
-		return jQuery.grep(elements, function( elem, i ) {
-			return !!qualifier.call( elem, i, elem ) === keep;
-		});
-
-	} else if ( qualifier.nodeType ) {
-		return jQuery.grep(elements, function( elem, i ) {
-			return (elem === qualifier) === keep;
-		});
-
-	} else if ( typeof qualifier === "string" ) {
-		var filtered = jQuery.grep(elements, function( elem ) {
-			return elem.nodeType === 1;
-		});
-
-		if ( isSimple.test( qualifier ) ) {
-			return jQuery.filter(qualifier, filtered, !keep);
-		} else {
-			qualifier = jQuery.filter( qualifier, filtered );
-		}
-	}
-
-	return jQuery.grep(elements, function( elem, i ) {
-		return (jQuery.inArray( elem, qualifier ) >= 0) === keep;
-	});
-};
+	isSimple = /^.[^:#\[\.,]*$/,
+	slice = Array.prototype.slice,
+	POS = jQuery.expr.match.POS;
 
 jQuery.fn.extend({
 	find: function( selector ) {
@@ -3769,11 +4155,13 @@ jQuery.fn.extend({
 	},
 
 	closest: function( selectors, context ) {
+		var ret = [], i, l, cur = this[0];
+
 		if ( jQuery.isArray( selectors ) ) {
-			var ret = [], cur = this[0], match, matches = {}, selector;
+			var match, matches = {}, selector, level = 1;
 
 			if ( cur && selectors.length ) {
-				for ( var i = 0, l = selectors.length; i < l; i++ ) {
+				for ( i = 0, l = selectors.length; i < l; i++ ) {
 					selector = selectors[i];
 
 					if ( !matches[selector] ) {
@@ -3788,29 +4176,41 @@ jQuery.fn.extend({
 						match = matches[selector];
 
 						if ( match.jquery ? match.index(cur) > -1 : jQuery(cur).is(match) ) {
-							ret.push({ selector: selector, elem: cur });
-							delete matches[selector];
+							ret.push({ selector: selector, elem: cur, level: level });
 						}
 					}
+
 					cur = cur.parentNode;
+					level++;
 				}
 			}
 
 			return ret;
 		}
 
-		var pos = jQuery.expr.match.POS.test( selectors ) ? 
+		var pos = POS.test( selectors ) ? 
 			jQuery( selectors, context || this.context ) : null;
 
-		return this.map(function( i, cur ) {
-			while ( cur && cur.ownerDocument && cur !== context ) {
-				if ( pos ? pos.index(cur) > -1 : jQuery(cur).is(selectors) ) {
-					return cur;
+		for ( i = 0, l = this.length; i < l; i++ ) {
+			cur = this[i];
+
+			while ( cur ) {
+				if ( pos ? pos.index(cur) > -1 : jQuery.find.matchesSelector(cur, selectors) ) {
+					ret.push( cur );
+					break;
+
+				} else {
+					cur = cur.parentNode;
+					if ( !cur || !cur.ownerDocument || cur === context ) {
+						break;
+					}
 				}
-				cur = cur.parentNode;
 			}
-			return null;
-		});
+		}
+
+		ret = ret.length > 1 ? jQuery.unique(ret) : ret;
+		
+		return this.pushStack( ret, "closest", selectors );
 	},
 	
 	// Determine the position of an element within
@@ -3918,7 +4318,9 @@ jQuery.extend({
 			expr = ":not(" + expr + ")";
 		}
 
-		return jQuery.find.matches(expr, elems);
+		return elems.length === 1 ?
+			jQuery.find.matchesSelector(elems[0], expr) ? [ elems[0] ] : [] :
+			jQuery.find.matches(expr, elems);
 	},
 	
 	dir: function( elem, dir, until ) {
@@ -3957,20 +4359,49 @@ jQuery.extend({
 		return r;
 	}
 });
+
+// Implement the identical functionality for filter and not
+function winnow( elements, qualifier, keep ) {
+	if ( jQuery.isFunction( qualifier ) ) {
+		return jQuery.grep(elements, function( elem, i ) {
+			var retVal = !!qualifier.call( elem, i, elem );
+			return retVal === keep;
+		});
+
+	} else if ( qualifier.nodeType ) {
+		return jQuery.grep(elements, function( elem, i ) {
+			return (elem === qualifier) === keep;
+		});
+
+	} else if ( typeof qualifier === "string" ) {
+		var filtered = jQuery.grep(elements, function( elem ) {
+			return elem.nodeType === 1;
+		});
+
+		if ( isSimple.test( qualifier ) ) {
+			return jQuery.filter(qualifier, filtered, !keep);
+		} else {
+			qualifier = jQuery.filter( qualifier, filtered );
+		}
+	}
+
+	return jQuery.grep(elements, function( elem, i ) {
+		return (jQuery.inArray( elem, qualifier ) >= 0) === keep;
+	});
+}
+
+
+
+
 var rinlinejQuery = / jQuery\d+="(?:\d+|null)"/g,
 	rleadingWhitespace = /^\s+/,
-	rxhtmlTag = /(<([\w:]+)[^>]*?)\/>/g,
-	rselfClosing = /^(?:area|br|col|embed|hr|img|input|link|meta|param)$/i,
+	rxhtmlTag = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/ig,
 	rtagName = /<([\w:]+)/,
 	rtbody = /<tbody/i,
 	rhtml = /<|&#?\w+;/,
-	rnocache = /<script|<object|<embed|<option|<style/i,
+	rnocache = /<(?:script|object|embed|option|style)/i,
 	rchecked = /checked\s*(?:[^=]|=\s*.checked.)/i,  // checked="checked" or checked (html5)
-	fcloseTag = function( all, front, tag ) {
-		return rselfClosing.test( tag ) ?
-			all :
-			front + "></" + tag + ">";
-	},
+	raction = /\=([^="'>\s]+\/)>/g,
 	wrapMap = {
 		option: [ 1, "<select multiple='multiple'>", "</select>" ],
 		legend: [ 1, "<fieldset>", "</fieldset>" ],
@@ -4164,7 +4595,7 @@ jQuery.fn.extend({
 
 				return jQuery.clean([html.replace(rinlinejQuery, "")
 					// Handle the case in IE 8 where action=/test/> self-closes a tag
-					.replace(/=([^="'>\s]+\/)>/g, '="$1">')
+					.replace(raction, '="$1">')
 					.replace(rleadingWhitespace, "")], ownerDocument)[0];
 			} else {
 				return this.cloneNode(true);
@@ -4192,7 +4623,7 @@ jQuery.fn.extend({
 			(jQuery.support.leadingWhitespace || !rleadingWhitespace.test( value )) &&
 			!wrapMap[ (rtagName.exec( value ) || ["", ""])[1].toLowerCase() ] ) {
 
-			value = value.replace(rxhtmlTag, fcloseTag);
+			value = value.replace(rxhtmlTag, "<$1></$2>");
 
 			try {
 				for ( var i = 0, l = this.length; i < l; i++ ) {
@@ -4210,10 +4641,8 @@ jQuery.fn.extend({
 
 		} else if ( jQuery.isFunction( value ) ) {
 			this.each(function(i){
-				var self = jQuery(this), old = self.html();
-				self.empty().append(function(){
-					return value.call( this, i, old );
-				});
+				var self = jQuery(this);
+				self.html( value.call(this, i, self.html()) );
 			});
 
 		} else {
@@ -4284,7 +4713,7 @@ jQuery.fn.extend({
 				results = { fragment: parent };
 
 			} else {
-				results = buildFragment( args, this, scripts );
+				results = jQuery.buildFragment( args, this, scripts );
 			}
 			
 			fragment = results.fragment;
@@ -4316,15 +4745,15 @@ jQuery.fn.extend({
 		}
 
 		return this;
-
-		function root( elem, cur ) {
-			return jQuery.nodeName(elem, "table") ?
-				(elem.getElementsByTagName("tbody")[0] ||
-				elem.appendChild(elem.ownerDocument.createElement("tbody"))) :
-				elem;
-		}
 	}
 });
+
+function root( elem, cur ) {
+	return jQuery.nodeName(elem, "table") ?
+		(elem.getElementsByTagName("tbody")[0] ||
+		elem.appendChild(elem.ownerDocument.createElement("tbody"))) :
+		elem;
+}
 
 function cloneCopyEvent(orig, ret) {
 	var i = 0;
@@ -4349,7 +4778,7 @@ function cloneCopyEvent(orig, ret) {
 	});
 }
 
-function buildFragment( args, nodes, scripts ) {
+jQuery.buildFragment = function( args, nodes, scripts ) {
 	var fragment, cacheable, cacheresults,
 		doc = (nodes && nodes[0] ? nodes[0].ownerDocument || nodes[0] : document);
 
@@ -4379,7 +4808,7 @@ function buildFragment( args, nodes, scripts ) {
 	}
 
 	return { fragment: fragment, cacheable: cacheable };
-}
+};
 
 jQuery.fragments = {};
 
@@ -4401,7 +4830,7 @@ jQuery.each({
 		} else {
 			for ( var i = 0, l = insert.length; i < l; i++ ) {
 				var elems = (i > 0 ? this.clone(true) : this).get();
-				jQuery.fn[ original ].apply( jQuery(insert[i]), elems );
+				jQuery( insert[i] )[ original ]( elems );
 				ret = ret.concat( elems );
 			}
 		
@@ -4436,7 +4865,7 @@ jQuery.extend({
 
 			} else if ( typeof elem === "string" ) {
 				// Fix "XHTML"-style tags in all browsers
-				elem = elem.replace(rxhtmlTag, fcloseTag);
+				elem = elem.replace(rxhtmlTag, "<$1></$2>");
 
 				// Trim whitespace, otherwise indexOf won't work as expected
 				var tag = (rtagName.exec( elem ) || ["", ""])[1].toLowerCase(),
@@ -4489,7 +4918,7 @@ jQuery.extend({
 		}
 
 		if ( fragment ) {
-			for ( var i = 0; ret[i]; i++ ) {
+			for ( i = 0; ret[i]; i++ ) {
 				if ( scripts && jQuery.nodeName( ret[i], "script" ) && (!ret[i].type || ret[i].type.toLowerCase() === "text/javascript") ) {
 					scripts.push( ret[i].parentNode ? ret[i].parentNode.removeChild( ret[i] ) : ret[i] );
 				
@@ -4511,18 +4940,22 @@ jQuery.extend({
 			deleteExpando = jQuery.support.deleteExpando;
 		
 		for ( var i = 0, elem; (elem = elems[i]) != null; i++ ) {
+			if ( elem.nodeName && jQuery.noData[elem.nodeName.toLowerCase()] ) {
+				continue;
+			}
+
 			id = elem[ jQuery.expando ];
 			
 			if ( id ) {
 				data = cache[ id ];
 				
-				if ( data.events ) {
+				if ( data && data.events ) {
 					for ( var type in data.events ) {
 						if ( special[ type ] ) {
 							jQuery.event.remove( elem, type );
 
 						} else {
-							removeEvent( elem, type, data.handle );
+							jQuery.removeEvent( elem, type, data.handle );
 						}
 					}
 				}
@@ -4539,198 +4972,152 @@ jQuery.extend({
 		}
 	}
 });
-// exclude the following css properties to add px
-var rexclude = /z-?index|font-?weight|opacity|zoom|line-?height/i,
-	ralpha = /alpha\([^)]*\)/,
+
+function evalScript( i, elem ) {
+	if ( elem.src ) {
+		jQuery.ajax({
+			url: elem.src,
+			async: false,
+			dataType: "script"
+		});
+	} else {
+		jQuery.globalEval( elem.text || elem.textContent || elem.innerHTML || "" );
+	}
+
+	if ( elem.parentNode ) {
+		elem.parentNode.removeChild( elem );
+	}
+}
+
+
+
+
+var ralpha = /alpha\([^)]*\)/i,
 	ropacity = /opacity=([^)]*)/,
-	rfloat = /float/i,
 	rdashAlpha = /-([a-z])/ig,
 	rupper = /([A-Z])/g,
 	rnumpx = /^-?\d+(?:px)?$/i,
 	rnum = /^-?\d/,
 
-	cssShow = { position: "absolute", visibility: "hidden", display:"block" },
+	cssShow = { position: "absolute", visibility: "hidden", display: "block" },
 	cssWidth = [ "Left", "Right" ],
 	cssHeight = [ "Top", "Bottom" ],
+	curCSS,
 
 	// cache check for defaultView.getComputedStyle
 	getComputedStyle = document.defaultView && document.defaultView.getComputedStyle,
-	// normalize float css property
-	styleFloat = jQuery.support.cssFloat ? "cssFloat" : "styleFloat",
+
 	fcamelCase = function( all, letter ) {
 		return letter.toUpperCase();
 	};
 
 jQuery.fn.css = function( name, value ) {
-	return access( this, name, value, true, function( elem, name, value ) {
-		if ( value === undefined ) {
-			return jQuery.curCSS( elem, name );
-		}
-		
-		if ( typeof value === "number" && !rexclude.test(name) ) {
-			value += "px";
-		}
+	// Setting 'undefined' is a no-op
+	if ( arguments.length === 2 && value === undefined ) {
+		return this;
+	}
 
-		jQuery.style( elem, name, value );
+	return jQuery.access( this, name, value, true, function( elem, name, value ) {
+		return value !== undefined ?
+			jQuery.style( elem, name, value ) :
+			jQuery.css( elem, name );
 	});
 };
 
 jQuery.extend({
-	style: function( elem, name, value ) {
-		// don't set styles on text and comment nodes
-		if ( !elem || elem.nodeType === 3 || elem.nodeType === 8 ) {
-			return undefined;
-		}
+	// Add in style property hooks for overriding the default
+	// behavior of getting and setting a style property
+	cssHooks: {
+		opacity: {
+			get: function( elem, computed ) {
+				if ( computed ) {
+					// We should always get a number back from opacity
+					var ret = curCSS( elem, "opacity", "opacity" );
+					return ret === "" ? "1" : ret;
 
-		// ignore negative width and height values #1599
-		if ( (name === "width" || name === "height") && parseFloat(value) < 0 ) {
-			value = undefined;
-		}
-
-		var style = elem.style || elem, set = value !== undefined;
-
-		// IE uses filters for opacity
-		if ( !jQuery.support.opacity && name === "opacity" ) {
-			if ( set ) {
-				// IE has trouble with opacity if it does not have layout
-				// Force it by setting the zoom level
-				style.zoom = 1;
-
-				// Set the alpha filter to set the opacity
-				var opacity = parseInt( value, 10 ) + "" === "NaN" ? "" : "alpha(opacity=" + value * 100 + ")";
-				var filter = style.filter || jQuery.curCSS( elem, "filter" ) || "";
-				style.filter = ralpha.test(filter) ? filter.replace(ralpha, opacity) : opacity;
-			}
-
-			return style.filter && style.filter.indexOf("opacity=") >= 0 ?
-				(parseFloat( ropacity.exec(style.filter)[1] ) / 100) + "":
-				"";
-		}
-
-		// Make sure we're using the right name for getting the float value
-		if ( rfloat.test( name ) ) {
-			name = styleFloat;
-		}
-
-		name = name.replace(rdashAlpha, fcamelCase);
-
-		if ( set ) {
-			style[ name ] = value;
-		}
-
-		return style[ name ];
-	},
-
-	css: function( elem, name, force, extra ) {
-		if ( name === "width" || name === "height" ) {
-			var val, props = cssShow, which = name === "width" ? cssWidth : cssHeight;
-
-			function getWH() {
-				val = name === "width" ? elem.offsetWidth : elem.offsetHeight;
-
-				if ( extra === "border" ) {
-					return;
+				} else {
+					return elem.style.opacity;
 				}
-
-				jQuery.each( which, function() {
-					if ( !extra ) {
-						val -= parseFloat(jQuery.curCSS( elem, "padding" + this, true)) || 0;
-					}
-
-					if ( extra === "margin" ) {
-						val += parseFloat(jQuery.curCSS( elem, "margin" + this, true)) || 0;
-					} else {
-						val -= parseFloat(jQuery.curCSS( elem, "border" + this + "Width", true)) || 0;
-					}
-				});
 			}
-
-			if ( elem.offsetWidth !== 0 ) {
-				getWH();
-			} else {
-				jQuery.swap( elem, props, getWH );
-			}
-
-			return Math.max(0, Math.round(val));
 		}
-
-		return jQuery.curCSS( elem, name, force );
 	},
 
-	curCSS: function( elem, name, force ) {
-		var ret, style = elem.style, filter;
+	// Exclude the following css properties to add px
+	cssNumber: {
+		"zIndex": true,
+		"fontWeight": true,
+		"opacity": true,
+		"zoom": true,
+		"lineHeight": true
+	},
 
-		// IE uses filters for opacity
-		if ( !jQuery.support.opacity && name === "opacity" && elem.currentStyle ) {
-			ret = ropacity.test(elem.currentStyle.filter || "") ?
-				(parseFloat(RegExp.$1) / 100) + "" :
-				"";
+	// Add in properties whose names you wish to fix before
+	// setting or getting the value
+	cssProps: {
+		// normalize float css property
+		"float": jQuery.support.cssFloat ? "cssFloat" : "styleFloat"
+	},
 
-			return ret === "" ?
-				"1" :
-				ret;
+	// Get and set the style property on a DOM Node
+	style: function( elem, name, value, extra ) {
+		// Don't set styles on text and comment nodes
+		if ( !elem || elem.nodeType === 3 || elem.nodeType === 8 || !elem.style ) {
+			return;
 		}
 
-		// Make sure we're using the right name for getting the float value
-		if ( rfloat.test( name ) ) {
-			name = styleFloat;
+		// Make sure that we're working with the right name
+		var ret, origName = jQuery.camelCase( name ),
+			style = elem.style, hooks = jQuery.cssHooks[ origName ];
+
+		name = jQuery.cssProps[ origName ] || origName;
+
+		// Check if we're setting a value
+		if ( value !== undefined ) {
+			// Make sure that NaN and null values aren't set. See: #7116
+			if ( typeof value === "number" && isNaN( value ) || value == null ) {
+				return;
+			}
+
+			// If a number was passed in, add 'px' to the (except for certain CSS properties)
+			if ( typeof value === "number" && !jQuery.cssNumber[ origName ] ) {
+				value += "px";
+			}
+
+			// If a hook was provided, use that value, otherwise just set the specified value
+			if ( !hooks || !("set" in hooks) || (value = hooks.set( elem, value )) !== undefined ) {
+				// Wrapped to prevent IE from throwing errors when 'invalid' values are provided
+				// Fixes bug #5509
+				try {
+					style[ name ] = value;
+				} catch(e) {}
+			}
+
+		} else {
+			// If a hook was provided get the non-computed value from there
+			if ( hooks && "get" in hooks && (ret = hooks.get( elem, false, extra )) !== undefined ) {
+				return ret;
+			}
+
+			// Otherwise just get the value from the style object
+			return style[ name ];
 		}
+	},
 
-		if ( !force && style && style[ name ] ) {
-			ret = style[ name ];
+	css: function( elem, name, extra ) {
+		// Make sure that we're working with the right name
+		var ret, origName = jQuery.camelCase( name ),
+			hooks = jQuery.cssHooks[ origName ];
 
-		} else if ( getComputedStyle ) {
+		name = jQuery.cssProps[ origName ] || origName;
 
-			// Only "float" is needed here
-			if ( rfloat.test( name ) ) {
-				name = "float";
-			}
+		// If a hook was provided get the computed value from there
+		if ( hooks && "get" in hooks && (ret = hooks.get( elem, true, extra )) !== undefined ) {
+			return ret;
 
-			name = name.replace( rupper, "-$1" ).toLowerCase();
-
-			var defaultView = elem.ownerDocument.defaultView;
-
-			if ( !defaultView ) {
-				return null;
-			}
-
-			var computedStyle = defaultView.getComputedStyle( elem, null );
-
-			if ( computedStyle ) {
-				ret = computedStyle.getPropertyValue( name );
-			}
-
-			// We should always get a number back from opacity
-			if ( name === "opacity" && ret === "" ) {
-				ret = "1";
-			}
-
-		} else if ( elem.currentStyle ) {
-			var camelCase = name.replace(rdashAlpha, fcamelCase);
-
-			ret = elem.currentStyle[ name ] || elem.currentStyle[ camelCase ];
-
-			// From the awesome hack by Dean Edwards
-			// http://erik.eae.net/archives/2007/07/27/18.54.15/#comment-102291
-
-			// If we're not dealing with a regular pixel number
-			// but a number that has a weird ending, we need to convert it to pixels
-			if ( !rnumpx.test( ret ) && rnum.test( ret ) ) {
-				// Remember the original values
-				var left = style.left, rsLeft = elem.runtimeStyle.left;
-
-				// Put in the new values to get a computed value out
-				elem.runtimeStyle.left = elem.currentStyle.left;
-				style.left = camelCase === "fontSize" ? "1em" : (ret || 0);
-				ret = style.pixelLeft + "px";
-
-				// Revert the changed values
-				style.left = left;
-				elem.runtimeStyle.left = rsLeft;
-			}
+		// Otherwise, if a way to get the computed value exists, use that
+		} else if ( curCSS ) {
+			return curCSS( elem, name, origName );
 		}
-
-		return ret;
 	},
 
 	// A method for quickly swapping in/out CSS properties to get correct calculations
@@ -4746,45 +5133,190 @@ jQuery.extend({
 		callback.call( elem );
 
 		// Revert the old values
-		for ( var name in options ) {
+		for ( name in options ) {
 			elem.style[ name ] = old[ name ];
 		}
+	},
+
+	camelCase: function( string ) {
+		return string.replace( rdashAlpha, fcamelCase );
 	}
 });
 
+// DEPRECATED, Use jQuery.css() instead
+jQuery.curCSS = jQuery.css;
+
+jQuery.each(["height", "width"], function( i, name ) {
+	jQuery.cssHooks[ name ] = {
+		get: function( elem, computed, extra ) {
+			var val;
+
+			if ( computed ) {
+				if ( elem.offsetWidth !== 0 ) {
+					val = getWH( elem, name, extra );
+
+				} else {
+					jQuery.swap( elem, cssShow, function() {
+						val = getWH( elem, name, extra );
+					});
+				}
+
+				return val + "px";
+			}
+		},
+
+		set: function( elem, value ) {
+			if ( rnumpx.test( value ) ) {
+				// ignore negative width and height values #1599
+				value = parseFloat(value);
+
+				if ( value >= 0 ) {
+					return value + "px";
+				}
+
+			} else {
+				return value;
+			}
+		}
+	};
+});
+
+if ( !jQuery.support.opacity ) {
+	jQuery.cssHooks.opacity = {
+		get: function( elem, computed ) {
+			// IE uses filters for opacity
+			return ropacity.test((computed && elem.currentStyle ? elem.currentStyle.filter : elem.style.filter) || "") ?
+				(parseFloat(RegExp.$1) / 100) + "" :
+				computed ? "1" : "";
+		},
+
+		set: function( elem, value ) {
+			var style = elem.style;
+
+			// IE has trouble with opacity if it does not have layout
+			// Force it by setting the zoom level
+			style.zoom = 1;
+
+			// Set the alpha filter to set the opacity
+			var opacity = jQuery.isNaN(value) ?
+				"" :
+				"alpha(opacity=" + value * 100 + ")",
+				filter = style.filter || "";
+
+			style.filter = ralpha.test(filter) ?
+				filter.replace(ralpha, opacity) :
+				style.filter + ' ' + opacity;
+		}
+	};
+}
+
+if ( getComputedStyle ) {
+	curCSS = function( elem, newName, name ) {
+		var ret, defaultView, computedStyle;
+
+		name = name.replace( rupper, "-$1" ).toLowerCase();
+
+		if ( !(defaultView = elem.ownerDocument.defaultView) ) {
+			return undefined;
+		}
+
+		if ( (computedStyle = defaultView.getComputedStyle( elem, null )) ) {
+			ret = computedStyle.getPropertyValue( name );
+			if ( ret === "" && !jQuery.contains( elem.ownerDocument.documentElement, elem ) ) {
+				ret = jQuery.style( elem, name );
+			}
+		}
+
+		return ret;
+	};
+
+} else if ( document.documentElement.currentStyle ) {
+	curCSS = function( elem, name ) {
+		var left, rsLeft, ret = elem.currentStyle && elem.currentStyle[ name ], style = elem.style;
+
+		// From the awesome hack by Dean Edwards
+		// http://erik.eae.net/archives/2007/07/27/18.54.15/#comment-102291
+
+		// If we're not dealing with a regular pixel number
+		// but a number that has a weird ending, we need to convert it to pixels
+		if ( !rnumpx.test( ret ) && rnum.test( ret ) ) {
+			// Remember the original values
+			left = style.left;
+			rsLeft = elem.runtimeStyle.left;
+
+			// Put in the new values to get a computed value out
+			elem.runtimeStyle.left = elem.currentStyle.left;
+			style.left = name === "fontSize" ? "1em" : (ret || 0);
+			ret = style.pixelLeft + "px";
+
+			// Revert the changed values
+			style.left = left;
+			elem.runtimeStyle.left = rsLeft;
+		}
+
+		return ret;
+	};
+}
+
+function getWH( elem, name, extra ) {
+	var which = name === "width" ? cssWidth : cssHeight,
+		val = name === "width" ? elem.offsetWidth : elem.offsetHeight;
+
+	if ( extra === "border" ) {
+		return val;
+	}
+
+	jQuery.each( which, function() {
+		if ( !extra ) {
+			val -= parseFloat(jQuery.css( elem, "padding" + this )) || 0;
+		}
+
+		if ( extra === "margin" ) {
+			val += parseFloat(jQuery.css( elem, "margin" + this )) || 0;
+
+		} else {
+			val -= parseFloat(jQuery.css( elem, "border" + this + "Width" )) || 0;
+		}
+	});
+
+	return val;
+}
+
 if ( jQuery.expr && jQuery.expr.filters ) {
 	jQuery.expr.filters.hidden = function( elem ) {
-		var width = elem.offsetWidth, height = elem.offsetHeight,
-			skip = elem.nodeName.toLowerCase() === "tr";
+		var width = elem.offsetWidth, height = elem.offsetHeight;
 
-		return width === 0 && height === 0 && !skip ?
-			true :
-			width > 0 && height > 0 && !skip ?
-				false :
-				jQuery.curCSS(elem, "display") === "none";
+		return (width === 0 && height === 0) || (!jQuery.support.reliableHiddenOffsets && (elem.style.display || jQuery.css( elem, "display" )) === "none");
 	};
 
 	jQuery.expr.filters.visible = function( elem ) {
 		return !jQuery.expr.filters.hidden( elem );
 	};
 }
-var jsc = now(),
-	rscript = /<script(.|\s)*?\/script>/gi,
-	rselectTextarea = /select|textarea/i,
-	rinput = /color|date|datetime|email|hidden|month|number|password|range|search|tel|text|time|url|week/i,
-	jsre = /=\?(&|$)/,
+
+
+
+
+var jsc = jQuery.now(),
+	rscript = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+	rselectTextarea = /^(?:select|textarea)/i,
+	rinput = /^(?:color|date|datetime|email|hidden|month|number|password|range|search|tel|text|time|url|week)$/i,
+	rnoContent = /^(?:GET|HEAD|DELETE)$/,
+	rbracket = /\[\]$/,
+	jsre = /\=\?(&|$)/,
 	rquery = /\?/,
-	rts = /(\?|&)_=.*?(&|$)/,
+	rts = /([?&])_=[^&]*/,
 	rurl = /^(\w+:)?\/\/([^\/?#]+)/,
 	r20 = /%20/g,
+	rhash = /#.*$/,
 
 	// Keep a copy of the old load method
 	_load = jQuery.fn.load;
 
 jQuery.fn.extend({
 	load: function( url, params, callback ) {
-		if ( typeof url !== "string" ) {
-			return _load.call( this, url );
+		if ( typeof url !== "string" && _load ) {
+			return _load.apply( this, arguments );
 
 		// Don't do a request if no elements are being requested
 		} else if ( !this.length ) {
@@ -4829,7 +5361,7 @@ jQuery.fn.extend({
 					// See if a selector was specified
 					self.html( selector ?
 						// Create a dummy div to hold the results
-						jQuery("<div />")
+						jQuery("<div>")
 							// inject the contents of the document in, removing the scripts
 							// to avoid any 'Permission Denied' errors in IE
 							.append(res.responseText.replace(rscript, ""))
@@ -4853,6 +5385,7 @@ jQuery.fn.extend({
 	serialize: function() {
 		return jQuery.param(this.serializeArray());
 	},
+
 	serializeArray: function() {
 		return this.map(function() {
 			return this.elements ? jQuery.makeArray(this.elements) : this;
@@ -4884,7 +5417,6 @@ jQuery.each( "ajaxStart ajaxStop ajaxComplete ajaxError ajaxSuccess ajaxSend".sp
 });
 
 jQuery.extend({
-
 	get: function( url, data, callback, type ) {
 		// shift arguments if data argument was omited
 		if ( jQuery.isFunction( data ) ) {
@@ -4945,19 +5477,10 @@ jQuery.extend({
 		password: null,
 		traditional: false,
 		*/
-		// Create the request object; Microsoft failed to properly
-		// implement the XMLHttpRequest in IE7 (can't request local files),
-		// so we use the ActiveXObject when it is available
 		// This function can be overriden by calling jQuery.ajaxSetup
-		xhr: window.XMLHttpRequest && (window.location.protocol !== "file:" || !window.ActiveXObject) ?
-			function() {
-				return new window.XMLHttpRequest();
-			} :
-			function() {
-				try {
-					return new window.ActiveXObject("Microsoft.XMLHTTP");
-				} catch(e) {}
-			},
+		xhr: function() {
+			return new window.XMLHttpRequest();
+		},
 		accepts: {
 			xml: "application/xml, text/xml",
 			html: "text/html",
@@ -4968,16 +5491,14 @@ jQuery.extend({
 		}
 	},
 
-	// Last-Modified header cache for next request
-	lastModified: {},
-	etag: {},
-
 	ajax: function( origSettings ) {
-		var s = jQuery.extend(true, {}, jQuery.ajaxSettings, origSettings);
-		
-		var jsonp, status, data,
-			callbackContext = origSettings && origSettings.context || s,
-			type = s.type.toUpperCase();
+		var s = jQuery.extend(true, {}, jQuery.ajaxSettings, origSettings),
+			jsonp, status, data, type = s.type.toUpperCase(), noContent = rnoContent.test(type);
+
+		s.url = s.url.replace( rhash, "" );
+
+		// Use original (not extended) context object if it was provided
+		s.context = origSettings && origSettings.context != null ? origSettings.context : s;
 
 		// convert data if not already a string
 		if ( s.data && s.processData && typeof s.data !== "string" ) {
@@ -5012,17 +5533,25 @@ jQuery.extend({
 			s.dataType = "script";
 
 			// Handle JSONP-style loading
-			window[ jsonp ] = window[ jsonp ] || function( tmp ) {
+			var customJsonp = window[ jsonp ];
+
+			window[ jsonp ] = function( tmp ) {
 				data = tmp;
-				success();
-				complete();
-				// Garbage collect
-				window[ jsonp ] = undefined;
+				jQuery.handleSuccess( s, xhr, status, data );
+				jQuery.handleComplete( s, xhr, status, data );
 
-				try {
-					delete window[ jsonp ];
-				} catch(e) {}
+				if ( jQuery.isFunction( customJsonp ) ) {
+					customJsonp( tmp );
 
+				} else {
+					// Garbage collect
+					window[ jsonp ] = undefined;
+
+					try {
+						delete window[ jsonp ];
+					} catch( jsonpError ) {}
+				}
+				
 				if ( head ) {
 					head.removeChild( script );
 				}
@@ -5034,10 +5563,10 @@ jQuery.extend({
 		}
 
 		if ( s.cache === false && type === "GET" ) {
-			var ts = now();
+			var ts = jQuery.now();
 
 			// try replacing _= if it is there
-			var ret = s.url.replace(rts, "$1_=" + ts + "$2");
+			var ret = s.url.replace(rts, "$1_=" + ts);
 
 			// if nothing was replaced, add timestamp to the end
 			s.url = ret + ((ret === s.url) ? (rquery.test(s.url) ? "&" : "?") + "_=" + ts : "");
@@ -5049,7 +5578,7 @@ jQuery.extend({
 		}
 
 		// Watch for a new set of requests
-		if ( s.global && ! jQuery.active++ ) {
+		if ( s.global && jQuery.active++ === 0 ) {
 			jQuery.event.trigger( "ajaxStart" );
 		}
 
@@ -5062,10 +5591,10 @@ jQuery.extend({
 		if ( s.dataType === "script" && type === "GET" && remote ) {
 			var head = document.getElementsByTagName("head")[0] || document.documentElement;
 			var script = document.createElement("script");
-			script.src = s.url;
 			if ( s.scriptCharset ) {
 				script.charset = s.scriptCharset;
 			}
+			script.src = s.url;
 
 			// Handle Script loading
 			if ( !jsonp ) {
@@ -5076,8 +5605,8 @@ jQuery.extend({
 					if ( !done && (!this.readyState ||
 							this.readyState === "loaded" || this.readyState === "complete") ) {
 						done = true;
-						success();
-						complete();
+						jQuery.handleSuccess( s, xhr, status, data );
+						jQuery.handleComplete( s, xhr, status, data );
 
 						// Handle memory leak in IE
 						script.onload = script.onreadystatechange = null;
@@ -5115,8 +5644,8 @@ jQuery.extend({
 
 		// Need an extra try/catch for cross domain requests in Firefox 3
 		try {
-			// Set the correct header, if data is being sent
-			if ( s.data || origSettings && origSettings.contentType ) {
+			// Set content-type if data specified and content-body is valid for this type
+			if ( (s.data != null && !noContent) || (origSettings && origSettings.contentType) ) {
 				xhr.setRequestHeader("Content-Type", s.contentType);
 			}
 
@@ -5139,14 +5668,14 @@ jQuery.extend({
 
 			// Set the Accepts header for the server, depending on the dataType
 			xhr.setRequestHeader("Accept", s.dataType && s.accepts[ s.dataType ] ?
-				s.accepts[ s.dataType ] + ", */*" :
+				s.accepts[ s.dataType ] + ", */*; q=0.01" :
 				s.accepts._default );
-		} catch(e) {}
+		} catch( headerError ) {}
 
 		// Allow custom headers/mimetypes and early abort
-		if ( s.beforeSend && s.beforeSend.call(callbackContext, xhr, s) === false ) {
+		if ( s.beforeSend && s.beforeSend.call(s.context, xhr, s) === false ) {
 			// Handle the global AJAX counter
-			if ( s.global && ! --jQuery.active ) {
+			if ( s.global && jQuery.active-- === 1 ) {
 				jQuery.event.trigger( "ajaxStop" );
 			}
 
@@ -5156,7 +5685,7 @@ jQuery.extend({
 		}
 
 		if ( s.global ) {
-			trigger("ajaxSend", [xhr, s]);
+			jQuery.triggerGlobal( s, "ajaxSend", [xhr, s] );
 		}
 
 		// Wait for a response to come back
@@ -5166,7 +5695,7 @@ jQuery.extend({
 				// Opera doesn't call onreadystatechange before this point
 				// so we simulate the call
 				if ( !requestDone ) {
-					complete();
+					jQuery.handleComplete( s, xhr, status, data );
 				}
 
 				requestDone = true;
@@ -5194,9 +5723,9 @@ jQuery.extend({
 					try {
 						// process the data (runs the xml through httpData regardless of callback)
 						data = jQuery.httpData( xhr, s.dataType, s );
-					} catch(err) {
+					} catch( parserError ) {
 						status = "parsererror";
-						errMsg = err;
+						errMsg = parserError;
 					}
 				}
 
@@ -5204,14 +5733,16 @@ jQuery.extend({
 				if ( status === "success" || status === "notmodified" ) {
 					// JSONP handles its own success callback
 					if ( !jsonp ) {
-						success();
+						jQuery.handleSuccess( s, xhr, status, data );
 					}
 				} else {
-					jQuery.handleError(s, xhr, status, errMsg);
+					jQuery.handleError( s, xhr, status, errMsg );
 				}
 
 				// Fire the complete handlers
-				complete();
+				if ( !jsonp ) {
+					jQuery.handleComplete( s, xhr, status, data );
+				}
 
 				if ( isTimeout === "timeout" ) {
 					xhr.abort();
@@ -5224,18 +5755,20 @@ jQuery.extend({
 			}
 		};
 
-		// Override the abort handler, if we can (IE doesn't allow it, but that's OK)
+		// Override the abort handler, if we can (IE 6 doesn't allow it, but that's OK)
 		// Opera doesn't fire onreadystatechange at all on abort
 		try {
 			var oldAbort = xhr.abort;
 			xhr.abort = function() {
-				if ( xhr ) {
+				// xhr.abort in IE7 is not a native JS function
+				// and does not have a call property
+				if ( xhr && oldAbort.call ) {
 					oldAbort.call( xhr );
 				}
 
 				onreadystatechange( "abort" );
 			};
-		} catch(e) { }
+		} catch( abortError ) {}
 
 		// Timeout checker
 		if ( s.async && s.timeout > 0 ) {
@@ -5249,11 +5782,13 @@ jQuery.extend({
 
 		// Send the data
 		try {
-			xhr.send( type === "POST" || type === "PUT" || type === "DELETE" ? s.data : null );
-		} catch(e) {
-			jQuery.handleError(s, xhr, null, e);
+			xhr.send( noContent || s.data == null ? null : s.data );
+
+		} catch( sendError ) {
+			jQuery.handleError( s, xhr, null, sendError );
+
 			// Fire the complete handlers
-			complete();
+			jQuery.handleComplete( s, xhr, status, data );
 		}
 
 		// firefox 1.5 doesn't fire statechange for sync requests
@@ -5261,66 +5796,144 @@ jQuery.extend({
 			onreadystatechange();
 		}
 
-		function success() {
-			// If a local callback was specified, fire it and pass it the data
-			if ( s.success ) {
-				s.success.call( callbackContext, data, status, xhr );
-			}
-
-			// Fire the global callback
-			if ( s.global ) {
-				trigger( "ajaxSuccess", [xhr, s] );
-			}
-		}
-
-		function complete() {
-			// Process result
-			if ( s.complete ) {
-				s.complete.call( callbackContext, xhr, status);
-			}
-
-			// The request was completed
-			if ( s.global ) {
-				trigger( "ajaxComplete", [xhr, s] );
-			}
-
-			// Handle the global AJAX counter
-			if ( s.global && ! --jQuery.active ) {
-				jQuery.event.trigger( "ajaxStop" );
-			}
-		}
-		
-		function trigger(type, args) {
-			(s.context ? jQuery(s.context) : jQuery.event).trigger(type, args);
-		}
-
 		// return XMLHttpRequest to allow aborting the request etc.
 		return xhr;
 	},
 
+	// Serialize an array of form elements or a set of
+	// key/values into a query string
+	param: function( a, traditional ) {
+		var s = [], add = function( key, value ) {
+			// If value is a function, invoke it and return its value
+			value = jQuery.isFunction(value) ? value() : value;
+			s[ s.length ] = encodeURIComponent(key) + "=" + encodeURIComponent(value);
+		};
+		
+		// Set traditional to true for jQuery <= 1.3.2 behavior.
+		if ( traditional === undefined ) {
+			traditional = jQuery.ajaxSettings.traditional;
+		}
+		
+		// If an array was passed in, assume that it is an array of form elements.
+		if ( jQuery.isArray(a) || a.jquery ) {
+			// Serialize the form elements
+			jQuery.each( a, function() {
+				add( this.name, this.value );
+			});
+			
+		} else {
+			// If traditional, encode the "old" way (the way 1.3.2 or older
+			// did it), otherwise encode params recursively.
+			for ( var prefix in a ) {
+				buildParams( prefix, a[prefix], traditional, add );
+			}
+		}
+
+		// Return the resulting serialization
+		return s.join("&").replace(r20, "+");
+	}
+});
+
+function buildParams( prefix, obj, traditional, add ) {
+	if ( jQuery.isArray(obj) && obj.length ) {
+		// Serialize array item.
+		jQuery.each( obj, function( i, v ) {
+			if ( traditional || rbracket.test( prefix ) ) {
+				// Treat each array item as a scalar.
+				add( prefix, v );
+
+			} else {
+				// If array item is non-scalar (array or object), encode its
+				// numeric index to resolve deserialization ambiguity issues.
+				// Note that rack (as of 1.0.0) can't currently deserialize
+				// nested arrays properly, and attempting to do so may cause
+				// a server error. Possible fixes are to modify rack's
+				// deserialization algorithm or to provide an option or flag
+				// to force array serialization to be shallow.
+				buildParams( prefix + "[" + ( typeof v === "object" || jQuery.isArray(v) ? i : "" ) + "]", v, traditional, add );
+			}
+		});
+			
+	} else if ( !traditional && obj != null && typeof obj === "object" ) {
+		if ( jQuery.isEmptyObject( obj ) ) {
+			add( prefix, "" );
+
+		// Serialize object item.
+		} else {
+			jQuery.each( obj, function( k, v ) {
+				buildParams( prefix + "[" + k + "]", v, traditional, add );
+			});
+		}
+					
+	} else {
+		// Serialize scalar item.
+		add( prefix, obj );
+	}
+}
+
+// This is still on the jQuery object... for now
+// Want to move this to jQuery.ajax some day
+jQuery.extend({
+
+	// Counter for holding the number of active queries
+	active: 0,
+
+	// Last-Modified header cache for next request
+	lastModified: {},
+	etag: {},
+
 	handleError: function( s, xhr, status, e ) {
 		// If a local callback was specified, fire it
 		if ( s.error ) {
-			s.error.call( s.context || s, xhr, status, e );
+			s.error.call( s.context, xhr, status, e );
 		}
 
 		// Fire the global callback
 		if ( s.global ) {
-			(s.context ? jQuery(s.context) : jQuery.event).trigger( "ajaxError", [xhr, s, e] );
+			jQuery.triggerGlobal( s, "ajaxError", [xhr, s, e] );
 		}
 	},
 
-	// Counter for holding the number of active queries
-	active: 0,
+	handleSuccess: function( s, xhr, status, data ) {
+		// If a local callback was specified, fire it and pass it the data
+		if ( s.success ) {
+			s.success.call( s.context, data, status, xhr );
+		}
+
+		// Fire the global callback
+		if ( s.global ) {
+			jQuery.triggerGlobal( s, "ajaxSuccess", [xhr, s] );
+		}
+	},
+
+	handleComplete: function( s, xhr, status ) {
+		// Process result
+		if ( s.complete ) {
+			s.complete.call( s.context, xhr, status );
+		}
+
+		// The request was completed
+		if ( s.global ) {
+			jQuery.triggerGlobal( s, "ajaxComplete", [xhr, s] );
+		}
+
+		// Handle the global AJAX counter
+		if ( s.global && jQuery.active-- === 1 ) {
+			jQuery.event.trigger( "ajaxStop" );
+		}
+	},
+		
+	triggerGlobal: function( s, type, args ) {
+		(s.context && s.context.url == null ? jQuery(s.context) : jQuery.event).trigger(type, args);
+	},
 
 	// Determines if an XMLHttpRequest was successful or not
 	httpSuccess: function( xhr ) {
 		try {
 			// IE error sometimes returns 1223 when it should be 204 so treat it as success, see #1450
 			return !xhr.status && location.protocol === "file:" ||
-				// Opera returns 0 when status is 304
-				( xhr.status >= 200 && xhr.status < 300 ) ||
-				xhr.status === 304 || xhr.status === 1223 || xhr.status === 0;
+				xhr.status >= 200 && xhr.status < 300 ||
+				xhr.status === 304 || xhr.status === 1223;
 		} catch(e) {}
 
 		return false;
@@ -5339,8 +5952,7 @@ jQuery.extend({
 			jQuery.etag[url] = etag;
 		}
 
-		// Opera returns 0 when status is 304
-		return xhr.status === 304 || xhr.status === 0;
+		return xhr.status === 304;
 	},
 
 	httpData: function( xhr, type, s ) {
@@ -5371,77 +5983,40 @@ jQuery.extend({
 		}
 
 		return data;
-	},
-
-	// Serialize an array of form elements or a set of
-	// key/values into a query string
-	param: function( a, traditional ) {
-		var s = [];
-		
-		// Set traditional to true for jQuery <= 1.3.2 behavior.
-		if ( traditional === undefined ) {
-			traditional = jQuery.ajaxSettings.traditional;
-		}
-		
-		// If an array was passed in, assume that it is an array of form elements.
-		if ( jQuery.isArray(a) || a.jquery ) {
-			// Serialize the form elements
-			jQuery.each( a, function() {
-				add( this.name, this.value );
-			});
-			
-		} else {
-			// If traditional, encode the "old" way (the way 1.3.2 or older
-			// did it), otherwise encode params recursively.
-			for ( var prefix in a ) {
-				buildParams( prefix, a[prefix] );
-			}
-		}
-
-		// Return the resulting serialization
-		return s.join("&").replace(r20, "+");
-
-		function buildParams( prefix, obj ) {
-			if ( jQuery.isArray(obj) ) {
-				// Serialize array item.
-				jQuery.each( obj, function( i, v ) {
-					if ( traditional || /\[\]$/.test( prefix ) ) {
-						// Treat each array item as a scalar.
-						add( prefix, v );
-					} else {
-						// If array item is non-scalar (array or object), encode its
-						// numeric index to resolve deserialization ambiguity issues.
-						// Note that rack (as of 1.0.0) can't currently deserialize
-						// nested arrays properly, and attempting to do so may cause
-						// a server error. Possible fixes are to modify rack's
-						// deserialization algorithm or to provide an option or flag
-						// to force array serialization to be shallow.
-						buildParams( prefix + "[" + ( typeof v === "object" || jQuery.isArray(v) ? i : "" ) + "]", v );
-					}
-				});
-					
-			} else if ( !traditional && obj != null && typeof obj === "object" ) {
-				// Serialize object item.
-				jQuery.each( obj, function( k, v ) {
-					buildParams( prefix + "[" + k + "]", v );
-				});
-					
-			} else {
-				// Serialize scalar item.
-				add( prefix, obj );
-			}
-		}
-
-		function add( key, value ) {
-			// If value is a function, invoke it and return its value
-			value = jQuery.isFunction(value) ? value() : value;
-			s[ s.length ] = encodeURIComponent(key) + "=" + encodeURIComponent(value);
-		}
 	}
+
 });
+
+/*
+ * Create the request object; Microsoft failed to properly
+ * implement the XMLHttpRequest in IE7 (can't request local files),
+ * so we use the ActiveXObject when it is available
+ * Additionally XMLHttpRequest can be disabled in IE7/IE8 so
+ * we need a fallback.
+ */
+if ( window.ActiveXObject ) {
+	jQuery.ajaxSettings.xhr = function() {
+		if ( window.location.protocol !== "file:" ) {
+			try {
+				return new window.XMLHttpRequest();
+			} catch(xhrError) {}
+		}
+
+		try {
+			return new window.ActiveXObject("Microsoft.XMLHTTP");
+		} catch(activeError) {}
+	};
+}
+
+// Does this browser support XHR requests?
+jQuery.support.ajax = !!jQuery.ajaxSettings.xhr();
+
+
+
+
 var elemdisplay = {},
-	rfxtypes = /toggle|show|hide/,
-	rfxnum = /^([+-]=)?([\d+-.]+)(.*)$/,
+	rfxtypes = /^(?:toggle|show|hide)$/,
+	rfxnum = /^([+\-]=)?([\d+.\-]+)(.*)$/,
 	timerId,
 	fxAttrs = [
 		// height animations
@@ -5453,66 +6028,52 @@ var elemdisplay = {},
 	];
 
 jQuery.fn.extend({
-	show: function( speed, callback ) {
-		if ( speed || speed === 0) {
-			return this.animate( genFx("show", 3), speed, callback);
-
+	show: function( speed, easing, callback ) {
+		if ( speed || speed === 0 ) {
+			return this.animate( genFx("show", 3), speed, easing, callback);
 		} else {
-			for ( var i = 0, l = this.length; i < l; i++ ) {
-				var old = jQuery.data(this[i], "olddisplay");
+			for ( var i = 0, j = this.length; i < j; i++ ) {
+				// Reset the inline display of this element to learn if it is
+				// being hidden by cascaded rules or not
+				if ( !jQuery.data(this[i], "olddisplay") && this[i].style.display === "none" ) {
+					this[i].style.display = "";
+				}
 
-				this[i].style.display = old || "";
-
-				if ( jQuery.css(this[i], "display") === "none" ) {
-					var nodeName = this[i].nodeName, display;
-
-					if ( elemdisplay[ nodeName ] ) {
-						display = elemdisplay[ nodeName ];
-
-					} else {
-						var elem = jQuery("<" + nodeName + " />").appendTo("body");
-
-						display = elem.css("display");
-
-						if ( display === "none" ) {
-							display = "block";
-						}
-
-						elem.remove();
-
-						elemdisplay[ nodeName ] = display;
-					}
-
-					jQuery.data(this[i], "olddisplay", display);
+				// Set elements which have been overridden with display: none
+				// in a stylesheet to whatever the default browser style is
+				// for such an element
+				if ( this[i].style.display === "" && jQuery.css( this[i], "display" ) === "none" ) {
+					jQuery.data(this[i], "olddisplay", defaultDisplay(this[i].nodeName));
 				}
 			}
 
-			// Set the display of the elements in a second loop
+			// Set the display of most of the elements in a second loop
 			// to avoid the constant reflow
-			for ( var j = 0, k = this.length; j < k; j++ ) {
-				this[j].style.display = jQuery.data(this[j], "olddisplay") || "";
+			for ( i = 0; i < j; i++ ) {
+				this[i].style.display = jQuery.data(this[i], "olddisplay") || "";
 			}
 
 			return this;
 		}
 	},
 
-	hide: function( speed, callback ) {
+	hide: function( speed, easing, callback ) {
 		if ( speed || speed === 0 ) {
-			return this.animate( genFx("hide", 3), speed, callback);
+			return this.animate( genFx("hide", 3), speed, easing, callback);
 
 		} else {
-			for ( var i = 0, l = this.length; i < l; i++ ) {
-				var old = jQuery.data(this[i], "olddisplay");
-				if ( !old && old !== "none" ) {
-					jQuery.data(this[i], "olddisplay", jQuery.css(this[i], "display"));
+			for ( var i = 0, j = this.length; i < j; i++ ) {
+				var display = jQuery.css( this[i], "display" );
+
+				if ( display !== "none" ) {
+					jQuery.data( this[i], "olddisplay", display );
 				}
 			}
 
 			// Set the display of the elements in a second loop
 			// to avoid the constant reflow
-			for ( var j = 0, k = this.length; j < k; j++ ) {
-				this[j].style.display = "none";
+			for ( i = 0; i < j; i++ ) {
+				this[i].style.display = "none";
 			}
 
 			return this;
@@ -5522,7 +6083,7 @@ jQuery.fn.extend({
 	// Save the old toggle function
 	_toggle: jQuery.fn.toggle,
 
-	toggle: function( fn, fn2 ) {
+	toggle: function( fn, fn2, callback ) {
 		var bool = typeof fn === "boolean";
 
 		if ( jQuery.isFunction(fn) && jQuery.isFunction(fn2) ) {
@@ -5535,15 +6096,15 @@ jQuery.fn.extend({
 			});
 
 		} else {
-			this.animate(genFx("toggle", 3), fn, fn2);
+			this.animate(genFx("toggle", 3), fn, fn2, callback);
 		}
 
 		return this;
 	},
 
-	fadeTo: function( speed, to, callback ) {
+	fadeTo: function( speed, to, easing, callback ) {
 		return this.filter(":hidden").css("opacity", 0).show().end()
-					.animate({opacity: to}, speed, callback);
+					.animate({opacity: to}, speed, easing, callback);
 	},
 
 	animate: function( prop, speed, easing, callback ) {
@@ -5554,12 +6115,16 @@ jQuery.fn.extend({
 		}
 
 		return this[ optall.queue === false ? "each" : "queue" ](function() {
+			// XXX â€˜thisâ€™ does not always have a nodeName when running the
+			// test suite
+
 			var opt = jQuery.extend({}, optall), p,
-				hidden = this.nodeType === 1 && jQuery(this).is(":hidden"),
+				isElement = this.nodeType === 1,
+				hidden = isElement && jQuery(this).is(":hidden"),
 				self = this;
 
 			for ( p in prop ) {
-				var name = p.replace(rdashAlpha, fcamelCase);
+				var name = jQuery.camelCase( p );
 
 				if ( p !== name ) {
 					prop[ name ] = prop[ p ];
@@ -5571,12 +6136,35 @@ jQuery.fn.extend({
 					return opt.complete.call(this);
 				}
 
-				if ( ( p === "height" || p === "width" ) && this.style ) {
-					// Store display property
-					opt.display = jQuery.css(this, "display");
-
+				if ( isElement && ( p === "height" || p === "width" ) ) {
 					// Make sure that nothing sneaks out
-					opt.overflow = this.style.overflow;
+					// Record all 3 overflow attributes because IE does not
+					// change the overflow attribute when overflowX and
+					// overflowY are set to the same value
+					opt.overflow = [ this.style.overflow, this.style.overflowX, this.style.overflowY ];
+
+					// Set display property to inline-block for height/width
+					// animations on inline elements that are having width/height
+					// animated
+					if ( jQuery.css( this, "display" ) === "inline" &&
+							jQuery.css( this, "float" ) === "none" ) {
+						if ( !jQuery.support.inlineBlockNeedsLayout ) {
+							this.style.display = "inline-block";
+
+						} else {
+							var display = defaultDisplay(this.nodeName);
+
+							// inline-level elements accept inline-block;
+							// block-level elements need to be inline with layout
+							if ( display === "inline" ) {
+								this.style.display = "inline-block";
+
+							} else {
+								this.style.display = "inline";
+								this.style.zoom = 1;
+							}
+						}
+					}
 				}
 
 				if ( jQuery.isArray( prop[p] ) ) {
@@ -5608,9 +6196,9 @@ jQuery.fn.extend({
 
 						// We need to compute starting value
 						if ( unit !== "px" ) {
-							self.style[ name ] = (end || 1) + unit;
+							jQuery.style( self, name, (end || 1) + unit);
 							start = ((end || 1) / e.cur(true)) * start;
-							self.style[ name ] = start + unit;
+							jQuery.style( self, name, start + unit);
 						}
 
 						// If a +=/-= token was provided, we're doing a relative animation
@@ -5662,6 +6250,16 @@ jQuery.fn.extend({
 
 });
 
+function genFx( type, num ) {
+	var obj = {};
+
+	jQuery.each( fxAttrs.concat.apply([], fxAttrs.slice(0,num)), function() {
+		obj[ this ] = type;
+	});
+
+	return obj;
+}
+
 // Generate shortcuts for custom animations
 jQuery.each({
 	slideDown: genFx("show", 1),
@@ -5670,14 +6268,14 @@ jQuery.each({
 	fadeIn: { opacity: "show" },
 	fadeOut: { opacity: "hide" }
 }, function( name, props ) {
-	jQuery.fn[ name ] = function( speed, callback ) {
-		return this.animate( props, speed, callback );
+	jQuery.fn[ name ] = function( speed, easing, callback ) {
+		return this.animate( props, speed, easing, callback );
 	};
 });
 
 jQuery.extend({
 	speed: function( speed, easing, fn ) {
-		var opt = speed && typeof speed === "object" ? speed : {
+		var opt = speed && typeof speed === "object" ? jQuery.extend({}, speed) : {
 			complete: fn || !fn && easing ||
 				jQuery.isFunction( speed ) && speed,
 			duration: speed,
@@ -5685,7 +6283,7 @@ jQuery.extend({
 		};
 
 		opt.duration = jQuery.fx.off ? 0 : typeof opt.duration === "number" ? opt.duration :
-			jQuery.fx.speeds[opt.duration] || jQuery.fx.speeds._default;
+			opt.duration in jQuery.fx.speeds ? jQuery.fx.speeds[opt.duration] : jQuery.fx.speeds._default;
 
 		// Queueing
 		opt.old = opt.complete;
@@ -5732,33 +6330,28 @@ jQuery.fx.prototype = {
 		}
 
 		(jQuery.fx.step[this.prop] || jQuery.fx.step._default)( this );
-
-		// Set display property to block for height/width animations
-		if ( ( this.prop === "height" || this.prop === "width" ) && this.elem.style ) {
-			this.elem.style.display = "block";
-		}
 	},
 
 	// Get the current size
-	cur: function( force ) {
+	cur: function() {
 		if ( this.elem[this.prop] != null && (!this.elem.style || this.elem.style[this.prop] == null) ) {
 			return this.elem[ this.prop ];
 		}
 
-		var r = parseFloat(jQuery.css(this.elem, this.prop, force));
-		return r && r > -10000 ? r : parseFloat(jQuery.curCSS(this.elem, this.prop)) || 0;
+		var r = parseFloat( jQuery.css( this.elem, this.prop ) );
+		return r && r > -10000 ? r : 0;
 	},
 
 	// Start an animation from one number to another
 	custom: function( from, to, unit ) {
-		this.startTime = now();
+		this.startTime = jQuery.now();
 		this.start = from;
 		this.end = to;
 		this.unit = unit || this.unit || "px";
 		this.now = this.start;
 		this.pos = this.state = 0;
 
-		var self = this;
+		var self = this, fx = jQuery.fx;
 		function t( gotoEnd ) {
 			return self.step(gotoEnd);
 		}
@@ -5766,7 +6359,7 @@ jQuery.fx.prototype = {
 		t.elem = this.elem;
 
 		if ( t() && jQuery.timers.push(t) && !timerId ) {
-			timerId = setInterval(jQuery.fx.tick, 13);
+			timerId = setInterval(fx.tick, fx.interval);
 		}
 	},
 
@@ -5797,7 +6390,7 @@ jQuery.fx.prototype = {
 
 	// Each step of an animation
 	step: function( gotoEnd ) {
-		var t = now(), done = true;
+		var t = jQuery.now(), done = true;
 
 		if ( gotoEnd || t >= this.options.duration + this.startTime ) {
 			this.now = this.end;
@@ -5813,17 +6406,12 @@ jQuery.fx.prototype = {
 			}
 
 			if ( done ) {
-				if ( this.options.display != null ) {
-					// Reset the overflow
-					this.elem.style.overflow = this.options.overflow;
-
-					// Reset the display
-					var old = jQuery.data(this.elem, "olddisplay");
-					this.elem.style.display = old ? old : this.options.display;
-
-					if ( jQuery.css(this.elem, "display") === "none" ) {
-						this.elem.style.display = "block";
-					}
+				// Reset the overflow
+				if ( this.options.overflow != null && !jQuery.support.shrinkWrapBlocks ) {
+					var elem = this.elem, options = this.options;
+					jQuery.each( [ "", "X", "Y" ], function (index, value) {
+						elem.style[ "overflow" + value ] = options.overflow[index];
+					} );
 				}
 
 				// Hide the element if the "hide" operation was done
@@ -5834,7 +6422,7 @@ jQuery.fx.prototype = {
 				// Reset the properties, if the item has been hidden or shown
 				if ( this.options.hide || this.options.show ) {
 					for ( var p in this.options.curAnim ) {
-						jQuery.style(this.elem, p, this.options.orig[p]);
+						jQuery.style( this.elem, p, this.options.orig[p] );
 					}
 				}
 
@@ -5876,22 +6464,24 @@ jQuery.extend( jQuery.fx, {
 			jQuery.fx.stop();
 		}
 	},
-		
+
+	interval: 13,
+
 	stop: function() {
 		clearInterval( timerId );
 		timerId = null;
 	},
-	
+
 	speeds: {
 		slow: 600,
- 		fast: 200,
- 		// Default speed
- 		_default: 400
+		fast: 200,
+		// Default speed
+		_default: 400
 	},
 
 	step: {
 		opacity: function( fx ) {
-			jQuery.style(fx.elem, "opacity", fx.now);
+			jQuery.style( fx.elem, "opacity", fx.now );
 		},
 
 		_default: function( fx ) {
@@ -5912,18 +6502,32 @@ if ( jQuery.expr && jQuery.expr.filters ) {
 	};
 }
 
-function genFx( type, num ) {
-	var obj = {};
+function defaultDisplay( nodeName ) {
+	if ( !elemdisplay[ nodeName ] ) {
+		var elem = jQuery("<" + nodeName + ">").appendTo("body"),
+			display = elem.css("display");
 
-	jQuery.each( fxAttrs.concat.apply([], fxAttrs.slice(0,num)), function() {
-		obj[ this ] = type;
-	});
+		elem.remove();
 
-	return obj;
+		if ( display === "none" || display === "" ) {
+			display = "block";
+		}
+
+		elemdisplay[ nodeName ] = display;
+	}
+
+	return elemdisplay[ nodeName ];
 }
+
+
+
+
+var rtable = /^t(?:able|d|h)$/i,
+	rroot = /^(?:body|html)$/i;
+
 if ( "getBoundingClientRect" in document.documentElement ) {
 	jQuery.fn.offset = function( options ) {
-		var elem = this[0];
+		var elem = this[0], box;
 
 		if ( options ) { 
 			return this.each(function( i ) {
@@ -5939,10 +6543,26 @@ if ( "getBoundingClientRect" in document.documentElement ) {
 			return jQuery.offset.bodyOffset( elem );
 		}
 
-		var box = elem.getBoundingClientRect(), doc = elem.ownerDocument, body = doc.body, docElem = doc.documentElement,
-			clientTop = docElem.clientTop || body.clientTop || 0, clientLeft = docElem.clientLeft || body.clientLeft || 0,
-			top  = box.top  + (self.pageYOffset || jQuery.support.boxModel && docElem.scrollTop  || body.scrollTop ) - clientTop,
-			left = box.left + (self.pageXOffset || jQuery.support.boxModel && docElem.scrollLeft || body.scrollLeft) - clientLeft;
+		try {
+			box = elem.getBoundingClientRect();
+		} catch(e) {}
+
+		var doc = elem.ownerDocument,
+			docElem = doc.documentElement;
+
+		// Make sure we're not dealing with a disconnected DOM node
+		if ( !box || !jQuery.contains( docElem, elem ) ) {
+			return box || { top: 0, left: 0 };
+		}
+
+		var body = doc.body,
+			win = getWindow(doc),
+			clientTop  = docElem.clientTop  || body.clientTop  || 0,
+			clientLeft = docElem.clientLeft || body.clientLeft || 0,
+			scrollTop  = (win.pageYOffset || jQuery.support.boxModel && docElem.scrollTop  || body.scrollTop ),
+			scrollLeft = (win.pageXOffset || jQuery.support.boxModel && docElem.scrollLeft || body.scrollLeft),
+			top  = box.top  + scrollTop  - clientTop,
+			left = box.left + scrollLeft - clientLeft;
 
 		return { top: top, left: left };
 	};
@@ -5986,12 +6606,13 @@ if ( "getBoundingClientRect" in document.documentElement ) {
 				top  += elem.offsetTop;
 				left += elem.offsetLeft;
 
-				if ( jQuery.offset.doesNotAddBorder && !(jQuery.offset.doesAddBorderForTableAndCells && /^t(able|d|h)$/i.test(elem.nodeName)) ) {
+				if ( jQuery.offset.doesNotAddBorder && !(jQuery.offset.doesAddBorderForTableAndCells && rtable.test(elem.nodeName)) ) {
 					top  += parseFloat( computedStyle.borderTopWidth  ) || 0;
 					left += parseFloat( computedStyle.borderLeftWidth ) || 0;
 				}
 
-				prevOffsetParent = offsetParent, offsetParent = elem.offsetParent;
+				prevOffsetParent = offsetParent;
+				offsetParent = elem.offsetParent;
 			}
 
 			if ( jQuery.offset.subtractsBorderForOverflowNotVisible && computedStyle.overflow !== "visible" ) {
@@ -6018,7 +6639,7 @@ if ( "getBoundingClientRect" in document.documentElement ) {
 
 jQuery.offset = {
 	initialize: function() {
-		var body = document.body, container = document.createElement("div"), innerDiv, checkDiv, table, td, bodyMarginTop = parseFloat( jQuery.curCSS(body, "marginTop", true) ) || 0,
+		var body = document.body, container = document.createElement("div"), innerDiv, checkDiv, table, td, bodyMarginTop = parseFloat( jQuery.css(body, "marginTop") ) || 0,
 			html = "<div style='position:absolute;top:0;left:0;margin:0;border:5px solid #000;padding:0;width:1px;height:1px;'><div></div></div><table style='position:absolute;top:0;left:0;margin:0;border:5px solid #000;padding:0;width:1px;height:1px;' cellpadding='0' cellspacing='0'><tr><td></td></tr></table>";
 
 		jQuery.extend( container.style, { position: "absolute", top: 0, left: 0, margin: 0, border: 0, width: "1px", height: "1px", visibility: "hidden" } );
@@ -6032,12 +6653,16 @@ jQuery.offset = {
 		this.doesNotAddBorder = (checkDiv.offsetTop !== 5);
 		this.doesAddBorderForTableAndCells = (td.offsetTop === 5);
 
-		checkDiv.style.position = "fixed", checkDiv.style.top = "20px";
+		checkDiv.style.position = "fixed";
+		checkDiv.style.top = "20px";
+
 		// safari subtracts parent border width here which is 5px
 		this.supportsFixedPosition = (checkDiv.offsetTop === 20 || checkDiv.offsetTop === 15);
 		checkDiv.style.position = checkDiv.style.top = "";
 
-		innerDiv.style.overflow = "hidden", innerDiv.style.position = "relative";
+		innerDiv.style.overflow = "hidden";
+		innerDiv.style.position = "relative";
+
 		this.subtractsBorderForOverflowNotVisible = (checkDiv.offsetTop === -5);
 
 		this.doesNotIncludeMarginInBodyOffset = (body.offsetTop !== bodyMarginTop);
@@ -6053,31 +6678,46 @@ jQuery.offset = {
 		jQuery.offset.initialize();
 
 		if ( jQuery.offset.doesNotIncludeMarginInBodyOffset ) {
-			top  += parseFloat( jQuery.curCSS(body, "marginTop",  true) ) || 0;
-			left += parseFloat( jQuery.curCSS(body, "marginLeft", true) ) || 0;
+			top  += parseFloat( jQuery.css(body, "marginTop") ) || 0;
+			left += parseFloat( jQuery.css(body, "marginLeft") ) || 0;
 		}
 
 		return { top: top, left: left };
 	},
 	
 	setOffset: function( elem, options, i ) {
+		var position = jQuery.css( elem, "position" );
+
 		// set position first, in-case top/left are set even on static elem
-		if ( /static/.test( jQuery.curCSS( elem, "position" ) ) ) {
+		if ( position === "static" ) {
 			elem.style.position = "relative";
 		}
-		var curElem   = jQuery( elem ),
+
+		var curElem = jQuery( elem ),
 			curOffset = curElem.offset(),
-			curTop    = parseInt( jQuery.curCSS( elem, "top",  true ), 10 ) || 0,
-			curLeft   = parseInt( jQuery.curCSS( elem, "left", true ), 10 ) || 0;
+			curCSSTop = jQuery.css( elem, "top" ),
+			curCSSLeft = jQuery.css( elem, "left" ),
+			calculatePosition = (position === "absolute" && jQuery.inArray('auto', [curCSSTop, curCSSLeft]) > -1),
+			props = {}, curPosition = {}, curTop, curLeft;
+
+		// need to be able to calculate position if either top or left is auto and position is absolute
+		if ( calculatePosition ) {
+			curPosition = curElem.position();
+		}
+
+		curTop  = calculatePosition ? curPosition.top  : parseInt( curCSSTop,  10 ) || 0;
+		curLeft = calculatePosition ? curPosition.left : parseInt( curCSSLeft, 10 ) || 0;
 
 		if ( jQuery.isFunction( options ) ) {
 			options = options.call( elem, i, curOffset );
 		}
 
-		var props = {
-			top:  (options.top  - curOffset.top)  + curTop,
-			left: (options.left - curOffset.left) + curLeft
-		};
+		if (options.top != null) {
+			props.top = (options.top - curOffset.top) + curTop;
+		}
+		if (options.left != null) {
+			props.left = (options.left - curOffset.left) + curLeft;
+		}
 		
 		if ( "using" in options ) {
 			options.using.call( elem, props );
@@ -6101,17 +6741,17 @@ jQuery.fn.extend({
 
 		// Get correct offsets
 		offset       = this.offset(),
-		parentOffset = /^body|html$/i.test(offsetParent[0].nodeName) ? { top: 0, left: 0 } : offsetParent.offset();
+		parentOffset = rroot.test(offsetParent[0].nodeName) ? { top: 0, left: 0 } : offsetParent.offset();
 
 		// Subtract element margins
 		// note: when an element has margin: auto the offsetLeft and marginLeft
 		// are the same in Safari causing offset.left to incorrectly be 0
-		offset.top  -= parseFloat( jQuery.curCSS(elem, "marginTop",  true) ) || 0;
-		offset.left -= parseFloat( jQuery.curCSS(elem, "marginLeft", true) ) || 0;
+		offset.top  -= parseFloat( jQuery.css(elem, "marginTop") ) || 0;
+		offset.left -= parseFloat( jQuery.css(elem, "marginLeft") ) || 0;
 
 		// Add offsetParent borders
-		parentOffset.top  += parseFloat( jQuery.curCSS(offsetParent[0], "borderTopWidth",  true) ) || 0;
-		parentOffset.left += parseFloat( jQuery.curCSS(offsetParent[0], "borderLeftWidth", true) ) || 0;
+		parentOffset.top  += parseFloat( jQuery.css(offsetParent[0], "borderTopWidth") ) || 0;
+		parentOffset.left += parseFloat( jQuery.css(offsetParent[0], "borderLeftWidth") ) || 0;
 
 		// Subtract the two offsets
 		return {
@@ -6123,7 +6763,7 @@ jQuery.fn.extend({
 	offsetParent: function() {
 		return this.map(function() {
 			var offsetParent = this.offsetParent || document.body;
-			while ( offsetParent && (!/^body|html$/i.test(offsetParent.nodeName) && jQuery.css(offsetParent, "position") === "static") ) {
+			while ( offsetParent && (!rroot.test(offsetParent.nodeName) && jQuery.css(offsetParent, "position") === "static") ) {
 				offsetParent = offsetParent.offsetParent;
 			}
 			return offsetParent;
@@ -6171,12 +6811,16 @@ jQuery.each( ["Left", "Top"], function( i, name ) {
 });
 
 function getWindow( elem ) {
-	return ("scrollTo" in elem && elem.document) ?
+	return jQuery.isWindow( elem ) ?
 		elem :
 		elem.nodeType === 9 ?
 			elem.defaultView || elem.parentWindow :
 			false;
 }
+
+
+
+
 // Create innerHeight, innerWidth, outerHeight and outerWidth methods
 jQuery.each([ "Height", "Width" ], function( i, name ) {
 
@@ -6185,14 +6829,14 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 	// innerHeight and innerWidth
 	jQuery.fn["inner" + name] = function() {
 		return this[0] ?
-			jQuery.css( this[0], type, false, "padding" ) :
+			parseFloat( jQuery.css( this[0], type, "padding" ) ) :
 			null;
 	};
 
 	// outerHeight and outerWidth
 	jQuery.fn["outer" + name] = function( margin ) {
 		return this[0] ?
-			jQuery.css( this[0], type, false, margin ? "margin" : "border" ) :
+			parseFloat( jQuery.css( this[0], type, margin ? "margin" : "border" ) ) :
 			null;
 	};
 
@@ -6210,7 +6854,7 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 			});
 		}
 
-		return ("scrollTo" in elem && elem.document) ? // does it walk and quack like a window?
+		return jQuery.isWindow( elem ) ?
 			// Everyone else use document.documentElement or document.body depending on Quirks vs Standards mode
 			elem.document.compatMode === "CSS1Compat" && elem.document.documentElement[ "client" + name ] ||
 			elem.document.body[ "client" + name ] :
@@ -6227,15 +6871,14 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 				// Get or set width or height on the element
 				size === undefined ?
 					// Get width or height on the element
-					jQuery.css( elem, type ) :
+					parseFloat( jQuery.css( elem, type ) ) :
 
 					// Set the width or height on the element (default to pixels if value is unitless)
 					this.css( type, typeof size === "string" ? size : size + "px" );
 	};
 
 });
-// Expose jQuery to the global object
-window.jQuery = window.$ = jQuery;
+
 
 })(window);
 
@@ -6997,7 +7640,6 @@ jQuery.fn.extend({
 	    return results[1];
 	}
 })(jQuery);
-
 /**
  * Cookie plugin
  *
@@ -24076,7 +24718,6 @@ Ext.apply(Ext.Error.prototype, {
         return Ext.encode(this);
     }
 });
-
 /*!
  * Ext JS Library 3.2.1
  * Copyright(c) 2006-2010 Ext JS, Inc.
@@ -50052,7 +50693,6 @@ Ext.Resizable.Handle = Ext.extend(Object, {
         this.el = null;
     }
 });
-
 /*!
  * Ext JS Library 3.2.1
  * Copyright(c) 2006-2010 Ext JS, Inc.
@@ -54322,7 +54962,6 @@ Ext.TabPanel.AccessStack = function(){
         }
     };
 };
-
 /*!
  * Ext JS Library 3.2.1
  * Copyright(c) 2006-2010 Ext JS, Inc.
@@ -63058,7 +63697,6 @@ Ext.reg('menucheckitem', Ext.menu.CheckItem);/**
     }
 });
 Ext.reg('colormenu', Ext.menu.ColorMenu);
-
 /*!
  * Ext JS Library 3.2.1
  * Copyright(c) 2006-2010 Ext JS, Inc.
@@ -72174,7 +72812,6 @@ Ext.form.VTypes = function(){
         'alphanumMask' : /[a-z0-9_]/i
     };
 }();
-
 /*!
  * Ext JS Library 3.2.1
  * Copyright(c) 2006-2010 Ext JS, Inc.
@@ -78132,14 +78769,28 @@ jQuery.fn.removeCss = function( cssName ) {
 };
 
 /**
- * jQuery command Keydown extension Extension
- *
- * The method is fired when a Alt, Ctrl, Meta key down happens.
+ * Make the object contenteditable. Care about browser version (name of contenteditable attribute depends on it)
  */
-jQuery.fn.cmdkeydown  = function( fn ) {
-	return fn ? jQuery(document).bind( 'cmdkeydown', fn ) : jQuery(document).trigger( 'cmdkeydown' );
+jQuery.fn.contentEditable  = function( b ) {
+	// ie does not understand contenteditable but contentEditable
+	// contentEditable is not xhtml compatible.
+	var ce = 'contenteditable';
+	if (jQuery.browser.msie && parseInt(jQuery.browser.version) == 7 ) {
+		ce = 'contentEditable';
+	}
+	if ( b == undefined ) {
+		return jQuery(this).attr(ce);
+	} else if (b === '') {
+		jQuery(this).removeAttr(ce);
+	} else {
+		if (b && b !== 'false') {
+			b='true';
+		} else {
+			b='false';
+		}
+		jQuery(this).attr(ce, b);
+	}
 };
-
 /*!
 * Aloha Editor
 * Author & Copyright (c) 2010 Gentics Software GmbH
@@ -78179,6 +78830,24 @@ GENTICS.Utils.applyProperties = function (target, properties) {
 			target[name] = properties[name];
 		}
 	}
+};
+
+/**
+ * Generate a unique hexadecimal string with 4 charachters
+ * @return {string} 
+ */
+GENTICS.Utils.uniqeString4 = function () {
+   return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+};
+
+/**
+ * Generate a unique value represented as a 32 character hexadecimal string,
+ * such as 21EC2020-3AEA-1069-A2DD-08002B30309D
+ * @return {string} 
+ */
+GENTICS.Utils.guid = function () {
+	var S4 = GENTICS.Utils.uniqeString4;
+	return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
 };
 /*!
 * Aloha Editor
@@ -79084,7 +79753,6 @@ GENTICS.Utils.RangeTree = function() {
 	 */
 	this.children = new Array();
 };
-
 /*!
 * Aloha Editor
 * Author & Copyright (c) 2010 Gentics Software GmbH
@@ -79294,49 +79962,120 @@ GENTICS.Utils.Dom.prototype.tags = {
 };
 
 /**
- * Possible children of tags (some of them), according to the HTML 5
- * specification. see http://dev.w3.org/html5/spec/Overview.html#elements-1
+ * Possible children of tags, according to the HTML 5
+ * specification.
+ * See http://dev.w3.org/html5/spec/Overview.html#elements-1
+ * Moved to http://www.whatwg.org/specs/web-apps/current-work/#elements-1
  * @hide
  */
 GENTICS.Utils.Dom.prototype.children = {
-	'a' : 'phrasing',
+	'a' : 'phrasing', // transparent
+	'abbr' : 'phrasing',
+	'address' : 'flow',
+	'area' : 'empty',
+	'article' : 'flow',
+	'aside' : 'flow',
+	'audio' : 'source', // transparent
 	'b' : 'phrasing',
+	'base' : 'empty',
+	'bdo' : 'phrasing',
 	'blockquote' : 'flow',
+	'body' : 'flow',
 	'br' : 'empty',
+	'button' : 'phrasing',
+	'canvas' : 'phrasing', // transparent
 	'caption' : 'flow',
 	'cite' : 'phrasing',
 	'code' : 'phrasing',
 	'col' : 'empty',
 	'colgroup' : 'col',
+	'command' : 'empty',
+	'datalist' : ['phrasing', 'option'],
+	'dd' : 'flow',
 	'del' : 'phrasing',
 	'div' : 'flow',
+	'details' : ['summary', 'flow'],
+	'dfn' : 'flow',
+	'div' : 'flow',
+	'dl' : ['dt','dd'],
+	'dt' : 'phrasing', // varies
+	'em' : 'phrasing',
+	'embed' : 'empty',
+	'fieldset' : ['legend', 'flow'],
+	'figcaption': 'flow',
+	'figure' :  ['figcaption', 'flow'],
+	'footer' : 'flow',
+	'form' : 'flow',
 	'h1' : 'phrasing',
 	'h2' : 'phrasing',
 	'h3' : 'phrasing',
 	'h4' : 'phrasing',
 	'h5' : 'phrasing',
 	'h6' : 'phrasing',
+	//head
+	'header' : 'flow',
+	'hgroup' : ['h1','h2','h3','h4','h5','h6'],
 	'hr' : 'empty',
+	//html :)
 	'i' : 'phrasing',
+	'iframe' : '#text',
 	'img' : 'empty',
-	'ins' : 'phrasing',
+	'input' : 'empty',
+	'ins' : 'phrasing', // transparent
+	'kbd' : 'phrasing',
+	'keygen' : 'empty',
+	'label' : 'phrasing',
+	'legend' : 'phrasing',
 	'li' : 'flow',
+	'link' : 'empty',
+	'map' : 'area', // transparent
+	'mark' : 'phrasing',
+	'menu' : ['li', 'flow'],
+	'meta' : 'empty',
+	'meter' : 'phrasing',
+	'nav' : 'flow',
+	'noscript' : 'phrasing', // varies
+	'object' : 'param', // transparent
 	'ol' : 'li',
+	'optgroup' : 'option',
+	'option' : '#text',
+	'output' : 'phrasing',
 	'p' : 'phrasing',
+	'param' : 'empty',
 	'pre' : 'phrasing',
+	'progress' : 'phrasing',
+	'q' : 'phrasing',
+	'rp' : 'phrasing',
+	'rt' : 'phrasing',
+	'ruby' : ['phrasing', 'rt', 'rp'],
+	's' : 'phrasing',
+	'samp' : 'pharsing',
+	'script' : '#script', //script 
+	'section' : 'flow',
+	'select' : ['option', 'optgroup'],
 	'small' : 'phrasing',
+	'source' : 'empty',
 	'span' : 'phrasing',
 	'strong' : 'phrasing',
+	'style' : 'phrasing', // varies
 	'sub' : 'phrasing',
+	'summary' : 'phrasing',
 	'sup' : 'phrasing',
 	'table' : ['caption', 'colgroup', 'thead', 'tbody', 'tfoot', 'tr'],
 	'tbody' : 'tr',
 	'td' : 'flow',
+	'textarea' : '#text',
 	'tfoot' : 'tr',
 	'th' : 'phrasing',
 	'thead' : 'tr',
+	'time' : 'phrasing',
+	'title' : '#text',
 	'tr' : ['th', 'td'],
-	'ul' : 'li'
+	'track' : 'empty',
+	'ul' : 'li',
+	'var' : 'phrasing',
+	'video' : 'source', // transparent
+	'wbr' : 'empty'
 };
 
 /**
@@ -79360,7 +80099,7 @@ GENTICS.Utils.Dom.prototype.listElements = ['li', 'ol',	'ul'];
  * 				The limiting node will not be included in the split itself.
  * 				If no limiting object is set, the document body will be the limiting object.
  * @param {boolean} atEnd If set to true, the DOM will be splitted at the end of the range otherwise at the start.
- * @return {object} jQuery object containing the two root DOM objects of the split or false if the DOM could not be split
+ * @return {object} jQuery object containing the two root DOM objects of the split, true if the DOM did not need to be split or false if the DOM could not be split
  * @method
  */
 GENTICS.Utils.Dom.prototype.split = function (range, limit, atEnd) {
@@ -79399,7 +80138,7 @@ GENTICS.Utils.Dom.prototype.split = function (range, limit, atEnd) {
 	
 	// nothing found to split -> return here
 	if (! path) {
-		return;
+		return true;
 	}
 	
 	path = path.reverse();
@@ -80118,7 +80857,29 @@ GENTICS.Utils.Dom.prototype.insertIntoDOM = function (object, range, limit, atEn
 	if (typeof newParent != 'undefined') {
 		// we found a possible new parent, so we split the DOM up to the new parent
 		var splitParts = this.split(range, jQuery(newParent), atEnd);
-		if (splitParts) {
+		if (splitParts === true) {
+			// DOM was not split (there was no need to split it), insert the new object anyway
+			var container = range.startContainer;
+			var offset = range.startOffset;
+			if (atEnd) {
+				container = range.endContainer;
+				offset = range.endOffset;
+			}
+			if (offset == 0) {
+				// insert right before the first element in the container
+				var contents = jQuery(container).contents();
+				if (contents.length > 0) {
+					contents.eq(0).before(object);
+				} else {
+					jQuery(container).append(object);
+				}
+				return true;
+			} else {
+				// insert right after the element at offset-1
+				jQuery(container).contents().eq(offset-1).after(object);
+				return true;
+			}
+		} else if (splitParts) {
 			// if the DOM could be split, we insert the new object in between the split parts
 			splitParts.eq(0).after(object);
 			return true;
@@ -80372,11 +81133,39 @@ GENTICS.Utils.Dom.prototype.isEmpty = function (domObject) {
 };
 
 /**
+ * Set the cursor (collapsed selection) right after the given DOM object
+ * @param domObject DOM object
+ * @method
+ */
+GENTICS.Utils.Dom.prototype.setCursorAfter = function (domObject) {
+	var newRange = new GENTICS.Utils.RangeObject();
+	newRange.startContainer = newRange.endContainer = domObject.parentNode;
+	newRange.startOffset = newRange.endOffset = this.getIndexInParent(domObject);
+
+	// select the range
+	newRange.select();
+};
+
+/**
+ * Set the cursor (collapsed selection) at the start into the given DOM object
+ * @param domObject DOM object
+ * @method
+ */
+GENTICS.Utils.Dom.prototype.setCursorInto = function (domObject) {
+	// set a new range into the given dom object
+	var newRange = new GENTICS.Utils.RangeObject();
+	newRange.startContainer = newRange.endContainer = domObject;
+	newRange.startOffset = newRange.endOffset = 0;
+
+	// select the range
+	newRange.select();
+};
+
+/**
  * Create the singleton object
  * @hide
  */
 GENTICS.Utils.Dom = new GENTICS.Utils.Dom();
-
 /*!
 * Aloha Editor
 * Author & Copyright (c) 2010 Gentics Software GmbH
@@ -80406,11 +81195,10 @@ Ext.data.AlohaProxy = function( ) {
 
 Ext.extend(Ext.data.AlohaProxy, Ext.data.DataProxy, {
 	doRequest : function(action, rs, params, reader, cb, scope, arg) {
-		jQuery.extend(this.params, params);
 		var p = this.params;
+		jQuery.extend(p, params);
         try {
-        	 // GENTICS.Aloha.RepositoryManager.query(queryString, objectTypeFilter, filter, inFolderId, orderBy, maxItems, skipCount, renditionFilter, repositoryId, callback)
-        	GENTICS.Aloha.RepositoryManager.query(p.queryString, p.objectTypeFilter, p.filter, p.inFolderId, p.orderBy, p.maxItems, p.skipCount, p.renditionFilter, p.repositoryId, function( items ) {
+        	GENTICS.Aloha.RepositoryManager.query( p, function( items ) {
         		var result = reader.readRecords( items );
  	 	        cb.call(scope, result, arg, true);
         	});
@@ -80430,7 +81218,6 @@ Ext.extend(Ext.data.AlohaProxy, Ext.data.DataProxy, {
 		jQuery.extend(this.params, p);
 	}
 });	
-
 /*!
 * Aloha Editor
 * Author & Copyright (c) 2010 Gentics Software GmbH
@@ -80447,8 +81234,8 @@ Ext.data.AlohaObjectReader = function(meta, recordType) {
 		fields: [
 			'id',
 			'url',
-			'displayName',
-			'objectType',
+			'name',
+			'type',
 			'weight',
 			'repositoryId'
 		]
@@ -80475,8 +81262,12 @@ Ext.extend( Ext.tree.AlohaTreeLoader, Ext.tree.TreeLoader, {
 	paramOrder: ['node', 'id'],
 	nodeParameter: 'id',
 	directFn : function(node, id, callback) {
-		// GENTICS.Aloha.RepositoryManager.getChildren ( objectTypeFilter, filter, inFolderId, orderBy, maxItems, skipCount, renditionFilter, repositoryId, function( items ) {
-		GENTICS.Aloha.RepositoryManager.getChildren ( this.objectTypeFilter, null, node.id, null, null, null, null, null, node.repositoryId, function( items ) {
+		var params = {
+				inFolderId: node.id,
+				objectTypeFilter: this.objectTypeFilter,
+				repositoryId: node.repositoryId
+		};
+		GENTICS.Aloha.RepositoryManager.getChildren ( params, function( items ) {
  	        var response = {};
  	        response= {
  	            status: true,
@@ -80489,8 +81280,8 @@ Ext.extend( Ext.tree.AlohaTreeLoader, Ext.tree.TreeLoader, {
     	});
 	},
     createNode: function(node) {
-		if ( node.displayName ) {
-			node.text = node.displayName;
+		if ( node.name ) {
+			node.text = node.name;
 		}
 		if ( node.hasMoreItems ) {
 			node.leaf = !node.hasMoreItems;
@@ -80498,7 +81289,15 @@ Ext.extend( Ext.tree.AlohaTreeLoader, Ext.tree.TreeLoader, {
 		if ( node.objectType ) {
 			node.cls = node.objectType;
 		}
-        return Ext.tree.TreeLoader.prototype.createNode.call(this, node);
+		if (node.baseType) {
+			//basetype 'document' should not contains more items
+			if (node.baseType == "document") node.leaf = true;
+		}
+        result = Ext.tree.TreeLoader.prototype.createNode.call(this, node);
+        // attach original repo object to node (TreeNode object loose some of it)
+        // will be used in ui-browser to get custom ui components from repository
+        result.repoData = node;
+        return result;
     },
 	objectTypeFilter : null,
 	setObjectTypeFilter : function (otFilter) {
@@ -80508,7 +81307,6 @@ Ext.extend( Ext.tree.AlohaTreeLoader, Ext.tree.TreeLoader, {
 		return this.objectTypeFilter;
 	}
 });	
-
 /*!
 * Aloha Editor
 * Author & Copyright (c) 2010 Gentics Software GmbH
@@ -80742,6 +81540,23 @@ GENTICS.Aloha.prototype.deactivateEditable = function () {
 	this.FloatingMenu.setScope('GENTICS.Aloha.empty');
 	
 	this.activeEditable = null;
+};
+
+/**
+ * Gets an editable by an ID or null if no Editable with that ID registered.
+ * @param {string} id the element id to look for.
+ * @return {GENTICS.Aloha.Editable} editable
+ */
+GENTICS.Aloha.prototype.getEditableById = function (id) {
+	
+	// serach all editables for id
+	for (var i = 0; i < GENTICS.Aloha.editables.length; i++) {
+		if (GENTICS.Aloha.editables[i].getId() == id) {
+			return GENTICS.Aloha.editables[i];
+		}
+	}
+	
+	return null;
 };
 
 /**
@@ -81182,6 +81997,23 @@ if (typeof GENTICS.Aloha.ui == 'undefined') {
  * - toggle: Boolean that indicates if the button is a toggle button.
  */
 GENTICS.Aloha.ui.Button = function(properties) {
+	this.init(properties);
+};
+
+/**
+ * Init method for an Aloha button.
+ * This method is necessary due to JS specific initalization.
+ * @namespace GENTICS.Aloha.ui
+ * @class Button
+ * @param {Object} properties Properties of the button:
+ * - label: Label that is displayed on the button.
+ * - onclick: Callback function of the button when activated.
+ * - menu: Array of GENTICS.Aloha.ui.Button elements that are displayed as drop-down menu.
+ * - iconClass: Icon displayed on the button.
+ * - icon: URL to an icon that is displayed on the button.
+ * - toggle: Boolean that indicates if the button is a toggle button.
+ */
+GENTICS.Aloha.ui.Button.prototype.init = function(properties) {
 	/**
 	 * Label that is displayed on the button
 	 * @hide
@@ -81417,8 +82249,9 @@ GENTICS.Aloha.ui.Button.prototype.getExtConfigProperties = function() {
 		pressed : this.pressed,
 		icon: this.icon,
 		iconCls: this.iconClass,
-		scale : this.size,
-		rowspan : (this.size == 'large' || this.size == 'medium') ? 2 : 1,
+		scale : this.scale||this.size,
+		width : this.width||undefined,
+		rowspan : this.rowspan || ((this.size == 'large' || this.size == 'medium') ? 2 : 1),
 		menu : menu,
 		handler : function(element, event) {
 			if (typeof that.onclick === 'function') {
@@ -81430,7 +82263,7 @@ GENTICS.Aloha.ui.Button.prototype.getExtConfigProperties = function() {
 		tooltipType : 'qtip',
 		tooltip : this.tooltip,
 		id : this.id,
-        arrowAlign: this.size == 'large' || this.size == 'small' ? 'right' : 'bottom'
+        arrowAlign: this.arrowAlign || (this.size == 'large' || this.size == 'small' ? 'right' : 'bottom')
 	};
 
 	return buttonConfig;
@@ -81641,7 +82474,7 @@ Ext.ux.GENTICSMultiSplitButton = Ext.extend(Ext.Component, {
 		}
 		
 		// reposition multisplit contents to the active item
-		if (el) {
+		if (el && this.ulObj) {
 			this.ulObj.css('margin-top', 0);
 			var top = el.position().top;
 			this.ulObj.css('margin-top', - top + 6);
@@ -81875,26 +82708,27 @@ Ext.ux.AlohaAttributeField = Ext.extend(Ext.form.ComboBox, {
     }),
     tpl: new Ext.XTemplate(
         '<tpl for="."><div class="x-combo-list-item">',
-            '<span><b>{displayName}</b><br />{url}</span>',
+            '<span><b>{name}</b><br />{url}</span>',
         '</div></tpl>'
     ),
-    onSelect: function (item) { 
-		// TODO split display field by '.' and get corresponding attribute
-		var v = item.data[this.displayField];
-		this.setValue(v);
-		this.setAttribute(this.targetAttribute, v);
-	
-		// call the repository marker
-		GENTICS.Aloha.RepositoryManager.markObject(this.targetObject, item.data);
+    onSelect: function (item) {
+		this.setItem(item.data);
+		if ( typeof this.alohaButton.onSelect == 'function' ) {
+			this.alohaButton.onSelect.call(this.alohaButton, item.data);
+		}
 		this.collapse();
 	},
     listeners: {
 		// repository object types could have changed
-		'beforequery': function (obj, event) {
+		'beforequery': function (event) {
+			if( this.noQuery ) {
+				event.cancel = true;
+				return;
+			}
 			if (this.store != null && this.store.proxy != null) {
 				this.store.proxy.setParams({
 					objectTypeFilter: this.getObjectTypeFilter(),
-					queryString: obj.query
+					queryString: event.query
 				});
 			}
 		},
@@ -81950,8 +82784,28 @@ Ext.ux.AlohaAttributeField = Ext.extend(Ext.form.ComboBox, {
 	        	}
 	    		jQuery(target).removeAttr('data-original-background-color');
 	        }
+	    },
+	    'expand': function (combo ) {
+	    	if( this.noQuery ) {
+	    		this.collapse();
+	    	}
 	    }
     }, 
+    setItem: function( item, displayField ) {
+    	this.resourceItem = item;
+    	if ( item ) {
+	    	displayField = (displayField) ? displayField : this.displayField;
+			// TODO split display field by '.' and get corresponding attribute, because it could be a properties attribute.
+			var v = item[displayField];
+	    	this.setValue( v );
+			this.setAttribute(this.targetAttribute, v);
+			// call the repository marker
+			GENTICS.Aloha.RepositoryManager.markObject(this.targetObject, item);
+    	}
+    },
+    getItem: function( ) {
+    	return this.resourceItem;
+    },
     // Private hack to allow attribute setting by regex
     setAttribute: function (attr, value, regex, reference) {
     	
@@ -81994,7 +82848,8 @@ Ext.ux.AlohaAttributeField = Ext.extend(Ext.form.ComboBox, {
 	},
 	getObjectTypeFilter : function () {
 		return this.objectTypeFilter;
-	}
+	},
+	noQuery: true
 });
 
 /**
@@ -82009,8 +82864,18 @@ Ext.reg('alohaattributefield', Ext.ux.AlohaAttributeField);
  * @namespace GENTICS.Aloha.ui
  * @class AttributeField
  */
-GENTICS.Aloha.ui.AttributeField = function () {
-    GENTICS.Aloha.ui.Button.apply(this, arguments);
+GENTICS.Aloha.ui.AttributeField = function (properties) {
+
+	/**
+	 * @cfg Function called when an element is selected
+	 */
+	this.onSelect = null;
+	this.listenerQueue = [];
+	this.objectTypeFilter = null;
+	this.tpl = null;
+	this.displayField = null;
+
+	this.init(properties);
 };
 
 /**
@@ -82025,7 +82890,10 @@ GENTICS.Aloha.ui.AttributeField.prototype = new GENTICS.Aloha.ui.Button();
  */
 GENTICS.Aloha.ui.AttributeField.prototype.getExtConfigProperties = function() {
     return {
+    	alohaButton: this,
         xtype : 'alohaattributefield',
+        rowspan: this.rowspan||undefined,
+        width: this.width||undefined,
         id : this.id
     };
 };
@@ -82061,7 +82929,9 @@ GENTICS.Aloha.ui.AttributeField.prototype.getTargetObject = function () {
 GENTICS.Aloha.ui.AttributeField.prototype.focus = function () {
     if (this.extButton) {
         this.extButton.focus();
-        this.extButton.selectText( 0, this.extButton.getValue().length );
+        if ( this.extButton.getValue().length > 0 ) {
+               this.extButton.selectText( 0, this.extButton.getValue().length );
+        }
     }
 };
 
@@ -82107,10 +82977,35 @@ GENTICS.Aloha.ui.AttributeField.prototype.setAttribute = function (attr, value, 
  */
 GENTICS.Aloha.ui.AttributeField.prototype.setObjectTypeFilter = function (objectTypeFilter) {
     if (this.extButton) {
+    	this.noQuery = false;
     	this.extButton.setObjectType(objectTypeFilter);
     } else {
+    	if ( !objectTypeFilter ) {
+    		objectTypeFilter = 'all';
+    	}
     	this.objectTypeFilter = objectTypeFilter;
     }
+};
+
+/**
+ * Sets an item to the link tag.
+ * @param {resourceItem} item  
+ */
+GENTICS.Aloha.ui.AttributeField.prototype.setItem = function ( item , displayField ) {
+    if (this.extButton) {
+    	this.extButton.setItem( item, displayField );
+    }
+};
+
+/**
+ * Gets current item set.
+ * @return {resourceItem} item  
+ */
+GENTICS.Aloha.ui.AttributeField.prototype.getItem = function ( ) {
+    if (this.extButton) {
+    	return this.extButton.getItem();
+    }
+    return null;
 };
 
 /**
@@ -82194,6 +83089,7 @@ GENTICS.Aloha.ui.AttributeField.prototype.setTemplate = function (tpl) {
 		header.appendChild(cssElement(base + 'plugins/com.gentics.aloha.plugins.Table/resources/table.css?v=' + GENTICS.Aloha.version));
 		header.appendChild(cssElement(base + 'plugins/com.gentics.aloha.plugins.Link/css/Link.css?v=' + GENTICS.Aloha.version));
 		header.appendChild(cssElement(base + 'plugins/com.gentics.aloha.plugins.HighlightEditables/css/HighlightEditables.css?v=' + GENTICS.Aloha.version));
+		header.appendChild(cssElement(base + 'plugins/com.gentics.aloha.plugins.LinkChecker/css/LinkChecker.css?v=' + GENTICS.Aloha.version));
 
 	}
 
@@ -82207,7 +83103,6 @@ GENTICS.Aloha.ui.AttributeField.prototype.setTemplate = function (tpl) {
 		return csslink;
 	}
 })();
-
 /*!
 * Aloha Editor
 * Author & Copyright (c) 2010 Gentics Software GmbH
@@ -82223,7 +83118,12 @@ GENTICS.Aloha.ui.AttributeField.prototype.setTemplate = function (tpl) {
  * @param {Object} obj jQuery object reference to the object
  */
 GENTICS.Aloha.Editable = function(obj) {
-		
+
+	// check wheter the object has an ID otherwise generate and set globally unique ID
+	if ( !obj.attr('id') ) {
+		obj.attr('id', GENTICS.Utils.guid());
+	}
+
 	// store object reference
 	this.obj = obj;
 
@@ -82264,12 +83164,17 @@ GENTICS.Aloha.Editable.prototype.range = undefined;
  */
 GENTICS.Aloha.Editable.prototype.check = function() {
 	
-	/* check elements
+	/* TODO check those elements
 	'map', 'meter', 'object', 'output', 'progress', 'samp',
 	'time', 'area', 'datalist', 'figure', 'kbd', 'keygen',
 	'mark', 'math', 'wbr', 'area',
     */
-
+	
+	// Extract El
+	var	obj = this.obj,
+		el = obj.get(0),
+		nodeName = el.nodeName.toLowerCase();
+	
 	// supported elements
 	var textElements = [ 'a', 'abbr', 'address', 'article', 'aside',
 				'b', 'bdo', 'blockquote',  'cite', 'code', 'command',
@@ -82277,35 +83182,51 @@ GENTICS.Aloha.Editable.prototype.check = function() {
 				'h3', 'h4', 'h5', 'h6', 'header', 'i', 'ins', 'menu',
 				'nav', 'p', 'pre', 'q', 'ruby',  'section', 'small',
 				'span', 'strong',  'sub', 'sup', 'var']; 	
+	
 	for (var i = 0; i < textElements.length; i++) {
-		var e = this.obj.get(0).nodeName.toLowerCase();
-		if ( this.obj.get(0).nodeName.toLowerCase() == textElements[i] ) {
+		var e = nodeName;
+		if ( nodeName == textElements[i] ) {
 			return true;
 		}
 	}
 	
 	// special handled elements
-	if ( this.obj.get(0).nodeName.toLowerCase() == 'label') {
-		// need some special handling.
-	    return true;		
-	}
-	if ( this.obj.get(0).nodeName.toLowerCase() == 'button') {
-		// need some special handling.
-	    return true;		
-	}
-	if ( this.obj.get(0).nodeName.toLowerCase() == 'textarea') {
-		// need some special handling.
-	    return true;	
+	switch ( nodeName ) {
+		case 'label':
+		case 'button':
+			// TODO need some special handling.
+	    	break;
+		
+		case 'textarea':
+			// Create a div alongside the textarea
+			var div = jQuery('<div/>').insertAfter(obj);
+			// Populate the div with the value of the textarea
+			div.html(obj.val());
+			// Hide the textarea
+			obj.hide();
+			// Attach a onsubmit to the form to place the HTML of the div back into the textarea
+			var updateFunction = function(){
+				var val = div.html();
+				obj.val(val);
+			};
+			obj.parents('form:first').submit(updateFunction);
+			// Swap textarea reference with the new div
+			this.obj = div;
+			// Supported
+			return true;
+			
+		default:
+			break;
 	}
 				
-	// all other elements are not supported
+	// the following elements are not supported
 	/*		
 	'canvas', 'audio', 'br', 'embed', 'fieldset', 'hgroup', 'hr', 
 	'iframe', 'img', 'input', 'map', 'script', 'select', 'style', 
 	'svg', 'table', 'ul', 'video', 'ol', 'form', 'noscript',
 	 */
 	return false;
-}
+};
 
 
 /**
@@ -82328,7 +83249,7 @@ GENTICS.Aloha.Editable.prototype.init = function() {
 
 		// initialize the object
 		this.obj.addClass('GENTICS_editable');
-		this.obj.attr('contenteditable', true);
+		this.obj.attr('contentEditable', true);
 		
 		// add focus event to the object to activate
 		this.obj.mousedown(function(e) {
@@ -82400,7 +83321,7 @@ GENTICS.Aloha.Editable.prototype.destroy = function() {
 
 	// initialize the object
 	this.obj.removeClass('GENTICS_editable');
-	this.obj.removeAttr('contenteditable');
+	this.obj.removeAttr('contentEditable');
 	
 	// unbind all events 
 	// TODO should only unbind the specific handlers.
@@ -82472,7 +83393,7 @@ GENTICS.Aloha.Editable.prototype.toString = function() {
  * check whether the editable has been disabled 
  */
 GENTICS.Aloha.Editable.prototype.isDisabled = function () {
-	if (this.obj.attr("contenteditable") == "false" || !this.obj.attr("contenteditable")) {
+	if (this.obj.attr("contentEditable") == "false" || !this.obj.attr("contentEditable")) {
 		return true;
 	} else {
 		return false;
@@ -82487,7 +83408,7 @@ GENTICS.Aloha.Editable.prototype.disable = function() {
 	if (this.isDisabled()) {
 		return;
 	}
-	this.obj.attr("contenteditable", "false");
+	this.obj.attr("contentEditable", "false");
 };
 
 /**
@@ -82498,7 +83419,7 @@ GENTICS.Aloha.Editable.prototype.enable = function() {
 	if (!this.isDisabled()) {
 		return;
 	}
-	this.obj.attr("contenteditable", "true");
+	this.obj.attr("contentEditable", "true");
 };
 
 
@@ -82516,7 +83437,7 @@ GENTICS.Aloha.Editable.prototype.activate = function(e) {
 
 	// get active Editable before setting the new one.
 	var oldActive = GENTICS.Aloha.getActiveEditable(); 
-
+	
 	// set active Editable in core
 	GENTICS.Aloha.activateEditable( this );
 	
@@ -82630,7 +83551,6 @@ GENTICS.Aloha.Editable.prototype.getContents = function() {
 GENTICS.Aloha.Editable.prototype.getId = function() {
 	return this.obj.attr('id');
 };
-
 /*!
 * Aloha Editor
 * Author & Copyright (c) 2010 Gentics Software GmbH
@@ -82647,7 +83567,10 @@ GENTICS.Aloha.Editable.prototype.getId = function() {
 GENTICS.Aloha.Ribbon = function() {
 	
 	var that = this;
-	
+
+	// flag to mark whether ribbon is visible
+	this.visible = false;
+
 	// the ribbon
 	this.toolbar = new Ext.Toolbar({
 		height: 30,
@@ -82743,7 +83666,7 @@ GENTICS.Aloha.Ribbon.prototype.addButton = function (button) {
 			}
 			button.pressed = !button.pressed;
 		}
-	}
+	};
 	
 	var extButton;
 	
@@ -82764,7 +83687,7 @@ GENTICS.Aloha.Ribbon.prototype.addButton = function (button) {
  */
 GENTICS.Aloha.Ribbon.prototype.addSeparator = function() {
 	this.toolbar.insert(this.toolbar.items.getCount() - 3, new Ext.Toolbar.Separator());
-}
+};
 
 /**
  * Initilization of the Ribbon
@@ -82786,6 +83709,7 @@ GENTICS.Aloha.Ribbon.prototype.init = function() {
  */
 GENTICS.Aloha.Ribbon.prototype.hide = function () {
 	jQuery('.GENTICS_ribbon').fadeOut();
+	this.visible = false;
 };
 
 /**
@@ -82793,6 +83717,15 @@ GENTICS.Aloha.Ribbon.prototype.hide = function () {
  */
 GENTICS.Aloha.Ribbon.prototype.show = function () {
 	jQuery('.GENTICS_ribbon').fadeIn();
+	this.visible = true;
+};
+
+/**
+ * Check whether the ribbon is visible right now
+ * @return true when the ribbon is visible, false when not
+ */
+GENTICS.Aloha.Ribbon.prototype.isVisible = function () {
+	return this.visible;
 };
 
 GENTICS.Aloha.Ribbon = new GENTICS.Aloha.Ribbon();
@@ -82849,7 +83782,6 @@ GENTICS.Aloha.EventRegistry.prototype.trigger = function (event) {
 };
 
 GENTICS.Aloha.EventRegistry = new GENTICS.Aloha.EventRegistry();
-
 
 
 /*!
@@ -82932,6 +83864,10 @@ GENTICS.Aloha.FloatingMenu.left = 100;
  */
 GENTICS.Aloha.FloatingMenu.pinned = false;
 
+/**
+ * just a reference to the jQuery(window) object, which is used quite often
+ */
+GENTICS.Aloha.FloatingMenu.window = jQuery(window);
 
 /**
  * Initialize the floatingmenu
@@ -82940,7 +83876,7 @@ GENTICS.Aloha.FloatingMenu.pinned = false;
 GENTICS.Aloha.FloatingMenu.init = function() {
 	this.currentScope = 'GENTICS.Aloha.global';
 	var that = this;
-	jQuery(window).unload(function () {
+	this.window.unload(function () {
 		// store fm position if the panel is pinned to be able to restore it next time
 		if (that.pinned) {
 			jQuery.cookie('GENTICS.Aloha.FloatingMenu.pinned', 'true');
@@ -83197,7 +84133,7 @@ GENTICS.Aloha.FloatingMenu.togglePin = function() {
 		this.pinned = false;
 	} else {
 		el.addClass('GENTICS_floatingmenu_pinned');
-		this.top = this.obj.offset().top - jQuery(window).scrollTop();
+		this.top = this.obj.offset().top - this.window.scrollTop();
 		
 		// update position as preparation for fixed position 
 		this.obj.css('top', this.top);
@@ -83501,6 +84437,12 @@ GENTICS.Aloha.FloatingMenu.calcFloatTarget = function(range) {
 		y = targetObj.offset().top + targetObj.height() + ribbonOffset;
 	}
 	
+	// if the floating menu would float off the bottom of the screen
+	// we don't want it to move, so we'll return false
+	if (y > this.window.height() + this.window.scrollTop()) {
+		return false;
+	}
+	
 	return {
 		x : GENTICS.Aloha.activeEditable.obj.offset().left,
 		y : y 
@@ -83666,7 +84608,7 @@ GENTICS.Aloha.FloatingMenu.Group.prototype.getExtComponent = function () {
 			// count the number of buttons (large buttons count as 2)
 			buttonCount += button.button.size == 'small' ? 1 : 2;
 		});
-
+		
 		this.extButtonGroup = new Ext.ButtonGroup({
 			'columns' : Math.ceil(buttonCount / 2),
 			'items': items
@@ -83675,6 +84617,8 @@ GENTICS.Aloha.FloatingMenu.Group.prototype.getExtComponent = function () {
 		// now find the Ext.Buttons and set to the GENTICS buttons
 		jQuery.each(this.buttons, function(index, buttonInfo) {
 			buttonInfo.button.extButton = that.extButtonGroup.findById(buttonInfo.button.id);
+			// the following code is a work arround because ExtJS initializes later.
+			// The ui wrapper store the information and here we use it... ugly.
 			// if there are any listeners added before initializing the extButtons
 			if ( buttonInfo.button.listenerQueue && buttonInfo.button.listenerQueue.length > 0 ) {
 				while ( l = buttonInfo.button.listenerQueue.shift() ) {
@@ -83682,6 +84626,12 @@ GENTICS.Aloha.FloatingMenu.Group.prototype.getExtComponent = function () {
 				}
 			}
 			if (buttonInfo.button.extButton.setObjectTypeFilter) {
+				if (buttonInfo.button.objectTypeFilter) {
+					buttonInfo.button.extButton.noQuery = false;
+				}
+				if ( buttonInfo.button.objectTypeFilter == 'all' ) {
+					buttonInfo.button.objectTypeFilter = null;
+				}
 				buttonInfo.button.extButton.setObjectTypeFilter(buttonInfo.button.objectTypeFilter);
 				if ( buttonInfo.button.displayField) {
 					buttonInfo.button.extButton.displayField = buttonInfo.button.displayField;
@@ -84595,7 +85545,6 @@ GENTICS.Aloha.Log.prototype.flushLogHistory = function() {
  * @hide
  */
 GENTICS.Aloha.Log = new GENTICS.Aloha.Log();
-
 /*!
 * Aloha Editor
 * Author & Copyright (c) 2010 Gentics Software GmbH
@@ -85458,7 +86407,6 @@ GENTICS.Aloha.MessageLine.prototype.add = function(message) {
  * @hide
  */
 GENTICS.Aloha.MessageLine = new GENTICS.Aloha.MessageLine();
-
 /*!
 * Aloha Editor
 * Author & Copyright (c) 2010 Gentics Software GmbH
@@ -85636,16 +86584,22 @@ GENTICS.Aloha.Plugin.prototype.init = function() {};
  */
 GENTICS.Aloha.Plugin.prototype.getEditableConfig = function (obj) {
 	
-	var config = [];
+	var configObj = null;
 	var configSpecified = false;
 	
 	if ( this.settings.editables ) {
-	
+		var that = this;
 		// check if the editable's selector matches and if so add its configuration to object configuration
 		jQuery.each( this.settings.editables, function (selector, selectorConfig) {
 			if ( obj.is(selector) ) {
 				configSpecified = true;
-				config = jQuery.merge(config, selectorConfig);
+				if (selectorConfig.constructor == (new Array).constructor) {
+					configObj = [];
+					configObj = jQuery.merge(configObj, selectorConfig);
+				} else {
+					configObj = {};
+					configObj = jQuery.extend(true, configObj, selectorConfig);
+				}
 			}
 		});	
 	}
@@ -85653,14 +86607,13 @@ GENTICS.Aloha.Plugin.prototype.getEditableConfig = function (obj) {
 	// fall back to default configuration
 	if ( !configSpecified ) {
 		if ( typeof this.settings.config == 'undefined' || !this.settings.config ) {
-			config = this.config;
+			configObj = this.config;
 		} else {
-			config = this.settings.config;
+			configObj = this.settings.config;
 		}
 	}
-	
-	return config;
-}
+	return configObj;
+};
 
 /**
  * Make the given jQuery object (representing an editable) clean for saving
@@ -85710,7 +86663,6 @@ GENTICS.Aloha.Plugin.prototype.toString = function() {
 GENTICS.Aloha.Plugin.prototype.log = function (level, message) {
 	GENTICS.Aloha.Log.log(level, this, message);
 };
-
 /*!
 * Aloha Editor
 * Author & Copyright (c) 2010 Gentics Software GmbH
@@ -87285,7 +88237,7 @@ GENTICS.Aloha.Selection.prototype.SelectionRange.prototype.updateMarkupEffective
  */
 GENTICS.Aloha.Selection.prototype.SelectionRange.prototype.updatelimitObject = function() {
 	if (GENTICS.Aloha.editables && GENTICS.Aloha.editables.length > 0) {
-		var parents = jQuery(this.startContainer).parents();
+		var parents = this.getStartContainerParents();
 		var editables = GENTICS.Aloha.editables;
 		for (var i = 0; i < parents.length; i++) {
 			var el = parents[i];
@@ -87317,7 +88269,6 @@ GENTICS.Aloha.Selection.prototype.SelectionRange.prototype.toString = function(v
 };
 
 GENTICS.Aloha.Selection = new GENTICS.Aloha.Selection();
-
 /*!
 * Aloha Editor
 * Author & Copyright (c) 2010 Gentics Software GmbH
@@ -87388,7 +88339,6 @@ GENTICS.Aloha.Sidebar.Panel = function () {};
  * @return HTML Code of the rendered panel
  */
 GENTICS.Aloha.Sidebar.Panel.prototype.render = function() {};
-
 /*!
 * Aloha Editor
 * Author & Copyright (c) 2010 Gentics Software GmbH
@@ -87478,7 +88428,7 @@ GENTICS.Aloha.RepositoryManager.prototype.getRepository = function(repositoryId)
  * @param {function} callback defines an callback function( repositoryResult ) which will be called after a time out of 5sec or when all repositories returned their result
  * @return {Array} Array of Items
  */
-GENTICS.Aloha.RepositoryManager.prototype.query = function(queryString, objectTypeFilter, filter, inFolderId, orderBy, maxItems, skipCount, renditionFilter, repositoryId, callback) {
+GENTICS.Aloha.RepositoryManager.prototype.query = function( params, callback ) {
 	
 	var that = this;
 	var allitems = [];
@@ -87494,9 +88444,9 @@ GENTICS.Aloha.RepositoryManager.prototype.query = function(queryString, objectTy
 		that.queryCallback(callback, allitems, timer);
 	}, 5000);
 
-	// only query the repositoryId for Navigation Elements
-	if ( repositoryId ) {
-		repositories.push(this.getRepository(repositoryId));
+	// only query the repositoryId for Children Elements
+	if ( params.repositoryId ) {
+		repositories.push(this.getRepository(params.repositoryId));
 	} else {
 		repositories = this.repositories;
 	}
@@ -87508,7 +88458,7 @@ GENTICS.Aloha.RepositoryManager.prototype.query = function(queryString, objectTy
 		
         try {
         	
-			var notImplemented = repositories[i].query( queryString, objectTypeFilter, filter, inFolderId, orderBy, maxItems, skipCount, renditionFilter, function (items) {
+			var notImplemented = repositories[i].query( params, function (items) {
 			    
 				// remove the repository from the callback stack
 				var id = that.openCallbacks.indexOf( this.repositoryId );
@@ -87576,47 +88526,43 @@ GENTICS.Aloha.RepositoryManager.prototype.queryCallback = function (cb, items, t
 };
 
 /**
- * Returns  navigation items.
- * @param {Item} mother the resouceItem  in from which the naviagtion should be returned.
- * @param {Array} objectTypeFilter an array of strings with desired objectTypeFilter. 
- * @param {function} callback needs to be called callback.call( this, Items ) with the result items
- * @return {Array} Items the found objects.
+ * Returns children items.
  */
-GENTICS.Aloha.RepositoryManager.prototype.getChildren = function ( objectTypeFilter, filter, inFolderId, inTreeId, orderBy, maxItems, skipCount, renditionFilter, repositoryId, callback ) {
+GENTICS.Aloha.RepositoryManager.prototype.getChildren = function ( params, callback ) {
 
 	var that = this;
 	var allitems = [];
 	var repositories = [];
 
 	// reset callback queue
-	this.openNavigationCallbacks = [];
+	this.openChildrenCallbacks = [];
 
 	// return repositories
-	if ( inFolderId == 'aloha' && this.repositories.length > 0 ) {
+	if ( params.inFolderId == 'aloha' && this.repositories.length > 0 ) {
 		var repos = [];
 		for ( var i = 0; i < this.repositories.length; i++) {
-			repos.push({
+			repos.push( new GENTICS.Aloha.Repository.Folder ({
 				id: this.repositories[i].repositoryId,
-				displayName: this.repositories[i].repositoryName,
+				name: this.repositories[i].repositoryName,
 				repositoryId: this.repositories[i].repositoryId,
-				objectType: 'repository',
+				type: 'repository',
 				hasMoreItems: true
-			})
+			}));
 		}
-		that.getNavigationCallback(callback, repos, null);
+		that.getChildrenCallback(callback, repos, null);
 		return;
 	}
 	
 	// start timer in case a repository does not deliver in time
 	var timer = setTimeout( function() {
 		// reset callback stack
-		that.openNavigationCallbacks = [];
-		that.getNavigationCallback(callback, allitems, timer);
+		that.openChildrenCallbacks = [];
+		that.getChildrenCallback(callback, allitems, timer);
 	}, 5000);
 
-	// only query the repositoryId for Navigation Elements
-	if ( repositoryId ) {
-		repositories.push(this.getRepository(repositoryId));
+	// only query the repositoryId for Children Elements
+	if ( params.repositoryId ) {
+		repositories.push(this.getRepository(params.repositoryId));
 	} else {
 		repositories = this.repositories;
 	}
@@ -87624,22 +88570,22 @@ GENTICS.Aloha.RepositoryManager.prototype.getChildren = function ( objectTypeFil
 	// iterate through all registered repositories
 	for ( var i = 0; i < repositories.length; i++) {
 		
-		this.openNavigationCallbacks.push(repositories[i].repositoryId);
+		this.openChildrenCallbacks.push(repositories[i].repositoryId);
 		
         try {
 		
-			var notImplemented = repositories[i].getChildren( objectTypeFilter, filter, inFolderId, inTreeId, orderBy, maxItems, skipCount, renditionFilter, function (items) {
+			var notImplemented = repositories[i].getChildren( params, function (items) {
 			    
 				// remove the repository from the callback stack
-				var id = that.openNavigationCallbacks.indexOf( this.repositoryId );
+				var id = that.openChildrenCallbacks.indexOf( this.repositoryId );
 				if (id != -1) {
-					that.openNavigationCallbacks.splice(id, 1); 
+					that.openChildrenCallbacks.splice(id, 1); 
 				}
 		
 				// merge new items with the rest
 				jQuery.merge( allitems, items ); 
 	
-				that.getNavigationCallback(callback, allitems, timer);
+				that.getChildrenCallback(callback, allitems, timer);
 			});
 
         } catch (e) {
@@ -87650,11 +88596,11 @@ GENTICS.Aloha.RepositoryManager.prototype.getChildren = function ( objectTypeFil
 		
 		// remove this repository from the callback stack
 		if ( notImplemented ) {
-			var id = that.openNavigationCallbacks.indexOf( repositories[i].repositoryId );
+			var id = that.openChildrenCallbacks.indexOf( repositories[i].repositoryId );
 			if (id != -1) {
-				this.openNavigationCallbacks.splice(id, 1);
+				this.openChildrenCallbacks.splice(id, 1);
 				if ( i == repositories.length - 1 ) {
-					this.getNavigationCallback(callback, allitems, timer);
+					this.getChildrenCallback(callback, allitems, timer);
 				}
 			}
 		}
@@ -87667,10 +88613,10 @@ GENTICS.Aloha.RepositoryManager.prototype.getChildren = function ( objectTypeFil
 * @return void
 * @hide
 */
-GENTICS.Aloha.RepositoryManager.prototype.getNavigationCallback = function (cb, items, timer) {
+GENTICS.Aloha.RepositoryManager.prototype.getChildrenCallback = function (cb, items, timer) {
 
 	// if we all callbacks came back we are done!
-	if (this.openNavigationCallbacks.length == 0) {
+	if (this.openChildrenCallbacks.length == 0) {
 		
 		// unset the timer...
 		if (timer) clearTimeout(timer);
@@ -87714,7 +88660,7 @@ GENTICS.Aloha.RepositoryManager.prototype.makeClean = function(obj) {
  * @return void
  */
 GENTICS.Aloha.RepositoryManager.prototype.markObject = function (obj, item) {
-	var repository = this.getRepository(item.repositoryId)
+	var repository = this.getRepository(item.repositoryId);
 	if ( repository ) {
 		jQuery(obj).attr('data-GENTICS-aloha-repository', item.repositoryId);
 		jQuery(obj).attr('data-GENTICS-aloha-object-id', item.id);
@@ -87737,7 +88683,6 @@ GENTICS.Aloha.RepositoryManager = new GENTICS.Aloha.RepositoryManager();
 GENTICS.Aloha.RepositoryManager.toString = function() {
 	return "com.gentics.aloha.RepositoryManager";
 };
-
 /*!
 * Aloha Editor
 * Author & Copyright (c) 2010 Gentics Software GmbH
@@ -87752,7 +88697,7 @@ GENTICS.Aloha.RepositoryManager.toString = function() {
  * @param {String} repositoryId unique repository identifier
  * @param {String} basePath (optional) basepath of the repository (relative to 'repositories' folder). If not given, the basePath is taken
  */
-GENTICS.Aloha.Repository = function(repositoryId, basePath) {
+GENTICS.Aloha.Repository = function(repositoryId, repositoryName) {
 	/**
 	 * @cfg {String} repositoryId is the unique Id for this Repository instance 
 	 */
@@ -87767,7 +88712,7 @@ GENTICS.Aloha.Repository = function(repositoryId, basePath) {
 	/**
 	 * @cfg {String} repositoryName is the name for this Repository instance 
 	 */
-	this.repositoryName = repositoryId;
+	this.repositoryName = (repositoryName) ? repositoryName : repositoryId;
 	
 	GENTICS.Aloha.RepositoryManager.register(this);
 
@@ -87784,32 +88729,33 @@ GENTICS.Aloha.Repository.prototype.init = function() {};
  * Searches a repository for object items matching queryString if none found returns null.
  * The returned object items must be an array of Aloha.Repository.Object
  * 
- * @param {String} queryString 
- * @param {array} objectTypeFilter OPTIONAL Object types that will be returned.
- * @param {array} filter OPTIONAL Attributes that will be returned.
- * @param {string} inFolderId OPTIONAL his is a predicate function that tests whether or not a candidate object is a child-object of the folder object identified by the given inFolderId (objectId).
- * @param {array} orderBy OPTIONAL ex. [{lastModificationDate:’DESC’, name:’ASC’}]
- * @param {Integer} maxItems OPTIONAL number items to return as result
- * @param {Integer} skipCount OPTIONAL This is tricky in a merged multi repository scenario
- * @param {array} renditionFilter OPTIONAL Instead of termlist an array of kind or mimetype is expected. If null or array.length == 0 all renditions are returned. See http://docs.oasis-open.org/cmis/CMIS/v1.0/cd04/cmis-spec-v1.0.html#_Ref237323310 for renditionFilter
- * @return {Array} Items
- * TODO Migrate to a parameter object 
+ * @property {String} queryString 
+ * @property {array} objectTypeFilter OPTIONAL Object types that will be returned.
+ * @property {array} filter OPTIONAL Attributes that will be returned.
+ * @property {string} inFolderId OPTIONAL his is a predicate function that tests whether or not a candidate object is a child-object of the folder object identified by the given inFolderId (objectId).
+ * @property {string} inTreeId OPTIONAL This is a predicate function that tests whether or not a candidate object is a descendant-object of the folder object identified by the given inTreeId (objectId).
+ * @property {array} orderBy OPTIONAL ex. [{lastModificationDate:’DESC’, name:’ASC’}]
+ * @property {Integer} maxItems OPTIONAL number items to return as result
+ * @property {Integer} skipCount OPTIONAL This is tricky in a merged multi repository scenario
+ * @property {array} renditionFilter OPTIONAL Instead of termlist an array of kind or mimetype is expected. If null or array.length == 0 all renditions are returned. See http://docs.oasis-open.org/cmis/CMIS/v1.0/cd04/cmis-spec-v1.0.html#_Ref237323310 for renditionFilter
+ * @param {object} params object with properties
+ * @param {function} callback this method must be called with all result items
  */
-GENTICS.Aloha.Repository.prototype.query = function(queryString, objectTypeFilter, filter, inFolderId, orderBy, maxItems, skipCount, renditionFilter, callback) { return true; };
+GENTICS.Aloha.Repository.prototype.query = function( params, callback ) { return true; };
 
 /**
  * Returns all children of a given motherId.
- * @param {array} objectTypeFilter OPTIONAL Object types that will be returned.
- * @param {array} filter OPTIONAL Attributes that will be returned.
- * @param {string} inFolderId OPTIONAL his is a predicate function that tests whether or not a candidate object is a child-object of the folder object identified by the given inFolderId (objectId).
- * @param {string} inTreeId OPTIONAL This is a predicate function that tests whether or not a candidate object is a descendant-object of the folder object identified by the given inTreeId (objectId).
- * @param {array} orderBy OPTIONAL ex. [{lastModificationDate:’DESC’, name:’ASC’}]
- * @param {Integer} maxItems OPTIONAL number items to return as result
- * @param {Integer} skipCount OPTIONAL This is tricky in a merged multi repository scenario
- * @param {array} renditionFilter OPTIONAL Instead of termlist an array of kind or mimetype is expected. If null or array.length == 0 all renditions are returned. See http://docs.oasis-open.org/cmis/CMIS/v1.0/cd04/cmis-spec-v1.0.html#_Ref237323310 for renditionFilter
- * @return {Array} Items 
+ * @property {array} objectTypeFilter OPTIONAL Object types that will be returned.
+ * @property {array} filter OPTIONAL Attributes that will be returned.
+ * @property {string} inFolderId OPTIONAL his is a predicate function that tests whether or not a candidate object is a child-object of the folder object identified by the given inFolderId (objectId).
+ * @property {array} orderBy OPTIONAL ex. [{lastModificationDate:’DESC’, name:’ASC’}]
+ * @property {Integer} maxItems OPTIONAL number items to return as result
+ * @property {Integer} skipCount OPTIONAL This is tricky in a merged multi repository scenario
+ * @property {array} renditionFilter OPTIONAL Instead of termlist an array of kind or mimetype is expected. If null or array.length == 0 all renditions are returned. See http://docs.oasis-open.org/cmis/CMIS/v1.0/cd04/cmis-spec-v1.0.html#_Ref237323310 for renditionFilter
+ * @param {object} params object with properties
+ * @param {function} callback this method must be called with all result items
  */
-GENTICS.Aloha.Repository.prototype.getChildren = function(objectTypeFilter, filter, inFolderId, inTreeId, orderBy, maxItems, skipCount, renditionFilter, callback) { return true; };
+GENTICS.Aloha.Repository.prototype.getChildren = function( params, callback ) { return true; };
 
 
 /**
@@ -87829,7 +88775,60 @@ GENTICS.Aloha.Repository.prototype.makeClean = function (obj) {};
  * @return void
  */
 GENTICS.Aloha.Repository.prototype.markObject = function (obj, repositoryItem) {};
+/*!
+* Aloha Editor
+* Author & Copyright (c) 2010 Gentics Software GmbH
+* aloha-sales@gentics.com
+* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*/
 
+/**
+ * Abstract Document suitable for most Objects
+ * @namespace GENTICS.Aloha.Repository
+ * @class Document
+ * @property {String} id unique identifier
+ * @property {String} repositoryId unique repository identifier
+ */
+
+GENTICS.Aloha.Repository.Document = function(properties) {
+
+	var p = properties;
+	
+	this.type = 'document';
+	
+	// Basic error checking for MUST attributes
+	if (!p.id || 
+		!p.name ||
+		!p.repositoryId
+	) {
+//		GENTICS.Aloha.Log.error(this, "No valid Aloha Object. Missing MUST property");
+		return;
+	}
+	
+	GENTICS.Utils.applyProperties(this, properties);
+	
+	this.baseType = 'document';
+};
+
+GENTICS.Aloha.Repository.Folder = function(properties) {
+
+	var p = properties;
+	
+	this.type = 'folder';
+	
+	// Basic error checking for MUST attributes
+	if (!p.id || 
+		!p.name ||
+		!p.repositoryId
+	) {
+//		GENTICS.Aloha.Log.error(this, "No valid Aloha Object. Missing MUST property");
+		return;
+	}
+	
+	GENTICS.Utils.applyProperties(this, properties);
+	
+	this.baseType = 'folder';
+};
 /*!
 * Aloha Editor
 * Author & Copyright (c) 2010 Gentics Software GmbH
@@ -87850,41 +88849,66 @@ GENTICS.Aloha.Repository.prototype.markObject = function (obj, repositoryItem) {
  */
 GENTICS.Aloha.ui.Browser = function () {
 
-	var that = this;
+	/**
+	 * @cfg Function called when an element is selected
+	 */
+	this.onSelect = null;
 	
+	var that = this;
+	this.exploreStore = new Ext.data.Store( {
+		proxy : new Ext.data.AlohaProxy(),
+		reader : new Ext.data.AlohaObjectReader()
+	});
+	
+	this.colModel = new Ext.grid.ColumnModel([ {
+		id : 'name',
+		header : 'Name',
+		width : 100,
+		sortable : true,
+		dataIndex : 'name'
+	}, {
+		header : 'URL',
+		renderer : function(val) {
+			return val;
+		},
+		width : 300,
+		sortable : true,
+		dataIndex : 'url'
+	} ]);
 	// define the grid that represents the filelist
 	this.grid = new Ext.grid.GridPanel( {
 		region : 'center',
 		autoScroll : true,
 		// the datastore can be used by the gridpanel to fetch data from
 		// repository manager
-		store : new Ext.data.Store( {
-			proxy : new Ext.data.AlohaProxy(),
-			reader : new Ext.data.AlohaObjectReader()
-		}),
-		columns : [ {
-			id : 'displayName',
-			header : 'Name',
-			width : 100,
-			sortable : true,
-			dataIndex : 'displayName'
-		}, {
-			header : 'URL',
-			renderer : function(val) {
-				return val;
-			},
-			width : 300,
-			sortable : true,
-			dataIndex : 'url'
-		} ],
+		store : this.exploreStore,
+		colModel : this.colModel,
 		stripeRows : true,
-		autoExpandColumn : 'displayName',
+		autoExpandColumn : 'name',
 		height : 350,
 		width : 600,
 		title : 'Objectlist',
 		stateful : true,
-		stateId : 'grid'
+		stateId : 'grid',
+		selModel: new Ext.grid.RowSelectionModel({singleSelect:true}),
+		listeners : {
+			'dblclick' : function(e) {
+				that.onItemSelect();
+			}
+		}
 	});
+    this.grid.getSelectionModel().on({
+    	'selectionchange' : function(sm, n, node){
+    		var resourceItem = that.grid.getSelectionModel().getSelected();
+    		if (resourceItem) {
+                this.win.buttons[1].enable();
+    		} else {
+                this.win.buttons[1].disable();
+    		}
+        },
+        scope:this
+    });
+
 
 	// define the treepanel
 	this.tree = new Ext.tree.TreePanel( {
@@ -87911,24 +88935,29 @@ GENTICS.Aloha.ui.Browser = function () {
 			}
 		}
 	});
-	
     this.tree.getSelectionModel().on({
         'selectionchange' : function(sm, node){
-            if(node){
-                this.tree.fireEvent('alohatreeselect', node.attributes);
+            if (node) {
+            	try{            		
+            		// sets the ui object containing the items list
+            		var resourceItem = node.attributes;
+            		resourceItem.viewGrid = this.grid;
+            		if (resourceItem.colModel) {
+            			this.grid.reconfigure(this.exploreStore,resourceItem.colModel);
+            		} else {
+            			this.grid.reconfigure(this.exploreStore,this.colModel);
+            		}
+            	} catch (error) {}
+            	this.grid.setTitle(node.text);
+            	//this.win.doLayout();
+            	this.exploreStore.load({ params: {
+        			inFolderId: resourceItem.id,
+        			objectTypeFilter: that.objectTypeFilter,
+        			repositoryId: resourceItem.repositoryId
+        		}});
             }
         },
         scope:this
-    });
-    
-    this.tree.addEvents({alohatreeselect:true});
-    
-    this.tree.on('alohatreeselect', function(resourceItem) {
-		that.grid.store.load({ params: {
-			inFolderId: resourceItem.id,
-			objectTypeFilter: that.objectTypeFilter,
-			repositoryId: resourceItem.repositoryId
-		}});
     });
 
 	// nest the tree within a panel
@@ -87948,6 +88977,10 @@ GENTICS.Aloha.ui.Browser = function () {
 		width : 800,
 		height : 300,
 		closeAction : 'hide',
+		onEsc: function () { 
+			this.hide();
+		},
+		defaultButton: this.nav,
 		plain : true,
 		initHidden: true,
 		items : [ this.nav, this.grid ],
@@ -87958,7 +88991,10 @@ GENTICS.Aloha.ui.Browser = function () {
 			}
 		}, {
 			text : 'Select',
-			disabled : true
+			disabled : true,
+			handler : function() {
+				that.onItemSelect();
+			}
 		}],
 	    toFront : function(e) {
 	        this.manager = this.manager || Ext.WindowMgr;
@@ -87967,6 +89003,16 @@ GENTICS.Aloha.ui.Browser = function () {
 	        return this;
 	    }
 	});
+	
+	this.onItemSelect = function () {
+		var sm =  this.grid.getSelectionModel();
+		var sel = (sm) ? sm.getSelected() : null;
+		var resourceItem = (sel) ? sel.data : null;
+		this.win.hide();
+		if ( typeof this.onSelect == 'function' ) {
+			this.onSelect.call(this, resourceItem);
+		}
+	};
 };
 	
 GENTICS.Aloha.ui.Browser.prototype.setObjectTypeFilter = function(otf) {
@@ -87980,8 +89026,8 @@ GENTICS.Aloha.ui.Browser.prototype.getObjectTypeFilter = function() {
 GENTICS.Aloha.ui.Browser.prototype.show = function() {
 	this.win.show(); // first show,
 	this.win.toFront(true);
+	this.win.focus();
 };
-
 
 /*!
  * jQuery UI 1.8.5
@@ -92422,7 +93468,6 @@ AnyTime.picker = function( id, options )
 
 })(jQuery); // function($)...
 
-
 //Always start with comments (concat et tcet)
 /**
  * 
@@ -92484,7 +93529,7 @@ AnyTime.picker = function( id, options )
 						area.wymeditor({
 					        stylesheet: 'styles.css',
 					       // skin: 'twopanels',
-					        lang: 'fr', 
+					        lang: 'fr'
 					 	   });
 					//} else
 						//TOTO quelque chose
@@ -92677,703 +93722,6 @@ AnyTime.picker = function( id, options )
 	}
 	// ############################
 	})(jQuery);
-
-
-/*
-Awesome Uploader
-Ext.ux.XHRUpload JavaScript Class
-
-Copyright (c) 2010, Andrew Rymarczyk
-All rights reserved.
-
-Redistribution and use in source and minified, compiled or otherwise obfuscated 
-form, with or without modification, are permitted provided that the following 
-conditions are met:
-
-	* Redistributions of source code must retain the above copyright notice, 
-		this list of conditions and the following disclaimer.
-	* Redistributions in minified, compiled or otherwise obfuscated form must 
-		reproduce the above copyright notice, this list of conditions and the 
-		following disclaimer in the documentation and/or other materials 
-		provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
-// API Specs:
-// http://www.w3.org/TR/XMLHttpRequest/
-// http://www.w3.org/TR/XMLHttpRequest2/
-// http://www.w3.org/TR/progress-events/
-
-// Browser Implementation Details:
-// FROM: https://developer.mozilla.org/en/DOM/File
-// https://developer.mozilla.org/en/Using_files_from_web_applications
-// https://developer.mozilla.org/En/DragDrop/DataTransfer
-// https://developer.mozilla.org/en/DOM/FileList
-// "NOTE: The File object as implemented by Gecko offers several non-standard methods for reading the contents of the file. These should not be used, as they will prevent your web application from being used in other browsers, as well as in future versions of Gecko, which will likely remove these methods."
-// NOTE: fileObj.getAsBinary() is deprecated according to the mozilla docs!
-
-// Can optionally follow RFC2388
-// RFC2388 - Returning Values from Forms: multipart/form-data
-// http://www.faqs.org/rfcs/rfc2388.html
-// This allows additional POST params to be sent with file upload, and also simplifies the backend upload handler becuase a single script can be used for drag and drop, flash, and standard uploads
-// NOTE: This is currently only supported by Firefox 1.6, Chrome 6 should be released soon and will also be supported.
-
-Ext.ns('Ext.ux');
-
-Ext.ux.XHRUpload = function(config){
-	Ext.apply(this, config, {
-		method: 'POST'
-		,fileNameHeader: 'X-File-Name'
-		,filePostName:'fileName'
-		,contentTypeHeader: 'text/plain; charset=x-user-defined-binary'
-		,extraPostData:{}
-		,extraHeaders:{}
-		,xhrExtraPostDataPrefix:'extraPostData_'
-		,sendMultiPartFormData:false
-	});
-	this.addEvents( //extend the xhr's progress events to here
-		'loadstart',
-		'progress',
-		'abort',
-		'error',
-		'load',
-		'loadend'
-	);
-	Ext.ux.XHRUpload.superclass.constructor.call(this);
-};
-
-Ext.extend(Ext.ux.XHRUpload, Ext.util.Observable,{
-	send:function(config){
-		Ext.apply(this, config);
-		
-		this.xhr = new XMLHttpRequest();
-		this.xhr.addEventListener('loadstart', this.relayXHREvent.createDelegate(this), false);
-		this.xhr.addEventListener('progress', this.relayXHREvent.createDelegate(this), false);
-		this.xhr.addEventListener('progressabort', this.relayXHREvent.createDelegate(this), false);
-		this.xhr.addEventListener('error', this.relayXHREvent.createDelegate(this), false);
-		this.xhr.addEventListener('load', this.relayXHREvent.createDelegate(this), false);
-		this.xhr.addEventListener('loadend', this.relayXHREvent.createDelegate(this), false);
-		
-		this.xhr.upload.addEventListener('loadstart', this.relayUploadEvent.createDelegate(this), false);
-		this.xhr.upload.addEventListener('progress', this.relayUploadEvent.createDelegate(this), false);
-		this.xhr.upload.addEventListener('progressabort', this.relayUploadEvent.createDelegate(this), false);
-		this.xhr.upload.addEventListener('error', this.relayUploadEvent.createDelegate(this), false);
-		this.xhr.upload.addEventListener('load', this.relayUploadEvent.createDelegate(this), false);
-		this.xhr.upload.addEventListener('loadend', this.relayUploadEvent.createDelegate(this), false);
-
-		this.xhr.open(this.method, this.url, true);
-		
-		if(typeof(FileReader) !== 'undefined' && this.sendMultiPartFormData ){
-			//currently this is firefox only, chrome 6 will support this in the future
-			this.reader = new FileReader();
-			this.reader.addEventListener('load', this.sendFileUpload.createDelegate(this), false);
-			this.reader.readAsBinaryString(this.file);
-			return true;	
-		}
-		//This will work in both Firefox 1.6 and Chrome 5
-		this.xhr.overrideMimeType(this.contentTypeHeader);
-		this.xhr.setRequestHeader(this.fileNameHeader, this.file.name);
-		console.log(this.xhr);
-		for (var attr in this.extraHeaders){
-			this.xhr.setRequestHeader(attr,this.extraHeaders[attr]);
-		}
-		for(var attr in this.extraPostData){
-			this.xhr.setRequestHeader(this.xhrExtraPostDataPrefix + attr, this.extraPostData[attr]);
-		}
-		//xhr.setRequestHeader('X-File-Size', files.size); //this may be useful
-		this.xhr.send(this.file);
-		return true;
-		
-	}
-	,sendFileUpload:function(){
-
-		var boundary = (1000000000000+Math.floor(Math.random()*8999999999998)).toString(),
-			data = '';
-		
-		for(attr in this.extraPostData){
-			data += '--'+boundary + '\r\nContent-Disposition: form-data; name="' + attr + '"\r\ncontent-type: text/plain;\r\n\r\n'+this.extraPostData[attr]+'\r\n';
-		}
-		
-		//window.btoa(binaryData)
-		//Creates a base-64 encoded ASCII string from a string of binary data. 
-		//https://developer.mozilla.org/en/DOM/window.btoa
-		//Firefox and Chrome only!!
-		
-		data += '--'+boundary + '\r\nContent-Disposition: form-data; name="' + this.filePostName + '"; filename="' + this.file.name + '"\r\nContent-Type: '+this.file.type+'\r\nContent-Transfer-Encoding: base64\r\n\r\n' + window.btoa(this.reader.result) + '\r\n'+'--'+boundary+'--\r\n\r\n';
-		
-		this.xhr.setRequestHeader('Content-Type', 'multipart/form-data; boundary='+boundary);
-		this.xhr.send(data);
-	}
-	,relayUploadEvent:function(event){
-		this.fireEvent('upload'+event.type, event);
-	}
-	,relayXHREvent:function(event){
-		this.fireEvent(event.type, event);
-	}
-});
-
-/**
- * a repository-like structure
- */
-Ext.namespace('KaraCos.Explorer');
-KaraCos.Explorer.nodeItems = {};
-
-KaraCos.Explorer.refreshNodeItems = function(url) {
-	delete KaraCos.Explorer.nodeItems[url];
-	return KaraCos.Explorer.getNodeItems(url);
-};
-KaraCos.Explorer.getNodeItems = function(url) {
-	try {
-		return KaraCos.Explorer.nodeItems[url].items;
-	} catch(e) {
-		var items = [];
-		var url_href = "/w_browse_types";
-		if (url != '/') {
-			url_href = url + "/w_browse_types";
-		}
-		jQuery.ajax({ url: url_href,
-			dataType: "json",
-			context: document.body,
-			async: false, // plugin init should wait for success b4 continuing
-		    success: function(data) {
-				jQuery.each(data,function(k,v){
-					t_url = "/";
-					if (url != '/') {
-						t_url = url + '/' + k;
-					} else {
-						t_url = '/' + k;
-					}
-					item = {text: k,
-							id: t_url,
-							cls : 'karacos_explorer_' + v.webType,
-							parent_url:url,
-							imgsrc: '/_browser/karacos/explorer/images/type_' + v.webType + '.png',
-							imgstyle: 'width:16px;height:16px',
-							kc_link_href: t_url,
-					};
-					items.push(item);
-				});
-			},
-		}); // $.ajax for browse_childrens
-		if (url != '/') {
-			url_href = url + "/_att";
-			jQuery.ajax({ url: url_href,
-		    	dataType: "json",
-		    	context: document.body,
-		    	async: false, // plugin init should wait for success b4 continuing
-		        success: function(data) {
-					jQuery.each(data.form.fields[0].values, function(id,value) {
-						t_url = "\/";
-						if (url != '/') {
-							t_url = url + '\/' + value.value;
-						} else {
-							t_url = '\/' + value.value;
-						}
-						item = {id: t_url,
-								text: value.label,
-								leaf:true,
-								parent_url:url};
-						var imgreg = /.*(\.jpg)|(\.gif)|(\.jpeg)|(\.png)$/;
-						var match = value.value.toLowerCase().match(imgreg);
-						if ( match != null) {
-							item.cls = 'karacos_file_image';
-							item.imgsrc = value.value;
-							item.imgstyle = 'width:64px;height:64px';
-						}
-						var sndreg = /.*(\.mp3)|(\.ogg)|(\.m4a)|(\.aac)$/;
-						var match = value.value.toLowerCase().match(sndreg);
-						if ( match != null) {
-							item.cls = 'karacos_file_sound';
-							item.imgsrc = '/_browser/karacos/explorer/images/type_AudioTrack.png';
-							item.imgstyle = 'width:16px;height:16px';
-							item.kc_link_href = value.value;
-						}
-						if (!item.imgsrc) {
-							item.imgsrc = '/_browser/karacos/explorer/images/page_package.gif';
-							item.imgstyle = 'width:16px;height:16px';
-							item.kc_link_href = value.value;
-						}
-						items.push(item);
-					});
-				}, //success
-				failure: function(data) {}, // do nothing
-			
-			}); //ajax
-		} //
-		KaraCos.Explorer.nodeItems[url] = {items : items};
-		return KaraCos.Explorer.nodeItems[url].items;
-	} //catch
-}
-
-Ext.namespace('KaraCos.Explorer');
-
-KaraCos.Explorer.sinkBodyEvents = function() {
-	//==================
-	// Attach drag and drop listeners to document body
-	// this prevents incorrect drops, reloading the page with the dropped item
-	// This may or may not be helpful
-	
-	 if(!document.body.BodyDragSinker){
-		 console.log("Processing body event sink");
-		document.body.BodyDragSinker = true;
-		
-		var body = Ext.fly(document.body);
-		//$('body').get(0).addEventListener('drop', function(event){
-		//	console.log(event);
-		//	event.stopEvent();
-		//	return true;
-		//});
-		body.on({
-			dragenter:function(event){
-				return true;
-			}
-			,dragleave:function(event){
-				return true;
-			}
-			,dragover:function(event){
-				event.stopEvent();
-				//console.log(event);
-				
-				return true;
-			}
-			,drop:function(event){
-				console.log(event);
-				event.stopEvent();
-				
-				return true;
-			}
-		});
-	}
-	// end body events
-	//==================
-};
-
-/**
- * Upload dropped file to dest using XRH HTML5 file POST
- * 
- * @param id : id of element where drop is done
- * @param url : destination url for POST request
- */
-KaraCos.Explorer.bindUploadDropFile = function(id,url,listeners) {
-	KaraCos.Explorer.sinkBodyEvents();
-	if (!listeners || listeners == undefined) {
-		listeners = {};
-	}
-	jQuery('#'+id).get(0).addEventListener('drop', function(event){
-		//event.sink = true;
-		//console.log(event);
-		 var files = event.dataTransfer.files;
-		 var count = files.length;
-        // if no files where dropped, use default handler
-        if (count < 1) {
-			//event.sink = false;
-			return true;
-		}
-		var len = files.length;
-		Ext.MessageBox.show({
-			buttons: Ext.MessageBox.OK
-			,icon: Ext.MessageBox.ERROR
-			,modal:false
-			,title:'Upload requested!'
-			,msg:"You've dropped "+count+" files !<BR><BR>These files will be uploaded."
-		});
-		var t_url = "";
-		if (typeof url == 'function') {
-			t_url = url();
-		} else {
-			t_url = url;
-		}
-		while(--len >= 0){
-			upload = new Ext.ux.XHRUpload({
-				url: t_url
-				,filePostName:'att_file'
-				,fileNameHeader:'X-File-Name'
-				,extraPostData:{'return_json':'','base64':''}
-				,extraHeaders:{'Accept':'application/json'}
-				,sendMultiPartFormData:false
-				,file:file
-				,listeners:listeners
-			}); //XHRUpload
-			upload.send();
-		} // ProcessFileUpload
-		return false;
-		}, false);
-};
-/**
- * KaraCos integrated plugin for Aloha
- * Copyright 2010 Nicolas Karageuzian
- * Domain explorer
- * 
- *
- */
-Ext.namespace('KaraCos.Explorer');
-
-/**
- * KaraCos async tree node
- */
-KaraCos.Explorer.TreeNode = function(config) {
-	Ext.apply(this, config);
-	KaraCos.Explorer.TreeNode.superclass.constructor.call(this);
-};
-
-Ext.extend( KaraCos.Explorer.TreeNode, Ext.tree.AsyncTreeNode, {
-	
-});
-
-
-
-
-/**
- * Tree Loader
- */
-KaraCos.Explorer.TreeLoader = function(config) {
-	Ext.apply(this, config);
-	KaraCos.Explorer.TreeLoader.superclass.constructor.call(this);
-};
-
-Ext.extend( KaraCos.Explorer.TreeLoader, Ext.tree.TreeLoader, {
-	directFn : function(url, callback, scope) {
-			var response = {
-					status: true,
-					argument: {callback: callback, node: url}
-			};
-			items = KaraCos.Explorer.getNodeItems(url);
-			
-			callback(items,response);
-		}, // directFn
-}); // TreeLoader
-
-/////////////////// Domain Tree Class
-Ext.namespace('KaraCos.Explorer');
-/**
- * KaraCos Domain Tree constructor
- */
-KaraCos.Explorer.DomainTree = function(config) {
-	Ext.apply(this, config);
-	KaraCos.Explorer.DomainTree.superclass.constructor.call(this);
-//	domainRoot = new KaraCos.Explorer.TreeNode({
-	domainRoot = new Ext.tree.AsyncTreeNode({
-	    text: '/', 
-	    draggable:true, // disable root node dragging
-	    cls: 'karacos_file_domain',
-	    id: '\/',
-	});
-//	domainRoot.url = '/';
-	this.setRootNode(domainRoot);
-	this.getSelectionModel().on('selectionchange', this.onSelectionChange, this);
-	this.addEvents({nodeselected:true});
-
-	this.on('contextmenu', this.onContextMenu, this);
-	
-};
-/**
- * KaraCos domain Tree class
- * 
- */
-Ext.extend(KaraCos.Explorer.DomainTree, Ext.tree.TreePanel, {
-	onContextMenu : function(node, e){
-			var that = this;
-			if(this.ctxNode){
-		        this.ctxNode.ui.removeClass('x-node-ctx');
-		        this.ctxNode = null;
-		    }
-		    if(!node.isLeaf()){
-		        this.ctxNode = node;
-		        this.ctxNode.ui.addClass('x-node-ctx');
-		        this.getNodeMenu(node).showAt(e.getXY());
-		        
-		    }
-		},
-	onSelectionChange: function(sm, node){
-			console.log(sm);
-			console.log(node);
-	        if(node){
-	            this.fireEvent('nodeselected', node.attributes);
-	        }
-    },
-	onContextHide : function(){
-	    if(this.ctxNode){
-		        this.ctxNode.ui.removeClass('x-node-ctx');
-		        this.ctxNode = null;
-		    }
-		},
-	
-	getNodeMenu: function(node,focus){
-			var that = this;
-			if(!node.menu){ // create context menu on first right click
-				items = [];
-			    var url_href = "/get_user_actions_forms";
-				if (node.id != '/') {
-					url_href = node.id + "/get_user_actions_forms";
-				}
-				jQuery.ajax({ url: url_href,
-			    	dataType: "json",
-			    	context: document.body,
-			    	async: false, // plugin init should wait for success b4 continuing
-			        success: function(data) {
-			    		jQuery.each(data.data.actions, function(k,v) {
-			    			// Iterate over actions
-			    			menuItem = {
-			    					id: node.id + '\/' + v.action,
-			    					iconCls:'karacos_action_'+ v.action,
-			    					scope: this
-			    					//  handler: this.showWindow,
-			    			};
-			    			if (v.label) {
-			    				menuItem.text = v.label;
-			    			} else {
-			    				menuItem.text = v.action;
-			    			}
-			    			item = new Ext.menu.Item(menuItem);
-			    			items.push(item);
-			    			item.form = v.form;
-						
-			    		}); // end iterate
-					
-					}
-				});// ajax get_user_actions_forms
-				this.menu = new Ext.menu.Menu({
-					id:'feeds-ctx',
-					items: items
-				});
-				this.menu.on('hide', this.onContextHide, this);
-			} // if not node menu
-		return this.menu;
-		}
-
-});
-Ext.namespace('KaraCos.Explorer');
-/**
- * Node Content panel with dropZone
- * 
- */
-KaraCos.Explorer.NodeContentPanel = function(config) {
-	
-	Ext.apply(this, config);
-			
-	// unique store for all tabs
-	var tpl = new Ext.XTemplate(
-		    '<tpl for=".">',
-		        '<div class="karacos-explorer-thumb-wrap">',
-		        '<div class="karacos-explorer-thumb"><img src="{imgsrc}" style="width: 64px;height: 64px;" title="{text}"/></div>',
-		        '<span class="x-editable">{text}</span></div>',
-		    '</tpl>',
-		    '<div class="x-clear"></div>'
-		);
-	this.tpl = tpl;
-	this.ContentGrid = new Ext.DataView({
-        store: config.store,
-        tpl: tpl,
-        autoHeight:true,
-        multiSelect: true,
-        overClass:'karacos-content',
-        itemSelector:'div.thumb-wrap',
-        title:'Node content',
-        emptyText: 'Nothing to display'
-    });
-	this.items = [this.ContentGrid];
-	
-	KaraCos.Explorer.NodeContentPanel.superclass.constructor.call(this);
-	// Initialize panel
-	this.addEvents('fileupload','fileselectionerror' );
-	this.on('render', function(e){
-					e.initDnDUploader(e);								
-				});
-	this.on('fileupload', function(e){
-		console.log(e);								
-	});
-};
-
-Ext.extend(KaraCos.Explorer.NodeContentPanel, Ext.Panel, {
-	initDnDUploader:function(panel){
-			var that = panel;
-			KaraCos.Explorer.sinkBodyEvents();
-			// define listeners for upload action
-			listeners = {
-				scope:panel
-				,uploadloadstart:function(event){
-					//this.updateFile(fileRec, 'status', 'Sending');
-				}
-				,uploadprogress:function(event){
-					//this.updateFile(fileRec, 'progress', Math.round((event.loaded / event.total)*100));
-				}
-				// XHR Events
-				,loadstart:function(event){
-					//this.updateFile(fileRec, 'status', 'Sending');
-				}
-				,progress:function(event){
-					//fileRec.set('progress', Math.round((event.loaded / event.total)*100) );
-					//fileRec.commit();
-				}
-				,abort:function(event){
-					//this.updateFile(fileRec, 'status', 'Aborted');
-					panel.fireEvent('fileupload', panel, false, {error:'XHR upload aborted'});
-				}
-				,error:function(event){
-					//this.updateFile(fileRec, 'status', 'Error');
-					panel.fireEvent('fileupload', panel, false, {error:'XHR upload error'});
-				}
-				,load:function(event){
-					
-					try{
-						var result = Ext.util.JSON.decode(upload.xhr.responseText);//throws a SyntaxError.
-					} catch(e) {
-						Ext.MessageBox.show({
-							buttons: Ext.MessageBox.OK
-							,icon: Ext.MessageBox.ERROR
-							,modal:false
-							,title:'Upload Error!'
-							,msg:'Invalid JSON Data Returned!<BR><BR>Please refresh the page to try again.'
-						});
-						//this.updateFile(fileRec, 'status', 'Error');
-						panel.fireEvent('fileupload', panel, false, {error:'Invalid JSON returned'});
-						return true;
-					} // catch
-					if ( result.success ) {
-						var record = panel.store.recordType( {
-							id:'',
-							text:result.data,
-							imgsrc:result.data,
-							imgstyle:'width:64px;height:64px'
-						});
-						panel.fireEvent('fileupload', panel, true, result);
-					}else{
-						//this.fileAlert('<BR>'+file.name+'<BR><b>'+result.error+'</b><BR>');
-						//this.updateFile(fileRec, 'status', 'Error');
-						panel.fireEvent('fileupload', panel, false, result);
-					}
-				} // load
-			}; // listener
-			
-			KaraCos.Explorer.bindUploadDropFile(panel.el.id,this.getNodeUrl,listeners);
-		}, // initDnd
-		getNodeUrl: function() {
-			url = panel.this.linkedNode.id;
-			t_url = "/";
-			if (url != '/') {
-				t_url = url + '/' + k;
-			} else {
-				t_url = '/' + k;
-			}
-			return url;
-		}
-			
-});
-/**
- * Node tabbed panel
- * 
- */
-Ext.namespace('KaraCos.Explorer');
-KaraCos.Explorer.ItemTabPanel = function(config) {
-	Ext.apply(this, config);
-	// unique store for all tabs
-	this.contentElementsStore = new Ext.data.JsonStore({
-        fields: ['id','text','imgsrc','imgstyle']
-
-	});
-	that = this;
-	this.nodeContentPanel = new KaraCos.Explorer.NodeContentPanel({
-		store: this.contentElementsStore,
-        autoHeight:true,
-        title:'Node content',
-        });
-	this.items = [this.nodeContentPanel];
-	KaraCos.Explorer.ItemTabPanel.superclass.constructor.call(this);
-	this.nodeContentPanel.getNode = function() {
-		console.log("getNode");
-		console.log(that.linkedNode);
-		return that.linkedNode;
-	};
-	this.nodeContentPanel.on('fileupload',this.refresh, this);
-};
-Ext.extend(KaraCos.Explorer.ItemTabPanel, Ext.TabPanel, {
-	nodeSelected: function(node) {
-		items = KaraCos.Explorer.getNodeItems(node.id);
-		this.linkedNode = node;
-		this.contentElementsStore.loadData(items);
-		this.nodeContentPanel.linkedNode = node;
-	},
-	refresh: function(file, result) {
-		console.log(file);
-		items = KaraCos.Explorer.refreshNodeItems(this.linkedNode.id);
-		this.contentElementsStore.loadData(items);
-	}
-});
-/**
- * Main explorer Panel for admin
- * 
- * 
- */
-/*Ext.override(Ext.dd.DDProxy, {
-    startDrag: function(x, y) {
-        var dragEl = Ext.get(this.getDragEl());
-        var el = Ext.get(this.getEl());
- 
-        dragEl.applyStyles({border:'','z-index':2000});
-        dragEl.update(el.dom.innerHTML);
-        dragEl.addClass(el.dom.className + ' dd-proxy');
-    },
-    
-
-}); */
-
-Ext.namespace('KaraCos.Explorer');
-
-KaraCos.Explorer.DomainExplorer = function(config) {
-	Ext.apply(this, config);
-	this.treePanel = new KaraCos.Explorer.DomainTree({
-		title: 'Navigation',
-	    region: 'west',
-	    animate:true, 
-	    autoScroll:true,
-	    loader: new KaraCos.Explorer.TreeLoader({dataUrl:'/'}),//KaraCos.Explorer.TreeLoader({dataUrl:'/'}),
-	    enableDD:true,
-	    containerScroll: true,
-	    border: false,
-	    width: 250,
-	    height: 300,
-	    dropConfig: {appendOnly:true}
-	});
-	console.log(this);
-	
-	this.tabPanel = new KaraCos.Explorer.ItemTabPanel({
-		title: 'Content',
-		region: 'center',
-		margins:'3 3 3 0', 
-		activeTab: 0,
-		defaults:{autoScroll:true},
-	});
-	this.items = [this.treePanel,this.tabPanel];	 
-	KaraCos.Explorer.DomainExplorer.superclass.constructor.call(this);
-	this.treePanel.on('nodeselected',this.onTreeSelection, this);
-};
-
-Ext.extend(KaraCos.Explorer.DomainExplorer, Ext.Window, {
-	onTreeSelection: function(node) {
-		//this.contentElementsStore
-		this.tabPanel.nodeSelected(node);
-		//this.tabPanel.contentElementsStore.loadData(items);
-	},
-});
-KaraCos.Explorer.domainExplorer = new KaraCos.Explorer.DomainExplorer({
-    title: 'Explorer',
-    width:600,
-    height:350,
-    //border:false,
-    plain:true,
-    layout: 'border',
-    closeAction: 'hide',
-});
 /*!
 * Aloha Editor
 * Author & Copyright (c) 2010 Gentics Software GmbH
@@ -93737,6 +94085,8 @@ GENTICS.Aloha.TablePlugin.parameters = {
 	classLeftUpperCorner : 'GENTICS_Aloha_Table_leftUpperCorner', // class for the left upper corner cell
 	classTableWrapper    : 'GENTICS_Aloha_Table_wrapper',         // class of the outest table-wrapping div
 	classCellSelected    : 'GENTICS_Aloha_Cell_selected',         // class of cell which are selected (row/column selection)
+	waiRed				 : 'GENTICS_WAI_RED',                     // class that shows wai of div 
+	waiGreen			 : 'GENTICS_WAI_GREEN',                   // class that shows wai of div 
 	selectionArea        : 10                                     // width/height of the selection rows (in pixel)
 };
 
@@ -93756,7 +94106,8 @@ GENTICS.Aloha.TablePlugin.init = function() {
 
 	// subscribe for the 'editableActivated' event to activate all tables in the editable
 	GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha, 'editableCreated', function(event, editable) {
-		// add a mousedown event to all created editables to check if  
+		
+		// add a mousedown event to all created editables to check if focus leaves a table
 		editable.obj.bind('mousedown', function(jqEvent) {
 			GENTICS.Aloha.TablePlugin.setFocusedTable(undefined);
 		});
@@ -93764,13 +94115,14 @@ GENTICS.Aloha.TablePlugin.init = function() {
 		editable.obj.find('table').each(function() {
 			// only convert tables which are editable
 			if (that.isEditableTable(this)) {
+
 				// instantiate a new table-object 
 				var table = new GENTICS.Aloha.Table(this);
 		
 				table.parentEditable = editable;
-	
+
 				// activate the table
-				table.activate();
+//				table.activate();
 		
 				// add the activated table to the TableRegistry
 				GENTICS.Aloha.TablePlugin.TableRegistry.push(table);
@@ -93781,7 +94133,7 @@ GENTICS.Aloha.TablePlugin.init = function() {
 	// initialize the table buttons
 	this.initTableButtons();
 
-	GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha, 'selectionChanged', function(event, properties) {
+	GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha, 'selectionChanged', function(event, rangeObject) {
 
 		if (GENTICS.Aloha.activeEditable) {
 			// get Plugin configuration
@@ -93794,21 +94146,69 @@ GENTICS.Aloha.TablePlugin.init = function() {
 				that.createTableButton.hide();
 			}
 			
-			// set the scope if either columns or rows are selected
-			if (typeof GENTICS.Aloha.TableHelper.selectionType != undefined) {
-				GENTICS.Aloha.FloatingMenu.setScope(that.getUID(GENTICS.Aloha.TableHelper.selectionType));
-			}
+			GENTICS.Aloha.TableHelper.unselectCells();
 			
+			var table = rangeObject.findMarkup(function() {
+		        return this.nodeName.toLowerCase() == 'table';
+		    }, GENTICS.Aloha.activeEditable.obj);
+			
+			// check wheater we are inside a table
+			if ( table ) {
+				// set the scope if either columns or rows are selected
+				GENTICS.Aloha.FloatingMenu.setScope(that.getUID(GENTICS.Aloha.TableHelper.selectionType));
+			} else {
+				if ( that.activeTable ) {
+					that.activeTable.focusOut();
+				}
+			}
+		
 			// TODO this should not be necessary here!
 			GENTICS.Aloha.FloatingMenu.doLayout();
 		}
 	});
 
+	// subscribe for the 'editableActivated' event to activate all tables in the editable
+	GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha, 'editableActivated', function(event, props) {
+		props.editable.obj.find('table').each(function() {
+			// shortcut for TableRegistry
+			var tr = GENTICS.Aloha.TablePlugin.TableRegistry;
+			for (var i = 0; i < tr.length; i++){
+				if (tr[i].obj.attr('id') == jQuery(this).attr('id')) {
+					// activate the table
+					tr[i].activate();
+					// and continue with the next table tag
+					return true;
+				}
+			}
+
+			// if we come here, we did not find the table in our registry, so we need to create a new one
+			// only convert tables which are editable
+			if (that.isEditableTable(this)) {
+
+				// instantiate a new table-object 
+				var table = new GENTICS.Aloha.Table(this);
+		
+				table.parentEditable = props.editable;
+
+				// activate the table
+				table.activate();
+		
+				// add the activated table to the TableRegistry
+				GENTICS.Aloha.TablePlugin.TableRegistry.push(table);
+			}
+		});
+	});
+	
 	// subscribe for the 'editableDeactivated' event to deactivate all tables in the editable
 	GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha, 'editableDeactivated', function(event, properties) {
 		GENTICS.Aloha.TablePlugin.setFocusedTable(undefined);
-		
 		GENTICS.Aloha.TableHelper.unselectCells();
+		// shortcut for TableRegistry
+		var tr = GENTICS.Aloha.TablePlugin.TableRegistry;
+		for (var i = 0; i < tr.length; i++){
+			// activate the table
+			tr[i].deactivate();
+		}
 	});
 };
 
@@ -93818,7 +94218,7 @@ GENTICS.Aloha.TablePlugin.init = function() {
  */
 GENTICS.Aloha.TablePlugin.isEditableTable = function(table) {
 	var parent = jQuery(table.parentNode);
-	if (parent.attr('contenteditable') == 'true') {
+	if (parent.contentEditable() == 'true') {
 		return true;
 	} else {
 		return false;
@@ -93830,6 +94230,11 @@ GENTICS.Aloha.TablePlugin.isEditableTable = function(table) {
  */
 GENTICS.Aloha.TablePlugin.initTableButtons = function () {
 	var that = this;
+
+	// generate the new scopes
+	GENTICS.Aloha.FloatingMenu.createScope(this.getUID('row'), 'GENTICS.Aloha.global');
+	GENTICS.Aloha.FloatingMenu.createScope(this.getUID('column'), 'GENTICS.Aloha.global');
+	GENTICS.Aloha.FloatingMenu.createScope(this.getUID('cell'), 'GENTICS.Aloha.continuoustext');
 
 	// the 'create table' button
 	this.createTableButton = new GENTICS.Aloha.ui.Button({
@@ -93848,10 +94253,6 @@ GENTICS.Aloha.TablePlugin.initTableButtons = function () {
 		GENTICS.Aloha.i18n(GENTICS.Aloha, 'floatingmenu.tab.insert'),
 		1
 	);
-
-	// generate the new scopes
-	GENTICS.Aloha.FloatingMenu.createScope(this.getUID('row'), 'GENTICS.Aloha.global');
-	GENTICS.Aloha.FloatingMenu.createScope(this.getUID('column'), 'GENTICS.Aloha.global');
 
 	// now the specific table buttons
 	// for columns
@@ -93967,6 +94368,81 @@ GENTICS.Aloha.TablePlugin.initTableButtons = function () {
 		GENTICS.Aloha.i18n(this, 'floatingmenu.tab.table'),
 		1
 	);
+	
+	this.captionButton = new GENTICS.Aloha.ui.Button({
+		'iconClass' : 'GENTICS_button GENTICS_button_table_caption',
+		'size' : 'small',
+		'tooltip' : this.i18n('button.caption.tooltip'),
+        'toggle' : true,
+		'onclick' : function () {
+			if (that.activeTable) {
+				// look if table object has a child caption
+				if ( that.activeTable.obj.children("caption").is('caption') ) {
+					that.activeTable.obj.children("caption").remove();
+					// select first cell of table
+				} else {						
+					var captionText = that.i18n('empty.caption');
+					var c = jQuery('<caption></caption>');
+					that.activeTable.obj.append(c);
+					that.makeCaptionEditable(c, captionText);
+				}
+			}
+		}
+	});
+	GENTICS.Aloha.FloatingMenu.addButton(
+		this.getUID('cell'),
+		this.captionButton,
+		GENTICS.Aloha.i18n(this, 'floatingmenu.tab.table'),
+		1
+	);
+	
+	// for cells
+    // add summary field
+    this.summary = new GENTICS.Aloha.ui.AttributeField({
+    	'width':350
+    });
+    this.summary.addListener('keyup', function(obj, event) {
+    	that.activeTable.checkWai();
+    });
+    GENTICS.Aloha.FloatingMenu.addButton(
+        this.getUID('cell'),
+        this.summary,
+        GENTICS.Aloha.i18n(this, 'floatingmenu.tab.table'),
+        1
+    );
+};
+
+/**
+ * Helper method to make the caption editable
+ * @param caption caption as jQuery object
+ * @param captionText default text for the caption
+ */
+GENTICS.Aloha.TablePlugin.makeCaptionEditable = function(caption, captionText) {
+	var cSpan = caption.children('div').eq(0);
+	if (cSpan.length == 0) {
+		// generate a new div
+		cSpan = jQuery('<div></div>');
+		if (caption.contents().length > 0) {
+			// when the caption has content, we wrap it with the new div
+			caption.contents().wrap(cSpan);
+		} else {
+			// caption has no content, so insert the default caption text
+			if (captionText) {
+				cSpan.text(captionText);
+			}
+			// and append the div into the caption
+			caption.append(cSpan);
+		}
+	}
+	// make the div editable
+	cSpan.contentEditable(true);
+	cSpan.unbind('mousedown');
+	// focus on click
+	cSpan.bind('mousedown', function(jqEvent) {
+		this.focus();
+	});
+	// and focus now
+    cSpan.focus();
 };
 
 /**
@@ -94050,12 +94526,20 @@ GENTICS.Aloha.TablePlugin.createTable = function(cols, rows) {
 };
 
 GENTICS.Aloha.TablePlugin.setFocusedTable = function(focusTable) {
+	var that = this;
 	for (var i = 0; i < GENTICS.Aloha.TablePlugin.TableRegistry.length; i++) {
 		GENTICS.Aloha.TablePlugin.TableRegistry[i].hasFocus = false;
 	}
 	if (typeof focusTable != 'undefined') {
+        this.summary.setTargetObject(focusTable.obj, 'summary');
+        if ( focusTable.obj.children("caption").is('caption') ) {
+        	// set caption button
+        	that.captionButton.setPressed(true);
+        	var c = focusTable.obj.children("caption");
+        	that.makeCaptionEditable(c);
+        }
 		focusTable.hasFocus = true;
-	}	
+	}
 	GENTICS.Aloha.TablePlugin.activeTable = focusTable;
 };
 
@@ -94155,7 +94639,6 @@ GENTICS.Aloha.TablePlugin.makeClean = function (obj) {
 	obj.find('table').each(function() {
 		// instantiate a new table-object 
 		var table = new GENTICS.Aloha.Table(this);
-
 		// deactivate the table
 		table.deactivate();
 	});
@@ -94187,6 +94670,10 @@ GENTICS.Aloha.TablePlugin.toString = function() {
 GENTICS.Aloha.Table = function(table) {
 	// set the table attribut "obj" as a jquery represenation of the dom-table
 	this.obj = jQuery(table);
+
+	if ( !this.obj.attr('id') ) {
+		this.obj.attr('id', GENTICS.Utils.guid());
+	}
 	
 	// find the dimensions of the table
 	var rows = this.obj.find("tr");
@@ -94328,7 +94815,7 @@ GENTICS.Aloha.Table.prototype.activate = function() {
 	
 	// alter the table attributes
 	this.obj.addClass(this.get('className'));
-	this.obj.attr('contenteditable', 'false');
+	this.obj.contentEditable(false);
 
 	// set an id to the table if not already set
 	if (this.obj.attr('id') == '') {
@@ -94347,25 +94834,28 @@ GENTICS.Aloha.Table.prototype.activate = function() {
 	});
 	
 	// handle click event of the table
-	this.obj.bind('click', function(e){
-		// stop bubbling the event to the outer divs, a click in the table
-		// should only be handled in the table
-		e.stopPropagation();
-		return false;
-	});
+//	this.obj.bind('click', function(e){
+//		// stop bubbling the event to the outer divs, a click in the table
+//		// should only be handled in the table
+//		e.stopPropagation();
+//		return false;
+//	});
 	
 	this.obj.bind('mousedown', function(jqEvent) {
 		// focus the table if not already done
 		if (!that.hasFocus) {
 			that.focus();
 		}
-		
-		// if a mousedown is done on the table, just focus the first cell of the table
-		setTimeout(function() {
-			var firstCell = that.obj.find('tr:nth-child(2) td:nth-child(2)').children('div[contenteditable=true]').get(0);
-			GENTICS.Aloha.TableHelper.unselectCells();
-			jQuery(firstCell).get(0).focus();
-		}, 5);
+
+// DEACTIVATED by Haymo prevents selecting rows
+//		// if a mousedown is done on the table, just focus the first cell of the table
+//		setTimeout(function() {
+//			var firstCell = that.obj.find('tr:nth-child(2) td:nth-child(2)').children('div[contenteditable=true]').get(0);
+//			GENTICS.Aloha.TableHelper.unselectCells();
+//			jQuery(firstCell).get(0).focus();
+//			// move focus in first cell
+//			that.obj.cells[0].wrapper.get(0).focus();
+//		}, 0);
 		
 		// stop bubbling and default-behaviour
 		jqEvent.stopPropagation();
@@ -94376,8 +94866,9 @@ GENTICS.Aloha.Table.prototype.activate = function() {
 	// ### create a wrapper for the table (@see HINT below)
 	// wrapping div for the table to suppress the display of the resize-controls of
 	// the editable divs within the cells
-	var tableWrapper = jQuery('<div class="' + this.get('classTableWrapper') + '" contenteditable="false"></div>');
-	
+	var tableWrapper = jQuery('<div class="' + this.get('classTableWrapper') + '"></div>');
+	tableWrapper.contentEditable(false);
+
 	// wrap the tableWrapper around the table
 	this.obj.wrap(tableWrapper);
 
@@ -94405,6 +94896,13 @@ GENTICS.Aloha.Table.prototype.activate = function() {
 	
 	// attach events for the last cell
 	this.attachLastCellEvents();
+
+	// make the caption editable
+	
+	this.makeCaptionEditable();
+
+	// check WAI status
+	this.checkWai();
 	
 	// set flag, that the table is activated
 	this.isActive = true;
@@ -94417,6 +94915,30 @@ GENTICS.Aloha.Table.prototype.activate = function() {
 					[ this ]
 			)
 	);
+};
+
+/**
+ * Make the table caption editable (if present)
+ */
+GENTICS.Aloha.Table.prototype.makeCaptionEditable = function() {
+	var caption = this.obj.find('caption').eq(0);
+	if (caption) {
+		GENTICS.Aloha.TablePlugin.makeCaptionEditable(caption);
+	}
+};
+
+/**
+ * check the WAI conformity of the table and sets the attribute.
+ */
+GENTICS.Aloha.Table.prototype.checkWai = function() {
+	var w = this.wai;
+	w.removeClass(this.get('waiGreen'));
+	w.removeClass(this.get('waiRed'));
+	if (this.obj[0].summary.length > 5 ) {
+		w.addClass(this.get('waiGreen'));
+	} else {
+		w.addClass(this.get('waiRed'));
+	}
 };
 
 /**
@@ -94467,19 +94989,17 @@ GENTICS.Aloha.Table.prototype.attachRowSelectionEventsToCell = function(cell){
 	cell.get(0).onselectstart = function() { return false; };
 	
 	cell.bind('mousedown', function(e){
-		that.rowSelectionMouseDown(e);
-		
-		// focus the table (if not already done)
-		that.focus();
-		
-		// stop bubble, otherwise the mousedown of the table is called ...
-		e.stopPropagation();
-		
-		// prevent ff/chrome/safare from selecting the contents of the table 
-		//return false;
+		// set flag that the mouse is pressed
+		that.mousedown = true;
+		return that.rowSelectionMouseDown(e);
 	});
 	
-	cell.bind('mouseover', function(e) { that.rowSelectionMouseOver(e); e.preventDefault(); });
+	cell.bind('mouseover', function(e){
+		// only select more crows if the mouse is pressed
+		if ( that.mousedown ) {
+			return that.rowSelectionMouseOver(e);
+		}
+	});
 };
 
 /**
@@ -94490,8 +95010,9 @@ GENTICS.Aloha.Table.prototype.attachRowSelectionEventsToCell = function(cell){
  * @return void
  */
 GENTICS.Aloha.Table.prototype.rowSelectionMouseDown = function (jqEvent) {
-	// set flag that the mouse is pressed
-	this.mousedown = true;
+
+	// focus the table (if not already done)
+	this.focus();
 	
 	// if no cells are selected, reset the selection-array
 	if (GENTICS.Aloha.TableHelper.selectedCells.length == 0) {
@@ -94501,15 +95022,16 @@ GENTICS.Aloha.Table.prototype.rowSelectionMouseDown = function (jqEvent) {
 	// set the origin-rowId of the mouse-click
 	this.clickedRowId = jqEvent.currentTarget.parentNode.rowIndex;
 	
-	// set the array of to-be-selected columns
-	if (jqEvent.ctrlKey) {
+	// set single column selection
+	if (jqEvent.metaKey) {
 		var arrayIndex = jQuery.inArray(this.clickedRowId, this.rowsToSelect); 
 		if (arrayIndex >= 0) {
 			this.rowsToSelect.splice(arrayIndex, 1);
 		}else{
 			this.rowsToSelect.push(this.clickedRowId);
 		}
-	}else if (jqEvent.shiftKey) {
+	// block of colums selection
+	} else if (jqEvent.shiftKey) {
 		this.rowsToSelect.sort(function(a,b){return a - b;});
 		var start = this.rowsToSelect[0];
 		var end = this.clickedRowId;
@@ -94521,15 +95043,22 @@ GENTICS.Aloha.Table.prototype.rowSelectionMouseDown = function (jqEvent) {
 		for (var i = start; i <= end; i++) {
 			this.rowsToSelect.push(i);
 		}
-	}else{
+	// single column	
+	} else {
 		this.rowsToSelect = [this.clickedRowId];
 	}
 	
-	// do the selection
+	// mark the selection visual 
 	this.selectRows();
 	
 	// prevent browser from selecting the table
 	jqEvent.preventDefault();
+	
+	// stop bubble, otherwise the mousedown of the table is called ...
+	jqEvent.stopPropagation();
+	
+	// prevent ff/chrome/safare from selecting the contents of the table 
+	return false;
 };
 
 /**
@@ -94547,6 +95076,11 @@ GENTICS.Aloha.Table.prototype.rowSelectionMouseOver = function (jqEvent) {
 	// only select the row if the mouse was clicked and the clickedRowId isn't
 	// from the selection-row (row-id = 0)
 	if (this.mousedown && this.clickedRowId >= 0) {
+		
+		// select first cell
+//		var firstCell = this.obj.find('tr:nth-child(2) td:nth-child(2)').children('div[contenteditable=true]').get(0);
+//		jQuery(firstCell).get(0).focus();	
+		
 		var indexInArray = jQuery.inArray(rowIndex, this.rowsToSelect);
 		
 		var start = (rowIndex < this.clickedRowId) ? rowIndex : this.clickedRowId;
@@ -94559,6 +95093,15 @@ GENTICS.Aloha.Table.prototype.rowSelectionMouseOver = function (jqEvent) {
 		
 		// this actually selects the rows
 		this.selectRows();
+		
+		// prevent browser from selecting the table
+		jqEvent.preventDefault();
+		
+		// stop bubble, otherwise the mousedown of the table is called ...
+		jqEvent.stopPropagation();
+		
+		// prevent ff/chrome/safare from selecting the contents of the table 
+		return false;
 	}
 };
 
@@ -94582,14 +95125,40 @@ GENTICS.Aloha.Table.prototype.attachSelectionRow = function() {
 	selectionRow.addClass(this.get('classSelectionRow'));
 	selectionRow.css('height', this.get('selectionArea') + 'px');
 	for (var i = 0; i < numColumns; i++) {
-		var columnToInsert = emptyCell.clone();
-		
+
+		var columnToInsert = emptyCell.clone();			
 		// the first cell should have no function, so only attach the events for
 		// the rest
 		if (i > 0) {
 			// bind all mouse-events to the cell
 			this.attachColumnSelectEventsToCell(columnToInsert);
+		} else {
+			var columnToInsert = jQuery('<td>').clone();
+			columnToInsert.addClass(this.get('classLeftUpperCorner'));
+			this.wai = jQuery('<div/>');
+			this.wai.width(25);
+			this.wai.height(12);
+			this.wai.click( function(e) {
+				
+				// select Table
+				that.focus();
+				
+				// select first cell
+//				var firstCell = that.obj.find('tr:nth-child(2) td:nth-child(2)').children('div[contenteditable=true]').get(0);
+//				jQuery(firstCell).get(0).focus();
+				
+			    GENTICS.Aloha.FloatingMenu.userActivatedTab = GENTICS.Aloha.TablePlugin.i18n('floatingmenu.tab.table');
+				GENTICS.Aloha.FloatingMenu.doLayout();
+				
+				// jump in Summary field
+			    GENTICS.Aloha.TablePlugin.summary.focus();
+				e.stopPropagation();
+				e.preventDefault();
+				return false;
+			});
+			columnToInsert.append(this.wai);
 		}
+		
 		// add the cell to the row
 		selectionRow.append(columnToInsert);
 	}
@@ -94599,8 +95168,6 @@ GENTICS.Aloha.Table.prototype.attachSelectionRow = function() {
 		that.clickedColumnId = -1;
 		that.clickedRowId = -1;
 	});
-	
-	selectionRow.find('td:first').addClass(this.get('classLeftUpperCorner'));
 	this.obj.find('tr:first').before(selectionRow);
 };
 
@@ -94622,19 +95189,17 @@ GENTICS.Aloha.Table.prototype.attachColumnSelectEventsToCell = function (cell) {
 	cell.get(0).onselectstart = function() { return false; };
 	
 	cell.bind('mousedown',  function(e) {
+		// set the mousedown flag
+		that.mousedown = true;
 		that.columnSelectionMouseDown(e);
-		
-		// focus the table
-		that.focus();
-		
-		// stop bubble, otherwise the mousedown of the table is called ...
-		e.stopPropagation();
-		
-		return false;
+
 	});
 	
 	cell.bind('mouseover', function (e) {
-		that.columnSelectionMouseOver(e);
+		// only select more crows if the mouse is pressed
+		if ( that.mousedown ) {
+			that.columnSelectionMouseOver(e);
+		}
 	});
 };
 
@@ -94648,9 +95213,13 @@ GENTICS.Aloha.Table.prototype.attachColumnSelectEventsToCell = function (cell) {
  * @return void
  */
 GENTICS.Aloha.Table.prototype.columnSelectionMouseDown = function (jqEvent) {
-	// set the mousedown flag
-	this.mousedown = true;
+
+	this.focus();
 	
+	// select first cell
+//	var firstCell = this.obj.find('tr:nth-child(2) td:nth-child(2)').children('div[contenteditable=true]').get(0);
+//	jQuery(firstCell).get(0).focus();	
+
 	// if no cells are selected, reset the selection-array
 	if (GENTICS.Aloha.TableHelper.selectedCells.length == 0) {
 		this.columnsToSelect = new Array();
@@ -94658,7 +95227,7 @@ GENTICS.Aloha.Table.prototype.columnSelectionMouseDown = function (jqEvent) {
 	
 	// store the id of the column which has been originally clicked
 	this.clickedColumnId = jqEvent.currentTarget.cellIndex;
-	if (jqEvent.ctrlKey) {
+	if (jqEvent.metaKey) {
 		var arrayIndex = jQuery.inArray(this.clickedColumnId, this.columnsToSelect); 
 		if (arrayIndex >= 0) {
 			this.columnsToSelect.splice(arrayIndex, 1);
@@ -94687,6 +95256,11 @@ GENTICS.Aloha.Table.prototype.columnSelectionMouseDown = function (jqEvent) {
 	
 	// prevent browser from selecting the table
 	jqEvent.preventDefault();
+	
+	// stop bubble, otherwise the mousedown of the table is called ...
+	jqEvent.stopPropagation();
+	
+	return false;
 };
 
 /**
@@ -95250,13 +95824,20 @@ GENTICS.Aloha.Table.prototype.focus = function() {
 		if (!this.parentEditable.isActive) {
 			this.parentEditable.obj.focus();
 		}
-
+		
 		GENTICS.Aloha.TablePlugin.setFocusedTable(this);
-	}
 
+		// select first cell
+		// TODO put cursor in first cell without selecting
+//		var firstCell = this.obj.find('tr:nth-child(2) td:nth-child(2)').children('div[contenteditable=true]').get(0);
+//		jQuery(firstCell).get(0).focus();
+
+	}
+	
 	// TODO workaround - fix this. the selection is updated later on by the browser
 	// using setTimeout here is hideous, but a simple execution-time call will fail
-	setTimeout('GENTICS.Aloha.Selection.updateSelection(false, true)', 50);
+// DEACTIVATED by Haymo prevents selecting rows
+//	setTimeout('GENTICS.Aloha.Selection.updateSelection(false, true)', 50);
 	
 };
 
@@ -95267,8 +95848,8 @@ GENTICS.Aloha.Table.prototype.focus = function() {
  */
 GENTICS.Aloha.Table.prototype.focusOut = function() {
 	if (this.hasFocus) {
-		this.hasFocus = false;
 		GENTICS.Aloha.TablePlugin.setFocusedTable(undefined);
+		GENTICS.Aloha.TableHelper.selectionType = undefined;
 	}
 };
 
@@ -95285,6 +95866,7 @@ GENTICS.Aloha.Table.prototype.selectColumns = function() {
 	GENTICS.Aloha.TableHelper.unselectCells();
 
 	GENTICS.Aloha.TableHelper.selectionType = 'column';
+	GENTICS.Aloha.FloatingMenu.setScope(GENTICS.Aloha.TablePlugin.getUID('column'));
 
 	this.columnsToSelect.sort(function(a,b){return a - b;});
 
@@ -95336,6 +95918,7 @@ GENTICS.Aloha.Table.prototype.selectRows = function() {
 		jQuery(rowCells).addClass(this.get('classCellSelected'));
 	}
 	GENTICS.Aloha.TableHelper.selectionType = 'row';
+	GENTICS.Aloha.FloatingMenu.setScope(GENTICS.Aloha.TablePlugin.getUID('row'));
 
 	// blur all editables within the table
 	this.obj.find('div.GENTICS_Table_Cell_editable').blur();
@@ -95353,8 +95936,8 @@ GENTICS.Aloha.Table.prototype.deactivate = function() {
 	if (GENTICS.Aloha.trim(this.obj.attr('class')) == '') {
 		this.obj.removeAttr('class');
 	}
-	this.obj.removeAttr('contenteditable');
-	this.obj.removeAttr('id');
+//	this.obj.contentEditable('');
+//	this.obj.removeAttr('id');
 
 	// unwrap the selectionLeft-div if available
 	if (this.obj.parents('.' + this.get('classTableWrapper')).length){
@@ -95377,6 +95960,14 @@ GENTICS.Aloha.Table.prototype.deactivate = function() {
 		var Cell = this.cells[i];
 		Cell.deactivate();
 	}
+
+	// remove editable span in caption (if any)
+	this.obj.find('caption div').each(function() {
+		jQuery(this).contents().unwrap();
+	});
+
+	// better unset ;-) otherwise activate() may think you're activated.
+	this.isActive = false;
 };
 
 /**
@@ -95483,7 +96074,9 @@ GENTICS.Aloha.Table.Cell.prototype.editableFocus = function(e) {
 		this.selectAll(this.wrapper.get(0));
 
 		// unset the selection type
-		GENTICS.Aloha.TableHelper.selectionType = undefined;
+		GENTICS.Aloha.TableHelper.selectionType = 'cell';
+//		GENTICS.Aloha.FloatingMenu.setScope(GENTICS.Aloha.TablePlugin.getUID('cell'));
+
 	}
 };
 
@@ -95515,13 +96108,13 @@ GENTICS.Aloha.Table.Cell.prototype.activate = function() {
 	// create the editable wrapper for the cells
 	var wrapper = this.obj.children('div').eq(0);
 
-	wrapper.attr('contenteditable', 'true');
+	wrapper.contentEditable(true);
 	wrapper.addClass('GENTICS_Table_Cell_editable');
 
 
 	var that = this;
 	// attach events to the editable div-object
-	wrapper.bind('focus',     function(jqEvent) {
+	wrapper.bind('focus', function(jqEvent) {
 		// ugly workaround for ext-js-adapter problem in ext-jquery-adapter-debug.js:1020
 		if (jqEvent.currentTarget) {
 			jqEvent.currentTarget.indexOf = function () {
@@ -96160,19 +96753,21 @@ GENTICS.Aloha.ListPlugin.init = function() {
 GENTICS.Aloha.ListPlugin.applyButtonConfig = function (obj) {
 
 	var config = this.getEditableConfig(obj);
-	
-	// show/hide them according to the config
-	if (jQuery.inArray('ul', config) != -1 && GENTICS.Aloha.Selection.canTag1WrapTag2(GENTICS.Aloha.Selection.rangeObject.unmodifiableMarkupAtStart[0].nodeName, "ul") != -1) {
-		this.createUnorderedListButton.show();
-	} else {
-		this.createUnorderedListButton.hide();
-	}
 
-	if (jQuery.inArray('ol', config) != -1 && GENTICS.Aloha.Selection.canTag1WrapTag2(GENTICS.Aloha.Selection.rangeObject.unmodifiableMarkupAtStart[0].nodeName, "ol") != -1) {
-		this.createOrderedListButton.show();
-	} else {
-		this.createOrderedListButton.hide();
-	}	
+	if (GENTICS.Aloha.Selection.rangeObject.unmodifiableMarkupAtStart[0]) {
+		// show/hide them according to the config
+		if (jQuery.inArray('ul', config) != -1 && GENTICS.Aloha.Selection.canTag1WrapTag2(GENTICS.Aloha.Selection.rangeObject.unmodifiableMarkupAtStart[0].nodeName, "ul") != -1) {
+			this.createUnorderedListButton.show();
+		} else {
+			this.createUnorderedListButton.hide();
+		}
+		
+		if (jQuery.inArray('ol', config) != -1 && GENTICS.Aloha.Selection.canTag1WrapTag2(GENTICS.Aloha.Selection.rangeObject.unmodifiableMarkupAtStart[0].nodeName, "ol") != -1) {
+			this.createOrderedListButton.show();
+		} else {
+			this.createOrderedListButton.hide();
+		}
+	}
 };
 
 
@@ -96516,7 +97111,6 @@ GENTICS.Aloha.ListPlugin.mergeAdjacentLists = function (jqList) {
 		jqNextList.remove();
 	}
 };
-
 /*!
 * Aloha Editor
 * Author & Copyright (c) 2010 Gentics Software GmbH
@@ -96955,7 +97549,6 @@ GENTICS.Aloha.Link.makeClean = function (obj) {
 		jQuery(this).removeClass('GENTICS_link_text');
 	});
 };
-
 if (typeof eu == "undefined") {
     var eu = {};
     
@@ -96999,40 +97592,100 @@ eu.iksproject.LoaderPlugin.loadAsset = function(pluginNamespace, assetName, asse
     }
 };
 
-
-/*!
-* Aloha Img plugin
-* This plugin is a contribution of Nicolas Karageuzian
+/*
+* Aloha Image Plugin - Allow image manipulation in Aloha Editor
+* 
+*   Copyright (C) 2010 by Nicolas Karageuzian - http://nka.me/
+*	Copyright (C) 2010 by Benjamin Athur Lupton - http://www.balupton.com
 * Licensed unter the terms of AGPL http://www.gnu.org/licenses/agpl-3.0.html
-* Requires IKS Loader
+*
+* do not require anymore IKS Loader
 */
 
-if(typeof KaraCos=="undefined"||!KaraCos)
-    {
-    var KaraCos={};
-    }
+// Attributes manipulation utilities
+// Aloha team may want to factorize, it could be useful for other plugins
+// Prototypes
+String.prototype.toInteger = String.prototype.toInteger || function(){
+	return parseInt(String(this).replace(/px$/,'')||0,10);
+};
+String.prototype.toFloat = String.prototype.toInteger || function(){
+	return parseFloat(String(this).replace(/px$/,'')||0,10);
+};
+Number.prototype.toInteger = Number.prototype.toInteger || String.prototype.toInteger;
+Number.prototype.toFloat = Number.prototype.toFloat || String.prototype.toFloat;
 
-KaraCos.Img=new GENTICS.Aloha.Plugin("org.karacos.aloha.Img");
-eu.iksproject.LoaderPlugin.loadAsset('org.karacos.aloha.Img', 'style', 'css');
-KaraCos.Img.languages=["en","fr"];
-KaraCos.Img.config = ['img'];
+// jQuery
+jQuery.fn.increase = jQuery.fn.increase || function(attr){
+	var	obj = jQuery(this),
+		value = obj.css(attr).toFloat(),
+		newValue = Math.round((value||1)*1.2);
+	if (value == newValue) { // when value is 2, won't increase
+		newValue++;
+	}
+	// Apply
+	obj.css(attr,newValue);
+	// Chain
+	return obj;
+};
+jQuery.fn.decrease = jQuery.fn.decrease || function(attr){
+	var	obj = jQuery(this),
+		value = obj.css(attr).toFloat(),
+		newValue = Math.round((value||0)*0.8);
+	// Apply
+	if (value == newValue && newValue >0) { // when value is 2, won't increase
+		newValue--;
+	}
+	obj.css(attr,newValue);
+	// Chain
+	return obj;
+};
+
+
+
+GENTICS.Aloha.Image=new GENTICS.Aloha.Plugin("com.gentics.aloha.plugins.Image");
+
+GENTICS.Aloha.Image.languages=["en","fr","de"];
+GENTICS.Aloha.Image.config = { 'img': { 'max_width': '50px',
+		'max_height': '50px' }};
 /*
  * Initalize plugin
  */
-KaraCos.Img.init=function(){
-	
-	var that=this;
+GENTICS.Aloha.Image.init=function(){
+	// get settings
+    if (GENTICS.Aloha.Image.settings.objectTypeFilter != undefined)
+    	GENTICS.Aloha.Image.objectTypeFilter = GENTICS.Aloha.Image.settings.objectTypeFilter;	
+    if (GENTICS.Aloha.Image.settings.dropEventHandler != undefined)
+    	GENTICS.Aloha.Image.dropEventHandler = GENTICS.Aloha.Image.settings.dropEventHandler;	
+
+    var that=this;
 	that.initImage();
 	that.bindInteractions();
 	that.subscribeEvents();
+	stylePath = GENTICS_Aloha_base + '/plugins/com.gentics.aloha.plugins.Image/style.css';
+	jQuery('<link rel="stylesheet" />').attr('href', stylePath).appendTo('head');
+/*
+	if (!GENTICS.Aloha.DnDFile) {
+		dndFilePath = GENTICS_Aloha_base + '/plugins/com.gentics.aloha.plugins.DragnDropFiles/plugin.js';
+		jQuery('<script type="text/javascript" />').attr('src', dndFilePath).appendTo('head');
+	}
+ * 
+ */
+	
    }; // END INIT
 
-KaraCos.Img.resourceObjectTypes = [];
-//KaraCos.Img.PropsWindow = 
-KaraCos.Img.initImage = function() {
+GENTICS.Aloha.Image.objectTypeFilter = [];
+
+/**
+ * Default behaviour for dropped image
+ * car be overriden in settings
+ */
+
+
+// GENTICS.Aloha.Image.PropsWindow =
+GENTICS.Aloha.Image.initImage = function() {
 	var that = this;
 	this.insertImgButton = new GENTICS.Aloha.ui.Button({
-		'label' : 'IMG',
+		'iconClass': 'GENTICS_button GENTICS_img_insert',
 		'size' : 'small',
 		'onclick' : function () { that.insertImg(); },
 		'tooltip' : that.i18n('button.addimg.tooltip'),
@@ -97045,11 +97698,12 @@ KaraCos.Img.initImage = function() {
 			1
 	);
 	
-	GENTICS.Aloha.FloatingMenu.createScope(this.getUID('img'), 'GENTICS.Aloha.continuoustext');
-	
+// GENTICS.Aloha.FloatingMenu.createScope(this.getUID('img'),
+// 'GENTICS.Aloha.continuoustext');
+	GENTICS.Aloha.FloatingMenu.createScope(this.getUID('image'), 'global');
 	
 	var alignLeftButton = new GENTICS.Aloha.ui.Button({
-        'iconClass': 'GENTICS_button karacos_img_align_left',
+        'iconClass': 'GENTICS_button GENTICS_img_align_left',
         'size': 'small',
         'onclick' : function() {
             var img = that.findImgMarkup();
@@ -97058,7 +97712,7 @@ KaraCos.Img.initImage = function() {
         'tooltip': that.i18n('button.img.align.left.tooltip')
     });
 	var alignRightButton = new GENTICS.Aloha.ui.Button({
-        'iconClass': 'GENTICS_button karacos_img_align_right',
+        'iconClass': 'GENTICS_button GENTICS_img_align_right',
         'size': 'small',
         'onclick' : function() {
             var img = that.findImgMarkup();
@@ -97067,105 +97721,204 @@ KaraCos.Img.initImage = function() {
         'tooltip': that.i18n('button.img.align.right.tooltip')
     });
     var alignNoneButton = new GENTICS.Aloha.ui.Button({
-        'iconClass': 'GENTICS_button karacos_img_align_none',
+        'iconClass': 'GENTICS_button GENTICS_img_align_none',
         'size': 'small',
         'onclick' : function() {
-    	var img = that.findImgMarkup();
-        jQuery(img).css('float', '');
+	    	var img = that.findImgMarkup();
+	        jQuery(img).css('float', '');
         },
         'tooltip': that.i18n('button.img.align.none.tooltip')
     });
     
+    // add the src field for images
     var imgSrcLabel = new GENTICS.Aloha.ui.Button({
     	'label': that.i18n('field.img.src.label'),
     	'tooltip': that.i18n('field.img.src.tooltip'),
-    	'size': 'small',
+    	'size': 'small'
     });
-    this.imgSrcField = new GENTICS.Aloha.ui.AttributeField({	
-    });
-    this.imgSrcField.setObjectTypeFilter(KaraCos.Img.resourceObjectTypes);
-    // add the input field for links
+    this.imgSrcField = new GENTICS.Aloha.ui.AttributeField({});
+    this.imgSrcField.setObjectTypeFilter( this.objectTypeFilter );
+
+    // add the title field for images
     var imgTitleLabel = new GENTICS.Aloha.ui.Button({
     	'label': that.i18n('field.img.title.label'),
     	'tooltip': that.i18n('field.img.title.tooltip'),
-    	'size': 'small',
+    	'size': 'small'
     });
-    this.imgTitleField = new GENTICS.Aloha.ui.AttributeField({
-    });
-    this.imgTitleField.setObjectTypeFilter([KaraCos.Img.resourceObjectTypes]);
+    this.imgTitleField = new GENTICS.Aloha.ui.AttributeField();
+    this.imgTitleField.setObjectTypeFilter();
 
     GENTICS.Aloha.FloatingMenu.addButton(
-    		this.getUID('img'),
+    		this.getUID('image'),
     		this.imgSrcField,
     		this.i18n('floatingmenu.tab.img'),
     		1
     );
     GENTICS.Aloha.FloatingMenu.addButton(
-    		this.getUID('img'),
+    		this.getUID('image'),
     		alignRightButton,
     		this.i18n('floatingmenu.tab.img'),
     		1
     );
     GENTICS.Aloha.FloatingMenu.addButton(
-    		this.getUID('img'),
+    		this.getUID('image'),
     		alignLeftButton,
     		this.i18n('floatingmenu.tab.img'),
     		1
     );
     GENTICS.Aloha.FloatingMenu.addButton(
-    		this.getUID('img'),
+    		this.getUID('image'),
     		alignNoneButton,
     		this.i18n('floatingmenu.tab.img'),
     		1
     );
     GENTICS.Aloha.FloatingMenu.addButton(
-    		this.getUID('img'),
+    		this.getUID('image'),
     		this.imgTitleField,
     		this.i18n('floatingmenu.tab.img'),
     		1
     );
     
+    var incPadding = new GENTICS.Aloha.ui.Button({
+    	iconClass: 'GENTICS_button GENTICS_img_padding_increase',
+    	size: 'small',
+    	onclick: function() {
+    	var image = that.findImgMarkup();
+    	Image = jQuery(image);
+    	// Apply
+    	Image.increase('padding');
+    	},
+    	tooltip: this.i18n('padding.increase')
+    	});
+    GENTICS.Aloha.FloatingMenu.addButton(
+    		this.getUID('image'),
+    		incPadding,
+    		this.i18n('floatingmenu.tab.img'),
+    		2
+    );
+   var decPadding = new GENTICS.Aloha.ui.Button({
+    	iconClass: 'GENTICS_button GENTICS_img_padding_decrease',
+    	size: 'small',
+    	onclick: function() {
+    	var image = that.findImgMarkup();
+    	Image = jQuery(image);
+    	// Apply
+    	Image.decrease('padding');
+    	},
+    	tooltip: this.i18n('padding.decrease')
+    	});
+   GENTICS.Aloha.FloatingMenu.addButton(
+   		this.getUID('image'),
+   		decPadding,
+   		this.i18n('floatingmenu.tab.img'),
+   		2
+   );
+   var  incSize = new GENTICS.Aloha.ui.Button({
+	   iconClass: 'GENTICS_button GENTICS_img_size_increase',
+	   size: 'small',
+	   onclick: function() {
+	   var image = that.findImgMarkup();
+	   Image = jQuery(image);
+	   // Apply
+		   Image.increase('height').increase('width');
+	   },
+	   tooltip: this.i18n('size.increase')
+	   });
+   GENTICS.Aloha.FloatingMenu.addButton(
+	   		this.getUID('image'),
+	   		incSize,
+	   		this.i18n('floatingmenu.tab.img'),
+	   		2
+	   );
+   var decSize = new GENTICS.Aloha.ui.Button({
+	   iconClass: 'GENTICS_button GENTICS_img_size_decrease',
+	   size: 'small',
+	   onclick: function() {
+	   var image = that.findImgMarkup();
+	   Image = jQuery(image);
+	   // Apply
+	   Image.decrease('height').decrease('width');
+	   },
+	   tooltip: that.i18n('size.decrease')
+	   });
+   GENTICS.Aloha.FloatingMenu.addButton(
+	   		this.getUID('image'),
+	   		decSize,
+	   		this.i18n('floatingmenu.tab.img'),
+	   		2
+	   );
+};
 
-    
-    
-}
-
-KaraCos.Img.bindInteractions = function () {
+GENTICS.Aloha.Image.bindInteractions = function () {
     var that = this;
 
-    // update link object when src changes
-    this.imgSrcField.addListener('keyup', function(obj, event) {
-    	
+    // update image object when src changes
+    this.imgSrcField.addListener('keyup', function(obj, event) {  	
     	that.srcChange();
     });
 
-    // on blur check if href is empty. If so remove the a tag
     this.imgSrcField.addListener('blur', function(obj, event) {
-        if ( this.getValue() == '' ) {
-            //that.removeLink();
-        }
+    	// TODO remove image or do something usefull if the user leaves the
+    	// image without defining a valid image src.
+    	img = jQuery(obj.getTargetObject());
+    	if (img.attr('src') == "") {
+    		img.remove();
+    	} // image removal when src field is blank
     });
      
-}
+};
 
-KaraCos.Img.subscribeEvents = function () {
+GENTICS.Aloha.Image.subscribeEvents = function () {
 	var that = this;
-	
+	//handles dropped files
+	GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha, 'UploadSuccess', function(event,data) {
+		if (data.file.type.match(/image\//)) {	
+			img = jQuery('#'+data.id);
+			img.attr("src",data.src);
+			img.attr("id",'');
+		}
+	});
+	GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha, 'UploadFailure', function(event,data) {
+		if (data.file.type.match(/image\//)) {	
+			img = jQuery('#'+data.id);
+			img.remove();
+		}
+	});
+	GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha, 'dropFileInEditable', function(event,data) {
+		//console.log(data.file);
+		if (data.fileObj.file.type.match(/image\//)) {			
+			var reader = new FileReader();
+			reader.config = that.getEditableConfig(data.editable);
+			reader.attachedData = data;
+			reader.onloadend = function(readEvent) {
+				img = jQuery('<img id="'+reader.attachedData.fileObj.id+'" style="" title="" src=""></img>');
+				img.click( GENTICS.Aloha.Image.clickImage );
+				if (reader.attachedData.fileObj.src == undefined) {
+					reader.attachedData.fileObj.src =readEvent.target.result;
+				}
+				img.attr('src', reader.attachedData.fileObj.src );
+				GENTICS.Utils.Dom.insertIntoDOM(img,reader.attachedData.range,  jQuery(GENTICS.Aloha.activeEditable.obj));
+			};
+			reader.readAsDataURL(data.fileObj.file);
+		}
+	});
     // add the event handler for selection change
     GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha, 'selectionChanged', function(event, rangeObject) {
     	var foundMarkup = that.findImgMarkup( rangeObject );
     	var config = that.getEditableConfig(GENTICS.Aloha.activeEditable.obj);
-        if ( jQuery.inArray('img', config) != -1) {
+        if ( config.img ) {
         	that.insertImgButton.show();
         } else {
         	that.insertImgButton.hide();
+        	// TODO this should not be necessary here!
+        	GENTICS.Aloha.FloatingMenu.doLayout();
             // leave if img is not allowed
             return;
         }
         if ( foundMarkup ) {
-        	//img found
+        	// img found
         	that.insertImgButton.hide();
-        	GENTICS.Aloha.FloatingMenu.setScope(that.getUID('img'));
+        	GENTICS.Aloha.FloatingMenu.setScope(that.getUID('image'));
             that.imgSrcField.setTargetObject(foundMarkup, 'src');
             that.imgTitleField.setTargetObject(foundMarkup, 'title');
             that.imgSrcField.focus();
@@ -97176,10 +97929,38 @@ KaraCos.Img.subscribeEvents = function () {
     	// TODO this should not be necessary here!
     	GENTICS.Aloha.FloatingMenu.doLayout();
     });
-    	
-	
-}
-KaraCos.Img.findImgMarkup = function ( range ) {
+    // add to all editables the image click
+    for (var i = 0; i < GENTICS.Aloha.editables.length; i++) {
+
+	    // add a click (=select) event to all image.
+	    GENTICS.Aloha.editables[i].obj.find('img').each( function( i ) {
+	        // select the image when clicked
+	        jQuery(this).click( GENTICS.Aloha.Image.clickImage );
+	    });
+    }
+};
+
+GENTICS.Aloha.Image.clickImage = function ( e ) { 
+	// select the image
+	// HELP: can't find a way...
+	thisimg = jQuery(this);
+   var offset = 1;//GENTICS.Utils.Dom.getIndexInParent(this);
+   var imgRange = new GENTICS.Utils.RangeObject({
+	   startContainer: thisimg.parent(),
+	   endContainer: thisimg.parent(),
+	   startOffset: offset,
+	   endOffset: offset+1
+   });
+   imgRange.correctRange();
+   imgRange.update();
+   console.log(imgRange);
+   imgRange.select();
+   
+};
+
+
+
+GENTICS.Aloha.Image.findImgMarkup = function ( range ) {
 	if ( typeof range == 'undefined' ) {
         var range = GENTICS.Aloha.Selection.getRangeObject();   
     }
@@ -97189,56 +97970,1203 @@ KaraCos.Img.findImgMarkup = function ( range ) {
 				if (range.startOffset)
 					if (range.startContainer.childNodes[range.startOffset])
 	    if (range.startContainer.childNodes[range.startOffset].nodeName.toLowerCase() == 'img') {
-			//console.log(range);
+			// console.log(range);
 			result = range.startContainer.childNodes[range.startOffset];
 			if (! result.css) result.css = "";
 			if (! result.title) result.title = "";
 			if (! result.src) result.src = "";
 			return result;
 		}
-	} catch (e) {console.log(e);}
+	} catch (e) {
+		GENTICS.Aloha.Log.debug(e,"Error finding img markup.");
+	}
     return null;
     
 };
-KaraCos.Img.insertImg = function() {
+
+GENTICS.Aloha.Image.insertImg = function() {
 	var range = GENTICS.Aloha.Selection.getRangeObject();
 	
-    // if selection is collapsed then extend to the word.
-    //if (range.isCollaps//ed()) {
-    //    GENTICS.Utils.Dom.extendToWord(range);
-    //}
     if ( range.isCollapsed() ) {
-    	//rangeb4 = range;
-    	//console.log(rangeb4);
-    	var newImg = jQuery('<img src="" title="" style=""></img>');
+    	// TODO I would suggest to call the srcChange method. So all image src
+		// changes are on one single point.
+    	imagetag = '<img src="' + GENTICS_Aloha_base + 'plugins/com.gentics.aloha.plugins.Image/images/blank.jpeg" title="" style=""></img>';
+    	var newImg = jQuery(imagetag);
+    	// add the click selection handler
+    	newImg.click( GENTICS.Aloha.Image.clickImage );
     	GENTICS.Utils.Dom.insertIntoDOM(newImg, range, jQuery(GENTICS.Aloha.activeEditable.obj));
-    	//range.correctRange();
-    	//this.findImgMarkup(range).click();
-    	//console.log(range);
-        
-        //range.select();
-        //this.imgSrcField.focus();
-        // linkText.length;
+    	// select the image when inserted
+// var offset = GENTICS.Utils.Dom.getIndexInParent(newImg.get(0));
+// var imgRange = new GENTICS.Utils.RangeObject({
+// startContainer: newImg.parent(),
+// endContainer: newImg.parent(),
+// startOffset: offset,
+// endOffset: offset+1
+// });
+// imgRange.select();
+    	
     } else {
+    	// TODO NEVER alert!! i18n !! Instead log. We have a messaging stack on
+    	// the roadmap which will offer you the possibility to push messages.
     	alert('img cannot markup a selection');
+    	// TODO the desired behavior could be that the selected content is
+		// replaced by an image.
+    	// TODO it should be editor's choice, with an Ext Dialog instead of
+		// alert.
     }
+};
+
+
+GENTICS.Aloha.Image.srcChange = function () {
+	// TODO the src changed. I suggest :
+	// 1. set an loading image (I suggest set src base64 enc) to show the user
+	// we are trying to load an image
+	// 2. start a request to get the image
+	// 3a. the image is ok change the src
+	// 3b. the image is not availbable show an error.
+	// this.imgSrcField.getTargetObject(), (the img tag)
+	// this.imgSrcField.getQueryValue(), (the query value in the inputfield)
+	// this.imgSrcField.getItem() (optinal a selected resource item)
+	// TODO additionally implement an srcChange Handler to let implementer
+	// customize
+};
+
+/*
+Awesome Uploader
+Ext.ux.XHRUpload JavaScript Class
+
+Copyright (c) 2010, Andrew Rymarczyk
+All rights reserved.
+
+Redistribution and use in source and minified, compiled or otherwise obfuscated 
+form, with or without modification, are permitted provided that the following 
+conditions are met:
+
+	* Redistributions of source code must retain the above copyright notice, 
+		this list of conditions and the following disclaimer.
+	* Redistributions in minified, compiled or otherwise obfuscated form must 
+		reproduce the above copyright notice, this list of conditions and the 
+		following disclaimer in the documentation and/or other materials 
+		provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+// API Specs:
+// http://www.w3.org/TR/XMLHttpRequest/
+// http://www.w3.org/TR/XMLHttpRequest2/
+// http://www.w3.org/TR/progress-events/
+
+// Browser Implementation Details:
+// FROM: https://developer.mozilla.org/en/DOM/File
+// https://developer.mozilla.org/en/Using_files_from_web_applications
+// https://developer.mozilla.org/En/DragDrop/DataTransfer
+// https://developer.mozilla.org/en/DOM/FileList
+// "NOTE: The File object as implemented by Gecko offers several non-standard methods for reading the contents of the file. These should not be used, as they will prevent your web application from being used in other browsers, as well as in future versions of Gecko, which will likely remove these methods."
+// NOTE: fileObj.getAsBinary() is deprecated according to the mozilla docs!
+
+// Can optionally follow RFC2388
+// RFC2388 - Returning Values from Forms: multipart/form-data
+// http://www.faqs.org/rfcs/rfc2388.html
+// This allows additional POST params to be sent with file upload, and also simplifies the backend upload handler becuase a single script can be used for drag and drop, flash, and standard uploads
+// NOTE: This is currently only supported by Firefox 1.6, Chrome 6 should be released soon and will also be supported.
+
+Ext.ns('Ext.ux');
+
+Ext.ux.XHRUpload = function(config){
+	Ext.apply(this, config, {
+		method: 'POST'
+		,fileNameHeader: 'X-File-Name'
+		,filePostName:'fileName'
+		,contentTypeHeader: 'text/plain; charset=x-user-defined-binary'
+		,extraPostData:{}
+		,extraHeaders:{}
+		,xhrExtraPostDataPrefix:'extraPostData_'
+		,sendMultiPartFormData:false
+	});
+	this.addEvents( //extend the xhr's progress events to here
+		'loadstart',
+		'progress',
+		'abort',
+		'error',
+		'load',
+		'loadend'
+	);
+	Ext.ux.XHRUpload.superclass.constructor.call(this);
+};
+
+Ext.extend(Ext.ux.XHRUpload, Ext.util.Observable,{
+	send:function(config){
+		Ext.apply(this, config);
+		
+		this.xhr = new XMLHttpRequest();
+		this.xhr.addEventListener('loadstart', this.relayXHREvent.createDelegate(this), false);
+		this.xhr.addEventListener('progress', this.relayXHREvent.createDelegate(this), false);
+		this.xhr.addEventListener('progressabort', this.relayXHREvent.createDelegate(this), false);
+		this.xhr.addEventListener('error', this.relayXHREvent.createDelegate(this), false);
+		this.xhr.addEventListener('load', this.relayXHREvent.createDelegate(this), false);
+		this.xhr.addEventListener('loadend', this.relayXHREvent.createDelegate(this), false);
+		
+		this.xhr.upload.addEventListener('loadstart', this.relayUploadEvent.createDelegate(this), false);
+		this.xhr.upload.addEventListener('progress', this.relayUploadEvent.createDelegate(this), false);
+		this.xhr.upload.addEventListener('progressabort', this.relayUploadEvent.createDelegate(this), false);
+		this.xhr.upload.addEventListener('error', this.relayUploadEvent.createDelegate(this), false);
+		this.xhr.upload.addEventListener('load', this.relayUploadEvent.createDelegate(this), false);
+		this.xhr.upload.addEventListener('loadend', this.relayUploadEvent.createDelegate(this), false);
+
+		this.xhr.open(this.method, this.url, true);
+		
+		if(typeof(FileReader) !== 'undefined' && this.sendMultiPartFormData ){
+			//currently this is firefox only, chrome 6 will support this in the future
+			this.reader = new FileReader();
+			this.reader.addEventListener('load', this.sendFileUpload.createDelegate(this), false);
+			this.reader.readAsBinaryString(this.file);
+			return true;	
+		}
+		//This will work in both Firefox 1.6 and Chrome 5
+		this.xhr.overrideMimeType(this.contentTypeHeader);
+		this.xhr.setRequestHeader(this.fileNameHeader, this.file.name);
+		console.log(this.xhr);
+		for (var attr in this.extraHeaders){
+			this.xhr.setRequestHeader(attr,this.extraHeaders[attr]);
+		}
+		for(var attr in this.extraPostData){
+			this.xhr.setRequestHeader(this.xhrExtraPostDataPrefix + attr, this.extraPostData[attr]);
+		}
+		//xhr.setRequestHeader('X-File-Size', files.size); //this may be useful
+		this.xhr.send(this.file);
+		return true;
+		
+	}
+	,sendFileUpload:function(){
+
+		var boundary = (1000000000000+Math.floor(Math.random()*8999999999998)).toString(),
+			data = '';
+		
+		for(attr in this.extraPostData){
+			data += '--'+boundary + '\r\nContent-Disposition: form-data; name="' + attr + '"\r\ncontent-type: text/plain;\r\n\r\n'+this.extraPostData[attr]+'\r\n';
+		}
+		
+		//window.btoa(binaryData)
+		//Creates a base-64 encoded ASCII string from a string of binary data. 
+		//https://developer.mozilla.org/en/DOM/window.btoa
+		//Firefox and Chrome only!!
+		
+		data += '--'+boundary + '\r\nContent-Disposition: form-data; name="' + this.filePostName + '"; filename="' + this.file.name + '"\r\nContent-Type: '+this.file.type+'\r\nContent-Transfer-Encoding: base64\r\n\r\n' + window.btoa(this.reader.result) + '\r\n'+'--'+boundary+'--\r\n\r\n';
+		
+		this.xhr.setRequestHeader('Content-Type', 'multipart/form-data; boundary='+boundary);
+		this.xhr.send(data);
+	}
+	,relayUploadEvent:function(event){
+		this.fireEvent('upload'+event.type, event);
+	}
+	,relayXHREvent:function(event){
+		this.fireEvent(event.type, event);
+	}
+});
+/*
+ * Repository
+ * Copyright (c) 2010 Nicolas Karageuzian - http://nka.me
+ */
+if ( !GENTICS.Aloha.Repositories ) GENTICS.Aloha.Repositories = {};
+
+/**
+ * Repository for uploaded files
+ */
+GENTICS.Aloha.Repositories.Uploader = new GENTICS.Aloha.Repository('com.gentics.aloha.plugins.DragAndDropFiles');
+
+/**
+ * Initialize repository
+ */
+GENTICS.Aloha.Repositories.Uploader.init = function() {
+	this.repositoryName = 'Uploader';
+	this.uploadFolder = new this.UploadFolder({
+		id: "Uploads", 
+		name: "Uploads", 
+		displayName:"Uploads",
+		parentId:"/",
+		path:"Uploads",
+		objectType:'folder',
+		type:'folder',
+		repositoryId:"com.gentics.aloha.plugins.DragAndDropFiles"
+	});
+	this.browser = new GENTICS.Aloha.ui.Browser();
+	
+	this.objects = [this.uploadFolder];
+	var that = this;
+};
+
+GENTICS.Aloha.Repositories.Uploader.upload_conf = {
+		// can add more elements for Ext window styling 
+		'method':'POST',
+		'url': "",
+		'file_name_param':"filename",
+		'file_name_header':'X-File-Name',
+		'extra_headers':{}, //Extra parameters
+		'extra_post_data': {}, //Extra parameters
+		'send_multipart_form': false, //true for html4 TODO: make browser check
+		//'additional_params': {"location":""},
+		'www_encoded': false };
+
+
+/**
+ * Repository's Query function
+ */
+GENTICS.Aloha.Repositories.Uploader.query = function( p, callback) {
+	GENTICS.Aloha.Log.info(this,"Query Uploader");
+	console.log(p);
+	var d = [];
+	if (p.inFolderId == "com.gentics.aloha.plugins.DragAndDropFiles" && p.queryString == null) {
+		d = this.objects;
+	} else {
+		d = this.objects.filter(function(e, i, a) {
+			var r = new RegExp(p.queryString, 'i'); 
+			var ret = false;
+			try {
+				if ( (!p.queryString || e.url.match(r)) &&
+						(p.inFolderId == e.parentId) ) {
+					ret = true;
+				}
+			} catch (error) {}
+			return ret;
+			/* (
+			( !queryString || e.displayName.match(r) || e.url.match(r) ) && 
+			( !objectTypeFilter || jQuery.inArray(e.objectType, objectTypeFilter) > -1) &&
+			( !inFolderId || inFolderId == e.parentId ) 
+		);*/
+		});
+	}
+	console.log(d);
+	callback.call( this, d);
+};
+
+/**
+ * The get childrens function
+ */
+GENTICS.Aloha.Repositories.Uploader.getChildren = function( p, callback) {
+	console.log(p);
+	d = [];
+	var parentFolder = p.inFolderId.split("com.gentics.aloha.plugins.DragAndDropFiles")[0];
+	if (parentFolder == "") {
+		parentFolder = "/";
+	}
+	d = this.objects.filter(function(e, i, a) {
+		if (e.parentId == parentFolder) return true;
+		return false;
+	});
+//	if (p.inFolderId == "com.gentics.aloha.plugins.DragAndDropFiles") {
+//		d = this.objects;
+//	}
+	callback.call( this, d);
+};
+
+/**
+ * Add an upload
+ */
+GENTICS.Aloha.Repositories.Uploader.addFileUpload = function(file) {
+	var type='';
+	this.browser.show();
+
+	d = this.objects.filter(function(e, i, a) {
+		if (e.name == file.name) return true;
+		return false;
+	});
+	if (d.length > 0 ) {
+		return d[0];
+	}
+	len = this.objects.length;
+	id = 'GENTICS_idx_file' + len;
+	this.objects.push(new this.File({ 
+		file:file,
+		id: id, 
+		name: file.name, 
+		displayName:file.name,
+		parentId:"Uploads",
+		path:"Uploads",
+		url:"Uploads",
+		objectType:'file',
+		type:'file',
+		ulProgress: 0,
+		parent: this.uploadFolder,
+		repositoryId:"com.gentics.aloha.plugins.DragAndDropFiles"}));
+	;
+	repoNode = this.browser.tree.getNodeById("com.gentics.aloha.plugins.DragAndDropFiles");
+	repoNode.expand();
+	try {
+		this.browser.tree.getNodeById("Uploads").select();
+	} catch(error) {}
+	return this.objects[len];
+};
+
+GENTICS.Aloha.Repositories.Uploader.startFileUpload = function(id,upload_config) {
+	var type='';
+	d = this.objects.filter(function(e, i, a) {
+		if (e.id == id) {return true;}
+		return false;
+	});
+	if (d.length > 0 ) {
+		d[0].uploadFile(Ext.apply(this.upload_conf,upload_config));
+	} else {
+		GENTICS.Aloha.Log.error(this,"No file with that id");
+	}
+};
+
+/**
+ * The file class
+ */
+GENTICS.Aloha.Repositories.Uploader.File = function (data) {
+	//GENTICS.Utils.applyProperties(this,data);
+	GENTICS.Aloha.Repositories.Uploader.File.superclass.constructor.call(this,data);
+};
+Ext.extend(GENTICS.Aloha.Repositories.Uploader.File, GENTICS.Aloha.Repository.Document, {
+	render: function() {
+		try {
+			// This refresh the uploader view
+			this.parent.viewGrid.store.reload();
+		} catch (error) {}
+	},
+	/**
+	 * Alerting window
+	 * TODO: i18n
+	 */
+	fileAlert:function(text){
+		if(this.fileAlertMsg === undefined || !this.fileAlertMsg.isVisible()){
+			this.fileAlertMsgText = 'Error uploading:<BR>'+text;
+			this.fileAlertMsg = Ext.MessageBox.show({
+				title:'Upload Error',
+				msg: this.fileAlertMsgText,
+				buttons: Ext.Msg.OK,
+				modal:false,
+				icon: Ext.MessageBox.ERROR
+			});
+		}else{
+				this.fileAlertMsgText += text;
+				this.fileAlertMsg.updateText(this.fileAlertMsgText);
+				this.fileAlertMsg.getDialog().focus();
+		}
+		
+	},
+	/**
+	 * Process the file upload
+	 */
+	uploadFile: function(uploadConfig) {
+		var that = this;
+		
+		extra_headers = jQuery.merge(uploadConfig.extra_headers, {'Accept': 'application/json',
+			'Content-Type':this.file.type});
+		upload = new Ext.ux.XHRUpload({
+			// TODO: make this configurable
+			method:uploadConfig.method
+			,url: uploadConfig.url
+			,filePostName:uploadConfig.file_name_param
+			,fileNameHeader:uploadConfig.file_name_header
+			,extraHeaders:uploadConfig.extra_headers
+			,extraPostData:uploadConfig.extra_post_data
+			,sendMultiPartFormData:uploadConfig.www_encoded
+			,file:this.file
+			,listeners:{
+				scope:this
+				,uploadloadstart:function(event){
+					that.ulStatus = 'Sending';
+					that.render();
+					//this.colModel.render();
+				}
+				,uploadprogress:function(event){
+					that.ulProgress = Math.round((event.loaded / event.total)*100);
+					that.render();
+				}
+				// XHR Events
+				,loadstart:function(event){
+					that.ulStatus = 'Sending';
+					that.render();
+				}
+				,progress:function(event){
+					that.ulProgress = Math.round((event.loaded / event.total)*100);
+					that.render();
+				}
+				,abort:function(event){
+					//that.updateFile(fileRec, 'status', 'Aborted');
+					GENTICS.Aloha.EventRegistry.trigger(
+		        			new GENTICS.Aloha.Event('UploadFailure', GENTICS.Aloha,this));
+				}
+				,error:function(event){
+					that.ulStatus = 'Error';
+					that.render();
+					GENTICS.Aloha.EventRegistry.trigger(
+		        			new GENTICS.Aloha.Event('UploadFailure', GENTICS.Aloha,this));
+				}
+				,load:function(event){
+					
+					try{
+						var result = Ext.util.JSON.decode(upload.xhr.responseText);// throws
+																					// a
+																					// SyntaxError.
+					}catch(e){
+						Ext.MessageBox.show({
+							buttons: Ext.MessageBox.OK
+							,icon: Ext.MessageBox.ERROR
+							,modal:false
+							,title:'Upload Error!'
+							,msg:'Invalid JSON Data Returned!<BR><BR>Please refresh the page to try again.'
+						});
+						that.ulStatus =  'Error';
+						that.render();
+						//this.updateFile(fileRec, 'status', 'Error');
+						GENTICS.Aloha.EventRegistry.trigger(
+			        			new GENTICS.Aloha.Event('UploadFailure', GENTICS.Aloha,this));
+						//this.fireEvent('fileupload', this, false, {error:'Invalid JSON returned'});
+						return true;
+					}
+					if( result.success ){
+						that.ulProgress = 100 ;
+						that.ulStatus =  'Done';
+						that.render();
+						that.src = result.data;
+						GENTICS.Aloha.EventRegistry.trigger(
+			        			new GENTICS.Aloha.Event('UploadSuccess', GENTICS.Aloha,this));
+						//this.fireEvent('fileupload', this, true, result);
+					}else{
+						this.fileAlert('<BR>'+that.file.name+'<BR><b>'+result.error+'</b><BR>');
+						that.ulStatus = 'Error';
+						that.render();
+						GENTICS.Aloha.EventRegistry.trigger(
+			        			new GENTICS.Aloha.Event('UploadFailure', GENTICS.Aloha,this));
+						//this.fireEvent('fileupload', this, false, result);
+					}
+				} // on load
+			} // listeners
+		}); // XHRUpload
+		upload.send();
+	}
+});
+
+
+
+GENTICS.Aloha.Repositories.Uploader.UploadFolder = function (data) {
+	//GENTICS.Utils.applyProperties(this,data);
+	GENTICS.Aloha.Repositories.Uploader.UploadFolder.superclass.constructor.call(this,data);
+	
+	this.colModel = new Ext.grid.ColumnModel([
+		{header:'File Name',dataIndex:'name', width:150}
+		,{header:'Size', width:80, renderer:this.fileSizeRenderer, getDataObject:this.getDataObject, columnTemplate:
+			new Ext.XTemplate('<div class="x-grid3-cell-inner x-grid3-col-1" unselectable="on">{value}</div>')}
+		
+		,{header:'&nbsp;',dataIndex:'attributes',width:40, renderer:this.statusIconRenderer, getDataObject:this.getDataObject, columnTemplate:
+			new Ext.XTemplate('<div class="x-grid3-cell-inner x-grid3-col-2" unselectable="on">{value}</div>')}
+		
+		,{header:'Status',dataIndex:'attributes',width:80, renderer:this.statusRenderer, getDataObject:this.getDataObject, columnTemplate:
+			new Ext.XTemplate('<div class="x-grid3-cell-inner x-grid3-col-3" unselectable="on">{value}</div>')}
+		
+		,{header:'Progress', renderer:this.fileProgressRenderer, getDataObject:this.getDataObject, columnTemplate: new Ext.XTemplate(
+			'<div class="GENTICS_uploader-progress-cell-inner GENTICS_uploader-progress-cell-inner-center GENTICS_uploader-progress-cell-foreground">',
+				'<div>{value} %</div>',
+			'</div>',
+			'<div class="GENTICS_uploader-progress-cell-inner GENTICS_uploader-progress-cell-inner-center GENTICS_uploader-progress-cell-background" style="left:{value}%">',
+				'<div style="left:-{value}%">{value} %</div>',
+			'</div>'
+		)}
+		
+	]);
+	
+	
+	
+};
+
+Ext.extend(GENTICS.Aloha.Repositories.Uploader.UploadFolder, GENTICS.Aloha.Repository.Folder, {
+	/**
+	 * Utility method, when in ui-browser, some of the data are lost.
+	 * Get the data object from record - this is a helper for in column renderers
+	 */
+	getDataObject: function(record) {
+		repo = GENTICS.Aloha.RepositoryManager.getRepository(record.data.repositoryId);
+		d = repo.objects.filter(function(e, i, a) {
+			if (e.id == record.data.id && e.file) return true;
+			return false;
+		});
+		if (d.length > 0 ) {
+			return d[0];
+		}
+		return null;
+	},
+	
+	
+	/**
+	 * warn : this scopes column
+	 */
+	statusRenderer: function(value, metaData, record, rowIndex, colIndex, store) {
+		data = this.getDataObject(record);
+		if (data != null ) {
+			if (!data.ulStatus) {data.ulStatus = 'Pending';}
+			return this.columnTemplate.apply({
+				value: data.ulStatus
+			});
+		}
+	},
+	/**
+	 * warn : this scopes column
+	 */
+	statusIconRenderer: function(value, metaData, record, rowIndex, colIndex, store) {
+		data = this.getDataObject(record);
+		iconsbase = GENTICS_Aloha_base + '/plugins/com.gentics.aloha.plugins.DragAndDropFiles/resources/images/';
+		if (data != null ) {
+			if (!data.ulStatus) {data.ulStatus = 'Pending';}
+			switch(data.ulStatus){
+			default:
+				return value;
+			case 'Pending':
+				return '<div class="GENTICS_uploader_status_icon"><img src="'+iconsbase+'hourglass.png" width=16 height=16></div>';
+			case 'Sending':
+				return '<div class="GENTICS_uploader_status_icon"><img src="'+iconsbase+'loading.gif" width=16 height=16></div>';
+			case 'Aborted':
+				return '<div class="GENTICS_uploader_status_icon"><img src="'+iconsbase+'cross.png" width=16 height=16></div>';
+			case 'Error':
+				return '<div class="GENTICS_uploader_status_icon"><img src="'+iconsbase+'cross.png" width=16 height=16></div>';
+			case 'Done':
+				return '<div class="GENTICS_uploader_status_icon"><img src="'+iconsbase+'tick.png" width=16 height=16></div>';
+			}
+		}
+	},
+	/**
+	 * warn : this scopes column
+	 */
+	fileSizeRenderer: function(value, metaData, record, rowIndex, colIndex, store) {
+		data = this.getDataObject(record);
+		if (data != null ) {
+			return this.columnTemplate.apply({
+				value: Ext.util.Format.fileSize(data.file.size)
+			});
+		}
+	},
+	/**
+	 * warn : this scopes column
+	 */
+	fileProgressRenderer: function(value, metaData, record, rowIndex, colIndex, store) {
+		data = this.getDataObject(record);
+		if (data != null ) {
+			metaData.css += ' x-grid3-td-progress-cell';
+			return this.columnTemplate.apply({
+				value: data.ulProgress
+			});
+		}
+	}
+});
+/**
+ * Aloha Editor
+ * Drag and Drop files plugin for Aloha Editor
+ * copyright (c) 2010 Nicolas Karageuzian - http://nka.me/
+ * Copyright (c) 2010 Gentics Software GmbH
+ *
+ * Handles drag and drop for files
+ * 
+ */
+
+GENTICS.Aloha.DragAndDropFiles = new GENTICS.Aloha.Plugin("com.gentics.aloha.plugins.DragAndDropFiles");
+/**
+ * Configure the available languages
+ */
+GENTICS.Aloha.DragAndDropFiles.languages=['en','fr'];
+/**
+ * TODO make configuration adoptable to each editable
+ */
+GENTICS.Aloha.DragAndDropFiles.config = { 'drop' : {	'max_file_size': 200000,
+											'max_file_count': 2,
+											'upload': {'uploader_class':'GENTICS.Aloha.Uploader',
+										 			'config': {
+										 				// can add more elements for Ext window styling 
+										 				'method':'POST',
+											 			'url': "",
+											 			'file_name_param':"filename",
+											 			'file_name_header':'X-File-Name',
+											 			'extra_headers':{}, //Extra parameters
+											 			'extra_post_data': {}, //Extra parameters
+											 			'send_multipart_form': false, //true for html4 TODO: make browser check
+											 			//'additional_params': {"location":""},
+											 			'www_encoded': false }
+													}
+											}
+								};
+
+/**
+ * Add a drop listener to the body of the whole document
+ */
+GENTICS.Aloha.DragAndDropFiles.init = function() {
+	
+	var that = this;
+	// add the listener
+	this.setBodyDropHandler();
+	stylePath = GENTICS_Aloha_base + '/plugins/com.gentics.aloha.plugins.DragAndDropFiles/style.css';
+	jQuery('<link rel="stylesheet" />').attr('href', stylePath).appendTo('head');
+	
+	// TODO: have to finish specs, lines below may move to a new plugin
+		//this.subscribeEvents();
+//		var uxXHR = '' + GENTICS_Aloha_base + '/plugins/com.gentics.aloha.plugins.DragAndDropFiles/deps/Ext.ux.XHRUpload.js';
+//		jQuery('<script type="text/javascript" />').attr('src', uxXHR).appendTo('head');
+//		var uploaderPath = '' + GENTICS_Aloha_base + '/plugins/com.gentics.aloha.plugins.DragAndDropFiles/uploader.js';
+//		jQuery('<script type="text/javascript" />').attr('src', uploaderPath).appendTo('head');
+		try {
+			this.uploader = this.initUploader(this.settings.config);
+			
+		} catch(error) {
+			GENTICS.Aloha.Log.warn(this,error);
+			GENTICS.Aloha.Log.warn(this,"Error creating uploader, no upload will be processed");
+		}
+		
+		GENTICS.Aloha.FloatingMenu.createScope(this.getUID('DragnDrop'), 'global');
+		this.fileNameField = new GENTICS.Aloha.ui.AttributeField({});
+		GENTICS.Aloha.FloatingMenu.addButton(
+	    		this.getUID('DragnDrop'),
+	    		this.fileNameField,
+	    		this.i18n('floatingmenu.tab.file'),
+	    		1
+	    );
+};
+/**
+ * Init the uploader for given conf
+ */
+GENTICS.Aloha.DragAndDropFiles.initUploader = function(customConfig) {
+	var uploader_class = undefined;
+	try {
+		uploader_class = eval(customConfig.drop.upload.uploader_class);
+	} catch(error) {
+		GENTICS.Aloha.Log.info(this,"Custom class loading error or not specified, using default");
+	}
+	if (uploader_class == undefined) {
+		uploader_class = eval(this.config.drop.upload.uploader_class);
+	}
+	var uploader_config = this.config.drop.upload.config;
+	Ext.apply(uploader_config,{	
+		title: 'Upload status',
+		width:435,
+		height:140,
+		//border:false,
+		plain:true,
+		layout: 'border',
+		closeAction: 'hide'
+		}, customConfig.drop.upload.config);
+	uploader = new uploader_class(uploader_config);
+	return uploader;
+};
+
+/**
+ *  Attach drag and drop listeners to document body (ExtJs way)
+ * 
+ */
+GENTICS.Aloha.DragAndDropFiles.setBodyDropHandler = function() {
+	 if (!document.body.BodyDragSinker){
+		 document.body.BodyDragSinker = true;
+		 var that = this;
+		 body = Ext.fly(document.body);
+		 body.on({
+			dragenter:function(event){
+				return true;
+			}
+			,dragleave:function(event){
+				return true;
+			}
+			,dragover:function(event){				
+				event.stopEvent();
+				return false;
+			}
+			,drop:function(event){
+				try {
+					if (event.browserEvent.originalEvent.sink) { // is event maked to be sinked
+						event.stopEvent(); // this prevents default browser comportment
+						return true;
+					}
+					var e = event.browserEvent.originalEvent;
+					var files = e.dataTransfer.files;
+				    var len = files.length;
+				    // if no files where dropped, use default handler
+				    if (len < 1) {
+				    	e.sink = false;
+				        return true;
+				    }
+				    if (len > that.config.drop.max_file_count) {
+				    	GENTICS.Aloha.log.warn(that,"too much files dropped");
+				    	event.stopEvent();
+				    	return true;
+				    }
+				    var editable = null;
+					target = jQuery(e.target);
+					//If drop in editable
+					if (target.hasClass('GENTICS_editable')) {
+						editable = target;
+						target = editable.children(':last');
+						if (target.hasClass('GENTICS_editable')) {
+							//nested space is needed in this tag, otherwise select won't success...
+							editable.append('<p> </p>');
+							target = editable.children(':last');
+						}
+					} else {
+						editable = target.parents('.GENTICS_editable');
+					}
+					if (editable[0] == null) {
+						while(--len >= 0) {
+							fileObj = GENTICS.Aloha.Repositories.Uploader.addFileUpload(files[len]);
+							GENTICS.Aloha.Repositories.Uploader.startFileUpload(fileObj.id,this.config.drop.upload.config);
+//							GENTICS.Aloha.EventRegistry.trigger(
+//				        			new GENTICS.Aloha.Event('dropFileInPage', GENTICS.Aloha, files[len]));
+							//ul_id = that.uploader.addFileUpload(files[len]);
+			            	//that.uploader.startFileUpload(ul_id);
+						}
+						//that.uploader.show(document.body);
+					} else {
+						GENTICS.Aloha.getEditableById(editable.attr('id')).activate();
+						range = that.InitializeRangeForDropEvent(e, editable);
+
+					    while(--len >= 0) {
+					    	if (files[len].size > that.config.drop.max_file_size) {
+					    		event.stopPropagation();
+					    		GENTICS.Aloha.Log.warn(that,"max_file_size exeeded");
+					    	    return false;
+					    	}
+					    	fileObj = GENTICS.Aloha.Repositories.Uploader.addFileUpload(files[len]);
+					    	
+					    	//TODO : have a look in core for solving the per-editable config issue
+				        	var edConfig = that.getEditableConfig(editable);
+				           	if (edConfig.drop) {
+				           		GENTICS.Aloha.Repositories.Uploader.startFileUpload(fileObj.id,edConfig.drop.upload.config);
+				        		var display = jQuery('<div id="'+fileObj.id+'" class="GENTICS_drop_file_box"><div class="GENTICS_drop_file_icon GENTICS_drop_file_default"></div>' +
+				        				'<div class="GENTICS_drop_file_details">'+ files[len].name +'</div></div>');
+				        		GENTICS.Aloha.EventRegistry.trigger(
+				        				new GENTICS.Aloha.Event('dropFileInEditable', GENTICS.Aloha, {
+				        					'fileObj':fileObj,
+				        					'range': range,
+				        					'editable': editable}));
+				           	} else {
+				            	GENTICS.Aloha.EventRegistry.trigger(
+				            			new GENTICS.Aloha.Event('dropFileInPage', GENTICS.Aloha,files[len]));
+				            	GENTICS.Aloha.Repositories.Uploader.startFileUpload(fileObj.id,this.config.drop.upload.config);
+
+				           	}
+				           	
+				        } //while
+					}
+				    event.stopEvent();
+				    	
+				} catch (error) {
+					//TODO : log error
+					GENTICS.Aloha.Log.error(GENTICS.Aloha.DragAndDropFiles,error);
+					//console.log(error);
+				}
+				return false;
+			}
+		});
+
+	} // if
+	// end body events
+	//================== 
+};
+
+/**
+ * TODO do we realy need a range Object? May be it makes sense to attach it to the event
+ * for plugin developers comfort.
+ */
+GENTICS.Aloha.DragAndDropFiles.InitializeRangeForDropEvent = function(event, editable) {
+	//var range = new GENTICS.Utils.RangeObject();
+	target = jQuery(event.target);
+	if (target.textNodes().length == 0 && target.html().length == 0) {
+		target.html(" ");
+	}
+	var	range = new GENTICS.Aloha.Selection.SelectionRange();
+	if (target.textNodes().length == 0) {
+		range.startContainer = target[0].childNodes[0];
+		range.endContainer = target[0].childNodes[0];
+	} else {
+		range.startContainer = target.textNodes()[0];
+		range.endContainer = target.textNodes()[0];
+	}
+
+		range.startOffset = 0;
+		range.endOffset = 0;    		
+	try {
+		range.select();
+	} catch (error) {
+		GENTICS.Aloha.log(this,error);
+	}
+	return range;
+};
+
+/**
+ * On selection change
+ * TODO: this may move to a new plugin
+ */
+GENTICS.Aloha.DragAndDropFiles.subscribeEvents = function () {
+	var that = this;
+	 GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha, 'selectionChanged', function(event, rangeObject) {
+		 if (that.selectedFile != null) {
+			 that.selectedFile = null;
+		 }
+		 var foundMarkup = that.findFileObject( rangeObject );
+		 if (foundMarkup) {
+			 GENTICS.Aloha.FloatingMenu.setScope(that.getUID('DragnDrop'));
+			 GENTICS.Aloha.FloatingMenu.userActivatedTab = that.i18n('floatingmenu.tab.file');
+
+		 }
+	 	});
+};
+
+/**
+ * Find file object
+ * TODO: this may move to a new plugin
+ */
+GENTICS.Aloha.DragAndDropFiles.findFileObject = function(range) {
+	if ( typeof range == 'undefined' ) {
+        var range = GENTICS.Aloha.Selection.getRangeObject();   
+    }
+	try {
+		if (range.getContainerParents().is('.GENTICS_drop_file_box')) {
+			return range.getContainerParents().filter('.GENTICS_drop_file_box');
+		}
+	} catch (e) {
+		GENTICS.Aloha.Log.debug(this,"Error finding fileobj markup.");
+	}
+    return null;
+    
+};
+
+Ext.namespace("KaraCos");
+
+KaraCos.type_of = function(v) {
+	  if (typeof(v) == "object") {
+			if (v === null) return "null";
+			if (v.constructor == (new Array).constructor) return "array";
+			if (v.constructor == (new Date).constructor) return "date";
+			if (v.constructor == (new RegExp).constructor) return "regex";
+			return "object";
+		  }
+		  return typeof(v);
+		};
+
+KaraCos.Action = function(config) {
+	action = config.action;
+	if (action.label){
+		config.title = action.label;
+	}
+	if (KaraCos.type_of(action.form) == "object") {
+		config.items = new KaraCos.Form({'form': action.form,
+			'url':action.acturl,
+			'action':action.action,
+			'win': this})
+	}
+	if (KaraCos.type_of(action.form) == "array") {
+		config.items = [];
+		var arLen=action.form.length;
+		for ( var i=0, len=arLen; i<len; ++i ) {
+			config.items.push(new KaraCos.Form({'form': action['form'][i],
+				'url':action.acturl,
+				'action':action.action,
+				'win': this}));
+		}
+	}
+	KaraCos.Action.superclass.constructor.call(this, config);
+};
+Ext.extend(KaraCos.Action,Ext.Window, {
+	messageAlert:function(error) {
+		try {
+			this.formAlertMsgText = error.message;
+			this.formAlertMsg = Ext.MessageBox.show({
+				title:'Error ' + error.code + ' origin ' + error.origin,
+				msg: this.formAlertMsgText,
+				buttons: Ext.Msg.OK,
+				modal:true,
+				icon: Ext.MessageBox.ERROR
+			});			
+		} catch(error) {
+			this.formAlertMsgText = "unexpected error";
+			this.formAlertMsg = Ext.MessageBox.show({
+				title:'Error',
+				msg: this.formAlertMsgText,
+				buttons: Ext.Msg.OK,
+				modal:true,
+				icon: Ext.MessageBox.ERROR
+			});
+		}
+	}
+});
+
+KaraCos.Form = function(config) {
+	form = config.form;
+	config.frame = true;
+	if (form.title) {
+		config['title'] = form.title;
+	}
+	if (form.fields) {
+		this.items = [];
+		var arLen=form.fields.length;
+		for ( var i=0, len=arLen; i<len; ++i ) {
+			field = this.getField(form.fields[i]);
+			if (field != undefined)
+				this.items.push(field);
+		}
+	}
+	KaraCos.Form.superclass.constructor.call(this, config);
+	this.win = config.win;
+	var that = this;
+	submit = "";
+	if (form.submit) {
+		submit = form.submit;
+	} else {
+		submit = config.action;
+	}
+	this.addButton({
+		'text':submit,
+		handler: function(){
+			//
+			that.getForm().doAction('kc_jsonsubmit',{
+					'kc_method': config.action,
+					'success': function(form,action) {
+						this.win.destroy();
+					},
+					'failure' : function(form,action) {
+						if (action.result) {
+							if (action.result.error) {
+								this.messageAlert(action.result.error);
+								return;
+							}
+						}
+						if (action.result.status == 'success') {
+							this.formSuccessMsg = Ext.MessageBox.show({
+								title:'Action success',
+								msg: action.result.message,
+								buttons: Ext.Msg.OK,
+								modal:true,
+								icon: Ext.MessageBox.OK,
+								fn: function() {
+									this.destroy();
+								},
+								scope: this
+							});
+							return;
+						}
+						if (action.result.status == 'error'|| action.result.status == 'failure') {
+							msgObj = {'code':0,'origin':0};
+							msgObj['message'] = action.result.message;
+							if (action.result.trace) {
+								tracelen = action.result.trace.length;
+								for (var i=0 ; i<tracelen; ++i) {
+									msgObj['message'] += '<br/>';
+									msgObj['message'] += action.result.trace[i];
+								}
+							}
+							this.messageAlert(msgObj);
+							return;
+						}
+						this.messageAlert({'code': 0,'origin':0,'message':'Unreadable error'});
+					},
+					'scope': that.win,
+				});
+			}
+		});
+};
+
+Ext.extend(KaraCos.Form,Ext.form.FormPanel, {
+	/**
+	 * Returns a field object
+	 */
+	getField: function(field) {
+		field_label = "";
+		field_value = undefined;
+		if (field.title) {
+			field_label = field.title;
+		} else {
+			field_label = field.name;
+		}
+		if (field.value) {
+			field_value = field.value;
+		}
+		if (field.dataType.toLowerCase() == 'text') {
+			return new Ext.form.TextField({
+				fieldLabel:field_label,
+				name: field.name,
+				value: field_value
+			});
+		}
+		}
+	});
+Ext.namespace("KaraCos");
+
+
+KaraCos.JsonSubmit = function(form, options) {
+	KaraCos.JsonSubmit.superclass.constructor.call(this, form, options);
+};
+
+Ext.extend(KaraCos.JsonSubmit, Ext.form.Action.Submit, {
+    type: 'kc_jsonsubmit',
+
+    run : function() {
+        var o = this.options;
+        var method = this.getMethod();
+        var isGet = method == 'GET';
+        if (o.clientValidation === false || this.form.isValid()) {
+            var encodedParams = Ext.encode(this.form.getValues());
+
+            Ext.Ajax.request(Ext.apply(this.createCallback(o), {
+                url:this.getUrl(isGet),
+                method: method,
+                waitMsg: "Please wait while saving",
+                waitTitle: "Please wait",
+                headers: {'Content-Type': 'application/json','Accept': 'application/json'},
+                params: String.format('{"id": 1,"method": "{0}", "params": {1}}', o.kc_method, Ext.encode(this.form.getValues())),
+                isUpload: false
+            }));
+        } else if (o.clientValidation !== false) { // client validation failed
+            this.failureType = Ext.form.Action.CLIENT_INVALID;
+            this.form.afterAction(this, false);
+        }
+    }
+});
+
+/**
+ * We register the new action type...
+ */
+Ext.apply(Ext.form.Action.ACTION_TYPES, {
+    'kc_jsonsubmit' : KaraCos.JsonSubmit
+});
+
+/*!
+* Aloha Editor
+* Author & Copyright (c) 2010 Gentics Software GmbH
+* aloha-sales@gentics.com
+* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*/
+
+/**
+ * Create the Repositories object. Namespace for Repositories
+ * @hide
+ */
+if ( !GENTICS.Aloha.Repositories ) GENTICS.Aloha.Repositories = {};
+
+/**
+ * register the plugin with unique name
+ */
+GENTICS.Aloha.Repositories.KaraCos = new GENTICS.Aloha.Repository('org.karacos.aloha.Repository');
+
+
+/**
+ * Internal folder structur.
+ * @hide
+ */
+GENTICS.Aloha.Repositories.KaraCos.folder =[];
+
+/**
+ * initalize LinkList, parse all links, build folder structure and add 
+ * additional properties to the items
+ */
+GENTICS.Aloha.Repositories.KaraCos.init = function() {
+	var that = this;
+	url_href = "/w_browse_types"
+    this.repositoryName = 'KaraCos';
 }
 
 
 
-KaraCos.Img.srcChange = function () {
-	// For now hard coded attribute handling with regex.
-	//this.imgField.setAttribute('target', this.target, this.targetregex, this.hrefField.getQueryValue());
-	//this.imgField.setAttribute('class', this.cssclass, this.cssclassregex, this.hrefField.getQueryValue());
-}
+/**
+ * Searches a repository for object items matching query if objectTypeFilter.
+ * If none found it returns null.
+ */
+GENTICS.Aloha.Repositories.KaraCos.query = function( p, callback) {
+	// Not supported; filter, orderBy, maxItems, skipcount, renditionFilter
+	// 
+	//console.log("query");
+	var d = this.settings.data.filter(function(e, i, a) {
+		//var r = new RegExp(queryString, 'i'); 
+		var ret = false;
+		return ( !p.inFolderId || p.inFolderId == e.parentId );
+		/* (
+			( !queryString || e.displayName.match(r) || e.url.match(r) ) && 
+			( !objectTypeFilter || jQuery.inArray(e.objectType, objectTypeFilter) > -1) &&
+			( !inFolderId || inFolderId == e.parentId ) 
+		);*/
+	});
+	console.log(d);
+	callback.call( this, d);
+};
 
+/**
+ * returns the folder structure as parsed at init.
+ */
+GENTICS.Aloha.Repositories.KaraCos.getChildren = function( p, callback) {
+	var req_url = p.inFolderId.split("org.karacos.aloha.Repository")[0];
+	callback.call( this, this.getObjectsAtUrl(req_url));
+};
+
+
+GENTICS.Aloha.Repositories.KaraCos.getObjectsAtUrl = function(url_href) {
+	var result =    [];
+	var that = this;
+	jQuery.ajax({ url: url_href + "/w_browse_types",
+		dataType: "json",
+		context: document.body,
+		async: false, // plugin init should wait for success b4 continuing
+	    success: function(data) {
+	    	
+			jQuery.each(data,function(k,v){
+				result.push(new that.Folder({
+					'id': url_href + '/' + k, 
+					'name': k,
+					'url': url_href + '/' + k, 
+					'objectType': 'folder',
+					'type': 'folder',
+					'repositoryId': "org.karacos.aloha.Repository",
+					'parentId': url_href
+						}));
+			});
+		}
+	}); // jQuery.ajax for folders
+	jQuery.ajax({ url: url_href + "/_att",
+		dataType: "json",
+		context: document.body,
+		async: false, // plugin init should wait for success b4 continuing
+	    success: function(data) {
+	    	
+			jQuery.each(data.form.fields[0].values,function(k,v){
+				result.push(new that.Document({
+					'id': url_href + '/' + v.label, 
+					'name': v.label,
+					'url': v.value, 
+					'objectType': 'document',
+					'type': 'document',
+					'repositoryId': "org.karacos.aloha.Repository",
+					'parentId': url_href
+						}));
+			});
+		}
+	}); // jQuery.ajax for folders
+	return result
+};
+
+GENTICS.Aloha.Repositories.KaraCos.Folder = function (data) {
+	//GENTICS.Utils.applyProperties(this,data);
+	GENTICS.Aloha.Repositories.KaraCos.Folder.superclass.constructor.call(this,data);
+};
+
+Ext.extend(GENTICS.Aloha.Repositories.KaraCos.Folder, GENTICS.Aloha.Repository.Folder, {
+	
+});
+
+GENTICS.Aloha.Repositories.KaraCos.Document = function (data) {
+	//GENTICS.Utils.applyProperties(this,data);
+	GENTICS.Aloha.Repositories.KaraCos.Document.superclass.constructor.call(this,data);
+};
+
+Ext.extend(GENTICS.Aloha.Repositories.KaraCos.Document, GENTICS.Aloha.Repository.Document, {
+	
+});
 /*
 * Karacos plugin for aloha
 */
-if(typeof KaraCos=="undefined"||!KaraCos)
-    {
-	alert('KaraCos must be loaded');
-    }
+Ext.namespace("KaraCos");
+
 KaraCos.Plugin=new GENTICS.Aloha.Plugin("org.karacos.aloha.Plugin");
 /*if (typeof KaraCos_mode != "undefined" ||KaraCos_mode) {
 	if (KaraCos_mode != 'karacos_prod') {
@@ -97260,20 +99188,16 @@ KaraCos.Plugin.init=function(){
 	if (that.settings['instance_url'] == undefined) {
 		that.settings['instance_url'] = '';
 	}
-	
-	GENTICS.Aloha.Ribbon.addButton(
-			new GENTICS.Aloha.ui.Button({
-				'iconClass': 'GENTICS_button karacos_explorer_icon',
-				id: 'show-btn',
-				})
-		);
-	GENTICS.Aloha.Ribbon.addButton(
-		new GENTICS.Aloha.ui.Button({
-			'iconClass': 'GENTICS_button karacos_explorer_icon',
-			onclick:function(){
-			KaraCos.Explorer.domainExplorer.show(this);
-		}})
-	);
+	this.browser = new GENTICS.Aloha.ui.Browser();
+
+	this.explorer_button = new GENTICS.Aloha.ui.Button({
+		'iconClass': 'GENTICS_button karacos_explorer_icon',
+		'toggle' : false,
+		onclick:function(){
+			that.browser.show();
+	}});
+	GENTICS.Aloha.Ribbon.addButton(this.explorer_button);
+	// When explorer is hidden, make the button clickable
 	url_href = that.settings['instance_url'] + "/get_user_actions_forms";
 	$.ajax({ url: url_href,
     	dataType: "json",
@@ -97287,8 +99211,25 @@ KaraCos.Plugin.init=function(){
 				GENTICS.Aloha.Log.info(that,"successful result");
 				that.rsdata = data['data'];
 				}
-			},// success on get_user_actions_forms
+			}// success on get_user_actions_forms
 	}); // $.ajax for get_user_actions_forms
+	this.drawButtons();
+	GENTICS.Aloha.Log.info(that,that);
+	that.bindInteractions();
+	that.subscribeEvents();
+   }; // END INIT
+
+KaraCos.Plugin.objectTypeFilter = [];
+
+
+KaraCos.Plugin.bindInteractions = function () {
+    var that = this;
+    
+
+};
+
+KaraCos.Plugin.drawButtons = function() {
+	var that = this;
 	if (that.rsdata) {
 		len = that.rsdata.actions.length;
 		for (var i=0 ; i<len; ++i) {
@@ -97303,13 +99244,23 @@ KaraCos.Plugin.init=function(){
 				if (that.rsdata.actions[i].action == "_att") {
 					that._att = that.rsdata.actions[i];
 				}
-				/* 
-				 * if (that.rsdata.actions[i].label) {
+				if (that.rsdata.actions[i].label) {
 					var actionButton=new GENTICS.Aloha.ui.Button({label:that.rsdata.actions[i].label,
 						onclick:function(){ // When a button is clicked :
 						if (this.actiondata.form && this.actiondata.action != 'register') {
-							$.kc_write_kc_action(this.actiondata,$('#dialog_window'));
-							$('#dialog_window').dialog('open');	
+							new KaraCos.Action({'action': this.actiondata,
+								title : this.actiondata.action,
+								layout : 'vbox',
+								layoutConfig: {
+								    align : 'stretch',
+								    pack  : 'start',
+								},
+								width : 800,
+								height : 300,
+								modal:true,
+								closeAction : 'destroy'}).show();
+							
+							
 						} else {
 							document.location = this.instance_url + '/' + this.actiondata.action;
 						}
@@ -97319,8 +99270,9 @@ KaraCos.Plugin.init=function(){
 					GENTICS.Aloha.Log.info(that,"processing action button creation " + that.rsdata.actions[i].label );
 					GENTICS.Aloha.Ribbon.addButton(actionButton);
 					// actionButton.show();
-				} 
-				*/
+				} else {
+					
+				}
 			}
 			// GENTICS.Aloha.Ribbon.toolbar.render();
 			// GENTICS.Aloha.Ribbon.toolbar.show();
@@ -97336,174 +99288,37 @@ KaraCos.Plugin.init=function(){
 					}
 					that.pagedata[field.name] = fieldvalue;
 				}
-				var editMore=new GENTICS.Aloha.ui.Button({label:that.i18n("editMore"),
+				var editMore=new GENTICS.Aloha.ui.Button({
+					label:that.i18n("editMore"),
 					onclick:function(){that.editMore()}});
 				GENTICS.Aloha.Ribbon.addButton(editMore);
 				// editMore.show();
 				// GENTICS.Aloha.Ribbon.toolbar.render();
 				// GENTICS.Aloha.Ribbon.toolbar.show();
-				var saveButton=new GENTICS.Aloha.ui.Button({label:that.i18n("save"),
+				var saveButton=new GENTICS.Aloha.ui.Button({
+					label:that.i18n("save"),
 					onclick:function(){that.save()}});
 				GENTICS.Aloha.Ribbon.addButton(saveButton);
 				// saveButton.show();
 				// GENTICS.Aloha.Ribbon.toolbar.render();
 				// GENTICS.Aloha.Ribbon.toolbar.show();
 			} // if edit_page 
-		} // if data.status == "success"
-	GENTICS.Aloha.Log.info(that,that);
-	//console.log(that);
-	// $.ajax 
-	that.initImage();
-	that.bindInteractions();
-	that.subscribeEvents();
-   }; // END INIT
-
-KaraCos.Plugin.resourceObjectTypes = [];
-
-KaraCos.Plugin.initImage = function() {
-	var that = this;
-	
-	if (that.add_attachment != null) {
-	    that.imgUploadButton = new GENTICS.Aloha.ui.Button({
-	    	'label' : that.i18n('button.uploadimg.label'),
-	    	'size' : 'small',
-	    	'onclick' : function () { 
-	    		GENTICS.Aloha.FloatingMenu.obj.hide();
-	    		$.kc_write_kc_action(this.add_attachment,$('#dialog_window'));
-	    		$('#dialog_window input.field').fileUploader({
-	    			imageLoader: '',
-	    			buttonUpload: '#dialog_window input.button',
-	    			buttonClear: '#pxClear',
-	    			successOutput: 'File Uploaded',
-	    			errorOutput: 'Failed',
-	    			inputName: 'att_file',
-	    			inputSize: 30,
-	    			allowedExtension: 'jpg|jpeg|png|gif',
-	    			callback: function(data) {
-	    			$('#dialog_window').dialog('close');
-	    			//console.log(that.imgUploadButton.targetImg);
-	    			//console.log(data);
-	    			that.targetImg.src = data.data;
-	    			GENTICS.Aloha.FloatingMenu.obj.show();
-	    		}
-	    			});
-	    		$('#dialog_window').dialog('open');
-	    		
-	    },
-	    	'tooltip' : that.i18n('button.uploadimg.tooltip'),
-	    	'toggle' : false
-	    });
-	    that.imgUploadButton.add_attachment = that.add_attachment;
-	    //this.imgUploadButton.setResourceObjectTypes(KaraCos.Plugin.resourceObjectTypes);
-	    GENTICS.Aloha.FloatingMenu.addButton(
-	    		KaraCos.Img.getUID('img'),
-	    		this.imgUploadButton,
-	    		this.i18n('floatingmenu.tab.img'),
-	    		3
-	    );
-	    that.imgChooseButton = new GENTICS.Aloha.ui.Button({
-	    	'iconClass': 'GENTICS_button karacos_explorer_icon',
-	    	'size' : 'small',
-	    	'onclick' : function () { 
-	    	KaraCos.Explorer.domainExplorer.show(this);
-	    },
-	    	'tooltip' : that.i18n('button.choose.tooltip'),
-	    	'toggle' : false
-	    });
-	    GENTICS.Aloha.FloatingMenu.addButton(
-	    		KaraCos.Img.getUID('img'),
-	    		this.imgChooseButton,
-	    		this.i18n('floatingmenu.tab.img'),
-	    		3
-	    );
-	}
-};
-
-KaraCos.Plugin.bindInteractions = function () {
-    var that = this;
-    
-    if(!document.body.BodyDragSinker){
-		document.body.BodyDragSinker = true;
-		//==================
-		// Attach drag and drop listeners to document body
-		// this prevents incorrect drops, reloading the page with the dropped item
-		var body = Ext.fly(document.body);
-		//$('body').get(0).addEventListener('drop', function(event){
-		//	console.log(event);
-		//	event.stopEvent();
-		//	return true;
-		//});
-		body.on({
-			dragenter:function(event){
-				return true;
-			}
-			,dragleave:function(event){
-				return true;
-			}
-			,dragover:function(event){
-				//console.log(event);
-				if (event.sink) {
-					event.stopEvent();
-				}
-				return true;
-			}
-			,drop:function(event){
-				console.log(event);
-				event.stopEvent();
-				if (event.sink) {
-				}
-				return true;
-			}
-		});
-	}
-    
-    // Block call pasted from http://source.sphene.net/wsvn/sphene/aloha/trunk/aloha-imageplugin/src/at.tapo.aloha.plugins.Image/plugin.js
-    // to bind drop event....
-    GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha, 'editableCreated', function(event, editable) {
-        editable.obj[0].addEventListener('drop', function(event){
-    		var e = event;
-            event.sink = true;
-            var files = e.dataTransfer.files;
-            var count = files.length;
-            // if no files where dropped, use default handler
-            if (count < 1) {
-            	event.sink = false;
-                return true;
-            }
-            for (var i = 0 ; i < files.length ; i++) {
-                //alert("testing " + files[i].name);
-                var reader = new FileReader();
-                reader.onloadend = function(readEvent) {
-                    var img = jQuery('<img src="" alt="xyz" />');
-                    img.attr('src', readEvent.target.result);
-                    //GENTICS.Aloha.Selection.changeMarkupOnSelection(img);
-                    GENTICS.Utils.Dom.insertIntoDOM(
-                        img,
-                        GENTICS.Aloha.Selection.getRangeObject(),
-                        jQuery(GENTICS.Aloha.activeEditable.obj));
-                };
-                reader.readAsDataURL(files[i]);
-            }
-
-            return false;
-        }, false);
-    });
-
+		} // if that.rsdata
 }
 
 KaraCos.Plugin.subscribeEvents = function () {
 	var that = this;
-	
-    // add the event handler for selection change
     GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha, 'selectionChanged', function(event, rangeObject) {
+    	//console.log(rangeObject);
     	if (that.add_attachment != null) {
-	    	var foundImgMarkup = KaraCos.Img.findImgMarkup( rangeObject );
+	    	var foundImgMarkup = GENTICS.Aloha.Image.findImgMarkup( rangeObject );
 	        if ( foundImgMarkup != null ) {
 	        	//img found
 	            that.targetImg = foundImgMarkup;
 	        } else {
 //	        	that.targetImg = null;
 	        }
+	        
 	    	// TODO this should not be necessary here!
 	        GENTICS.Aloha.FloatingMenu.doLayout();
 	        GENTICS.Aloha.FloatingMenu.obj.show();
@@ -97539,9 +99354,9 @@ KaraCos.Plugin.save=function(){
 	    var that = this;
 		jQuery.each(GENTICS.Aloha.editables,
 		            function(index,editable){
-				that.pagedata[config[editable.getId()]] = editable.getContents();
-		        content=content+"Editable ID: "+config[editable.getId()]+"\nHTML code: "+editable.getContents()+"\n\n";
-		        });
+						that.pagedata[config[editable.getId()]] = editable.getContents();
+				        content=content+"Editable ID: "+config[editable.getId()]+"\nHTML code: "+editable.getContents()+"\n\n";
+			        });
 		url = that.settings['instance_url'];
 		if (url == "") {
 			url = "/";
@@ -97552,20 +99367,18 @@ KaraCos.Plugin.save=function(){
 	    	data: $.toJSON({
 	    		'method' : that.settings['edit_content_action'],
 	    		'id' : 1,
-	    		'params' : that.pagedata,
+	    		'params' : that.pagedata
 	    	}),
 	    	context: document.body,
 	    	type: "POST",
 	        success: function(data) {
-			GENTICS.Aloha.Log.info(that,data);
-	    },});
+				GENTICS.Aloha.Log.info(that,data);
+	    	}});
 		GENTICS.Aloha.Log.info(that,that);
 	} catch(error) {
-		console.log(error);
 		GENTICS.Aloha.Log.error(error);
 	}
   };
-
 /*!
 * Aloha Editor
 * Author & Copyright (c) 2010 Gentics Software GmbH

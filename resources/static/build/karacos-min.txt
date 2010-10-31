@@ -3,4 +3,3 @@ js/jquery.json-2.2.js
 js/jquery-ui-1.8.5.custom.min.js
 js/anytime.js
 js/karacos-forms.js
-js/karacos.fileUploader.js

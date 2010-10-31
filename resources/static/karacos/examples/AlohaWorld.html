@@ -13,8 +13,9 @@
 <script type="text/javascript" src="../plugins/com.gentics.aloha.plugins.TOC/plugin.js"></script>
 <script type="text/javascript" src="../plugins/com.gentics.aloha.plugins.Link/delicious.js"></script>
 <script type="text/javascript" src="../plugins/com.gentics.aloha.plugins.Link/LinkList.js"></script>
-
-<link rel="stylesheet" href="examples.css" />
+<script type="text/javascript" src="../plugins/com.gentics.aloha.plugins.Paste/plugin.js"></script>
+<script type="text/javascript" src="../plugins/com.gentics.aloha.plugins.Paste/wordpastehandler.js"></script>
+<link rel="stylesheet" href="AlohaWorld.css" />
 
 <!-- turn an element into editable Aloha continuous text -->
 <script type="text/javascript">
@@ -32,11 +33,11 @@ GENTICS.Aloha.settings = {
 	"repositories": {
 	 	"com.gentics.aloha.repositories.LinkList": {
 	 		data: [
- 		        { id: 1, displayName: 'Aloha Developers Wiki', url:'http://www.aloha-editor.com/wiki', objectType:'website', weight: 0.50 },
- 		        { id: 2, displayName: 'Aloha Editor - The HTML5 Editor', url:'http://aloha-editor.com', objectType:'website', weight: 0.90  },
- 		        { id: 3, displayName: 'Aloha Demo', url:'http://www.aloha-editor.com/demos.html', objectType:'website', weight: 0.75  },
- 		        { id: 4, displayName: 'Aloha Wordpress Demo', url:'http://www.aloha-editor.com/demos/wordpress-demo/index.html', objectType:'website', weight: 0.75  },
- 		        { id: 5, displayName: 'Aloha Logo', url:'http://www.aloha-editor.com/images/aloha-editor-logo.png', objectType:'image', weight: 0.10  },
+ 		        { name: 'Aloha Developers Wiki', url:'http://www.aloha-editor.com/wiki', type:'website', weight: 0.50 },
+ 		        { name: 'Aloha Editor - The HTML5 Editor', url:'http://aloha-editor.com', type:'website', weight: 0.90  },
+ 		        { name: 'Aloha Demo', url:'http://www.aloha-editor.com/demos.html', type:'website', weight: 0.75  },
+ 		        { name: 'Aloha Wordpress Demo', url:'http://www.aloha-editor.com/demos/wordpress-demo/index.html', type:'website', weight: 0.75  },
+ 		        { name: 'Aloha Logo', url:'http://www.aloha-editor.com/images/aloha-editor-logo.png', type:'image', weight: 0.10  }
 	 		]
 		}
 	},
@@ -82,7 +83,15 @@ GENTICS.Aloha.settings = {
 		  	cssclassregex : '^(?!.*aloha-editor.com).*',
 		  	cssclass : 'aloha',
 		  	// use all resources of type website for autosuggest
-		  	objectTypeFilter: ['website']
+		  	objectTypeFilter: ['website'],
+		  	// handle change of href
+		  	onHrefChange: function( obj, href, item ) {
+			  	if ( item ) {
+					jQuery(obj).attr('data-name', item.name);
+			  	} else {
+					jQuery(obj).removeAttr('data-name');
+			  	}
+		  	}
 		},
 	 	"com.gentics.aloha.plugins.Table": { 
 		 	// all elements with no specific configuration are not allowed to insert tables
@@ -116,9 +125,13 @@ it is used as the above.</p>
 </div>
 <div id="content" class="article">
 <h2>Etymology</h2>
-<p>The word <a href="http://en.wikipedia.org/wiki/Aloha" target="_blank" class="aloha">aloha</a> derives from the Proto-Polynesian root <i>*qalofa</i>. It has cognates in other Polynesian languages, such as Samoan alofa
+<p>The word <a href="http://en.wikipedia.org/wiki/Aloha-invalid" target="_blank" class="aloha">aloha</a> derives from the Proto-Polynesian root <i>*qalofa</i>. It has cognates in other Polynesian languages, such as Samoan alofa
 and Māori aroha, also meaning "love."</p>
-<p><a href="http://aloha-editor.com">Aloha Editor</a> is the word's most advanced browser based Editor made with aloha passion.</p>
+<table>
+<caption>with a caption.</caption>
+<tr><td>This</td><td>is</td></tr>
+<tr><td>a</td><td>table.</td></tr>
+</table>
 <p>A folk etymology claims that it derives from a compound of the <a href="http://en.wikipedia.org/wiki/Hawaii" target="_blank" class="aloha">Hawaiian</a> words alo meaning "presence", "front", "face", or "share"; and
 ha, meaning "breath of life" or "essence of life." Although alo does indeed mean "presence" etc., the word for breath is spelled with a macron
 or kahakō over the a (hā) whereas the word aloha does not have a long a.</p>
