@@ -137,6 +137,17 @@ class Document(couchdb.client.Document):
         """
         return 
     
+    def get_aloha_template_uri(self):
+        uri = ""
+        try:
+            uri = "/includes/alohaconf/%s.js" % (self.__domain__.get_site_theme_base(),self['WebType'])
+            template = self.__domain__.lookup.get_template(uri)
+        except:
+            self.log.log_exc(sys.exc_info(),'info')
+            uri = "/includes/alohaconf/%s.js" % self['type']
+            template = self.__domain__.lookup.get_template(uri)
+        return uri
+    
     def _get_action_url(self):
         acturl = ""
         assert isinstance(self.__class__,karacos.db['WebMeta'])

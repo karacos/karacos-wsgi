@@ -19,16 +19,19 @@
   <link rel="icon" type="image/x-icon" href="/multiflex37/img/favicon.ico" />
 % if isstaff:
   	<%include file="/includes/karacos_full_js"/>
+  		<script language="javascript">
+			<%include file="${instance.get_aloha_template_uri()}"/>
+		</script>
   	% else:
-  	<%include file="/includes/karacos_min_js"/>
-  	% endif  <title>
+	  	<%include file="/includes/karacos_min_js"/>
+  	% endif
+<title>
   % if 'title' in instance:
         ${instance['title']}
 		% else:
 			Bienvenue
 		% endif
 </title>
-
 
 	% if 'head_bloc' in instance.__domain__:
 		${instance.__domain__['head_bloc']}

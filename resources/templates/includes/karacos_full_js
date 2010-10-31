@@ -38,8 +38,9 @@
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.DragAndDropFiles/lib/DropFilesRepository.js"></script>
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.DragAndDropFiles/plugin.js"></script>
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Plugin/plugin.js"></script>
-	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Plugin/Repository.js"></script>
-
+	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Plugin/lib/Repository.js"></script>
+	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Plugin/lib/ext-kc-json-submit.js"></script>
+	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Plugin/lib/ext-kc-form.js"></script>
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.HighlightEditables/plugin.js"></script>
 ##	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.TOC/plugin.js"></script>	
 % endif

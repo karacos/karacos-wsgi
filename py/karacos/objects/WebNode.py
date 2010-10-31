@@ -144,7 +144,7 @@ class WebNode(karacos.db['Node']):
                     {'name':'type', 'title':_("Type d'objet"),'dataType': 'TEXT'},
                     {'name':'base', 'title':_('Base'),'dataType': 'TEXT'},
                  ] }
-    #create_child_node.label = _("Creer un noeud")
+    create_child_node.label = _("Creer un noeud")
     
     def _serve_att(self,name):
         att_filename = os.path.join(self.get_att_dir(),name)
