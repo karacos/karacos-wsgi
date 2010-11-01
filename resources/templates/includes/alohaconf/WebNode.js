@@ -10,7 +10,6 @@
 	   					config : { 'drop' : {'max_file_size': '200000',
 	   										 'max_file_count': 2,
 	   										 'upload': {'url': "${instance._get_action_url()}",
-	   										 			'file_name_param':"",
 	   										 			'extra_headers':{'Accept':'application/json'},
 				   										'www_encoded': false }}},
 					  	editables : {
