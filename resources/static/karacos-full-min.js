@@ -3107,7 +3107,7 @@ if(typeof start=='undefined'){if(rangeObject){start=rangeObject.getCommonAncesto
 var prevNode=false;var modifiedRange=false;var startObject=jQuery(start);startObject.contents().each(function(index){switch(this.nodeType){case 1:if(prevNode&&prevNode.nodeName==this.nodeName){if(rangeObject.startContainer===startObject&&rangeObject.startOffset>index){rangeObject.startOffset-=1;modifiedRange=true;}
 if(rangeObject.endContainer===startObject&&rangeObject.endOffset>index){rangeObject.endOffset-=1;modifiedRange=true;}
 jQuery(prevNode).append(jQuery(this).contents());modifiedRange|=that.doCleanup(cleanup,rangeObject,prevNode);jQuery(this).remove();}else{modifiedRange|=that.doCleanup(cleanup,rangeObject,this);var removed=false;if(cleanup.removeempty){if(GENTICS.Utils.Dom.isBlockLevelElement(this)&&this.childNodes.length==0){jQuery(this).remove();removed=true;}
-if(jQuery.inArray(this.nodeName.toLowerCase(),that.mergeableTags)>=0&&jQuery(this).text().length==0){jQuery(this).remove();removed=true;}}
+if(jQuery.inArray(this.nodeName.toLowerCase(),that.mergeableTags)>=0&&jQuery(this).text().length==0&&this.childNodes.length==0){jQuery(this).remove();removed=true;}}
 if(!removed){if(jQuery.inArray(this.nodeName.toLowerCase(),that.mergeableTags)>=0){prevNode=this;}else{prevNode=false;}}}
 break;case 3:if(prevNode&&prevNode.nodeType==3&&cleanup.merge){if(rangeObject.startContainer===this){rangeObject.startContainer=prevNode;rangeObject.startOffset+=prevNode.length;modifiedRange=true;}
 if(rangeObject.endContainer===this){rangeObject.endContainer=prevNode;rangeObject.endOffset+=prevNode.length;modifiedRange=true;}

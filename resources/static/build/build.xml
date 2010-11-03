@@ -69,8 +69,13 @@
 		<mkdir dir="${outdir}/karacos" />
 		<copy todir="${outdir}/karacos">
 			<fileset dir="${srcdir}/aloha-nka-fork/WebContent">
-				<include name="**/*" />
+				<include name="**/*.*" />
 				<exclude name="**/*.js" />
+				<exclude name="**/.git" />
+				<exclude name="**/.git/**" />
+				<exclude name="**/.gitattributes" />
+				<exclude name="**/.gitignore" />
+				<exclude name="**/.gitmodules" />
 			</fileset>
 		</copy>
 	</target>
