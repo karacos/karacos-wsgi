@@ -3,7 +3,14 @@
 <%namespace name="site">
 	<%def name="showresult(result)">
 	% if result:
+	<div id="result_frame">
 		${result}
+	</div>
+		 % if 'message' in result :
+			<div class="result_message">
+				<p class="${result['status']}">${result['message']}</p>
+			</div>
+		% endif
 	% endif
 	</%def>
 </%namespace>
@@ -62,7 +69,10 @@
     </div>
       
     <!-- C. FOOTER AREA -->      
-
+	<script language="javascript">
+	$(".result_message").fadeOut(4000, function() {
+  	});
+	</script>
     <div class="footer">
       <p>Copyleft 2010  <a href="http://nico.karageuzian.com/" title="Modifyer Homepage">Nicolas Karageuzian</a> | KaraCos LGPL Web Platform Engine</p>
       <p class="credits">

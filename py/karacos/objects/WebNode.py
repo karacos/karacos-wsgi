@@ -230,6 +230,7 @@ class WebNode(karacos.db['Node']):
          'fields': [{'name':'att_file', 'title':'Fichier','dataType': 'FILE'}]}
     add_attachment.label = _("Attacher un fichier")
     
+        
     @karacos._db.isaction
     def delete_child(self,childname=None):
         assert childname != None

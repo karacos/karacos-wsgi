@@ -88,6 +88,7 @@ class Dispatcher(object):
         """
         exceptionType, exceptionValue,exceptionTraceback = exc_info
         response = karacos.serving.get_response()
+        request = karacos.serving.get_request()
         session = karacos.serving.get_session()
         domain = session.get_karacos_domain()
         template = domain.lookup.get_template('system') 
@@ -111,9 +112,22 @@ class Dispatcher(object):
                     session['backlinks'] = backlinks
                     self.log.info("Setting backlinks : %s" % session['backlinks'] )
         else:
-            response.body = template.render(instance = domain,
+            if (request.headers['Accept'].find('text/html') >= 0 or
+                request.headers['Accept'].find('application/xhtml+xml') >= 0):
+                    response.body = template.render(instance = domain,
                                             result = {'status': 'failure',
                                                       'message': exceptionValue,
+                                                      'data' : "%s,%s,%s" % (exceptionType, exceptionValue,traceback.format_tb(exceptionTraceback))})
+            elif request.headers['Accept'].find('application/json') >= 0 :
+                response.body = karacos.json.dumps({'status': 'failure',
+                                                      'message': "%s" % exceptionValue,
+                                                      'data' : "%s,%s,%s" % (exceptionType, exceptionValue,traceback.format_tb(exceptionTraceback))})
+            elif request.headers['Accept'].find('application/xml') >= 0:
+                ""#self.render_xml(response)
+            else:
+                response.body = template.render(instance = domain,
+                                            result = {'status': 'failure',
+                                                      'message': "%s" % exceptionValue,
                                                       'data' : "%s,%s,%s" % (exceptionType, exceptionValue,traceback.format_tb(exceptionTraceback))})
     
     def process_request(self,request,response):
@@ -125,11 +139,7 @@ class Dispatcher(object):
         # If post with type != application/json, application/xml, ou multipart/form-data,
         # then it's a file upload.
         if (request.method == "POST" and            # 
-            'X-File-Name' in request.headers ) :    # This is a XRH upload request
-            #request.headers['Content-Type'].find('multipart/form-data') < 0 and
-            #request.headers['Content-Type'].find('application/json') < 0 and
-            #request.headers['Content-Type'].find('application/x-www-form-urlencoded') < 0 and
-            #request.headers['Content-Type'].find('application/xml') < 0) :
+            'X-File-Name' in request.headers ) :
             self.process_file_upload(request,response)
         elif (request.headers['Accept'].find('text/html') >= 0 or
                 request.headers['Accept'].find('application/xhtml+xml') >= 0):

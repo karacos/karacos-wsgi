@@ -2,7 +2,8 @@
 /*   Design:   Multiflex-3 Update-7 / Layout-4               */
 /*   File:     Global layout structure                       */
 /*-----------------------------------------------------------*/
-/*   Author:   Wolfgang                                      */
+/*   Author:   Wolfgang          
+/*   Custom:   Nicolas                                       */
 /*   Date:     January 15, 2007                              */
 /*   Homepage: wwww.1-2-3-4.info                             */
 /*-----------------------------------------------------------*/
@@ -14,7 +15,39 @@
 /************/
 /*  GLOBAL  */
 /************/
-
+#result_frame {display:none;}
+.result_message {
+	color:white;
+	top: 10px;
+	margin:5px;
+	padding:5px;
+}
+.result_message p.success {
+	background-color:darkgreen;
+	border:1px solid white;
+	font-weight: bold;
+	text-align: center;
+	margin:5px;
+	padding:5px;
+}
+.result_message p.error {
+	background-color: darkred;
+	border:1px solid white;
+	font-family: Arial, SansSerif;
+	font-weight: bold;
+	text-align: center;
+	margin:5px;
+	padding:5px;
+}
+.result_message p.failure {
+	background-color: darkred;
+	border:1px solid white;
+	font-family: Arial, SansSerif;
+	font-weight: bold;
+	text-align: center;
+	margin:5px;
+	padding:5px;
+}
 /* NON-HEADER */
 *{padding:0; margin:0;}
  body {font-size:62.5%; background-color:rgb(255,255,255); font-family:verdana,arial,sans-serif;} /*Font-size: 1.0em = 10px when browser default size is 16px*/

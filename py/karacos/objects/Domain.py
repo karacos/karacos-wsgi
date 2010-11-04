@@ -32,6 +32,7 @@ from mako.lookup import TemplateLookup
 from uuid import uuid4
 import os, datetime, sys, traceback
 import karacos
+json = karacos.json
 
 KcDocument = karacos.db['Document']
 class Domain(karacos.db['Parent']):

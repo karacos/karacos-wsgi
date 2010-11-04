@@ -140,7 +140,7 @@ class Document(couchdb.client.Document):
     def get_aloha_template_uri(self):
         uri = ""
         try:
-            uri = "/includes/alohaconf/%s.js" % (self.__domain__.get_site_theme_base(),self['WebType'])
+            uri = "/includes/alohaconf/%s.js" % self['WebType']
             template = self.__domain__.lookup.get_template(uri)
         except:
             self.log.log_exc(sys.exc_info(),'info')
@@ -261,3 +261,22 @@ class Document(couchdb.client.Document):
         assert 'owner_id' in self, "valueError: 'owner_id' : dict entry not found"
         assert 'group_id' in self, "valueError: 'group_id' : dict entry not found"
         assert 'ACL' in self, "valueError: 'permissions' : dict entry not found"
+    
+    @karacos._db.isaction
+    def _sync(self, data=None, override=False):
+        """
+        Entry-point for remote synchronisation
+        @param data: synchronisation data
+        @param override: True if given data should override existing, bypassing content verification 
+        """
+        assert 'name' in data, "Object name must be specified"
+        assert basestring(data['name']) == basestring(self['name']), "Incorrect object name"
+        if override:
+            self.update(data)
+            self.save()
+        return {"status": "success", "data": self}
+    
+    def _synchronize_remote(self, remote_url=None):
+        """
+        Synchronizes the current node data with remote url
+        """
