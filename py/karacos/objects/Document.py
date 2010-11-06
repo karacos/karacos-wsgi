@@ -23,12 +23,12 @@ Created on 24 nov. 2009
 @author: nico
 '''
 import karacos
-import new
 import datetime
 import sys
 import couchdb.client
 
 import logging
+import urlparse
 log = logging.getLogger("%s.KcDocMeta" % __name__)
 class KcDocMeta(type):
     """
@@ -269,14 +269,94 @@ class Document(couchdb.client.Document):
         @param data: synchronisation data
         @param override: True if given data should override existing, bypassing content verification 
         """
-        assert 'name' in data, "Object name must be specified"
-        assert basestring(data['name']) == basestring(self['name']), "Incorrect object name"
-        if override:
+        result = {}
+        assert 'name' in data, _("Object name must be specified")
+        assert 'type' in data, _("Object type must be specified")
+        assert data['type'] == self['type'], _("Object type don't match")
+        if 'WebType' in data:
+            assert 'WebType' in self, _("Object type don't match")
+            assert self['WebType'] == data['WebType'], _("Object type don't match")
+            del data['WebType']
+        assert unicode(data['name']) == unicode(self['name']), _("Object name don't match")
+        if 'sync' not in self:
+            self['sync'] = {}
+        assert '_id' in data
+        remote_id = data['_id']
+        
+        if remote_id not in self['sync']:
+            # use the remote id as a key for sync trace
+            self['sync'][remote_id] = []
+        self_last_modif = datetime.datetime.strptime(self['last_modification_date'],'%Y-%m-%dT%H:%M:%S')
+        remote_last_modif = datetime.datetime.strptime(data['last_modification_date'],'%Y-%m-%dT%H:%M:%S')
+        sync_data = {'remote': {'ip': karacos.serving.get_request().remote_addr,
+                                '_rev':data['_rev'],
+                                'parent_id': data['parent_id'],
+                                'base_id': data['base_id'],
+                                'last_modification_date': data['last_modification_date']},
+                    'local': {'_rev_before': self['_rev']}}
+        # Drop system properties
+        del data['_id']
+        del data['_rev']
+        del data['type']
+        del data['ACL']
+        del data['creator_id']
+        del data['group_id']
+        del data['base_id']
+        del data['parent_db']
+        del data['parent_id']
+        del data['childrens']
+        del data['creation_date']
+        del data['last_modification_date']
+        
+        if 'sync' in data:
+            del data['sync']
+        
+        if override or self_last_modif < remote_last_modif:
             self.update(data)
             self.save()
-        return {"status": "success", "data": self}
+            result['status'] = 'success'
+            result['message'] = _("Newer remote content, local content updated with new values")
+        else:
+            self.update(data,**self)
+            self.save()
+            result['status'] = 'success'
+            result['message'] = _("Newer local content, local content updated with missing values")
+        sync_data['local']['_rev_after'] = self['_rev']
+        self['sync'][remote_id].append(sync_data)
+        self.save()
+        result['data'] = self
+        return result
     
-    def _synchronize_remote(self, remote_url=None):
+    def do_remote_authentication(self,remote_server,remote_user_id,remote_password):
+        data = {'method':"login","id": 1, "params": {"email": remote_user_id,
+                                                     "password": remote_password}}
+        headers = {'Accept':'application/json', 'Content-Type':'application/json'}
+        handler = karacos.core.net.http.UrlHandler(http_timeout=3000)
+        response = handler.processRequest(method="POST",url=remote_server,
+                                          data=karacos.json.dumps(data),
+                                          headers=headers)
+        assert response.status == 200
+        return response.getheader('set-cookie')
+        
+    @karacos._db.isaction
+    def _synchronize_remote(self, remote_url=None, remote_user_id=None, remote_password=None): #, recursive=False, override=False):
         """
         Synchronizes the current node data with remote url
         """
+        scheme, netloc, path, query, fragment = urlparse.urlsplit(remote_url)
+        cookie = self.do_remote_authentication("%s://%s/"%(scheme,netloc),remote_user_id,remote_password)
+        override=False
+        data = {"method":"_sync", "id":1, "params": {"data":self, "override":override}}
+        headers = {'Accept':'application/json', 'Content-Type':'application/json',
+                   'Cookie': cookie}
+        handler = karacos.core.net.http.UrlHandler(http_timeout=3000)
+        response = handler.processRequest(method="POST",url=remote_url,
+                                           data=karacos.json.dumps(data),headers=headers)
+        if response.status == 200:
+            return karacos.json.loads(response.read())
+    _synchronize_remote.form = {'title': _("Synchronize with remote object"),
+                                'submit': _('Synchronize'),
+                                'fields': [{'name':'remote_url', 'title':_('Remote url'), 'dataType': 'TEXT'},
+                                           {'name':'remote_user_id', 'title':_('Remote user Id'), 'dataType': 'TEXT'},
+                                           {'name':'remote_password', 'title':_('Remote password'), 'dataType': 'TEXT'}] }
+    _synchronize_remote.label = _("Synchronize with remote system")
