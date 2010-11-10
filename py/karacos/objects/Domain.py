@@ -349,6 +349,18 @@ class Domain(karacos.db['Parent']):
         return self.__everyone_group__
     
     @karacos._db.isaction
+    def _search_by_name(self,name=None):
+        result = self.base._search_name(name) 
+        return {'status':'success', 'data':result }
+    _search_by_name.form = {'title':'Search by name',
+                'submit':'Rechercher',
+                'fields':[
+                    {'name':'name', 'title':_('Search string'), 'dataType': 'TEXT'}
+                        ]
+                }
+    _search_by_name.label= _("Search by name")
+    
+    @karacos._db.isaction
     def set_name(self,name):
         self._update_item()
         self['name'] = name
@@ -835,7 +847,7 @@ class Domain(karacos.db['Parent']):
     @karacos._db.isaction
     def view_tracking(self):
         self._update_item()
-        return {'status':'succes','data' : json.dumps(self._get_trac_node()['items'])}
+        return {'status':'succes','data' : self._get_trac_node()['items']}
     
     @karacos._db.isaction
     def set_site_template_uri(self, site_template_uri=None):

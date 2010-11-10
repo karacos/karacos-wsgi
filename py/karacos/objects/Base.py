@@ -153,7 +153,83 @@ class Base(KcDocument):
         self.base = self
         self.log.debug("END Base __init__ : %s" % self)
         
-
+    
+    @karacos._db.ViewsProcessor.isview('self', 'javascript')
+    def __search_name__(self,name):
+        """ // %s first param, unused
+        function(doc) {
+            var tokens;
+            if (doc.name) {
+                re = new RegExp("%s");
+                if (doc.name.match(re)) {
+                    emit(doc._id, doc);
+                }
+            }
+        }
+        """
+    
+    @karacos._db.ViewsProcessor.isview('self', 'javascript')
+    def __search_file__(self,name):
+        """// %s first param, unused
+        function(doc) {
+            re = new RegExp("%s");
+            if (doc.name) {
+                
+                if (doc.name.match(re)) {
+                    emit(doc._id, doc);
+                    if (doc.k_atts) {
+                        for (name in doc.k_atts) {
+                            emit(doc._id,{'file_name':name, 'stats':doc.k_atts[name]});
+                        }
+                    }
+                }
+            }
+            if (doc.k_atts) {
+            for (name in doc.k_atts) {
+                if (name.match(re)) {
+                    emit(doc._id,{'file_name':name, 'stats':doc.k_atts[name]});
+                }
+            }
+            }
+        }
+        """
+    @karacos._db.ViewsProcessor.isview('self', 'javascript')
+    def __get_sub_dbs__(self):
+        """
+        function(doc) {
+            if (doc.base_id) {
+                if ( doc.base_id != '%s') {
+                    emit(doc.base_id, doc.base_id);
+                }
+            }
+        }
+        """
+    
+    def _search_name(self,name=None):
+        found = self.__search_name__(name)
+        result = {}
+        for item in found:
+            item_obj = self.db[item.key]
+            if 'type' in item.value:
+                result[item_obj._get_action_url()] = { "url": "http://%s%s" % (item_obj.__domain__['fqdn'],item_obj._get_action_url()),
+                                                  'type':'folder',
+                                                  'objectType':'folder',
+                                                  'name': item_obj['name']}
+                result.update(item_obj._search_get_childs())
+            else:
+                obj_id = "%s/%s" % (item_obj._get_action_url(),item.value['file_name'])
+                result[obj_id]= { "url": "http://%s%s" % (item_obj.__domain__['fqdn'],obj_id),
+                                                  'type':'file',
+                                                  'objectType':'file',
+                                                  'fileType':item.value['stats']['type'],
+                                                  'fileSize':item.value['stats']['size'],
+                                                  'name': item_obj['name']}
+        sub_dbs = self.__get_sub_dbs__()
+        for db in sub_dbs :
+            db_obj = karacos.db.sysdb[db.key]
+            result.update(db_obj._search_name(name))
+        return result #json.dumps(result)
+    
     def set_title(self,title):
         """
         Set DB title

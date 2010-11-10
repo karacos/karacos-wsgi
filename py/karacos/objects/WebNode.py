@@ -165,7 +165,7 @@ class WebNode(karacos.db['Node']):
     def get_atts_form(self):
         res=[]
         for file in os.listdir(self.get_att_dir()):
-            res.append({'label': file , 'value': '/_atts/%s/%s' % (self.id, file)})
+            res.append({'label': file , 'value': '%s/_att/%s' % (self._get_action_url(), file)})
             
         return {'title': _("Choisissez un fichier a visualiser"),
          'submit': _('Envoyer'),

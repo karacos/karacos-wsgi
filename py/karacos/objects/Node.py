@@ -24,6 +24,7 @@ Created on 3 dec. 2009
 '''
 from logging import getLogger
 import os
+import mimetypes
 log = getLogger(__name__)
 import karacos
 
@@ -105,8 +106,16 @@ class Node(karacos.db['Child']):
                 new_file.write(att_file.file_body)
         new_file.flush()
         new_file.close()
-        return {"success":True,"status":"success", "data": "%s/_att/%s" % (self._get_action_url(),att_file.filename),#"/_atts/%s/%s"%(self.id,att_file.filename),
+        new_file_st = os.stat(new_file_name)
+        
+        if 'k_atts' not in self:
+            self['k_atts'] = {}
+        self['k_atts'][att_file.filename] = {'type': mimetypes.guess_type(new_file_name)[0],
+                                            'size' : new_file_st.st_size}
+        self.save()
+        return {"success":True,"status":"success", "data": "http://%s%s/_att/%s" % (self.__domain__['fqdn'],self._get_action_url(),att_file.filename),
                 "message": "%s has been successfully writen" % att_file.filename }
+        
     def get_att_dir(self):
         att_dirname = os.path.join(karacos._srvdir,'_atts',self.id)
         if not os.path.exists(att_dirname):

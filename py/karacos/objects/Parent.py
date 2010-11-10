@@ -170,9 +170,29 @@ class Parent(KcDocument):
         function(doc) {
          if (doc.parent_id == "%s" && doc.WebType && !("_deleted" in doc && doc._deleted == true))
           emit(doc._id, doc.name);
+          
         }
         """
     
+    def _search_get_childs(self):
+        result = {}
+        for id in self['childrens'].values():
+            child_obj = self.db[id]
+            result[child_obj._get_action_url()] = { "url": "http://%s%s" % (child_obj.__domain__['fqdn'],child_obj._get_action_url()),
+                                                   'type':'folder',
+                                                  'objectType':'folder',
+                                                  'name': child_obj['name']}
+            result.update(child_obj._search_get_childs())
+        if 'k_atts' in self:
+            for name in self['k_atts'].keys():
+                obj_id = "%s/%s" % (self._get_action_url(),name)
+                result[obj_id] = { "url": "http://%s%s" % (self.__domain__['fqdn'],obj_id),
+                                                  'type':'file',
+                                                  'objectType':'file',
+                                                  'fileType':self['k_atts'][name]['type'],
+                                                  'fileSize':self['k_atts'][name]['size'],
+                                                  'name': name}
+        return result
     def get_web_childrens(self):
         """
         """
