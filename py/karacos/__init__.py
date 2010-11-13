@@ -46,6 +46,7 @@ config.read(os.path.join(_confdir,'karacos.conf'))
 _srvlogdir = os.path.join(_srvdir,'log')
 if not os.path.exists(_srvlogdir):
     os.makedirs(_srvlogdir)
+kc_props.logdir = _srvlogdir
 import core
 
 from logging import getLogger
