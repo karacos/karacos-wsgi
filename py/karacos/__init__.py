@@ -31,7 +31,13 @@ if not os.path.exists(_srvdir):
     print "%s isn't a server directory, aborting start" % os.environ['KC_SERVER_NAME']
     import sys
     sys.exit()
-    
+
+# Initializing resources dir
+_srvresources = os.path.join(_srvdir,'resources')
+if not os.path.exists(_srvresources):
+    os.makedirs(os.path.join(_srvresources,'static'))
+    os.makedirs(os.path.join(_srvresources,'templates'))
+
 _confdir = os.path.join(_srvdir,'conf')
 print "Reading config from %s" % os.path.join(_confdir,'karacos.conf')
 config = ConfigParser.RawConfigParser()
@@ -39,7 +45,7 @@ config.read(os.path.join(_confdir,'karacos.conf'))
 
 _srvlogdir = os.path.join(_srvdir,'log')
 if not os.path.exists(_srvlogdir):
-     os.makedirs(_srvlogdir)
+    os.makedirs(_srvlogdir)
 import core
 
 from logging import getLogger

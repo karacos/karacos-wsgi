@@ -254,7 +254,8 @@ class Domain(karacos.db['Parent']):
             module_dir = os.path.join(karacos._srvdir,'temp','pytemplates')
             if not os.path.exists(module_dir):
                 os.makedirs(module_dir)
-            templatesdirs = [default_template_dir]
+            templatesdirs = [default_template_dir, os.path.join(karacos._srvresources,'templates')]
+            
             if 'templatesdirs' in self:
                 for templatedir in self['templatesdirs']:
                     templatesdirs.append(templatedir)
@@ -273,6 +274,12 @@ class Domain(karacos.db['Parent']):
                 self.save()
             if self['staticdirs']['_browser'] != default_static_dir:
                 self['staticdirs']['_browser'] = default_static_dir
+                self.save()
+            server_static_dir = os.path.join(karacos._srvresources,'static')
+            if '_server' not in self['staticdirs']:
+                self['staticdirs']['_server'] = server_static_dir
+            if self['staticdirs']['_server'] != server_static_dir:
+                self['staticdirs']['_server'] = server_static_dir
                 self.save()
             if '_atts' not in self['staticdirs']:
                 self['staticdirs']['_atts'] = atts_dir
@@ -767,6 +774,31 @@ class Domain(karacos.db['Parent']):
          'submit': _('Changer'),
          'fields': [{'name':'webtype', 'title':'theme','dataType': 'TEXT'}]}
     set_web_domain_type.label = "Change web_domain type"
+    
+    def get_themes(self):
+        result = []
+        for dir in self.lookup.directories:
+            for potential_theme_dir in os.listdir(dir):
+                if os.path.isdir(os.path.join(dir,potential_theme_dir)):
+                    if 'site' in os.listdir(os.path.join(dir,potential_theme_dir)):
+                        result.append(potential_theme_dir)
+        return result
+
+
+    def get_theme_form(self):
+        return {'title': _("Change domain theme"),
+         'submit': _('Change'),
+         'fields': [{'name':'theme', 'title':'theme base','dataType': 'TEXT', 'formType': 'SELECT', 'values':self.get_themes()}]}
+        
+    @karacos._db.isaction
+    def set_theme(self,theme=None):
+        assert theme != None
+        self['site_theme_base'] = '/%s' % theme
+        self['site_template_uri'] = '/%s/site' % theme
+        self.save()
+        return {'status': 'success', 'success': True, 'message': _("Theme updated for domain")}
+    set_theme.label = _("Change Domain Theme")
+    set_theme.get_form = get_theme_form
 
     @karacos._db.isaction
     def set_site_theme_base(self, site_theme_base=None):
