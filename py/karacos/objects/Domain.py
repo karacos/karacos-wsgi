@@ -783,16 +783,39 @@ class Domain(karacos.db['Parent']):
                     if 'site' in os.listdir(os.path.join(dir,potential_theme_dir)):
                         result.append(potential_theme_dir)
         return result
+    def get_user_theme_form(self):
+        user = self.get_user_auth()
+        user._update_item()
+        return {'title': _("Change domain theme"),
+         'submit': _('Change'),
+         'fields': [{'name':'theme', 'title':'theme base','dataType': 'TEXT', 
+                     'formType': 'SELECT', 'value': user['CUSTOM_SITE_SKIN'].split()[0],'values':self.get_themes()}]}
 
-
+    @karacos._db.isaction
+    def set_user_theme(self, theme=None):
+        assert theme != None
+        assert theme in self.get_themes()
+        user = self.get_user_auth()
+        user._update_item()
+        user['CUSTOM_SITE_SKIN'] = '/%s/site' % theme
+        user['CUSTOM_SITE_BASE'] =  '/%s' % theme
+        user.save()
+        return {'status': 'success', 'success': True, 'message': _("Theme updated for domain")}
+    set_user_theme.label = _("Change User Theme")
+    set_user_theme.get_form = get_user_theme_form
+    
+    
     def get_theme_form(self):
         return {'title': _("Change domain theme"),
          'submit': _('Change'),
-         'fields': [{'name':'theme', 'title':'theme base','dataType': 'TEXT', 'formType': 'SELECT', 'values':self.get_themes()}]}
+         'fields': [{'name':'theme', 'title':'theme base','dataType': 'TEXT',
+                     'formType': 'SELECT', 'value':self['site_template_uri'].split()[0],
+                     'values':self.get_themes()}]}
         
     @karacos._db.isaction
     def set_theme(self,theme=None):
         assert theme != None
+        assert theme in self.get_themes()
         self['site_theme_base'] = '/%s' % theme
         self['site_template_uri'] = '/%s/site' % theme
         self.save()
