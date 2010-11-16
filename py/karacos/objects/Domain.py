@@ -789,7 +789,7 @@ class Domain(karacos.db['Parent']):
         return {'title': _("Change domain theme"),
          'submit': _('Change'),
          'fields': [{'name':'theme', 'title':'theme base','dataType': 'TEXT', 
-                     'formType': 'SELECT', 'value': user['CUSTOM_SITE_SKIN'].split()[0],'values':self.get_themes()}]}
+                     'formType': 'SELECT', 'value': user['CUSTOM_SITE_SKIN'].split('/')[0],'values':self.get_themes()}]}
 
     @karacos._db.isaction
     def set_user_theme(self, theme=None):
@@ -809,7 +809,7 @@ class Domain(karacos.db['Parent']):
         return {'title': _("Change domain theme"),
          'submit': _('Change'),
          'fields': [{'name':'theme', 'title':'theme base','dataType': 'TEXT',
-                     'formType': 'SELECT', 'value':self['site_template_uri'].split()[0],
+                     'formType': 'SELECT', 'value':self['site_template_uri'].split('/')[0],
                      'values':self.get_themes()}]}
         
     @karacos._db.isaction
