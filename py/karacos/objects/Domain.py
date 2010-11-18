@@ -804,10 +804,13 @@ class Domain(karacos.db['Parent']):
     def get_themes(self):
         result = []
         for dir in self.lookup.directories:
-            for potential_theme_dir in os.listdir(dir):
-                if os.path.isdir(os.path.join(dir,potential_theme_dir)):
-                    if 'site' in os.listdir(os.path.join(dir,potential_theme_dir)):
-                        result.append(potential_theme_dir)
+            try:
+                for potential_theme_dir in os.listdir(dir):
+                    if os.path.isdir(os.path.join(dir,potential_theme_dir)):
+                        if 'site' in os.listdir(os.path.join(dir,potential_theme_dir)):
+                            result.append(potential_theme_dir)
+            except:
+                pass
         return result
     def get_user_theme_form(self):
         user = self.get_user_auth()
