@@ -75,11 +75,11 @@ class Domain(karacos.db['Parent']):
     
     @staticmethod
     @karacos._db.ViewsProcessor.is_static_view('javascript')
-    def _get_by_name(name):
+    def _get_by_name(*args,**kw):
         """
         function(doc) {
-         if (doc.type == "Domain" && doc.name == "%s" && !("_deleted" in doc && doc._deleted == true))
-          emit(doc._id, doc);
+         if (doc.type == "Domain" && !("_deleted" in doc && doc._deleted == true))
+          emit(doc.name, doc);
         }
         """
     
@@ -89,7 +89,7 @@ class Domain(karacos.db['Parent']):
         assert isinstance(name,basestring), "Parameter name must be string"
         result = None
         try:
-            domains = Domain._get_by_name(name)
+            domains = Domain._get_by_name(*(),**{'key':name})
             assert domains.__len__() <= 1, "Domain.get_by_name : More than one Domain with that name in system DB"
             if domains.__len__() == 1:
                 for domain in domains:
@@ -135,7 +135,7 @@ class Domain(karacos.db['Parent']):
         assert isinstance(name,basestring), "Parameter name must be string"
         result = None
         
-        domains = Domain._get_by_name(name)
+        domains = Domain._get_by_name(*(),**{'key':name})
         try:
             assert domains.__len__() <= 1, "More than one db with that name in system DB"
             if domains.__len__() == 1:
@@ -789,7 +789,9 @@ class Domain(karacos.db['Parent']):
         return {'title': _("Change domain theme"),
          'submit': _('Change'),
          'fields': [{'name':'theme', 'title':'theme base','dataType': 'TEXT', 
-                     'formType': 'SELECT', 'value': user['CUSTOM_SITE_SKIN'].split('/')[0],'values':self.get_themes()}]}
+                     'formType': 'SELECT',
+                     'value': user['CUSTOM_SITE_BASE'].split('/')[1],
+                     'values':self.get_themes()}]}
 
     @karacos._db.isaction
     def set_user_theme(self, theme=None):
@@ -809,7 +811,8 @@ class Domain(karacos.db['Parent']):
         return {'title': _("Change domain theme"),
          'submit': _('Change'),
          'fields': [{'name':'theme', 'title':'theme base','dataType': 'TEXT',
-                     'formType': 'SELECT', 'value':self['site_template_uri'].split('/')[0],
+                     'formType': 'SELECT',
+                     'value':self['site_theme_base'].split('/')[1],
                      'values':self.get_themes()}]}
         
     @karacos._db.isaction

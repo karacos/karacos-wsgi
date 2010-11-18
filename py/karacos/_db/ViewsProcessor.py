@@ -61,7 +61,7 @@ class ViewsProcessor(object):
         self.db = db
         self.log = karacos.core.log.getLogger(self)
     
-    def process_view(self,index, viewname,language,value):
+    def process_view(self,index, viewname,language,value, **kw):
         """
         """
         id = "_design/%s" % index
@@ -69,7 +69,7 @@ class ViewsProcessor(object):
         self.create_view(id, viewname,language,value)
         view_index = '%s/_view/%s'%(id,viewname)
         self.log.debug("process_view : %s" % view_index)
-        return self.db.view(view_index)
+        return self.db.view(view_index, **kw)
         
         
     
@@ -130,7 +130,7 @@ def isview(base_def,language):
             #a = func(*args,**kw)
             log.debug("@isview.wrapperfunc args : %s" % repr(argtuple))
             value = func.__doc__ % argtuple
-            result = processor.process_view(index, viewname,language,value)
+            result = processor.process_view(index, viewname,language,value,**kw)
             log.debug("END @isview.wrapper [RESULT]%s[/RESULT]" % result)
             return result
             
@@ -151,10 +151,12 @@ def is_static_view(language):
                         ,func.__class__.__name__,func.func_name)
         def wrapper(*args,**kw):
             log.debug("BEGIN @is_static_view for func : %s with args %s" % (func,args) )
-            arglist = list()
-            assert isinstance(args[0],basestring),"views only accepts string args"
-            viewname = args[0]
-            arglist.append(args[0])
+            arglist =   argtuple = list()
+            viewname = ""
+            if len(args)>0:
+                if isinstance(args[0],basestring):
+                    viewname = args[0]
+                    arglist.append(args[0])
             if len(arglist) > 1:
                 for arg in args[1:]:
                     assert isinstance(arg,basestring),"views only accepts string args"
@@ -163,8 +165,11 @@ def is_static_view(language):
             
                 argtuple = tuple(arglist)
             else:
-                argtuple = args[0]
-            value = func.__doc__ % argtuple
+                if len(args)>0:
+                    argtuple = args[0]
+            value = func.__doc__
+            if len(argtuple) > 0:
+                value = func.__doc__ % argtuple
             result = sysdb_processor.process_view(index, viewname,language,value)
             #
             return result
