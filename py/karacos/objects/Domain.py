@@ -887,9 +887,9 @@ class Domain(karacos.db['Parent']):
         return self.__childrens__['manager']
     
     def _trac(self,id=None):
-        self._update_item()
         assert isinstance(id,basestring)
         trac_node = self._get_trac_node()
+        trac_node._update_item()
         forward = '/'
         if 'items' not in trac_node:
             trac_node['items'] = {}
@@ -931,7 +931,10 @@ class Domain(karacos.db['Parent']):
     @karacos._db.isaction
     def view_tracking(self):
         self._update_item()
-        return {'status':'succes','data' : self._get_trac_node()['items']}
+        result = []
+        if 'items' in self._get_trac_node():
+            result = self._get_trac_node()['items']
+        return {'status':'succes','data' : result}
     
     @karacos._db.isaction
     def set_site_template_uri(self, site_template_uri=None):
