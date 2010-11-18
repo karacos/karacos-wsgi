@@ -150,6 +150,7 @@ class Node(karacos.db['Child']):
         del self.__parent__['childrens'][self['name']]
         self.__parent__.save()
         del self
+
     @karacos._db.isaction
     def delete(self):
         self._delete()

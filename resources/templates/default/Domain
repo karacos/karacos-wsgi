@@ -15,7 +15,7 @@
         <div id="domain_content">
         
 		% if 'content' in instance and instance['content'] != '':
-			${instance['content']}
+			${instance.__get_content__()}
 		% else:
 			<p>No content found</p>
 		% endif

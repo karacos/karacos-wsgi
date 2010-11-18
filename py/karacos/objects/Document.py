@@ -266,6 +266,19 @@ class Document(couchdb.client.Document):
         assert 'group_id' in self, "valueError: 'group_id' : dict entry not found"
         assert 'ACL' in self, "valueError: 'permissions' : dict entry not found"
     
+    def __get_content__(self):
+        session = karacos.serving.get_session()
+        codlang = session.get_session_lang()
+        if 'content' not in self:
+            return '<p>No content found.</p>'
+        if codlang == 'default':
+            return self['content']
+        else:
+            if 'content_%s' % codlang in self:
+                return self['content_%s' % codlang]
+            else:
+                return self['content']
+    
     @karacos._db.isaction
     def _sync(self, data=None, override=False):
         """

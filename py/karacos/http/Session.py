@@ -100,6 +100,21 @@ class Session(dict):
         self.user = user
         self['username'] = self.user['name']
     
+    def get_session_lang(self):
+        if self['username'] == 'anonymous':
+            if 'codlang' in self.get_karacos_domain():
+                return self.get_karacos_domain()['codlang']
+            else:
+                return 'default'
+        else:
+            if 'codlang' in self.user:
+                return self.user['codlang']
+            elif 'codlang' in self.get_karacos_domain():
+                return self.get_karacos_domain()['codlang']
+            else:
+                return 'default'
+                
+    
     def get_user_auth(self):
         """
         Returns user auth for current session
@@ -155,6 +170,9 @@ class Session(dict):
             self.probe_domain()
         request = karacos.serving.get_request()
         if request.headers['Host'] != self.__domain__['fqdn']:
+            if 'fqdn_aliases' in self.__domain__:
+                if request.headers['Host'] in self.__domain__['fqdn_aliases']:
+                    return self.__domain__    
             self.probe_domain()
             if request.headers['Host'] == self.__domain__['fqdn']:
                 self.log.info("probe domain changed current kc domain, resetting auth")

@@ -147,8 +147,7 @@ def is_static_view(language):
     """
     def decor(func):
         log.debug("@is_static_view : func = %s , doc = %s" % (func,dir(func)))
-        index = "%s.%s.%s" % (func.__module__
-                        ,func.__class__.__name__,language)
+        index = "%s.%s" % (func.__module__,language)
         def wrapper(*args,**kw):
             log.debug("BEGIN @is_static_view for func : %s with args %s" % (func,args) )
             arglist =   argtuple = list()
