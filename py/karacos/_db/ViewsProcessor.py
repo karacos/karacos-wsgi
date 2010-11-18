@@ -117,8 +117,8 @@ def isview(base_def,language):
                 base_name = self.parent.base['name']
             processor = ViewsProcessor(base_name)
             index = "%s.%s.%s" % (self.__module__
-                            ,self.__class__.__name__,func.func_name) 
-            viewname = self['_id']
+                            ,self.__class__.__name__,language) 
+            viewname = "%s.%s" % (self['_id'],func.func_name)
             arglist = list()
             arglist.append(self['_id'])
             for arg in args[1:]:
@@ -148,14 +148,14 @@ def is_static_view(language):
     def decor(func):
         log.debug("@is_static_view : func = %s , doc = %s" % (func,dir(func)))
         index = "%s.%s.%s" % (func.__module__
-                        ,func.__class__.__name__,func.func_name)
+                        ,func.__class__.__name__,language)
         def wrapper(*args,**kw):
             log.debug("BEGIN @is_static_view for func : %s with args %s" % (func,args) )
             arglist =   argtuple = list()
-            viewname = ""
+            viewname = func.func_name
             if len(args)>0:
                 if isinstance(args[0],basestring):
-                    viewname = args[0]
+                    viewname = "%s.%s" % (viewname,args[0])
                     arglist.append(args[0])
             if len(arglist) > 1:
                 for arg in args[1:]:
@@ -170,7 +170,7 @@ def is_static_view(language):
             value = func.__doc__
             if len(argtuple) > 0:
                 value = func.__doc__ % argtuple
-            result = sysdb_processor.process_view(index, viewname,language,value)
+            result = sysdb_processor.process_view(index, viewname,language,value,**kw)
             #
             return result
             #KaraCos._Db.log.debug("END @isstaticview.wrapper [RESULT]%s[/RESULT]" % result)

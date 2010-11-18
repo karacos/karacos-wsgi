@@ -94,7 +94,7 @@ class Domain(karacos.db['Parent']):
             if domains.__len__() == 1:
                 for domain in domains:
                     log.debug("Domain.get_by_name : db.key = %s db.value = %s" % (domain.key,domain.value) )
-                    result = karacos.db.sysdb[domain.key]
+                    result = karacos.db.sysdb[domain.value['_id']]
         except Exception, e:
             print sys.exc_info()
             log.log_exc(sys.exc_info(),'error')
@@ -103,11 +103,17 @@ class Domain(karacos.db['Parent']):
     
     @staticmethod
     @karacos._db.ViewsProcessor.is_static_view('javascript')
-    def _get_by_fqdn(name):
+    def _get_by_fqdn():
         '''
             function(doc) {
-            if (doc.type == "Domain" && doc.fqdn == "%s" && !("_deleted" in doc && doc._deleted == True))
-              emit(doc._id, doc);
+            if (doc.type == "Domain" && !("_deleted" in doc && doc._deleted == True)) {
+              emit(doc.fqdn, doc);
+              if (doc.fqdn_aliases) {
+                for (alias in doc.fqdn_aliases) {
+                    emit(doc.fqdn_aliases[alias], doc);
+                }
+            }
+          }  
         }
         '''
     
@@ -119,12 +125,12 @@ class Domain(karacos.db['Parent']):
         assert isinstance(fqdn,basestring), "Parameter name must be string"
         result = None
         try:
-            domains = Domain._get_by_fqdn(fqdn)
+            domains = Domain._get_by_fqdn(*(),**{'key':fqdn})
             assert domains.__len__() <= 1, "Domain.get_by_fqdn : More than one Domain with that name in system DB"
             if domains.__len__() == 1:
                 for domain in domains:
                     log.debug("Domain.get_by_fqdn : db.key = %s db.value = %s" % (domain.key,domain.value) )
-                    result = karacos.db.sysdb[domain.key]
+                    result = karacos.db.sysdb[domain.value['_id']]
         except Exception, e:
             log.log_exc(sys.exc_info(),'error')
             raise karacos._db.Exception, e
@@ -149,17 +155,15 @@ class Domain(karacos.db['Parent']):
             raise karacos._db.Exception, e
         
     @staticmethod
-    def exist_with_fqdn(name=None):
-        assert isinstance(name,basestring), "Parameter name must be string"
+    def exist_with_fqdn(fqdn=None):
+        assert isinstance(fqdn,basestring), "Parameter name must be string"
         result = None
         
-        domains = Domain._get_by_fqdn(name)
+        domains = Domain._get_by_fqdn(*(),**{'key':fqdn})
         try:
-            assert domains.__len__() <= 1, "More than one db with that name in system DB"
+            assert domains.__len__() <= 1, "More than one domain with that fqdn in system DB"
             if domains.__len__() == 1:
-                for domain in domains:
-                    base = karacos.db['Base'].get_by_id(domain.value['base_id'])
-                    return True
+                return True
             else:
                 return False
         except Exception, e:
@@ -368,7 +372,7 @@ class Domain(karacos.db['Parent']):
     _search_by_name.label= _("Search by name")
     
     @karacos._db.isaction
-    def set_name(self,name):
+    def set_name(self,name=None):
         self._update_item()
         self['name'] = name
         self.save()
@@ -377,7 +381,29 @@ class Domain(karacos.db['Parent']):
         self._update_item()
         self['fqdn'] = fqdn
         self.save()
-    set_fqdn.label = _("Changer le nom de domaine")
+    set_fqdn.form = {'title':_('Enter new domain FQDN'),
+                'submit':_('Change FQDN'),
+                'fields':[
+                    {'name':'fqdn', 'title':_('Server FQDN'), 'dataType': 'TEXT'}
+                        ]
+                }
+    set_fqdn.label = _("Changer main domain FQDN")
+    
+    @karacos._db.isaction
+    def add_fqdn_alias(self,fqdn=None):
+        self._update_item()
+        if 'fqdn_aliases' not in self:
+            self['fqdn_aliases'] = []
+        assert not Domain.exist_with_fqdn(fqdn), "A domain with that fqdn is already mapped"
+        self['fqdn_aliases'].append(fqdn)
+        self.save()
+    add_fqdn_alias.form = {'title':_('Enter new domain FQDN Alias'),
+                'submit':_('Add Domain Alias'),
+                'fields':[
+                    {'name':'fqdn', 'title':_('New Server Alias'), 'dataType': 'TEXT'}
+                        ]
+                }
+    add_fqdn_alias.label = _("Add Domain Alias")
     
     def validate(self):
         """
