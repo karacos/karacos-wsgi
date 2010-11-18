@@ -6883,6 +6883,7 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 })(window);
 
 
+
 (function($){$.toJSON=function(o)
 {if(typeof(JSON)=='object'&&JSON.stringify)
 return JSON.stringify(o);var type=typeof(o);if(o===null)
@@ -7640,6 +7641,7 @@ jQuery.fn.extend({
 	    return results[1];
 	}
 })(jQuery);
+
 /**
  * Cookie plugin
  *
@@ -24718,6 +24720,7 @@ Ext.apply(Ext.Error.prototype, {
         return Ext.encode(this);
     }
 });
+
 /*!
  * Ext JS Library 3.2.1
  * Copyright(c) 2006-2010 Ext JS, Inc.
@@ -50693,6 +50696,7 @@ Ext.Resizable.Handle = Ext.extend(Object, {
         this.el = null;
     }
 });
+
 /*!
  * Ext JS Library 3.2.1
  * Copyright(c) 2006-2010 Ext JS, Inc.
@@ -54962,6 +54966,7 @@ Ext.TabPanel.AccessStack = function(){
         }
     };
 };
+
 /*!
  * Ext JS Library 3.2.1
  * Copyright(c) 2006-2010 Ext JS, Inc.
@@ -63697,6 +63702,7 @@ Ext.reg('menucheckitem', Ext.menu.CheckItem);/**
     }
 });
 Ext.reg('colormenu', Ext.menu.ColorMenu);
+
 /*!
  * Ext JS Library 3.2.1
  * Copyright(c) 2006-2010 Ext JS, Inc.
@@ -72812,6 +72818,7 @@ Ext.form.VTypes = function(){
         'alphanumMask' : /[a-z0-9_]/i
     };
 }();
+
 /*!
  * Ext JS Library 3.2.1
  * Copyright(c) 2006-2010 Ext JS, Inc.
@@ -78701,11 +78708,24 @@ Ext.extend(Ext.grid.GridEditor, Ext.Editor, {
     shadow:false
 });
 /*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 /**
  * jQuery between Extension
  * 
@@ -78791,12 +78811,26 @@ jQuery.fn.contentEditable  = function( b ) {
 		jQuery(this).attr(ce, b);
 	}
 };
+
 /*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 if (typeof GENTICS == 'undefined' || !GENTICS) {
 	var GENTICS = {};
 }
@@ -78849,12 +78883,26 @@ GENTICS.Utils.guid = function () {
 	var S4 = GENTICS.Utils.uniqeString4;
 	return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
 };
+
 /*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 if (typeof GENTICS == 'undefined' || !GENTICS) {
 	var GENTICS = {};
 }
@@ -79753,12 +79801,26 @@ GENTICS.Utils.RangeTree = function() {
 	 */
 	this.children = new Array();
 };
+
 /*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 if (typeof GENTICS == 'undefined' || !GENTICS) {
 	var GENTICS = {};
 }
@@ -79894,11 +79956,24 @@ jQuery('html').mousemove(function (e) {
 	GENTICS.Utils.Position.Mouse.y = e.pageY;
 });
 /*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 if (typeof GENTICS == 'undefined' || !GENTICS) {
 	var GENTICS = {};
 }
@@ -81167,13 +81242,25 @@ GENTICS.Utils.Dom.prototype.setCursorInto = function (domObject) {
  * @hide
  */
 GENTICS.Utils.Dom = new GENTICS.Utils.Dom();
-/*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
-*/
 
+/*!
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 Ext.data.AlohaProxy = function( ) {
     // Must define a dummy api with "read" action to satisfy Ext.data.Api#prepare *before* calling super
     var api = {};
@@ -81219,13 +81306,25 @@ Ext.extend(Ext.data.AlohaProxy, Ext.data.DataProxy, {
 		jQuery.extend(this.params, p);
 	}
 });	
+
 /*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
-*/
- 	
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/	
 Ext.data.AlohaObjectReader = function(meta, recordType) {
 	meta = {};
     Ext.applyIf(meta, {
@@ -81247,13 +81346,24 @@ Ext.data.AlohaObjectReader = function(meta, recordType) {
 Ext.extend(Ext.data.AlohaObjectReader, Ext.data.JsonReader, {
 	// extend of necessary
 });
-	/*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
+/*!
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 Ext.tree.AlohaTreeLoader = function(config) {
 	Ext.apply(this, config);
 	Ext.tree.AlohaTreeLoader.superclass.constructor.call(this);
@@ -81308,14 +81418,28 @@ Ext.extend( Ext.tree.AlohaTreeLoader, Ext.tree.TreeLoader, {
 		return this.objectTypeFilter;
 	}
 });	
+
 /*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 if (typeof GENTICS == 'undefined' || !GENTICS) {
-	/*!
+	/*
 	 * The GENTICS global namespace object. If GENTICS is already defined, the
 	 * existing GENTICS object will not be overwritten so that defined
 	 * namespaces are preserved.
@@ -81976,11 +82100,24 @@ jQuery(document).ready(function() {
 	}
 });
 /*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 if (typeof GENTICS.Aloha.ui == 'undefined') {
 	GENTICS.Aloha.ui = function() {};
 }
@@ -82683,16 +82820,24 @@ GENTICS.Aloha.ui.MultiSplitButton.prototype.hideItem = function(name) {
 	this.extButton.hideItem(name);
 };
 /*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/**
- * Aloha wrapper for the ExtJS combobox 
- * @hide
- */
 Ext.ux.AlohaAttributeField = Ext.extend(Ext.form.ComboBox, {
     typeAhead: false,
     mode: 'remote',
@@ -83104,11 +83249,24 @@ GENTICS.Aloha.ui.AttributeField.prototype.setTemplate = function (tpl) {
 		return csslink;
 	}
 })();
+
 /*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
  * Editable object
@@ -83552,11 +83710,24 @@ GENTICS.Aloha.Editable.prototype.getContents = function() {
 GENTICS.Aloha.Editable.prototype.getId = function() {
 	return this.obj.attr('id');
 };
+
 /*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
  * Aloha Ribbon
@@ -83731,10 +83902,23 @@ GENTICS.Aloha.Ribbon.prototype.isVisible = function () {
 
 GENTICS.Aloha.Ribbon = new GENTICS.Aloha.Ribbon();
 /*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
+* 
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
  * @namespace GENTICS.Aloha
@@ -83785,11 +83969,24 @@ GENTICS.Aloha.EventRegistry.prototype.trigger = function (event) {
 GENTICS.Aloha.EventRegistry = new GENTICS.Aloha.EventRegistry();
 
 
+
 /*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
  * Aloha's Floating Menu
@@ -84411,7 +84608,8 @@ GENTICS.Aloha.FloatingMenu.nextFloatTargetObj = function (obj, limitObj) {
  * @hide
  */
 GENTICS.Aloha.FloatingMenu.calcFloatTarget = function(range) {
-	if (!GENTICS.Aloha.activeEditable) {
+	// TODO in IE8 somteimes a broken range is handed to this function - investigate this 
+	if (!GENTICS.Aloha.activeEditable || typeof range.getCommonAncestorContainer == "undefined") {
 		return false;
 	}
 	
@@ -84676,19 +84874,38 @@ GENTICS.Aloha.FloatingMenu.Group.prototype.doLayout = function () {
 
 	return groupVisible;
 };
-/**
- * Only execute the following code if we are in IE (check for
- * document.attachEvent, this is a microsoft event and therefore only available
- * in IE).
- */
+/*!
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*
+*
+*   Only execute the following code if we are in IE (check for
+*   document.attachEvent, this is a microsoft event and therefore only available
+*   in IE).
+*/
 if(document.attachEvent && document.selection) {
-	/*
-	  DOM Ranges for Internet Explorer (m2)
-	  
-	  Copyright (c) 2009 Tim Cameron Ryan
-	  Released under the MIT/X License
-	  available at http://code.google.com/p/ierange/
-	 */
+/*!
+*   DOM Ranges for Internet Explorer (m2)
+*	  
+*   Copyright (c) 2009 Tim Cameron Ryan
+*   Released under the MIT/X License
+*   available at http://code.google.com/p/ierange/
+*/
 	 
 	/*
 	  Range reference:
@@ -85187,10 +85404,22 @@ if(document.attachEvent && document.selection) {
 	})();
 }
 /*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
  * jQuery Aloha Plugin
@@ -85252,8 +85481,6 @@ jQuery.fn.GENTICS_mahalo = function() {
 	});
 }; 
 
-
-
 /**
  * jQuery Extension
  * new Event which is triggered whenever a selection (length >= 0) is made in 
@@ -85298,10 +85525,22 @@ jQuery.fn.outerHTML = function(s) {
 	}
 };	
 /*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
  * This is the aloha Log
@@ -85546,11 +85785,24 @@ GENTICS.Aloha.Log.prototype.flushLogHistory = function() {
  * @hide
  */
 GENTICS.Aloha.Log = new GENTICS.Aloha.Log();
+
 /*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
  * Markup object
@@ -86330,10 +86582,22 @@ GENTICS.Aloha.Markup.prototype.toString = function() {
 
 GENTICS.Aloha.Markup = new GENTICS.Aloha.Markup();
 /*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
  * Message Object
@@ -86408,11 +86672,24 @@ GENTICS.Aloha.MessageLine.prototype.add = function(message) {
  * @hide
  */
 GENTICS.Aloha.MessageLine = new GENTICS.Aloha.MessageLine();
+
 /*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
  * Plugin Registry
@@ -86664,11 +86941,24 @@ GENTICS.Aloha.Plugin.prototype.toString = function() {
 GENTICS.Aloha.Plugin.prototype.log = function (level, message) {
 	GENTICS.Aloha.Log.log(level, this, message);
 };
+
 /*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 jQuery.fn.zap = function () {
 	return this.each(function(){ jQuery(this.childNodes).insertBefore(this); }).remove();
@@ -88270,11 +88560,24 @@ GENTICS.Aloha.Selection.prototype.SelectionRange.prototype.toString = function(v
 };
 
 GENTICS.Aloha.Selection = new GENTICS.Aloha.Selection();
+
 /*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
  * Abstract Sidebar
@@ -88340,11 +88643,24 @@ GENTICS.Aloha.Sidebar.Panel = function () {};
  * @return HTML Code of the rendered panel
  */
 GENTICS.Aloha.Sidebar.Panel.prototype.render = function() {};
+
 /*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
  * Repository Manager
@@ -88684,11 +89000,24 @@ GENTICS.Aloha.RepositoryManager = new GENTICS.Aloha.RepositoryManager();
 GENTICS.Aloha.RepositoryManager.toString = function() {
 	return "com.gentics.aloha.RepositoryManager";
 };
+
 /*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
  * Abstract Repository
@@ -88776,13 +89105,25 @@ GENTICS.Aloha.Repository.prototype.makeClean = function (obj) {};
  * @return void
  */
 GENTICS.Aloha.Repository.prototype.markObject = function (obj, repositoryItem) {};
-/*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
-*/
 
+/*!
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 /**
  * Abstract Document suitable for most Objects
  * @namespace GENTICS.Aloha.Repository
@@ -88830,18 +89171,30 @@ GENTICS.Aloha.Repository.Folder = function(properties) {
 	
 	this.baseType = 'folder';
 };
+
 /*!
-* Aloha Editor
-* Author & Copyright (c) 2010 Gentics Software GmbH
-* aloha-sales@gentics.com
-* Licensed unter the terms of http://www.aloha-editor.com/license.html
+*   This file is part of Aloha Editor
+*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+*   Licensed unter the terms of http://www.aloha-editor.com/license.html
+*//*
+*	Aloha Editor is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU Affero General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.*
+*
+*   Aloha Editor is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU Affero General Public License for more details.
+*
+*   You should have received a copy of the GNU Affero General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 /**
  * !!!! ATTENTION !!!!
  * This is work in progress. This implemenation may change heavily.
  * Not yet implemented:
- * - onSelect Event!
  * - configuring and templating the list
  * - DnD
  * - passing all possible query attributes to the repository
@@ -89029,6 +89382,7 @@ GENTICS.Aloha.ui.Browser.prototype.show = function() {
 	this.win.toFront(true);
 	this.win.focus();
 };
+
 
 /*!
  * jQuery UI 1.8.5
@@ -93469,6 +93823,7 @@ AnyTime.picker = function( id, options )
 
 })(jQuery); // function($)...
 
+
 //Always start with comments (concat et tcet)
 /**
  * 
@@ -93723,6 +94078,7 @@ AnyTime.picker = function( id, options )
 	}
 	// ############################
 	})(jQuery);
+
 /*!
 * Aloha Editor
 * Author & Copyright (c) 2010 Gentics Software GmbH
@@ -94386,6 +94742,23 @@ GENTICS.Aloha.TablePlugin.initTableButtons = function () {
 					var c = jQuery('<caption></caption>');
 					that.activeTable.obj.append(c);
 					that.makeCaptionEditable(c, captionText);
+
+					// get the editable span within the caption and select it
+					var cDiv = c.find('div').eq(0);
+					var captionContent = cDiv.contents().eq(0);
+					if (captionContent.length > 0) {
+						var newRange = new GENTICS.Utils.RangeObject();
+						newRange.startContainer = newRange.endContainer = captionContent.get(0);
+						newRange.startOffset = 0;
+						newRange.endOffset = captionContent.text().length;
+
+						// blur all editables within the table
+						that.activeTable.obj.find('div.GENTICS_Table_Cell_editable').blur();
+
+						cDiv.focus();
+						newRange.select();
+						GENTICS.Aloha.Selection.updateSelection();
+					}
 				}
 			}
 		}
@@ -94419,6 +94792,8 @@ GENTICS.Aloha.TablePlugin.initTableButtons = function () {
  * @param captionText default text for the caption
  */
 GENTICS.Aloha.TablePlugin.makeCaptionEditable = function(caption, captionText) {
+	var that = this;
+
 	var cSpan = caption.children('div').eq(0);
 	if (cSpan.length == 0) {
 		// generate a new div
@@ -94440,10 +94815,13 @@ GENTICS.Aloha.TablePlugin.makeCaptionEditable = function(caption, captionText) {
 	cSpan.unbind('mousedown');
 	// focus on click
 	cSpan.bind('mousedown', function(jqEvent) {
-		this.focus();
+		cSpan.focus();
+
+		// stop bubble, otherwise the mousedown of the table is called ...
+		jqEvent.preventDefault();
+		jqEvent.stopPropagation();
+		return false;
 	});
-	// and focus now
-    cSpan.focus();
 };
 
 /**
@@ -97112,6 +97490,7 @@ GENTICS.Aloha.ListPlugin.mergeAdjacentLists = function (jqList) {
 		jqNextList.remove();
 	}
 };
+
 /*!
 * Aloha Editor
 * Author & Copyright (c) 2010 Gentics Software GmbH
@@ -97165,6 +97544,13 @@ GENTICS.Aloha.Link.cssclass = '';
 GENTICS.Aloha.Link.objectTypeFilter = [];
 
 /**
+ * handle change on href change
+ * called function( obj, href, item );
+ */
+GENTICS.Aloha.Link.onHrefChange = null;
+
+
+/**
  * Initialize the plugin
  */
 GENTICS.Aloha.Link.init = function () {
@@ -97178,6 +97564,8 @@ GENTICS.Aloha.Link.init = function () {
         GENTICS.Aloha.Link.cssclass = GENTICS.Aloha.Link.settings.cssclass;
     if (GENTICS.Aloha.Link.settings.objectTypeFilter != undefined)
         GENTICS.Aloha.Link.objectTypeFilter = GENTICS.Aloha.Link.settings.objectTypeFilter;
+    if (GENTICS.Aloha.Link.settings.onHrefChange != undefined)
+        GENTICS.Aloha.Link.onHrefChange = GENTICS.Aloha.Link.settings.onHrefChange;
         
     this.createButtons();
     this.subscribeEvents();
@@ -97226,8 +97614,36 @@ GENTICS.Aloha.Link.createButtons = function () {
     // add the new scope for links
     GENTICS.Aloha.FloatingMenu.createScope(this.getUID('link'), 'GENTICS.Aloha.continuoustext');
 
-    this.hrefField = new GENTICS.Aloha.ui.AttributeField();
-    this.hrefField.setObjectTypeFilter([GENTICS.Aloha.Link.objectTypeFilter]);
+    this.browser = new GENTICS.Aloha.ui.Browser();
+    this.browser.setObjectTypeFilter(GENTICS.Aloha.Link.objectTypeFilter);
+    this.browser.onSelect = function( item ) {
+    	// set href Value
+    	that.hrefField.setItem( item );
+		// call hrefChange
+    	that.hrefChange();
+    };
+    this.repositoryButton = new GENTICS.Aloha.ui.Button({
+        'iconClass' : 'GENTICS_button_big GENTICS_button_tree',
+        'size' : 'large',
+        'onclick' : function () {
+			that.browser.show();
+		},
+        'tooltip' : this.i18n('button.addlink.tooltip'),
+        'toggle' : false
+    });
+    
+    // COMMENT IN AND TEST THE BROWSER
+    GENTICS.Aloha.FloatingMenu.addButton(
+        this.getUID('link'),
+        this.repositoryButton,
+        this.i18n('floatingmenu.tab.link'),
+        1
+    );
+
+    this.hrefField = new GENTICS.Aloha.ui.AttributeField({
+    	'width':320
+    });
+    this.hrefField.setObjectTypeFilter(GENTICS.Aloha.Link.objectTypeFilter);
     // add the input field for links
     GENTICS.Aloha.FloatingMenu.addButton(
         this.getUID('link'),
@@ -97236,7 +97652,7 @@ GENTICS.Aloha.Link.createButtons = function () {
         1
     );
 
-    this.formatLinkButton = new GENTICS.Aloha.ui.Button({
+    this.removeLinkButton = new GENTICS.Aloha.ui.Button({
         // TODO use another icon here
         'iconClass' : 'GENTICS_button GENTICS_button_a_remove',
         'size' : 'small',
@@ -97246,30 +97662,11 @@ GENTICS.Aloha.Link.createButtons = function () {
     // add a button for removing the currently set link
     GENTICS.Aloha.FloatingMenu.addButton(
         this.getUID('link'),
-        this.formatLinkButton,
+        this.removeLinkButton,
         this.i18n('floatingmenu.tab.link'),
         1
     );
 
-    this.browser = new GENTICS.Aloha.ui.Browser();
-    this.browser.setObjectTypeFilter(GENTICS.Aloha.Link.objectTypeFilter);
-    this.repositoryButton = new GENTICS.Aloha.ui.Button({
-        'iconClass' : 'GENTICS_button GENTICS_button_a',
-        'size' : 'small',
-        'onclick' : function () {
-			that.browser.show();
-		},
-        'tooltip' : this.i18n('button.addlink.tooltip'),
-        'toggle' : false
-    });
-    
-//    // COMMENT IN AND TEST THE BROWSER
-//    GENTICS.Aloha.FloatingMenu.addButton(
-//        this.getUID('link'),
-//        this.repositoryButton,
-//        this.i18n('floatingmenu.tab.link'),
-//        1
-//    );
 };
 
 /**
@@ -97297,7 +97694,7 @@ GENTICS.Aloha.Link.bindInteractions = function () {
 //	    		that.hrefField.setValue(that.hrefField.getValue());
 	    	}
 	    }
-    	that.srcChange();
+    	that.hrefChange();
     });
 
     // on blur check if href is empty. If so remove the a tag
@@ -97312,7 +97709,7 @@ GENTICS.Aloha.Link.bindInteractions = function () {
 
         // CTRL+L
         GENTICS.Aloha.editables[i].obj.keydown(function (e) {
-    		if ( (e.metaKey || e.ctrlKey) && e.which == 76 ) {
+    		if ( e.metaKey && e.which == 76 ) {
 		        if ( that.findLinkMarkup() ) {
 		            GENTICS.Aloha.FloatingMenu.userActivatedTab = that.i18n('floatingmenu.tab.link');
 		
@@ -97380,7 +97777,7 @@ GENTICS.Aloha.Link.bindInteractions = function () {
    	 	that.updateMousePointer();
     });
 
-}
+};
 
 /**
  * Updates the mouse pointer
@@ -97395,7 +97792,7 @@ GENTICS.Aloha.Link.updateMousePointer = function () {
 		jQuery(this.mouseOverLink).removeClass('GENTICS_link_pointer');
 		jQuery(this.mouseOverLink).addClass('GENTICS_link_text');
     }
-}
+};
 
 /**
  * Subscribe for events
@@ -97406,34 +97803,36 @@ GENTICS.Aloha.Link.subscribeEvents = function () {
 	
     // add the event handler for selection change
     GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha, 'selectionChanged', function(event, rangeObject) {
-        
-        // show/hide the button according to the configuration
-        var config = that.getEditableConfig(GENTICS.Aloha.activeEditable.obj);
-        if ( jQuery.inArray('a', config) != -1) {
-        	that.formatLinkButton.show();
-        	that.insertLinkButton.show();
-        } else {
-        	that.formatLinkButton.hide();
-        	that.insertLinkButton.hide();
-            // leave if a is not allowed
-            return;
-        }
-        
-        var foundMarkup = that.findLinkMarkup( rangeObject )
-        if ( foundMarkup ) {
-            // link found
-        	that.insertLinkButton.hide();
-        	that.formatLinkButton.setPressed(true);
-            GENTICS.Aloha.FloatingMenu.setScope(that.getUID('link'));
-            that.hrefField.setTargetObject(foundMarkup, 'href');
-        } else {
-            // no link found
-        	that.formatLinkButton.setPressed(false);
-        	that.hrefField.setTargetObject(null);
-        }
 
-        // TODO this should not be necessary here!
-        GENTICS.Aloha.FloatingMenu.doLayout();
+    	if (GENTICS.Aloha.activeEditable) {
+    		// show/hide the button according to the configuration
+    		var config = that.getEditableConfig(GENTICS.Aloha.activeEditable.obj);
+    		if ( jQuery.inArray('a', config) != -1) {
+    			that.formatLinkButton.show();
+    			that.insertLinkButton.show();
+    		} else {
+    			that.formatLinkButton.hide();
+    			that.insertLinkButton.hide();
+    			// leave if a is not allowed
+    			return;
+    		}
+    		
+    		var foundMarkup = that.findLinkMarkup( rangeObject );
+    		if ( foundMarkup ) {
+    			// link found
+    			that.insertLinkButton.hide();
+    			that.formatLinkButton.setPressed(true);
+    			GENTICS.Aloha.FloatingMenu.setScope(that.getUID('link'));
+    			that.hrefField.setTargetObject(foundMarkup, 'href');
+    		} else {
+    			// no link found
+    			that.formatLinkButton.setPressed(false);
+    			that.hrefField.setTargetObject(null);
+    		}
+    		
+    		// TODO this should not be necessary here!
+    		GENTICS.Aloha.FloatingMenu.doLayout();
+    	}
 
     });
     
@@ -97450,9 +97849,13 @@ GENTICS.Aloha.Link.findLinkMarkup = function ( range ) {
 	if ( typeof range == 'undefined' ) {
         var range = GENTICS.Aloha.Selection.getRangeObject();   
     }
-    return range.findMarkup(function() {
-        return this.nodeName.toLowerCase() == 'a';
-    }, GENTICS.Aloha.activeEditable.obj);
+	if ( GENTICS.Aloha.activeEditable ) {
+		return range.findMarkup(function() {
+	        return this.nodeName.toLowerCase() == 'a';
+	    }, GENTICS.Aloha.activeEditable.obj);
+	} else {
+		return null;
+	}
 };
 
 /**
@@ -97508,7 +97911,7 @@ GENTICS.Aloha.Link.insertLink = function ( extendToWord ) {
     }
     range.select();
     this.hrefField.focus();
-    this.srcChange();
+    this.hrefChange();
 };
 
 /**
@@ -97531,11 +97934,21 @@ GENTICS.Aloha.Link.removeLink = function () {
 /**
  * Updates the link object depending on the src field
  */
-GENTICS.Aloha.Link.srcChange = function () {
+GENTICS.Aloha.Link.hrefChange = function () {
 	// For now hard coded attribute handling with regex.
 	this.hrefField.setAttribute('target', this.target, this.targetregex, this.hrefField.getQueryValue());
 	this.hrefField.setAttribute('class', this.cssclass, this.cssclassregex, this.hrefField.getQueryValue());
-}
+	if ( typeof this.onHrefChange == 'function' ) {
+		this.onHrefChange.call(this, this.hrefField.getTargetObject(),  this.hrefField.getQueryValue(), this.hrefField.getItem() )
+	}
+	GENTICS.Aloha.EventRegistry.trigger(
+			new GENTICS.Aloha.Event('hrefChanged', GENTICS.Aloha, {
+				'obj' : this.hrefField.getTargetObject(),
+				'href': this.hrefField.getQueryValue(),
+				'item': this.hrefField.getItem()
+			})
+	);
+};
 
 /**
  * Make the given jQuery object (representing an editable) clean for saving
@@ -97549,48 +97962,6 @@ GENTICS.Aloha.Link.makeClean = function (obj) {
 		jQuery(this).removeClass('GENTICS_link_pointer');
 		jQuery(this).removeClass('GENTICS_link_text');
 	});
-};
-if (typeof eu == "undefined") {
-    var eu = {};
-    
-    if (typeof eu.iksproject == "undefined") {
-        eu.iksproject = {};
-    }
-}
-
-eu.iksproject.LoaderPlugin = new GENTICS.Aloha.Plugin('eu.iksproject.plugins.Loader');
-eu.iksproject.LoaderPlugin.loadedAssets = {};
-
-/**
- * Initialize the plugin, register the buttons
- */
-eu.iksproject.LoaderPlugin.init = function() {
-	var that = this;
-};
-
-eu.iksproject.LoaderPlugin.load = function(pluginNamespace) {    
-    var pluginPath = '' + GENTICS_Aloha_base + '/plugins/' + pluginNamespace + '/plugin.js';
-	jQuery('<script type="text/javascript" />').attr('src', pluginPath).appendTo('head');
-};
-
-eu.iksproject.LoaderPlugin.loadAsset = function(pluginNamespace, assetName, assetType) {
-    if (typeof assetType == 'undefined') {
-        assetType = 'js';
-    }
-    
-	var assetPath = '' + GENTICS_Aloha_base + '/plugins/' + pluginNamespace + '/' + assetName + '.' + assetType;
-    
-    if (this.loadedAssets[assetPath]) {
-        return;
-    }
-    
-    this.loadedAssets[assetPath] = true;
-    
-    if (assetType == 'js') {
-        jQuery('<script type="text/javascript" />').attr('src', assetPath).appendTo('head');
-    } else if (assetType == 'css') {
-        jQuery('<link rel="stylesheet" />').attr('href', assetPath).appendTo('head');
-    }
 };
 
 /*
@@ -98032,6 +98403,7 @@ GENTICS.Aloha.Image.srcChange = function () {
 	// customize
 };
 
+
 /*
 Awesome Uploader
 Ext.ux.XHRUpload JavaScript Class
@@ -98174,6 +98546,7 @@ Ext.extend(Ext.ux.XHRUpload, Ext.util.Observable,{
 		this.fireEvent(event.type, event);
 	}
 });
+
 /*
  * Repository
  * Copyright (c) 2010 Nicolas Karageuzian - http://nka.me
@@ -98809,6 +99182,7 @@ GENTICS.Aloha.DragAndDropFiles.findFileObject = function(range) {
     
 };
 
+
 Ext.namespace("KaraCos");
 
 KaraCos.type_of = function(v) {
@@ -98900,7 +99274,18 @@ KaraCos.Form = function(config) {
 			that.getForm().doAction('kc_jsonsubmit',{
 					'kc_method': config.action,
 					'success': function(form,action) {
-						this.win.destroy();
+						this.formSuccessMsg = Ext.MessageBox.show({
+							title:'Action success',
+							msg: action.result.message,
+							buttons: Ext.Msg.OK,
+							modal:true,
+							icon: Ext.MessageBox.OK,
+							fn: function() {
+								this.destroy();
+							},
+							scope: this
+						});
+						return;
 					},
 					'failure' : function(form,action) {
 						if (action.result) {
@@ -98959,12 +99344,41 @@ Ext.extend(KaraCos.Form,Ext.form.FormPanel, {
 		if (field.value) {
 			field_value = field.value;
 		}
-		if (field.dataType.toLowerCase() == 'text') {
-			return new Ext.form.TextField({
-				fieldLabel:field_label,
-				name: field.name,
-				value: field_value
-			});
+		if (field.formType) {
+			if (field.formType.toLowerCase() == 'select') {
+				var combodata = [];
+				var store = new Ext.data.ArrayStore({
+					fields: ['value']
+				});
+				if (field.values) {
+					jQuery.each(field.values, function(k,v) {
+						//						store.loadData([v]);
+						combodata.push([v]);						
+					});
+				}
+				store.loadData(combodata);
+				return new Ext.form.ComboBox({
+					store: store,
+					name:field.name,
+					displayField:'value',
+					//typeAhead: true,
+					//triggerAction: 'all',
+					mode: 'local',
+					value: fieldvalue,
+					forceSelection: true,
+					//TODO i18n
+				    emptyText:'Select value...',
+				    //selectOnFocus:true
+				});
+			}
+		} else {
+			if (field.dataType.toLowerCase() == 'text') {
+				return new Ext.form.TextField({
+					fieldLabel:field_label,
+					name: field.name,
+					value: field_value
+				});
+			}
 		}
 		}
 	});
@@ -99050,21 +99464,17 @@ GENTICS.Aloha.Repositories.KaraCos.init = function() {
  * If none found it returns null.
  */
 GENTICS.Aloha.Repositories.KaraCos.query = function( p, callback) {
-	// Not supported; filter, orderBy, maxItems, skipcount, renditionFilter
-	// 
-	//console.log("query");
-	var d = this.settings.data.filter(function(e, i, a) {
-		//var r = new RegExp(queryString, 'i'); 
-		var ret = false;
-		return ( !p.inFolderId || p.inFolderId == e.parentId );
-		/* (
-			( !queryString || e.displayName.match(r) || e.url.match(r) ) && 
-			( !objectTypeFilter || jQuery.inArray(e.objectType, objectTypeFilter) > -1) &&
-			( !inFolderId || inFolderId == e.parentId ) 
-		);*/
-	});
-	console.log(d);
-	callback.call( this, d);
+	var req_str = p.queryString;
+	if (req_str != null && p.inFolderId == null)  {
+		callback.call( this, this.findInDomain(req_str));
+	}
+	if (p.inFolderId != null) {
+		folderId = p.inFolderId;
+		if (folderId.match(new RegExp("org.karacos.aloha.Repository"))) {
+			folderId = folderId.split("org.karacos.aloha.Repository")[0];
+		}
+		callback.call( this, this.getObjectsAtUrl(folderId));
+	}
 };
 
 /**
@@ -99076,9 +99486,35 @@ GENTICS.Aloha.Repositories.KaraCos.getChildren = function( p, callback) {
 };
 
 
+
 GENTICS.Aloha.Repositories.KaraCos.getObjectsAtUrl = function(url_href) {
 	var result =    [];
 	var that = this;
+	if (url_href == '/LinksFolder') {
+		jQuery.ajax({ url: "/",
+			dataType: "json",
+			contentType:"application/json",
+			context: document.body,
+			type: 'POST',
+			data: '{"method":"view_tracking", "id":1,"params":{}}',
+			async: false, // plugin init should wait for success b4 continuing
+			
+		    success: function(data) {
+				jQuery.each(data.data,function(k,v){
+					if (!v.description) {v.description = "No name";}
+					result.push(new that.Document({
+						'id': '/LinksFolder/'+k, 
+						'name': v.description,
+						'url': v.forward, 
+						'objectType': 'link',
+						'type': 'document',
+						'repositoryId': "org.karacos.aloha.Repository",
+							}));
+				});
+			}
+		}); // jQuery.ajax for items
+		return result;
+	}
 	jQuery.ajax({ url: url_href + "/w_browse_types",
 		dataType: "json",
 		context: document.body,
@@ -99098,25 +99534,91 @@ GENTICS.Aloha.Repositories.KaraCos.getObjectsAtUrl = function(url_href) {
 			});
 		}
 	}); // jQuery.ajax for folders
-	jQuery.ajax({ url: url_href + "/_att",
+	if (url_href != "/" && url_href != ""  ) {
+		jQuery.ajax({ url: url_href + "/_att",
+			dataType: "json",
+			context: document.body,
+			async: false, // plugin init should wait for success b4 continuing
+		    success: function(data) {
+		    	
+				jQuery.each(data.form.fields[0].values,function(k,v){
+					result.push(new that.Document({
+						'id': url_href + '/' + v.label, 
+						'name': v.label,
+						'url': v.value, 
+						'objectType': 'document',
+						'type': 'document',
+						'repositoryId': "org.karacos.aloha.Repository",
+						'parentId': url_href
+							}));
+				});
+			}
+		}); // jQuery.ajax for files
+	} else {
+		result.push(new that.Folder({
+						'id': '/LinksFolder', 
+						'name': 'LinksFolder',
+						'url': 'LinksFolder', 
+						'objectType': 'folder',
+						'type': 'folder',
+						'repositoryId': "org.karacos.aloha.Repository",
+						'parentId': '/'
+							}));
+	}
+	return result
+};
+
+GENTICS.Aloha.Repositories.KaraCos.findInDomain = function(queryString) {
+	var result =    [];
+	var that = this;
+	jQuery.ajax({ url: "/",
 		dataType: "json",
+		contentType:"application/json",
 		context: document.body,
+		type: 'POST',
+		data: '{"method":"_search_by_name", "id":1,"params":{"name":"'+queryString+'"}}',
 		async: false, // plugin init should wait for success b4 continuing
+		
 	    success: function(data) {
 	    	
-			jQuery.each(data.form.fields[0].values,function(k,v){
-				result.push(new that.Document({
-					'id': url_href + '/' + v.label, 
-					'name': v.label,
-					'url': v.value, 
-					'objectType': 'document',
-					'type': 'document',
+			jQuery.each(data.data,function(k,v){
+				result.push(new that.Folder({
+					'id': k, 
+					'name': v.name,
+					'url': v.url, 
+					'objectType': v.objectType,
+					'type': v.type,
 					'repositoryId': "org.karacos.aloha.Repository",
-					'parentId': url_href
 						}));
 			});
 		}
-	}); // jQuery.ajax for folders
+	}); // jQuery.ajax for items
+	// get links
+	jQuery.ajax({ url: "/",
+		dataType: "json",
+		contentType:"application/json",
+		context: document.body,
+		type: 'POST',
+		data: '{"method":"view_tracking", "id":1,"params":{}}',
+		async: false, // plugin init should wait for success b4 continuing
+		
+	    success: function(data) {
+			jQuery.each(data.data,function(k,v){
+				re = new RegExp(queryString);
+				if (!v.description) {v.description = "No name";}
+				if (v.forward.match(re) || v.description.match(re)) {
+				result.push(new that.Document({
+					'id': '/LinksFolder/'+k, 
+					'name': v.description,
+					'url': v.forward, 
+					'objectType': 'link',
+					'type': 'document',
+					'repositoryId': "org.karacos.aloha.Repository",
+						}));
+				}
+			});
+		}
+	}); // jQuery.ajax for links
 	return result
 };
 
@@ -99148,14 +99650,15 @@ KaraCos.Plugin=new GENTICS.Aloha.Plugin("org.karacos.aloha.Plugin");
 		eu.iksproject.LoaderPlugin.loadAsset('org.karacos.aloha.Plugin', 'explorer', 'js');
 	}
 }*/
-eu.iksproject.LoaderPlugin.loadAsset('org.karacos.aloha.Plugin', 'style', 'css');
 KaraCos.Plugin.languages=["en","fr"];
 KaraCos.Plugin.config = ['img'];
 /*
  * Initalize plugin
  */
 KaraCos.Plugin.init=function(){
-	
+	stylePath = GENTICS_Aloha_base + '/plugins/org.karacos.aloha.Plugin/style.css';
+	jQuery('<link rel="stylesheet" />').attr('href', stylePath).appendTo('head');
+
 	this.pagedata = {}
     var that=this;
 	that.add_attachment = null;
@@ -99188,7 +99691,23 @@ KaraCos.Plugin.init=function(){
 				}
 			}// success on get_user_actions_forms
 	}); // $.ajax for get_user_actions_forms
-	this.drawButtons();
+	url_href = "/get_user_actions_forms";
+	$.ajax({ url: url_href,
+		dataType: "json",
+		context: document.body,
+		async: false, // plugin init should wait for success b4 continuing
+		success: function(data) {
+			GENTICS.Aloha.Log.info(that,data);
+			that.user_actions = [];
+			that.edit_page = false;
+			if (data['status'] == "success") {
+				GENTICS.Aloha.Log.info(that,"successful result");
+				that.domainMenuData = data['data'];
+			}
+		}// success on get_user_actions_forms
+	}); // $.ajax for get_user_actions_forms
+	this.drawDomainMenu();
+	this.drawInstanceMenu();
 	GENTICS.Aloha.Log.info(that,that);
 	that.bindInteractions();
 	that.subscribeEvents();
@@ -99203,10 +99722,89 @@ KaraCos.Plugin.bindInteractions = function () {
 
 };
 
-KaraCos.Plugin.drawButtons = function() {
+KaraCos.Plugin.drawDomainMenu = function() {
+	var that = this;
+	if (that.domainMenuData) {
+		len = that.domainMenuData.actions.length;
+		menu = new Ext.menu.Menu({
+			id: 'domainMenu'
+		});
+		for (var i=0 ; i<len; ++i) {
+			var menu_items = ['<b class="menu-title">Choose a Theme</b>',];
+			//that.domain_actions[i] = that.domainMenuData.actions[i].action;
+			 if (that.domainMenuData.actions[i].action == "set_user_theme" ||
+					 that.domainMenuData.actions[i].action == 'set_theme') {
+				var field = that.domainMenuData.actions[i].form.fields[0];
+				var fieldvalue = undefined;
+				if (field.value){
+					fieldvalue = field.value;
+				}
+				action_name = that.domainMenuData.actions[i].action;
+				if (that.domainMenuData.actions[i].label) {
+					action_name = that.domainMenuData.actions[i].label;
+				}
+				if (field.values) {
+					jQuery.each(field.values, function(k,v) {
+						var ischecked = false;
+						if (v == fieldvalue) {
+							ischecked = true;
+						} else {
+							ischecked = false;
+						}
+						menuitem = {text:v,
+								group: that.domainMenuData.actions[i].action,
+								checkHandler: that.onUserThemeClick,
+								checked: ischecked};
+						
+						menu_items.push(menuitem)
+					});
+				}
+				var themeSelectorItem = new Ext.menu.Item({
+					text:action_name,
+					menu: {items:menu_items}
+				});
+			 menu.addItem(themeSelectorItem);
+			 } // if set_user_theme || set_theme
+			 
+		} //for
+		GENTICS.Aloha.Ribbon.toolbar.insert(GENTICS.Aloha.Ribbon.toolbar.items.getCount() - 3,
+				{
+					text:'Domain Actions',
+					iconcls: 'bmenu',
+					menu:menu
+				}
+		);
+		GENTICS.Aloha.Ribbon.toolbar.doLayout();
+	} // if domain menu data
+}
+
+KaraCos.Plugin.onUserThemeClick = function(data) {
+	$.ajax({ url: '/',
+    	dataType: "json",
+    	contentType: 'application/json',
+    	type: "POST",
+    	data: $.toJSON({
+    		'method' : data.group,
+    		'id' : 1,
+    		'params' : {'theme':data.text}
+    	}),
+    	context: document.body,
+    	async: false, // plugin init should wait for success b4 continuing
+        success: function(data) {
+        	if (data['status'] == "success") {
+        	document.location = document.URL;
+        	}
+			}// success on set_user_theme
+	}); // $.ajax for get_user_actions_forms
+}
+
+KaraCos.Plugin.drawInstanceMenu = function() {
 	var that = this;
 	if (that.rsdata) {
 		len = that.rsdata.actions.length;
+		menu = new Ext.menu.Menu({
+			id: 'mainMenu'
+		});
 		for (var i=0 ; i<len; ++i) {
 			that.user_actions[i] = that.rsdata.actions[i].action;
 			if (that.rsdata.actions[i].action == that.settings['edit_content_action']) {
@@ -99220,11 +99818,15 @@ KaraCos.Plugin.drawButtons = function() {
 					that._att = that.rsdata.actions[i];
 				}
 				if (that.rsdata.actions[i].label) {
-					var actionButton=new GENTICS.Aloha.ui.Button({label:that.rsdata.actions[i].label,
-						onclick:function(){ // When a button is clicked :
+					var actionMenuItem=new Ext.menu.Item(
+						{text:that.rsdata.actions[i].label,
+						actiondata: that.rsdata.actions[i],
+						}); 
+					actionMenuItem.on('click', function(){ // When a button is clicked :
 						if (this.actiondata.form && this.actiondata.action != 'register') {
 							new KaraCos.Action({'action': this.actiondata,
 								title : this.actiondata.action,
+								instance_url: that.settings['instance_url'],
 								layout : 'vbox',
 								layoutConfig: {
 								    align : 'stretch',
@@ -99239,19 +99841,33 @@ KaraCos.Plugin.drawButtons = function() {
 						} else {
 							document.location = this.instance_url + '/' + this.actiondata.action;
 						}
-					}}); // actionbutton
-					actionButton.actiondata = that.rsdata.actions[i];
-					actionButton.instance_url = that.settings['instance_url'];
+					});
+					//); // actionbutton
+					actionMenuItem.actiondata = that.rsdata.actions[i];
+					actionMenuItem.instance_url = that.settings['instance_url'];
+					menu.addItem(actionMenuItem);
+//					menu.items.push(actionButton);
 					GENTICS.Aloha.Log.info(that,"processing action button creation " + that.rsdata.actions[i].label );
-					GENTICS.Aloha.Ribbon.addButton(actionButton);
+					//GENTICS.Aloha.Ribbon.addButton(actionButton);
 					// actionButton.show();
 				} else {
 					
 				}
 			}
-			// GENTICS.Aloha.Ribbon.toolbar.render();
-			// GENTICS.Aloha.Ribbon.toolbar.show();
 		} // for
+		menuButton = new Ext.Button({
+			menu:menu,
+			text:'KaraCos Menu'
+		});
+		GENTICS.Aloha.Ribbon.toolbar.insert(GENTICS.Aloha.Ribbon.toolbar.items.getCount() - 3,
+				{
+					text:'Current Node Menu',
+					menu:menu
+				}
+		);
+//		GENTICS.Aloha.Ribbon.toolbar.render();
+//		GENTICS.Aloha.Ribbon.toolbar.show();
+		
 		if (that.edit_page) {
 			GENTICS.Aloha.Log.info(that,that.edit_page_action);
 				len = that.edit_page_action.form.fields.length;
@@ -99354,6 +99970,7 @@ KaraCos.Plugin.save=function(){
 		GENTICS.Aloha.Log.error(error);
 	}
   };
+
 /*!
 * Aloha Editor
 * Author & Copyright (c) 2010 Gentics Software GmbH

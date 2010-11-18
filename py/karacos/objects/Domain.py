@@ -812,6 +812,9 @@ class Domain(karacos.db['Parent']):
     def get_user_theme_form(self):
         user = self.get_user_auth()
         user._update_item()
+        if 'CUSTOM_SITE_BASE' not in user:
+            user['CUSTOM_SITE_BASE'] = self.get_self_theme_base()
+            user.save()
         return {'title': _("Change domain theme"),
          'submit': _('Change'),
          'fields': [{'name':'theme', 'title':'theme base','dataType': 'TEXT', 
@@ -834,11 +837,13 @@ class Domain(karacos.db['Parent']):
     
     
     def get_theme_form(self):
+        
+        
         return {'title': _("Change domain theme"),
          'submit': _('Change'),
          'fields': [{'name':'theme', 'title':'theme base','dataType': 'TEXT',
                      'formType': 'SELECT',
-                     'value':self['site_theme_base'].split('/')[1],
+                     'value':self.get_self_theme_base().split('/')[1],
                      'values':self.get_themes()}]}
         
     @karacos._db.isaction
@@ -861,7 +866,11 @@ class Domain(karacos.db['Parent']):
          'submit': _('Changer'),
          'fields': [{'name':'site_theme_base', 'title':'theme base','dataType': 'TEXT'}]}
     set_site_theme_base.label = "Set theme base"
-    
+    def get_self_theme_base(self):
+        if 'site_theme_base' not in self:
+            self['site_theme_base'] = "/default"
+            self.save()
+        return self['site_theme_base']
     def get_site_theme_base(self):
         self._update_item()
         result = "/default"

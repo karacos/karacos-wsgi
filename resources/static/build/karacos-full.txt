@@ -56,7 +56,6 @@ aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.Format/plugin.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.Table/plugin.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.List/plugin.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.Link/plugin.js
-aloha-nka-fork/WebContent/plugins/eu.iksproject.plugins.Loader/plugin.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.Image/plugin.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.DragAndDropFiles/deps/Ext.ux.XHRUpload.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.DragAndDropFiles/lib/DropFilesRepository.js
