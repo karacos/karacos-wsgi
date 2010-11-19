@@ -135,22 +135,25 @@ class Dispatcher(object):
         """
         self.log.debug("process_request %s" % dir(request.params))
         self.log.debug(request.headers['Content-Type'])
-        
-        # If post with type != application/json, application/xml, ou multipart/form-data,
-        # then it's a file upload.
-        if (request.method == "POST" and            # 
-            'X-File-Name' in request.headers ) :
-            self.process_file_upload(request,response)
-        elif (request.headers['Accept'].find('text/html') >= 0 or
-                request.headers['Accept'].find('application/xhtml+xml') >= 0):
+        try:
+            # If post with type != application/json, application/xml, ou multipart/form-data,
+            # then it's a file upload.
+            if (request.method == "POST" and            # 
+                'X-File-Name' in request.headers ) :
+                self.process_file_upload(request,response)
+            elif (request.headers['Accept'].find('text/html') >= 0 or
+                    request.headers['Accept'].find('application/xhtml+xml') >= 0):
+                self.process_http_params(request,response)
+            elif request.headers['Accept'].find('application/json') >= 0:
+                self.process_json_params(request,response)
+            elif request.headers['Accept'].find('application/xml') >= 0:
+                self.process_xml_params(request,response)
+            else:
+                self.process_http_params(request,response)
+            self.process_action(request, response)
+        except:
             self.process_http_params(request,response)
-        elif request.headers['Accept'].find('application/json') >= 0:
-            self.process_json_params(request,response)
-        elif request.headers['Accept'].find('application/xml') >= 0:
-            self.process_xml_params(request,response)
-        else:
-            self.process_http_params(request,response)
-        self.process_action(request, response)
+            self.process_action(request, response)
         
     def process_file_upload(self,request,response):
         self.log.info("Processing direct file upload")
