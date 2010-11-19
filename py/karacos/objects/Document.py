@@ -265,6 +265,19 @@ class Document(couchdb.client.Document):
         assert 'owner_id' in self, "valueError: 'owner_id' : dict entry not found"
         assert 'group_id' in self, "valueError: 'group_id' : dict entry not found"
         assert 'ACL' in self, "valueError: 'permissions' : dict entry not found"
+
+    def __get_title__(self):
+        session = karacos.serving.get_session()
+        codlang = session.get_session_lang()
+        if 'title' not in self:
+            return '<p>No title.</p>'
+        if codlang == 'default':
+            return self['title']
+        else:
+            if 'title_%s' % codlang in self:
+                return self['title_%s' % codlang]
+            else:
+                return self['title']
     
     def __get_content__(self):
         session = karacos.serving.get_session()
