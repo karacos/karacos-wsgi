@@ -15,18 +15,23 @@
         <!-- Navigation Level 0 
         <div class="nav0">
           <ul>
-            <li><a href="#" title="Pagina home in Italiano"><img src="/multiflex37/img/flag_italy.gif" alt="Image description" /></a></li>
-            <li><a href="#" title="Homepage auf Deutsch"><img src="/multiflex37/img/flag_germany.gif" alt="Image description" /></a></li>
-            <li><a href="#" title="Hemsidan p&aring; svenska"><img src="/multiflex37/img/flag_sweden.gif" alt="Image description" /></a></li>
+            <li><a href="#" title="Pagina home in Italiano"><img src="/_browser/themes/multiflex37/img/flag_italy.gif" alt="Image description" /></a></li>
+            <li><a href="#" title="Homepage auf Deutsch"><img src="/_browser/themes/multiflex37/img/flag_germany.gif" alt="Image description" /></a></li>
+            <li><a href="#" title="Hemsidan p&aring; svenska"><img src="/_browser/themes/multiflex37/img/flag_sweden.gif" alt="Image description" /></a></li>
           </ul>
-        </div>			-->
+        </div>		
+        	-->
 
         <!-- Navigation Level 1 -->
         <div class="nav1">
           <ul>
             <li><a href="/" title="Go to Start page">Home</a></li>
-            <li><a href="/login" title="">Connection</a></li>
-            <li><a href="/register" title="">S'enregistrer</a></li>							
+            % if 'login' in instance.__domain__.get_user_actions(instance.__domain__.get_user_auth()):
+	            <li><a href="/login" title="">Connexion</a></li>
+	            <li><a href="/register" title="">S'enregistrer</a></li>
+            % else :
+            	<li><a href="/logout" title="">Deconnexion</a></li>
+            %endif							
           </ul>
         </div>              
       </div>
@@ -42,21 +47,25 @@
 		<% childrens = instance.__domain__.get_web_childrens_for_id() %>
 			% for child in childrens.keys():
 			<ul>
-				<li><a href="${instance.__domain__._get_action_url()}${childrens[child]}/">${childrens[child]}</a>
-				 % try:
-					 <% childNode = instance.__domain__.__childrens__[child] %>
-						% if childNode != None:
-							<ul>
-							<% childChildrens = childNode.get_web_childrens_for_id() %>
-							% for childChild in childChildrens:
-								<li><a href="${instance.__domain__._get_action_url()}${childrens[child]}/${childChildrens[childChild]}/">${childChildrens[childChild]}</a></li>
-							% endfor
-							</ul>
-						% endif
-					%except:
-						
-					%endtry
-				</li>
+				% if not childrens[child].startswith('CMT'):
+					<li><a href="${instance.__domain__._get_action_url()}${childrens[child]}/">${childrens[child]}</a>
+					 % try:
+						 <% childNode = instance.__domain__.__childrens__[child] %>
+							% if childNode != None:
+								<ul>
+								<% childChildrens = childNode.get_web_childrens_for_id() %>
+								% for childChild in childChildrens:
+									% if not childChildrens[childChild].startswith('CMT'):
+										<li><a href="${instance.__domain__._get_action_url()}${childrens[child]}/${childChildrens[childChild]}/">${childChildrens[childChild]}</a></li>
+									% endif
+								% endfor
+								</ul>
+							% endif
+						%except:
+							
+						%endtry
+					</li>
+				%endif
 			</ul>
 			% endfor
           <!-- Navigation item -->

@@ -1,58 +1,15 @@
 <% user_auth = instance.__domain__.get_user_auth() %>
 <% isstaff = 'anonymous@%s' % instance.__domain__['name'] != user_auth['name'] %>
-
-<%def name="show_field(field)">
-	<tr><td>${field['title']}</td>
-	<% type = "" %>
-		% if 'formType' in field:
-			<% type = field['formType'] %>
-		% else:
-			<% type = field['dataType'] %>
-		% endif
-		<td><input type="${type}" name="${field['name']}"></td></tr>
-</%def>
-
-<%def name="show_form(action,form,acturl)">
-	% if 'fields' in form:
-	<form method='POST' action='${acturl}'>
-	<input type='hidden' name='method' value='${action}'/>
-	<table>
-		% for field in form['fields']:
-		
-		${show_field(field)}
-		% endfor
-	% endif
-	<tr><td colspan='2'><input type='submit' value='${action}'/></td></tr>
-	</table>
-	</form>
-</%def>
 	<h1 id="resource_title">
-	% if 'title' in instance:
-		${instance['title']}
-	% else:
-		Noeud ${instance['name']} du domaine ${instance.__domain__['name']}
-	% endif
+		${instance.__get_title__()}
 	</h1>
-	
-	% if result:
-		${result}
-	% endif
-	% if 'apps' in instance:
-		<ul>
-		% for app in instance['apps']:
-			<li><a href="${app}">${app}</a></li>
-		% endfor
-		</ul>
-	% endif
 	<div id="resource_content">
-	% if 'content' in instance and instance['content'] != "":
-		${instance['content']}
-	% else:
-		<p>No content found</p>
-	% endif
+	${instance.__get_content__()}
 	</div>
 	<ul>
 	<% childrens = instance.get_web_childrens_for_id() %>
+	
+	## Have to move this elsewhere
 	% for child in childrens.keys():
 	<% acturl = "/%s/" % instance.get_relative_uri() %>
 		<li><a href="${acturl}${childrens[child]}">${child}</a></li>

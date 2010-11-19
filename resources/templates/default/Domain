@@ -2,29 +2,15 @@
 <% isstaff = 'anonymous@%s' % instance.__domain__['name'] != user_auth['name'] %>
 
 <div class="main-content">
-	% if 'content' in instance:
 		<h1 class="block" id="domain_title">
-		% if 'title' in instance and instance['title'] != '':
-        	${instance['title']}
-		% else:
-			Bienvenue sur le domaine
-		% endif
+        	${instance.__get_title__()}
 		</h1>
 		
         <div class="column1-unit">
         <div id="domain_content">
-        
-		% if 'content' in instance and instance['content'] != '':
-			${instance.__get_content__()}
-		% else:
-			<p>No content found</p>
-		% endif
+        ${instance.__get_content__()}
+        </div> 
         </div>
-        
-        
-          
-        </div>
-	% endif
 	</div>
 	
 	

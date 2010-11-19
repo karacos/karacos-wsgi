@@ -270,7 +270,7 @@ class Document(couchdb.client.Document):
         session = karacos.serving.get_session()
         codlang = session.get_session_lang()
         if 'title' not in self:
-            return '<p>No title.</p>'
+            return 'No title.'
         if codlang == 'default':
             return self['title']
         else:
