@@ -72,14 +72,17 @@ class Dispatcher(object):
                 session['backlinks'] = backlinks
                 raise Redirect(forward, 302, _("Action processing redirect backlink"))
         if response.body == '':
-            if (request.headers['Accept'].find('text/html') >= 0 or
-                request.headers['Accept'].find('application/xhtml+xml') >= 0):
-                self.render_html(response)
-            elif request.headers['Accept'].find('application/json') >= 0 :
-                self.render_json(response)
-            elif request.headers['Accept'].find('application/xml') >= 0:
-                self.render_xml(response)
-            else:
+            try:
+                if (request.headers['Accept'].find('text/html') >= 0 or
+                    request.headers['Accept'].find('application/xhtml+xml') >= 0):
+                    self.render_html(response)
+                elif request.headers['Accept'].find('application/json') >= 0 :
+                    self.render_json(response)
+                elif request.headers['Accept'].find('application/xml') >= 0:
+                    self.render_xml(response)
+                else:
+                    self.render_html(response)
+            except:
                 self.render_html(response)
 
     def process_error(self,e,exc_info):
