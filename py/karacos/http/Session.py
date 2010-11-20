@@ -100,6 +100,7 @@ class Session(dict):
         self.user = user
         self['username'] = self.user['name']
     
+    
     def get_session_lang(self):
         if self['username'] == 'anonymous':
             if 'codlang' in self.get_karacos_domain():

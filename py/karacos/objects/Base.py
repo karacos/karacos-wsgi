@@ -155,18 +155,20 @@ class Base(KcDocument):
         
     
     @karacos._db.ViewsProcessor.isview('self', 'javascript')
-    def __search_name__(self,name):
+    def __search_name__(self,*args, **kw):
         """ // %s first param, unused
         function(doc) {
             var tokens;
             if (doc.name) {
-                re = new RegExp("%s");
-                if (doc.name.match(re)) {
-                    emit(doc._id, doc);
+                for (var i = 0; i < doc.name.length - 3; i++) {
+                    var mykey = doc.name.substr(i,doc.name.length);
+                    emit(mykey, doc);
                 }
             }
         }
         """
+    __search_name__.reduce = """
+    """
     
     @karacos._db.ViewsProcessor.isview('self', 'javascript')
     def __search_file__(self,name):
@@ -206,24 +208,27 @@ class Base(KcDocument):
         """
     
     def _search_name(self,name=None):
-        found = self.__search_name__(name)
+        found = self.__search_name__(*(),**{'startkey':name, 'endkey': u'%s\uefff' % name})
         result = {}
+        resultobjs = []
         for item in found:
-            item_obj = self.db[item.key]
-            if 'type' in item.value:
-                result[item_obj._get_action_url()] = { "url": "http://%s%s" % (item_obj.__domain__['fqdn'],item_obj._get_action_url()),
-                                                  'type':'folder',
-                                                  'objectType':'folder',
-                                                  'name': item_obj['name']}
-                result.update(item_obj._search_get_childs())
-            else:
-                obj_id = "%s/%s" % (item_obj._get_action_url(),item.value['file_name'])
-                result[obj_id]= { "url": "http://%s%s" % (item_obj.__domain__['fqdn'],obj_id),
-                                                  'type':'file',
-                                                  'objectType':'file',
-                                                  'fileType':item.value['stats']['type'],
-                                                  'fileSize':item.value['stats']['size'],
-                                                  'name': item_obj['name']}
+            if item.value['_id'] not in resultobjs:
+                resultobjs.append(item.value['_id'])
+                item_obj = self.db[item.value['_id']]
+                if 'type' in item.value:
+                    result[item_obj._get_action_url()] = { "url": "http://%s%s" % (item_obj.__domain__['fqdn'],item_obj._get_action_url()),
+                                                      'type':'folder',
+                                                      'objectType':'folder',
+                                                      'name': item_obj['name']}
+                    result.update(item_obj._search_get_childs())
+                else:
+                    obj_id = "%s/%s" % (item_obj._get_action_url(),item.value['file_name'])
+                    result[obj_id]= { "url": "http://%s%s" % (item_obj.__domain__['fqdn'],obj_id),
+                                                      'type':'file',
+                                                      'objectType':'file',
+                                                      'fileType':item_obj['stats']['type'],
+                                                      'fileSize':item_obj['stats']['size'],
+                                                      'name': item_obj['name']}
         sub_dbs = self.__get_sub_dbs__()
         for db in sub_dbs :
             db_obj = karacos.db.sysdb[db.key]
