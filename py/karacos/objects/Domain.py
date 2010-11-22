@@ -734,6 +734,18 @@ class Domain(karacos.db['Parent']):
             self.log.log_exc(sys.exc_info(),'error')
             raise karacos._db.Exception, e
     
+    @karacos._db.isaction
+    def fragment(self, fragment, *args, **kw):
+        try:
+            template = self.lookup.get_template('%s/fragments/%s' % (self.get_site_theme_base(), fragment))
+        except:
+            try:
+                template = self.lookup.get_template('/default/fragments/%s' % fragment)
+            except:
+                raise karacos.http.NotFound(message=_("Fragment n'existe pas"))
+        return template.render(instance=self, kw=kw)
+    
+    
     def get_group_by_name(self,groupname):
         """
         """

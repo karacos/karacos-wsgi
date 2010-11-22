@@ -16,7 +16,7 @@ if __name__ == '__main__':
             Thread.__init__(self)
             app = App.Dispatcher()
             wrapped_app = Middleware.Middleware(app)
-            self.server = make_server('127.0.1.1', port, wrapped_app)
+            self.server = make_server('localdev', port, wrapped_app)
         def run(self):
             self.server.serve_forever()
     
