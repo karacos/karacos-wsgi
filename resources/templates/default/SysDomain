@@ -1,0 +1,16 @@
+<% user_auth = instance.__domain__.get_user_auth() %>
+<% isstaff = 'anonymous@%s' % instance.__domain__['name'] != user_auth['name'] %>
+
+<div class="main-content">
+		<h1 class="block" id="domain_title">
+        	${instance.__get_title__()}
+		</h1>
+		
+        <div class="column1-unit">
+        <div id="domain_content">
+        ${instance.__get_content__()}
+        </div> 
+        </div>
+	</div>
+	
+	

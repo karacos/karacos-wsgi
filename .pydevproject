@@ -8,6 +8,6 @@
 <path>/karacos2-wsgi-web-applications-engine/lib</path>
 <path>/karacos2-wsgi-web-applications-engine/py</path>
 <path>/karacos2-wsgi-web-applications-engine/apps</path>
-<path>/karacos2-wsgi-web-applications-engine/server/default/deploy</path>
+<path>/karacos2-wsgi-web-applications-engine/server/dev/deploy</path>
 </pydev_pathproperty>
 </pydev_project>

@@ -104,7 +104,7 @@ class DomainsManager(karacos.db['WebNode']):
          'fields': [{'name':'name', 'title':_('Nom du domaine'),'dataType': 'TEXT'},
                     {'name':'fqdn', 'title':_('FQDN'),'dataType': 'TEXT'},
                     {'name':'type', 'title':_('Type'),'dataType': 'TEXT', 'value': 'Domain'}]}
-    
+    create_domain.label = _("Creer un domaine")
     def _domain_list(self):
         """
         """
