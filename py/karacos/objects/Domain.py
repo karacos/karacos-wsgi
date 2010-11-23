@@ -376,6 +376,7 @@ class Domain(karacos.db['Parent']):
         self._update_item()
         self['name'] = name
         self.save()
+    
     @karacos._db.isaction
     def set_fqdn(self,fqdn):
         self._update_item()
@@ -456,7 +457,73 @@ class Domain(karacos.db['Parent']):
             self.log.log_exc(sys.exc_info(),'error')
             raise karacos._db.Exception, e
         return result
-            
+    
+    @karacos._db.ViewsProcessor.isview('self', 'javascript')
+    def __get_first_level_menu_nodes_with_id__(self,*args, **kw):
+        """
+        function(doc) {
+            if (doc.type == "WebNode" && doc.parent_id == "%s" && !("_deleted" in doc && doc._deleted == true)) {
+                for (user in doc.ACL) {
+                    if (doc.ACL[user].indexOf("w_browse") > -1) {
+                        var doc_title = "";
+                        if (doc.title) {
+                            doc_title = doc.title;
+                        } else {
+                            doc_title = doc.name;
+                        }
+                        emit(user, {name:doc.name, title: doc_title});
+                    }
+                }
+            } 
+        }
+        """
+    
+    @karacos._db.ViewsProcessor.isview('self', 'javascript')
+    def __get_second_level_menu_nodes_with_id__(self,*args, **kw):
+        """
+        function(doc) {
+            if (doc.type == "WebNode" && doc.parent_id != "%s" && !("_deleted" in doc && doc._deleted == true)) {
+                for (user in doc.ACL) {
+                    if (doc.ACL[user].indexOf("w_browse") > -1) {
+                        var doc_title = "";
+                        if (doc.title) {
+                            doc_title = doc.title;
+                        } else {
+                            doc_title = doc.name;
+                        }
+                        emit([doc.parent_id,user], {name:doc.name, title: doc_title});
+                    }
+                }
+            }
+        }
+        """
+    
+    def _get_menu_nodes(self):
+        """
+        Calls the couchdb views with keys for matching authorized resources for a given user
+        """
+        userid = self.get_user_auth()
+        keys = userid.get_groups()
+        keys.append(userid.get_auth_id())
+        found = self.__get_first_level_menu_nodes_with_id__(*(),**{'keys':keys})
+        
+        result = {}
+        for item in found:
+            if item.id not in result:
+                result[item.id] = item.value
+        sub_search_keys = []
+        for key in result.keys():
+            for uid in keys:
+                sub_search_keys.append([key,uid])
+        subfound = self.__get_second_level_menu_nodes_with_id__(*(),**{'keys':sub_search_keys})
+        for subitem in subfound:
+            if subitem.id not in result.keys():
+                if 'childrens' not in result[str(subitem.key[0])]:
+                    result[subitem.key[0]]['childrens'] = {}
+                if subitem.id not in result[subitem.key[0]]['childrens']: 
+                    result[subitem.key[0]]['childrens'][subitem.id] = subitem.value
+        return result
+    
     def _create_user(self,username=None,password=None,hasbase=False):
         """
         """
