@@ -565,6 +565,25 @@ class Domain(karacos.db['Parent']):
             return False
         else:
             return True
+
+    def get_i18n_conf(self):
+        if 'i18n' not in self:
+            self['i18n'] = {'default_language': 'en-US', # Default site language
+                            'supported_languages': ['en-US']}
+            self.save()
+        return self['i18n']
+    
+    def get_default_site_language(self):
+        return self.get_i18n_conf()['default_language']
+    
+    def get_supported_site_languages(self):
+        return self.get_i18n_conf()['supported_languages']
+    
+    def add_lang_support(self,lang):
+        conf = self.get_i18n_conf()
+        conf['supported_languages'].append(lang)
+        self['i18n'] = conf
+        self.save()
     
     @karacos._db.isaction
     def reset_admin_ACL(self):

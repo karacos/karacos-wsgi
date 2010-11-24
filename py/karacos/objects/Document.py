@@ -271,7 +271,7 @@ class Document(couchdb.client.Document):
         codlang = session.get_session_lang()
         if 'title' not in self:
             return 'No title.'
-        if codlang == 'default':
+        if codlang == self.__domain__.get_default_site_language():
             return self['title']
         else:
             if 'title_%s' % codlang in self:
@@ -292,6 +292,25 @@ class Document(couchdb.client.Document):
             else:
                 return self['content']
     
+    def _translate_content(self,content=None, lang=None):
+        """
+        """
+        if lang not in self.__domain__.get_supported_site_languages():
+            self.__domain__.add_lang_support(lang)
+        self['content_%s' % lang] = content
+        self.save()
+    
+    @karacos._db.isaction
+    def translate_content(self,content=None, lang=None):
+        self._translate_content(content=content, lang=lang)
+    
+    translate_content.form = {'title': _("Translate content"),
+                              'submit': _('Traduire'),
+                              'fields': [{'name':'lang', 'title':_('Code Langue'),'dataType': 'TEXT'},
+                                         {'name':'content', 'title':_('Contenu'),'dataType': 'TEXT', 'formType': 'TEXTAREA'}
+                                         ]}
+    translate_content.label = _("Translate")
+        
     @karacos._db.isaction
     def _sync(self, data=None, override=False):
         """

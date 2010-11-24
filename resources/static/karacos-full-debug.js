@@ -99338,8 +99338,18 @@ Ext.extend(KaraCos.Form,Ext.form.FormPanel, {
 					editable:false,
 					forceSelection: true,
 					//TODO i18n
-				    emptyText:'Select value...',
+				    emptyText:'Select value...'
 				    //selectOnFocus:true
+				});
+			}
+			if (field.formType.toLowerCase() == 'textarea') {
+				return new Ext.form.HtmlEditor({
+				    //renderTo: Ext.getBody(),
+					fieldLabel:field_label,
+					name:field.name,
+					value: field_value,
+				    width: 800,
+				    height: 300
 				});
 			}
 		} else {
@@ -99806,7 +99816,7 @@ KaraCos.Plugin.drawInstanceMenu = function() {
 								width : 800,
 								height : 300,
 								modal:true,
-								closeAction : 'destroy'}).show();
+								closeAction : 'destroy'}).show().toFront();
 							
 							
 						} else {

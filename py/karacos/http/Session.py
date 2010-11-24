@@ -99,21 +99,21 @@ class Session(dict):
         assert isinstance(user, karacos.db['User'])
         self.user = user
         self['username'] = self.user['name']
+        if 'codlang' in self.user:
+            self['codlang'] = self.user['codlang']
     
     
     def get_session_lang(self):
-        if self['username'] == 'anonymous':
-            if 'codlang' in self.get_karacos_domain():
-                return self.get_karacos_domain()['codlang']
-            else:
-                return 'default'
-        else:
-            if 'codlang' in self.user:
-                return self.user['codlang']
-            elif 'codlang' in self.get_karacos_domain():
-                return self.get_karacos_domain()['codlang']
-            else:
-                return 'default'
+        if 'codlang' not in self:
+            domain = self.get_karacos_domain()
+            request = karacos.serving.get_request()
+            langs = request.accept_language.best_matches(domain.get_default_site_language())
+            for lang in langs:
+                if lang in domain.get_supported_site_languages():
+                    self['codlang'] = lang
+                    break 
+        
+        return self['codlang']
                 
     
     def get_user_auth(self):
