@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <?eclipse-pydev version="1.0"?>
 
 <pydev_project>
 <pydev_property name="org.python.pydev.PYTHON_PROJECT_INTERPRETER">Default</pydev_property>
 <pydev_property name="org.python.pydev.PYTHON_PROJECT_VERSION">python 2.6</pydev_property>
 <pydev_pathproperty name="org.python.pydev.PROJECT_SOURCE_PATH">
-<path>/karacos2-wsgi-web-applications-engine/lib</path>
-<path>/karacos2-wsgi-web-applications-engine/py</path>
-<path>/karacos2-wsgi-web-applications-engine/apps</path>
-<path>/karacos2-wsgi-web-applications-engine/server/dev/deploy</path>
+<path>/karacos2-wsgi/lib</path>
+<path>/karacos2-wsgi/py</path>
+<path>/karacos2-wsgi/apps</path>
+<path>/karacos2-wsgi/server/dev/deploy</path>
 </pydev_pathproperty>
 </pydev_project>

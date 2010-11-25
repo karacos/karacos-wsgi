@@ -377,17 +377,19 @@ class Domain(karacos.db['Parent']):
         self['name'] = name
         self.save()
     
+    def _get_set_fqdn_form(self):
+        return {'title':_('Enter new domain FQDN'),
+                'submit':_('Change FQDN'),
+                'fields':[
+                    {'name':'fqdn', 'title':_('Server FQDN'), 'dataType': 'TEXT', 'value':self['fqdn']}
+                        ]
+                }
     @karacos._db.isaction
-    def set_fqdn(self,fqdn):
+    def set_fqdn(self,fqdn=None):
         self._update_item()
         self['fqdn'] = fqdn
         self.save()
-    set_fqdn.form = {'title':_('Enter new domain FQDN'),
-                'submit':_('Change FQDN'),
-                'fields':[
-                    {'name':'fqdn', 'title':_('Server FQDN'), 'dataType': 'TEXT'}
-                        ]
-                }
+    set_fqdn.get_form = _get_set_fqdn_form
     set_fqdn.label = _("Changer main domain FQDN")
     
     @karacos._db.isaction
