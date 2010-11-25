@@ -6883,6 +6883,7 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 })(window);
 
 
+
 (function($){$.toJSON=function(o)
 {if(typeof(JSON)=='object'&&JSON.stringify)
 return JSON.stringify(o);var type=typeof(o);if(o===null)
@@ -7640,6 +7641,7 @@ jQuery.fn.extend({
 	    return results[1];
 	}
 })(jQuery);
+
 /**
  * Cookie plugin
  *
@@ -24718,6 +24720,7 @@ Ext.apply(Ext.Error.prototype, {
         return Ext.encode(this);
     }
 });
+
 /*!
  * Ext JS Library 3.2.1
  * Copyright(c) 2006-2010 Ext JS, Inc.
@@ -50693,6 +50696,7 @@ Ext.Resizable.Handle = Ext.extend(Object, {
         this.el = null;
     }
 });
+
 /*!
  * Ext JS Library 3.2.1
  * Copyright(c) 2006-2010 Ext JS, Inc.
@@ -54962,6 +54966,7 @@ Ext.TabPanel.AccessStack = function(){
         }
     };
 };
+
 /*!
  * Ext JS Library 3.2.1
  * Copyright(c) 2006-2010 Ext JS, Inc.
@@ -63697,6 +63702,7 @@ Ext.reg('menucheckitem', Ext.menu.CheckItem);/**
     }
 });
 Ext.reg('colormenu', Ext.menu.ColorMenu);
+
 /*!
  * Ext JS Library 3.2.1
  * Copyright(c) 2006-2010 Ext JS, Inc.
@@ -72812,6 +72818,7 @@ Ext.form.VTypes = function(){
         'alphanumMask' : /[a-z0-9_]/i
     };
 }();
+
 /*!
  * Ext JS Library 3.2.1
  * Copyright(c) 2006-2010 Ext JS, Inc.
@@ -78804,6 +78811,7 @@ jQuery.fn.contentEditable  = function( b ) {
 		jQuery(this).attr(ce, b);
 	}
 };
+
 /*!
 *   This file is part of Aloha Editor
 *   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
@@ -78875,6 +78883,7 @@ GENTICS.Utils.guid = function () {
 	var S4 = GENTICS.Utils.uniqeString4;
 	return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
 };
+
 /*!
 *   This file is part of Aloha Editor
 *   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
@@ -79792,6 +79801,7 @@ GENTICS.Utils.RangeTree = function() {
 	 */
 	this.children = new Array();
 };
+
 /*!
 *   This file is part of Aloha Editor
 *   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
@@ -81232,6 +81242,7 @@ GENTICS.Utils.Dom.prototype.setCursorInto = function (domObject) {
  * @hide
  */
 GENTICS.Utils.Dom = new GENTICS.Utils.Dom();
+
 /*!
 *   This file is part of Aloha Editor
 *   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
@@ -81295,6 +81306,7 @@ Ext.extend(Ext.data.AlohaProxy, Ext.data.DataProxy, {
 		jQuery.extend(this.params, p);
 	}
 });	
+
 /*!
 *   This file is part of Aloha Editor
 *   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
@@ -81406,6 +81418,7 @@ Ext.extend( Ext.tree.AlohaTreeLoader, Ext.tree.TreeLoader, {
 		return this.objectTypeFilter;
 	}
 });	
+
 /*!
 *   This file is part of Aloha Editor
 *   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
@@ -83236,6 +83249,7 @@ GENTICS.Aloha.ui.AttributeField.prototype.setTemplate = function (tpl) {
 		return csslink;
 	}
 })();
+
 /*!
 *   This file is part of Aloha Editor
 *   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
@@ -83696,6 +83710,7 @@ GENTICS.Aloha.Editable.prototype.getContents = function() {
 GENTICS.Aloha.Editable.prototype.getId = function() {
 	return this.obj.attr('id');
 };
+
 /*!
 *   This file is part of Aloha Editor
 *   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
@@ -83952,6 +83967,7 @@ GENTICS.Aloha.EventRegistry.prototype.trigger = function (event) {
 };
 
 GENTICS.Aloha.EventRegistry = new GENTICS.Aloha.EventRegistry();
+
 
 
 /*!
@@ -85769,6 +85785,7 @@ GENTICS.Aloha.Log.prototype.flushLogHistory = function() {
  * @hide
  */
 GENTICS.Aloha.Log = new GENTICS.Aloha.Log();
+
 /*!
 *   This file is part of Aloha Editor
 *   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
@@ -86655,6 +86672,7 @@ GENTICS.Aloha.MessageLine.prototype.add = function(message) {
  * @hide
  */
 GENTICS.Aloha.MessageLine = new GENTICS.Aloha.MessageLine();
+
 /*!
 *   This file is part of Aloha Editor
 *   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
@@ -86923,6 +86941,7 @@ GENTICS.Aloha.Plugin.prototype.toString = function() {
 GENTICS.Aloha.Plugin.prototype.log = function (level, message) {
 	GENTICS.Aloha.Log.log(level, this, message);
 };
+
 /*!
 *   This file is part of Aloha Editor
 *   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
@@ -88541,6 +88560,7 @@ GENTICS.Aloha.Selection.prototype.SelectionRange.prototype.toString = function(v
 };
 
 GENTICS.Aloha.Selection = new GENTICS.Aloha.Selection();
+
 /*!
 *   This file is part of Aloha Editor
 *   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
@@ -88623,6 +88643,7 @@ GENTICS.Aloha.Sidebar.Panel = function () {};
  * @return HTML Code of the rendered panel
  */
 GENTICS.Aloha.Sidebar.Panel.prototype.render = function() {};
+
 /*!
 *   This file is part of Aloha Editor
 *   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
@@ -88979,6 +89000,7 @@ GENTICS.Aloha.RepositoryManager = new GENTICS.Aloha.RepositoryManager();
 GENTICS.Aloha.RepositoryManager.toString = function() {
 	return "com.gentics.aloha.RepositoryManager";
 };
+
 /*!
 *   This file is part of Aloha Editor
 *   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
@@ -89083,6 +89105,7 @@ GENTICS.Aloha.Repository.prototype.makeClean = function (obj) {};
  * @return void
  */
 GENTICS.Aloha.Repository.prototype.markObject = function (obj, repositoryItem) {};
+
 /*!
 *   This file is part of Aloha Editor
 *   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
@@ -89148,6 +89171,7 @@ GENTICS.Aloha.Repository.Folder = function(properties) {
 	
 	this.baseType = 'folder';
 };
+
 /*!
 *   This file is part of Aloha Editor
 *   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
@@ -89358,6 +89382,7 @@ GENTICS.Aloha.ui.Browser.prototype.show = function() {
 	this.win.toFront(true);
 	this.win.focus();
 };
+
 
 /*!
  * jQuery UI 1.8.5
@@ -93798,6 +93823,7 @@ AnyTime.picker = function( id, options )
 
 })(jQuery); // function($)...
 
+
 //Always start with comments (concat et tcet)
 /**
  * 
@@ -94052,6 +94078,7 @@ AnyTime.picker = function( id, options )
 	}
 	// ############################
 	})(jQuery);
+
 /*!
 * Aloha Editor
 * Author & Copyright (c) 2010 Gentics Software GmbH
@@ -97463,6 +97490,7 @@ GENTICS.Aloha.ListPlugin.mergeAdjacentLists = function (jqList) {
 		jqNextList.remove();
 	}
 };
+
 /*!
 * Aloha Editor
 * Author & Copyright (c) 2010 Gentics Software GmbH
@@ -97935,6 +97963,7 @@ GENTICS.Aloha.Link.makeClean = function (obj) {
 		jQuery(this).removeClass('GENTICS_link_text');
 	});
 };
+
 /*
 * Aloha Image Plugin - Allow image manipulation in Aloha Editor
 * 
@@ -98374,6 +98403,7 @@ GENTICS.Aloha.Image.srcChange = function () {
 	// customize
 };
 
+
 /*
 Awesome Uploader
 Ext.ux.XHRUpload JavaScript Class
@@ -98516,6 +98546,7 @@ Ext.extend(Ext.ux.XHRUpload, Ext.util.Observable,{
 		this.fireEvent(event.type, event);
 	}
 });
+
 /*
  * Repository
  * Copyright (c) 2010 Nicolas Karageuzian - http://nka.me
@@ -99151,6 +99182,7 @@ GENTICS.Aloha.DragAndDropFiles.findFileObject = function(range) {
     
 };
 
+
 Ext.namespace("KaraCos");
 
 KaraCos.type_of = function(v) {
@@ -99173,6 +99205,7 @@ KaraCos.Action = function(config) {
 		config.items = new KaraCos.Form({'form': action.form,
 			'url':action.acturl,
 			'action':action.action,
+			'autoScroll':true,
 			'win': this})
 	}
 	if (KaraCos.type_of(action.form) == "array") {
@@ -99182,6 +99215,7 @@ KaraCos.Action = function(config) {
 			config.items.push(new KaraCos.Form({'form': action['form'][i],
 				'url':action.acturl,
 				'action':action.action,
+				autoScroll:true,
 				'win': this}));
 		}
 	}
@@ -99341,15 +99375,26 @@ Ext.extend(KaraCos.Form,Ext.form.FormPanel, {
 				    emptyText:'Select value...'
 				    //selectOnFocus:true
 				});
+				
 			}
-			if (field.formType.toLowerCase() == 'textarea') {
+			if (field.formType.toLowerCase() == 'wysiwyg') {
 				return new Ext.form.HtmlEditor({
 				    //renderTo: Ext.getBody(),
 					fieldLabel:field_label,
 					name:field.name,
 					value: field_value,
-				    width: 800,
-				    height: 300
+				    width: 400,
+				    height: 150
+				});
+			}
+			if (field.formType.toLowerCase() == 'textarea') {
+				return new Ext.form.TextArea({
+				    //renderTo: Ext.getBody(),
+					fieldLabel:field_label,
+					name:field.name,
+					value: field_value,
+				    width: 400,
+				    height: 150
 				});
 			}
 		} else {
@@ -99816,7 +99861,7 @@ KaraCos.Plugin.drawInstanceMenu = function() {
 								width : 800,
 								height : 300,
 								modal:true,
-								closeAction : 'destroy'}).show().toFront();
+								closeAction : 'destroy'}).show().setZIndex(9999999999);
 							
 							
 						} else {
@@ -99912,7 +99957,24 @@ KaraCos.Plugin.srcChange = function () {
  * Edit more (window with additional info (which cannont be edited on page)
  */
 KaraCos.Plugin.editMore=function(){
-	   
+	simplified_action = this.edit_page_action;
+	if (this.edit_page_action.form.fields) {
+		this.items = [];
+		var arLen=this.edit_page_action.form.fields.length;
+		new KaraCos.Action({'action': this.edit_page_action,
+			title : this.edit_page_action.action,
+			instance_url: this.settings['instance_url'],
+			layout : 'vbox',
+			layoutConfig: {
+			    align : 'stretch',
+			    pack  : 'start',
+			},
+			width : 800,
+			height : 300,
+			modal:true,
+			autoScroll:true,
+			closeAction : 'destroy'}).show().setZIndex(9999999999);
+	}
    }; // END EDIT MORE
 
 /**
@@ -99951,6 +100013,7 @@ KaraCos.Plugin.save=function(){
 		GENTICS.Aloha.Log.error(error);
 	}
   };
+
 /*!
 * Aloha Editor
 * Author & Copyright (c) 2010 Gentics Software GmbH
