@@ -1,4 +1,5 @@
 <% import karacos %>
+<link rel="canonical" href="http://${instance.__domain__['fqdn']}${instance._get_action_url()}"/>
 % if karacos.config.get('system','mode').strip().lower() != 'dev':
 	<script>GENTICS_Aloha_base="/_browser/karacos/";</script>
 	<script type="text/javascript" src="/_browser/karacos-min-min.js"></script>
