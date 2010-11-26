@@ -99349,28 +99349,30 @@ Ext.extend(KaraCos.Form,Ext.form.FormPanel, {
 		if (field.formType) {
 			if (field.formType.toLowerCase() == 'select') {
 				var combodata = [];
-				var store = new Ext.data.ArrayStore({
-					fields: ['value']
-				});
 				if (field.values) {
 					jQuery.each(field.values, function(k,v) {
 						//						store.loadData([v]);
-						combodata.push([v]);						
+						combodata.push(v);						
 					});
 				}
-				store.loadData(combodata);
+				var store = new Ext.data.JsonStore({
+					id: 0,
+					fields: ['value'],
+					data: combodata
+				});
 				return new Ext.form.ComboBox({
-					store: store,
+					store: combodata,
 					fieldLabel:field_label,
 					name:field.name,
 					displayField:'value',
+					valueField:'value',
 					//typeAhead: true,
 					//triggerAction: 'all',
 					mode: 'local',
 					value: field_value,
 					disableKeyFilter: true,
-					editable:false,
-					forceSelection: true,
+					//editable:false,
+					//forceSelection: true,
 					//TODO i18n
 				    emptyText:'Select value...'
 				    //selectOnFocus:true
@@ -99401,6 +99403,12 @@ Ext.extend(KaraCos.Form,Ext.form.FormPanel, {
 			if (field.dataType.toLowerCase() == 'text') {
 				return new Ext.form.TextField({
 					fieldLabel:field_label,
+					name: field.name,
+					value: field_value
+				});
+			}
+			if (field.dataType.toLowerCase() == 'hidden') {
+				return new Ext.form.Hidden({
 					name: field.name,
 					value: field_value
 				});
@@ -99861,7 +99869,7 @@ KaraCos.Plugin.drawInstanceMenu = function() {
 								width : 800,
 								height : 300,
 								modal:true,
-								closeAction : 'destroy'}).show().setZIndex(9999999999);
+								closeAction : 'destroy'}).show();
 							
 							
 						} else {
