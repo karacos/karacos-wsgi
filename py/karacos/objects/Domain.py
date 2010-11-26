@@ -201,9 +201,9 @@ class Domain(karacos.db['Parent']):
                    'creator_id': username, 
                    'owner_id': username,
                    'mail_register_from_addr': 'system@karacos.org',
-                   'ACL': {'group.registered@%s' % data['name']:['logout','get_user_actions_forms','w_browse'],
-                           'group.confirmed@%s' % data['name']:['logout','get_user_actions_forms','w_browse'],
-                           'user.anonymous@%s'%data['name']: ['login','get_user_actions_forms','w_browse']
+                   'ACL': {'group.registered@%s' % data['name']:['logout','get_user_actions_forms','w_browse','get_content_langs'],
+                           'group.confirmed@%s' % data['name']:['logout','get_user_actions_forms','w_browse','get_content_langs'],
+                           'user.anonymous@%s'%data['name']: ['login','get_user_actions_forms','w_browse','get_content_langs']
                            }
                  }
         
@@ -220,7 +220,7 @@ class Domain(karacos.db['Parent']):
         anonymous = result._create_user(username='anonymous@%s' % result['name'])
         result._update_item()
         result['ACL'][admin.get_auth_id()] = result._get_adm_actions()
-        result['ACL'][anonymous.get_auth_id()] = ['get_user_actions','login']
+        result['ACL'][anonymous.get_auth_id()] = ['get_user_actions','login','set_lang_session']
         result.save()
         result.log.info("END Domain.create : result type : %s", type(result) )
         return result
@@ -636,41 +636,47 @@ class Domain(karacos.db['Parent']):
         user.save()
     user_base_settings.get_form = _get_user_base_settings_form
     
-    def _get_edit_content_form(self):
+    def _get_edit_head_bloc_form(self):
         self._update_item()
-        if 'content' not in self:
-            self['content'] = ''
-        if 'title' not in self:
-            self['title'] = ''
         if 'head_bloc' not in self:
             self['head_bloc'] = ''
         
         self.save()
-        form = {'title':'Modifier le contenu de la page',
-                'submit':'Modifier',
+        form = {'title':_('Modify page header'),
+                'submit':_('Modify'),
                 'fields':[
-                    {'name':'title', 'title':_('Titre'), 'dataType': 'TEXT', 'value': self['title']},
                     {'name':'head_bloc', 'title':_('Head bloc'), 'dataType': 'TEXT', 'value': self['head_bloc'], 'formType': 'TEXTAREA'},
-                    {'name':'content', 'title':_('Contenu'), 'dataType': 'TEXT', 'formType': 'WYSIWYG', 'value': self['content']}
                         ]}
         
         return form
     
     @karacos._db.isaction
-    def edit_content(self,title=None,content=None,head_bloc=None):
+    def edit_head_bloc(self,head_bloc=None):
         """
         Basic content modification for domain
         """
         self._update_item()
         self.log.debug("EDIT CONTENT %s" % {title:content})
-        self['content'] = content
-        self['title'] = title
         self['head_bloc'] = head_bloc
         self.save()
-        return {'status':'success', 'message':_("Contenu modifi&eacute;"),'data':{}}
-    edit_content.get_form = _get_edit_content_form
-    edit_content.label = _('Modifier la page')
+        return {'status':'success', 'message':_("Headers modified"),'data':{}}
+    edit_head_bloc.get_form = _get_edit_head_bloc_form
+    edit_head_bloc.label = _('Modify additional page headers')
     
+    def _get_set_lang_session_form(self):
+        session = karacos.serving.get_session()
+        lang = session.get_session_lang()
+        return {'title': _("Change user lang"),
+         'submit': _('Change'),
+         'fields': [{'name':'lang', 'title':_('New Language'),'dataType': 'TEXT', 'formType': 'SELECT','values': self.get_supported_site_languages()},]
+                      }
+    
+    @karacos._db.isaction
+    def set_lang_session(self,lang=None):
+        session = karacos.serving.get_session()
+        session.set_session_lang(lang)
+    set_lang_session.get_form = _get_set_lang_session_form
+    set_lang_session.label= _("Change user language")
     
     def authenticate(self,username,password):
         """
@@ -711,8 +717,8 @@ class Domain(karacos.db['Parent']):
         return result
     
     
-    change_password.form = {'title': _("Changer son mot de passe"),
-         'submit': _('Changer'),
+    change_password.form = {'title': _("Change user password"),
+         'submit': _('Change'),
          'fields': [{'name':'old_password', 'title':_('Ancien mot de passe'),'dataType': 'PASSWORD'},
                     {'name':'password', 'title':_('Nouveau mot de passe'),'dataType': 'PASSWORD'},
                     {'name':'confirm', 'title':_('Confirmation'),'dataType': 'PASSWORD'},

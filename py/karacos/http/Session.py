@@ -114,7 +114,11 @@ class Session(dict):
                     break 
         
         return self['codlang']
-                
+    
+    def set_session_lang(self, lang):
+        domain = self.get_karacos_domain()
+        assert lang in domain.get_supported_site_languages(), "This language is not supported"
+        self['codlang'] = lang
     
     def get_user_auth(self):
         """

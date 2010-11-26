@@ -292,25 +292,76 @@ class Document(couchdb.client.Document):
             else:
                 return self['content']
     
-    def _translate_content(self,content=None, lang=None):
+    def _translate_page(self,lang=None):
         """
         """
         if lang not in self.__domain__.get_supported_site_languages():
             self.__domain__.add_lang_support(lang)
-        self['content_%s' % lang] = content
+        self['content_%s' % lang] = self['content']
+        session = karacos.serving.get_session()
+        session.set_session_lang(lang)
         self.save()
+    @karacos._db.isaction
+    def get_content_langs(self):
+        result = []
+        for attribute in self.keys():
+            if attribute.startswith('content_'):
+                result.append(attribute[8:-1])
+        return result
+    @karacos._db.isaction
+    def translate_page(self, lang=None):
+        self._translate_page(lang=lang)
+    
+    translate_page.form = {'title': _("Translate content"),
+                              'submit': _('Traduire'),
+                              'fields': [{'name':'lang', 'title':_('Code Langue'),'dataType': 'TEXT'}
+                                         ]}
+    translate_page.label = _("Translate")
+    
+    def _get_edit_content_form(self):
+        self._update_item()
+        session = karacos.serving.get_session()
+        lang = session.get_session_lang()
+        content_attr_name = "content"
+        title_attr_name = "title"
+        if lang != self.__domain__.get_default_site_language():
+            content_attr_name = "content_%s" % lang
+            title_attr_name = "title_%s" % lang
+        if content_attr_name not in self:
+            self[content_attr_name] = '<p>No content found.</p>'
+        if title_attr_name not in self:
+            self[title_attr_name] = 'no title'
+        self.save()
+        form = {'title':'Modifier le contenu de la page',
+                'submit':'Modifier',
+                'fields':[
+                    {'name':'lang', 'dataType': 'HIDDEN', 'value': lang},
+                    {'name':'title', 'title':_('Titre'), 'dataType': 'TEXT', 'value': self[title_attr_name]},
+                    {'name':'content', 'title':_('Contenu'), 'dataType': 'TEXT', 'value': self[content_attr_name]}
+                        ]}
+        
+        return form
     
     @karacos._db.isaction
-    def translate_content(self,content=None, lang=None):
-        self._translate_content(content=content, lang=lang)
+    def edit_content(self,content=None, title=None, lang=None):
+        """
+        Basic content modification for Document
+        """
+        self.log.debug("EDIT CONTENT %s" % {title:content})
+        content_attr_name = "content"
+        title_attr_name = "title"
+        if lang != self.__domain__.get_default_site_language():
+            content_attr_name = "content_%s" % lang
+            title_attr_name = "title_%s" % lang
+        self._update_item()
+        self[content_attr_name] = content
+        self[title_attr_name] = title
+        self.save()
+        return {'status':'success', 'message':_("Contenu modifi&eacute;"),'data':{}}
+    edit_content.get_form = _get_edit_content_form
+    edit_content.label = _('Modifier la page')
     
-    translate_content.form = {'title': _("Translate content"),
-                              'submit': _('Traduire'),
-                              'fields': [{'name':'lang', 'title':_('Code Langue'),'dataType': 'TEXT'},
-                                         {'name':'content', 'title':_('Contenu'),'dataType': 'TEXT', 'formType': 'TEXTAREA'}
-                                         ]}
-    translate_content.label = _("Translate")
-        
+    
     @karacos._db.isaction
     def _sync(self, data=None, override=False):
         """

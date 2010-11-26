@@ -188,7 +188,7 @@ class WebNode(karacos.db['Node']):
     #set_ACL.label = "Edit ACL"
     set_ACL.get_form = _set_ACL_form
     def _publish_node(self):
-        self['ACL']['group.everyone@%s' % self.__domain__['name']] = ["get_user_actions_forms","w_browse","index", "_att"]
+        self['ACL']['group.everyone@%s' % self.__domain__['name']] = ["get_user_actions_forms","w_browse","index", "_att", "get_content_langs"]
         self['is_node_published'] = True
         self.save()
     @karacos._db.isaction
@@ -237,32 +237,3 @@ class WebNode(karacos.db['Node']):
         child = self.get_child_by_name(childname)
         child.delete()
     
-    def _get_edit_webnode_content_form(self):
-        self._update_item()
-        if 'content' not in self:
-            self['content'] = '<p>No content found.</p>'
-        if 'title' not in self:
-            self['title'] = 'no title'
-        self.save()
-        form = {'title':'Modifier le contenu de la page',
-                'submit':'Modifier',
-                'fields':[
-                    {'name':'title', 'title':_('Titre'), 'dataType': 'TEXT', 'value': self['title']},
-                    {'name':'content', 'title':_('Contenu'), 'dataType': 'TEXT', 'value': self['content']}
-                        ]}
-        
-        return form
-    
-    @karacos._db.isaction
-    def edit_content(self,title=None,content=None):
-        """
-        Basic content modification for Resource
-        """
-        self._update_item()
-        self.log.info("EDIT CONTENT %s" % {title:content})
-        self['content'] = content
-        self['title'] = title
-        self.save()
-        return {'status':'success', 'message':_("Contenu modifi&eacute;"),'data':{}}
-    edit_content.get_form = _get_edit_webnode_content_form
-    edit_content.label = _('Modifier la page')
