@@ -109,10 +109,10 @@ class Session(dict):
             request = karacos.serving.get_request()
             langs = request.accept_language.best_matches(domain.get_default_site_language())
             for lang in langs:
+                lang = "%s%s" % (lang[0:2].lower(), lang[2:len(lang)+1].upper())
                 if lang in domain.get_supported_site_languages():
                     self['codlang'] = lang
-                    break 
-        
+                    break
         return self['codlang']
     
     def set_session_lang(self, lang):
