@@ -188,7 +188,7 @@ class WebNode(karacos.db['Node']):
     #set_ACL.label = "Edit ACL"
     set_ACL.get_form = _set_ACL_form
     def _publish_node(self):
-        self['ACL']['group.everyone@%s' % self.__domain__['name']] = ["get_user_actions_forms","w_browse","index", "_att", "get_content_langs"]
+        self['ACL']['group.everyone@%s' % self.__domain__['name']] = ["get_user_actions_forms","w_browse","index", "_att", "get_content_langs", "_lang"]
         self['is_node_published'] = True
         self.save()
     @karacos._db.isaction

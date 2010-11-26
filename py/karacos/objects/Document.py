@@ -301,13 +301,23 @@ class Document(couchdb.client.Document):
         session = karacos.serving.get_session()
         session.set_session_lang(lang)
         self.save()
-    @karacos._db.isaction
-    def get_content_langs(self):
-        result = []
+        
+    def _get_content_langs(self):
+        result = [self.__domain__.get_default_site_language()]
         for attribute in self.keys():
             if attribute.startswith('content_'):
-                result.append(attribute[8:-1])
+                result.append(attribute[8:])
         return result
+    @karacos._db.isaction
+    def get_content_langs(self):
+        return self._get_content_langs()
+    
+    @karacos._db.isaction
+    def _lang(self,lang):
+        session = karacos.serving.get_session()
+        if (lang in self._get_content_langs()):
+            session.set_session_lang(lang)
+    
     @karacos._db.isaction
     def translate_page(self, lang=None):
         self._translate_page(lang=lang)

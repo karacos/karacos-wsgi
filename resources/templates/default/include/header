@@ -12,15 +12,7 @@
           <h2>Open Source Web Platform Engine</h2>
         </div>
     
-        <!-- Navigation Level 0 
-        <div class="nav0">
-          <ul>
-            <li><a href="#" title="Pagina home in Italiano"><img src="/_browser/themes/multiflex37/img/flag_italy.gif" alt="Image description" /></a></li>
-            <li><a href="#" title="Homepage auf Deutsch"><img src="/_browser/themes/multiflex37/img/flag_germany.gif" alt="Image description" /></a></li>
-            <li><a href="#" title="Hemsidan p&aring; svenska"><img src="/_browser/themes/multiflex37/img/flag_sweden.gif" alt="Image description" /></a></li>
-          </ul>
-        </div>		
-        	-->
+        <%include file="/default/include/lang"/>	
 
         <!-- Navigation Level 1 -->
         <div class="nav1">

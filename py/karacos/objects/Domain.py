@@ -663,6 +663,26 @@ class Domain(karacos.db['Parent']):
     edit_head_bloc.get_form = _get_edit_head_bloc_form
     edit_head_bloc.label = _('Modify additional page headers')
     
+    def _get_set_default_lang_form(self):
+        session = karacos.serving.get_session()
+        lang = session.get_session_lang()
+        return {'title': _("Change default domain language"),
+         'submit': _('Change'),
+         'fields': [{'name':'lang', 'title':_('Language'),'dataType': 'TEXT', 'value': self.get_default_site_language()}]
+                      }
+    
+    @karacos._db.isaction
+    def set_default_lang(self,lang=None):
+        conf = self.get_i18n_conf()
+        conf['default_language'] = lang
+        if lang not in conf['supported_languages']:
+            conf['supported_languages'].append(lang)
+        self['i18n'] = conf
+        self.save()
+    set_default_lang.get_form = _get_set_default_lang_form
+    set_default_lang.label= _("Change default domain language")
+    
+    
     def _get_set_lang_session_form(self):
         session = karacos.serving.get_session()
         lang = session.get_session_lang()
