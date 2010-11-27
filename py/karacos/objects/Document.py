@@ -359,8 +359,11 @@ class Document(couchdb.client.Document):
         """
         self.log.debug("EDIT CONTENT %s" % {title:content})
         content_attr_name = "content"
-        title_attr_name = "title"
+        title_attr_name = "title" 
+        if lang == None:
+            lang = self.__domain__.get_default_site_language()
         if lang != self.__domain__.get_default_site_language():
+            assert lang in self.__domain__.get_supported_site_languages(), _("Unsupported site language")
             content_attr_name = "content_%s" % lang
             title_attr_name = "title_%s" % lang
         self._update_item()
@@ -371,6 +374,29 @@ class Document(couchdb.client.Document):
     edit_content.get_form = _get_edit_content_form
     edit_content.label = _('Modifier la page')
     
+    def _get_edit_content_aloha_mapping(self):
+        if 'edit_content_aloha_mapping' not in self:
+            self['edit_content_aloha_mapping'] = {"title":"resource_title",
+                                          "content":"resource_content"}
+            self.save()
+        return self['edit_content_aloha_mapping']
+    
+    @karacos._db.isaction
+    def get_edit_content_aloha_mapping(self):
+        result = {'status':'success', 'success': True,
+                   'message':'Mapping', 'data': []}
+        mappings = self._get_edit_content_aloha_mapping()
+        for key in mappings.keys():
+            result['data'].append({'name': key, 'value': mappings[key]})
+        return result 
+    
+    @karacos._db.isaction
+    def set_edit_content_aloha_mapping(self, attribute=None, value=None):
+        if attribute not in self:
+            return {'status':'failure','message':_("Attribute %s not in self" % attribute)}
+        self['edit_content_aloha_mapping'][attribute] = value
+        self.save()
+        return {'status':'success', 'success': True, 'message':_('Mapping saved')}
     
     @karacos._db.isaction
     def _sync(self, data=None, override=False):
