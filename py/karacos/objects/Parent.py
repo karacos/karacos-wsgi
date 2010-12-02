@@ -282,7 +282,7 @@ class Parent(KcDocument):
     
     def child_exist(self, name):
         assert isinstance(name, basestring), "Parameter name must be string"
-        if name in self.__childrens__:
+        if unicode(name) in self.__childrens__.keys():
             return True
         else:
             return False

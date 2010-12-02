@@ -24,7 +24,7 @@ Created on 12 dec. 2009
 '''
 import os
 from karacos.lib import static
-
+import re
 __author__="Nicolas Karageuzian"
 __contributors__ = []
 
@@ -84,6 +84,7 @@ class WebNode(karacos.db['Node']):
         Default index for app
         """
         return False
+
     def get_instance_template_uri(self):
         uri = ""
         try:

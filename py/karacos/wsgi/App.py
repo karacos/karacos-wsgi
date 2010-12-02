@@ -138,7 +138,7 @@ class Dispatcher(object):
         """
         self.log.debug("process_request %s" % dir(request.params))
         self.log.debug(request.headers['Content-Type'])
-        try:
+        if 'Accept' in request.headers:
             # If post with type != application/json, application/xml, ou multipart/form-data,
             # then it's a file upload.
             if (request.method == "POST" and            # 
@@ -154,7 +154,7 @@ class Dispatcher(object):
             else:
                 self.process_http_params(request,response)
             self.process_action(request, response)
-        except:
+        else:
             self.process_http_params(request,response)
             self.process_action(request, response)
         
