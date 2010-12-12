@@ -60,6 +60,7 @@ aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.Image/plugin.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.DragAndDropFiles/deps/Ext.ux.XHRUpload.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.DragAndDropFiles/lib/DropFilesRepository.js
 aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.DragAndDropFiles/plugin.js
+aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Plugin/lib/ext-kc-proxy.js
 aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Plugin/lib/ext-kc-form.js
 aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Plugin/lib/ext-kc-json-submit.js
 aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Plugin/lib/Repository.js
