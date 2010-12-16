@@ -116,11 +116,11 @@ class WebNode(karacos.db['Node']):
     def get_site_template_uri(self):
         instance = self
         result = ''
-        while 'site_template_uri' not in instance.__dict__ and not isinstance(instance,karacos.db['Domain']):
+        while 'site_template_uri' not in instance and not isinstance(instance,karacos.db['Domain']):
             instance = instance.__parent__
         if isinstance(instance,karacos.db['Domain']):
             return self.__domain__.get_site_template_uri()
-        return instance.site_template_uri
+        return instance['site_template_uri']
     
 
         
