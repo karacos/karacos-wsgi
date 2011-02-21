@@ -16,9 +16,9 @@
 	</script>
 <%include file="/includes/aloha_dev_js"/>
 ##<%include file="/includes/noaloha_dev"/>
-	<script type="text/javascript" src="/_browser/js/jquery-ui-1.8.5.custom.min.js"></script>
-	<script type="text/javascript" src="/_browser/js/anytime.js"></script>
-	<script type="text/javascript" src="/_browser/js/karacos-forms.js"></script>
+##	<script type="text/javascript" src="/_browser/js/jquery-ui-1.8.5.custom.min.js"></script>
+##	<script type="text/javascript" src="/_browser/js/anytime.js"></script>
+##	<script type="text/javascript" src="/_browser/js/karacos-forms.js"></script>
 ##	<script type="text/javascript" src="/_browser/karacos/explorer/Ext.ux.XHRUpload.js"></script>
 ##	<script type="text/javascript" src="/_browser/karacos/explorer/lazyRepository.js"></script>
 ##	<script type="text/javascript" src="/_browser/karacos/explorer/ui-bindings.js"></script>
@@ -28,11 +28,21 @@
 ##	<script type="text/javascript" src="/_browser/karacos/explorer/node-panel.js"></script>
 ##	<script type="text/javascript" src="/_browser/karacos/explorer/Uploader.js"></script>
 ##	<script type="text/javascript" src="/_browser/karacos/explorer/explorer.js"></script>
+	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.Ribbon/plugin.js"></script>
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.Format/plugin.js"></script>
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.Table/plugin.js"></script>
+<!--
+Disabled table plugin on dev branch
+Uncaught TypeError: Cannot call method 'setActiveItem' of undefined
+GENTICS.Aloha.ui.MultiSplitButton.setActiveItem ui.js:691
+GENTICS.Aloha.TablePlugin.setFocusedTable plugin.js:840
+GENTICS.Aloha.EventRegistry.subscribe.editable.obj.find.each.table plugin.js:106
+jQuery.event.handle jquery-1.4.4.js:2260
+jQuery.event.add.elemData.handle.eventHandle jquery-1.4.4.js:1891
+-->
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.List/plugin.js"></script>
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.Link/plugin.js"></script>
-	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/eu.iksproject.plugins.Loader/plugin.js"></script>
+	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.Paste/plugin.js"></script>
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.Image/plugin.js"></script>
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.DragAndDropFiles/deps/Ext.ux.XHRUpload.js"></script>
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.DragAndDropFiles/lib/DropFilesRepository.js"></script>
@@ -43,7 +53,7 @@
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Plugin/lib/Repository.js"></script>
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/org.karacos.aloha.Plugin/plugin.js"></script>
 	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.HighlightEditables/plugin.js"></script>
-##	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.TOC/plugin.js"></script>	
+##	<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/plugins/com.gentics.aloha.plugins.TOC/plugin.js"></script>
 % endif
 <link href="/_browser/fileuploader/fileUploader.css" rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" type="text/css" href="/_browser/js/anytime.css" />

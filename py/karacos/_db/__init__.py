@@ -48,6 +48,7 @@ def isaction(func):
                 
                 result['doc'] = wrapped_function.__doc__
                 result['acturl'] = instance._get_action_url()
+                result['success'] = True
                 return result
             
             if args[0] == "get_action":

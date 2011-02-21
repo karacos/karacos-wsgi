@@ -1,26 +1,30 @@
- <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery-1.4.3.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery-1.4.4.js"></script>
+ ##
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery.json-2.2.min.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery.getUrlParam.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/prettyPhoto/jquery.prettyPhoto.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery.cookie.js"></script>
- <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/ext-jquery-adapter-debug.js"></script>
- <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/ext-foundation-debug.js"></script>
- <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/cmp-foundation-debug.js"></script>
- <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/data-foundation-debug.js"></script>
- <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/data-json-debug.js"></script>
- <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/data-list-views-debug.js"></script>
- <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/ext-dd-debug.js"></script>
- <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/resizable-debug.js"></script>
- <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/window-debug.js"></script>
- <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-buttons-debug.js"></script>
- <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-tabs-debug.js"></script>
- <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-tips-debug.js"></script>
- <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-tree-debug.js"></script>
- <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-toolbars-debug.js"></script>
- <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-menu-debug.js"></script>
- <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-forms-debug.js"></script>
- <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-grid-foundation-debug.js"></script>
- <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-grid-editor-debug.js"></script>
+## <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery.md5.js"></script>
+## ext-js.txt
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/ext-jquery-adapter.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/ext-foundation.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/cmp-foundation.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/data-foundation.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/data-json.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/data-list-views.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/ext-dd.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/window.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/resizable.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-buttons.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-tabs.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-tips.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-tree.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-grid-foundation.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-toolbars.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-menu.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-forms.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-grid-editor.js"></script>
+ ## core-js.txt
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/utils/jquery.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/utils/lang.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/utils/range.js"></script>
@@ -32,9 +36,9 @@
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/core.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/ui.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/ui-attributefield.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/ui-browser.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/css.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/editable.js"></script>
- <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/ribbon.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/event.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/floatingmenu.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/ierange-m2.js"></script>
@@ -48,5 +52,3 @@
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/repositorymanager.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/repository.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/repositoryobjects.js"></script>
-  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/ui-browser.js"></script>
-	

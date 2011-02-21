@@ -786,7 +786,7 @@ class Domain(karacos.db['Parent']):
             return {'status':'failure', 'message':_('Adresse email invalide'),
                     'errors':{'email':_('This is not a valid mail address')}}
             
-        return {'status':'success', 'message':_("Authentification r&eacute;ussie"),'data':user}
+        return {'status':'success', 'message':_("Authentification r&eacute;ussie"),'data':user, 'success': True}
     login.label = _("S'authentifier")
     login.form = {'title': _("Connexion au site"),
          'submit': _('Se connecter'),

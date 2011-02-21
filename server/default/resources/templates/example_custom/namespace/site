@@ -1,0 +1,77 @@
+<%namespace name="form" file="/fashionistas_revenge/namespace/form"/>
+
+<%def name="show_content(action,instance,result)">
+	% if action:
+		
+		<div>
+		 ${form.show_action(action)}
+		 </div>
+	    
+	% else:
+		<%include file="${instance.get_instance_template_uri()}"/>
+	% endif
+</%def>
+
+<%def name="show_menu(instance)">
+<% import karacos %>
+     <div id="navcontainer">
+                
+        <ul id="navlist">	
+		<!-- put your navigation links and text here -->
+		<% menuclass = '' %>
+		% if isinstance(instance, karacos.db['Domain']):
+		<% menuclass = 'class="selected"' %>
+		% endif
+		<li ><a href="/">home</a></li>
+		<% childrens = instance.__domain__.get_web_childrens_for_id() %>
+		% for child in childrens.keys():
+			<% menuclass = '' %>
+			% if instance['name'] == childrens[child] and isinstance(instance.__parent__, karacos.db['Domain']):
+				<% menuclass = 'class="selected"' %>
+			% endif
+			<li ${menuclass}><a href="${instance.__domain__._get_action_url()}${childrens[child]}/">${childrens[child]}</a></li>
+		% endfor
+		</ul>
+	</div><!-- menu -->
+</%def>
+
+<%def name="head(instance)">
+	<head>
+	<meta name="robots" content="index,follow" />
+	<title>
+	% if 'title' in instance:
+		${instance['title']}
+	% else:
+		${instance['name']}
+	% endif
+	</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="author" content="" />
+	% if 'description' in instance:
+  	<meta name="description" content="${instance['description']}" />
+  % else:
+  	<meta name="description" content="${instance['name']}" />
+  % endif
+  % if 'keywords' in instance:
+  	<meta name="keywords" content="${instance['keywords']}" />
+  % else:
+    <meta name="keywords" content="${instance['name']}" />
+  % endif
+	<% user_auth = instance.__domain__.get_user_auth() %>
+	<% isstaff = 'group.staff@%s' % instance.__domain__['name'] in user_auth['groups'] %>
+	% if isstaff:
+	  	<%include file="/includes/karacos_full_js"/>
+		<script language="javascript">
+			<%include file="${instance.get_aloha_template_uri()}"/>
+		</script>
+  	% else:
+  		<%include file="/includes/karacos_min_js"/>
+  	% endif
+	% if 'head_bloc' in instance.__domain__:
+		${instance.__domain__['head_bloc']}
+	% endif
+	<link rel="stylesheet" href="/m_design/themes/fashionistas_revenge/style.css" type="text/css" />
+	
+	</head>
+
+</%def>

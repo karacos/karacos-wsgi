@@ -15,6 +15,7 @@ from karacos.lib import static
 from karacos.http.jsonrpc import *
 import cStringIO
 from io import StringIO
+import exceptions
 
 class Dispatcher(object):
     '''
@@ -57,20 +58,23 @@ class Dispatcher(object):
         self.log.debug("RENDER : Response object has body '%s'" % response.body[:200])
         #if response.__action__ == None:
         self.log.info("Checking backlinks %s" % session['backlinks'])
-        if len(session['backlinks']) > 0:
-            blid = len(session['backlinks']) -1
-            forward = session['backlinks'][blid][0]
-            instid = session['backlinks'][blid][1]
-            method = session['backlinks'][blid][2]
-            self.log.debug("Backlink : %s" % session['backlinks'][blid])
-            argslen = len(request.__args__) + len(request.__kwds__)
-            if argslen > 0:
-                assert str(request.__method__.func.func_name) == str(method) and str(response.__instance__.id) == str(instid)
-                self.log.info("Processing backlink %s" % forward)
-                backlinks = session['backlinks']
-                del backlinks[blid]
-                session['backlinks'] = backlinks
-                raise Redirect(forward, 302, _("Action processing redirect backlink"))
+        try:
+            if len(session['backlinks']) > 0:
+                blid = len(session['backlinks']) -1
+                forward = session['backlinks'][blid][0]
+                instid = session['backlinks'][blid][1]
+                method = session['backlinks'][blid][2]
+                self.log.debug("Backlink : %s" % session['backlinks'][blid])
+                argslen = len(request.__args__) + len(request.__kwds__)
+                if argslen > 0:
+                    assert str(request.__method__.func.func_name) == str(method) and str(response.__instance__.id) == str(instid)
+                    self.log.info("Processing backlink %s" % forward)
+                    backlinks = session['backlinks']
+                    del backlinks[blid]
+                    session['backlinks'] = backlinks
+                    raise Redirect(forward, 302, _("Action processing redirect backlink"))
+        except exceptions.AssertionError:
+            self.log.info("Exception while processing forward, continuing")
         if response.body == '':
             try:
                 if (request.headers['Accept'].find('text/html') >= 0 or
@@ -274,17 +278,17 @@ class Dispatcher(object):
             else:
                 if rpcmethod in response.__instance__.get_actions():
                     response.__result__ = dict(error =  {
-                        'origin': ErrorOrigin.PermissionDenied, 
-                        'code' : ErrorCode.Unknown,
-                        'message': 'Error processing JSON request: %s' % e,
+                        'origin': ErrorOrigin.Application, 
+                        'code' : ErrorCode.PermissionDenied,
+                        'message': 'Permisison denied, method |%s| is not allowed' % rpcmethod,
                         'trace': traceback.format_exc().splitlines()
                     })
                     return # self._get_json_response(error = err, id = rpcid)
                 else:
                     response.__result__ = dict(error = {
-                        'origin': ErrorOrigin.MethodNotFound, 
-                        'code' : ErrorCode.Unknown,
-                        'message': 'Error processing JSON request: %s' % e,
+                        'origin': ErrorOrigin.Server, 
+                        'code' : ErrorCode.MethodNotFound,
+                        'message': 'Method |%s| not found' % rpcmethod,
                         'trace': traceback.format_exc().splitlines()
                     })
                     return

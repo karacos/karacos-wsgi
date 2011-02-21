@@ -1,0 +1,80 @@
+{
+	"name": "core.xds",
+	"projectId": "A682AA57-A7B6-40E8-89EE-D5B6965FE27C",
+	"settings": {
+		"urlPrefix": "http://localhost/",
+		"spacesToIndent": 4,
+		"codeGenFormat": "Class",
+		"extPath": "http://extjs.cachefly.net/ext-3.2.1/",
+		"exportPath": ".",
+		"lineEnding": "LF"
+	},
+	"xdsVersion": "xds-1.0.2.14",
+	"components": [
+		{
+			"id": "MyPanel",
+			"cid": "panel",
+			"jsClass": "KaraCos.core.ui.ExplorerPanel",
+			"snapToGrid": 10,
+			"userConfig": {
+				"title": "ExplorerPanel",
+				"width": 773,
+				"height": 478,
+				"layout": "border",
+				"autoScroll": "-ext-undefined-",
+				"autoWidth": true
+			},
+			"cn": [
+				{
+					"id": "MyTreePanel",
+					"cid": "treepanel",
+					"jsClass": "MyTreePanel",
+					"snapToGrid": 10,
+					"userConfig": {
+						"title": "My Tree",
+						"width": 160,
+						"height": "-ext-undefined-",
+						"region": "west"
+					},
+					"cn": [
+						{
+							"id": "MyAsyncTreeNode",
+							"cid": "asynctreenode",
+							"jsClass": "MyAsyncTreeNode",
+							"dock": "root",
+							"snapToGrid": 10,
+							"userConfig": {
+								"text": "Tree Node"
+							}
+						},
+						{
+							"id": "MyTreeLoader",
+							"cid": "treeloader",
+							"jsClass": "MyTreeLoader",
+							"dock": "loader",
+							"snapToGrid": 10
+						}
+					]
+				},
+				{
+					"id": "MyPanel1",
+					"cid": "panel",
+					"jsClass": "MyPanel1",
+					"snapToGrid": 10,
+					"userConfig": {
+						"title": "My Panel",
+						"flex": 1,
+						"autoScroll": "-ext-undefined-",
+						"autoWidth": "-ext-undefined-",
+						"autoHeight": "-ext-undefined-",
+						"tpl": "",
+						"height": 330,
+						"width": 100,
+						"region": "center"
+					}
+				}
+			]
+		}
+	],
+	"stores": []
+}

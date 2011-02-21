@@ -1,0 +1,5 @@
+<%namespace name="form" file="/fashionistas_revenge/namespace/form" inheritable="True"/>
+<%namespace name="head" file="/fashionistas_revenge/namespace/head" inheritable="True"/>
+<%namespace name="site" file="/fashionistas_revenge/namespace/site" inheritable="True"/>
+
+${next.body()}

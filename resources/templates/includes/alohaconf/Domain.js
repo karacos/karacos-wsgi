@@ -1,6 +1,6 @@
-$(function(){ 
+
 	GENTICS.Aloha.settings = {
-	logLevels: {'error': true, 'warn': true, 'info': true, 'debug': true},
+	##logLevels: {'error': true, 'warn': true, 'info': true, 'debug': false},
 	   'i18n' : {
 	     'current' : 'fr'
 	   },
@@ -56,7 +56,8 @@ $(function(){
 					},
 					"com.gentics.aloha.plugins.Table": {
 						editables : {
-								'#domain_title'	: [  ]
+								'#domain_title'	: [  ],
+								'#domain_content'	: [ 'table'  ]
 							  	}
 					},
 		   			"com.gentics.aloha.plugins.Format": { 
@@ -69,7 +70,8 @@ $(function(){
 				} // plugins
 				
 		}; //Aloha.Settings
+	$(function(){ 
+
 		$("#domain_title").aloha();
 		$("#domain_content").aloha();
-
 });
