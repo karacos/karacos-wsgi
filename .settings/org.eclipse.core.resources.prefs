@@ -1,4 +1,4 @@
-#Mon Dec 13 21:34:14 CET 2010
+#Tue Jan 18 18:22:20 CET 2011
 eclipse.preferences.version=1
 encoding//lib/couchdb/__init__.py=utf-8
 encoding//lib/couchdb/client.py=utf-8
@@ -6,4 +6,3 @@ encoding//lib/couchdb/http.py=utf-8
 encoding//lib/couchdb/json.py=utf-8
 encoding//lib/couchdb/view.py=utf-8
 encoding//lib/wsgioauth/consumer.py=utf-8
-encoding//server/dev/deploy/krimmo/pericles/exampleData/exportVente/VENTE2-VESINET.TXT=US-ASCII

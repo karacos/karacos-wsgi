@@ -9,7 +9,7 @@
 	   'plugins': {
 	   				"com.gentics.aloha.plugins.DragAndDropFiles": {
 	   					config : { 'drop' : {'max_file_size': '200000',
-	   										 'upload': {'uploader_class':'GENTICS.Aloha.Uploader',
+	   										 'upload': {'uploader_instance':'GENTICS.Aloha.Repositories.Uploader',
 	   										 			'config': {
 		   										 			'url': '/content/',
 		   										 			'extra_headers':{'Accept':'application/json'},
@@ -18,7 +18,7 @@
 					  	editables : {
 							'#domain_title'	: {},
 							'#domain_content': { 'drop' : {'max_file_size': '200000',
-	   										 'upload': {'uploader_class':'GENTICS.Aloha.Uploader',
+	   										 'upload': {'uploader_class':'GENTICS.Aloha.Repositories.Uploader',
 	   										 			'config': {
 		   										 			'url': '/content/',
 		   										 			'extra_headers':{'Accept':'application/json'},
@@ -71,7 +71,17 @@
 				
 		}; //Aloha.Settings
 	$(function(){ 
-
-		$("#domain_title").aloha();
-		$("#domain_content").aloha();
+		Backbone.sync = function(method, model) {
+            console.log(method, JSON.stringify(model));
+        };
+		jQuery('[typeof][about]').each(function() {
+            jQuery(this).vieSemanticAloha();
+        });
+		
+		jQuery.each(VIE.ContainerManager.instances, function(index, objectInstance) {
+            jQuery.each(objectInstance.editables, function(propertyName, editableInstance) {
+            	
+            });
+		});
+		
 });

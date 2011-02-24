@@ -15,6 +15,10 @@
 	KaraCos_mode='karacos_dev';
 	</script>
 <%include file="/includes/aloha_dev_js"/>
+<script type="text/javascript" src="/_browser/js/VIE/underscore-min.js"></script>
+<script type="text/javascript" src="/_browser/js/VIE/backbone-min.js"></script>
+<script type="text/javascript" src="/_browser/js/VIE/vie-containermanager.js"></script>
+<script type="text/javascript" src="/_browser/js/VIE/vie-aloha.js"></script>
 ##<%include file="/includes/noaloha_dev"/>
 ##	<script type="text/javascript" src="/_browser/js/jquery-ui-1.8.5.custom.min.js"></script>
 ##	<script type="text/javascript" src="/_browser/js/anytime.js"></script>
