@@ -70,18 +70,3 @@
 				} // plugins
 				
 		}; //Aloha.Settings
-	$(function(){ 
-		Backbone.sync = function(method, model) {
-            console.log(method, JSON.stringify(model));
-        };
-		jQuery('[typeof][about]').each(function() {
-            jQuery(this).vieSemanticAloha();
-        });
-		
-		jQuery.each(VIE.ContainerManager.instances, function(index, objectInstance) {
-            jQuery.each(objectInstance.editables, function(propertyName, editableInstance) {
-            	
-            });
-		});
-		
-});
