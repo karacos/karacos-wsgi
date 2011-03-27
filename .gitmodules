@@ -13,3 +13,6 @@
 [submodule "resources/static/karacos-ui"]
 	path = resources/static/karacos-ui
 	url = http://github.com/karacos/KaraCos-js-UI.git
+[submodule "resources/static/aloha-nka-fork"]
+	path = resources/static/aloha-nka-fork
+	url = https://github.com/karacos/Aloha-Editor
