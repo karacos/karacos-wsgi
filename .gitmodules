@@ -4,9 +4,6 @@
 [submodule "apps/store"]
 	path = apps/store
 	url = http://github.com/karacos/store.git
-[submodule "resources/static/aloha-nka-fork"]
-	path = resources/static/aloha-nka-fork
-	url = http://github.com/karacos/Aloha-Editor.git
 [submodule "resources/static/js/VIE"]
 	path = resources/static/js/VIE
 	url = http://github.com/karacos/VIE.git
