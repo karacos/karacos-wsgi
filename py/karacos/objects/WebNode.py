@@ -76,7 +76,7 @@ class WebNode(karacos.db['Node']):
     
     @karacos._db.isaction
     def get_user_actions_forms(self):
-        return self._get_user_actions_forms()
+        return {'status':'success', 'message':_("get_user_actions_forms succeeded"),'data':self._get_user_actions_forms(), 'success': True}
 
     @karacos._db.isaction
     def index(self):

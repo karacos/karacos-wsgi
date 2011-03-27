@@ -4,9 +4,14 @@
 	   'i18n' : {
 	     'current' : 'fr'
 	   },
+	   'errorhandling': false, // KaraCos has his own error handler
 	   'base' : GENTICS_Aloha_base,
 	   'ribbon' : true,
 	   'plugins': {
+		   			"me.nka.aloha.Debugger": {
+		   				config: {},
+		   				editables:{}
+		   			},
 	   				"com.gentics.aloha.plugins.DragAndDropFiles": {
 	   					config : { 'drop' : {'max_file_size': '200000',
 	   										 'upload': {'uploader_instance':'GENTICS.Aloha.Repositories.Uploader',
@@ -16,8 +21,8 @@
 		   										 			'additional_params': {"location":""},
 					   										'www_encoded': false }}}},
 					  	editables : {
-							'#domain_title'	: {},
-							'#domain_content': { 'drop' : {'max_file_size': '200000',
+							'[property*="title"]'	: {},
+							'[property*="content"]': { 'drop' : {'max_file_size': '200000',
 	   										 'upload': {'uploader_class':'GENTICS.Aloha.Repositories.Uploader',
 	   										 			'config': {
 		   										 			'url': '/content/',
@@ -30,7 +35,9 @@
 	   					config : { 'img': { 'max_width': '50px',
 	   										'max_height': '50px' }},
 					  	editables : {
-							'#domain_title'	: {}
+							'[property*="title"]'	: {},
+							'[property*="number"]'	: {},
+							'[property*="price"]'	: {}
 							
 					  	}
 	   				},
@@ -44,27 +51,35 @@
 					"com.gentics.aloha.plugins.Link": {
 								config : [ 'a' ],
 							  	editables : {
-								'#domain_title'	: [  ]
+								'[property*="title"]'	: [  ],
+								'[property*="number"]'	: [  ],
+								'[property*="price"]'	: [  ]
 							  	},
 							  	targetregex : '^(?!.*${instance.__domain__['fqdn']}).*',
 							  	target : '_blank'
 							  	},
 					"com.gentics.aloha.plugins.List": {
 						editables : {
-								'#domain_title'	: [  ]
+								'[property*="title"]'	: [  ],
+								'[property*="price"]'	: [  ],
+							  	'[property*="number"]'	: [  ]
 							  	}
 					},
 					"com.gentics.aloha.plugins.Table": {
 						editables : {
-								'#domain_title'	: [  ],
-								'#domain_content'	: [ 'table'  ]
+								'[property*="title"]'	: [  ],
+								'[property*="number"]'	: [  ],
+								'[property*="price"]'	: [  ],
+								'[property*="content"]'	: [ 'table'  ]
 							  	}
 					},
 		   			"com.gentics.aloha.plugins.Format": { 
 						config : [ 'b', 'i','u','del','sub','sup', 'p', 'title', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'removeFormat'],
 					  	editables : {
-							'#domain_title'	: [ ], // no formatting allowed
-							'#domain_content' 	: [ 'b', 'i', 'u', 'del', 'sub', 'sup','h2', 'h3', 'h4', 'h5', 'h6', 'pre','removeFormat'  ] // just basic formattings, no headers, etc.
+							'[property*="title"]'	: [ ], // no formatting allowed
+							'[property*="number"]'	: [  ],
+							'[property*="price"]'	: [  ],
+							'[property*="content"]' 	: [ 'b', 'i', 'u', 'del', 'sub', 'sup','h2', 'h3', 'h4', 'h5', 'h6', 'pre','removeFormat'  ] // just basic formattings, no headers, etc.
 					  	}
 					} // plugin
 				} // plugins

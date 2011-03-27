@@ -1,9 +1,13 @@
- <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery-1.4.4.js"></script>
+## <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery-1.4.4.js"></script>
+## <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery-1.5.1.js"></script>
+ 
  ##
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery.json-2.2.min.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery.getUrlParam.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/prettyPhoto/jquery.prettyPhoto.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery.store.js"></script>
+## <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery.cookie.js"></script>
+ <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/jquery.aloha.js"></script>
 ## <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/jquery.md5.js"></script>
 ## ext-js.txt
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/ext-jquery-adapter.js"></script>
@@ -21,7 +25,7 @@
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-tree.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-grid-foundation.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-toolbars.js"></script>
- <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-menu.js"></script>
+<script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-menu.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-forms.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/deps/extjs/pkg-grid-editor.js"></script>
  ## core-js.txt
@@ -42,7 +46,7 @@
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/event.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/floatingmenu.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/ierange-m2.js"></script>
- <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/jquery.aloha.js"></script>
+ 
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/log.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/markup.js"></script>
  <script type="text/javascript" src="/_browser/aloha-nka-fork/WebContent/core/message.js"></script>

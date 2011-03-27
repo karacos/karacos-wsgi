@@ -1,0 +1,20 @@
+{.section form}
+    {.repeated section @}
+        <div>
+            <div>{title}</div>
+            <form method="POST" action="{acturl}">
+                <input type="hidden" name="method" value="{action}"/>
+                {.section fields}
+                    <table>
+                    {.repeated section @}
+                        <tr><td>{title}</td><td><input type="{dataType}" name="{name}" {.section fields}value="{value}"{.end}/></td></tr>
+                    {.end}
+                    <tr><td colspan="2"><div class="form_{action}_button">{submit}</div></td></tr>
+                {.end}
+            </form>
+        </div>
+    {.or}
+        un seul form {title}
+    {.end}
+{.or}
+{.end}

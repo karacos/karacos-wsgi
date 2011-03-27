@@ -70,7 +70,7 @@ class KcDocMeta(type):
                 if attrname not in karacos.webdb.actions[self]:
                     karacos.webdb.actions[self].append(attrname)
         except:
-            log.log_exc(sys.exc_info(),'error')
+            log.log_exc(sys.exc_inuserfo(),'error')
         
         
 karacos.db['KcDocMeta'] = KcDocMeta
@@ -94,6 +94,12 @@ class Document(couchdb.client.Document):
     """
     
     __metaclass__ = KcDocMeta
+    
+    def __missing__(self):
+        """
+        Returns empty string
+        """
+        return ""
     
     @staticmethod
     def get_by_name(name):
@@ -136,6 +142,8 @@ class Document(couchdb.client.Document):
         Required to have nice access to __dict__ attribute of instance
         """
         return 
+    
+    
     
     def get_aloha_template_uri(self):
         uri = ""
@@ -197,7 +205,7 @@ class Document(couchdb.client.Document):
             if 'label' in dir(self.get_action(action)):
                 actresult['label'] = self.get_action(action).label
             result['actions'].append(actresult)
-        return {'status':'success', 'message':_("get_user_actions_forms succeeded"),'data':result}
+        return result
         
     def _get_actions(self):
         if karacos.serving.get_session() != None:
@@ -351,6 +359,14 @@ class Document(couchdb.client.Document):
                         ]}
         
         return form
+    
+    @karacos._db.isaction
+    def _update(self, *args, **kw):
+        for k in kw:
+            if k in self:
+                self[k] = kw[k]
+        self.save()
+        return {'success': True, 'message': 'Node updated', 'status': 'success'}
     
     @karacos._db.isaction
     def edit_content(self,content=None, title=None, lang=None):

@@ -1,11 +1,9 @@
 <% user_auth = instance.__domain__.get_user_auth() %>
 <% isstaff = 'anonymous@%s' % instance.__domain__['name'] != user_auth['name'] %>
-	<h1 id="resource_title">
-		${instance.__get_title__()}
-	</h1>
-	<div id="resource_content">
-	${instance.__get_content__()}
-	</div>
+<div typeof="karacos:WebNode" 
+	about="urn:uuid:http://${instance.__domain__['fqdn']}${instance._get_action_url()}">
+	<h1 id="resource_title" property="title">${instance.__get_title__()}</h1>
+	<div id="resource_content" property="content">${instance.__get_content__()}</div>
 	<ul>
 	<% childrens = instance.get_web_childrens_for_id() %>
 	
@@ -15,5 +13,4 @@
 		<li><a href="${acturl}${childrens[child]}">${child}</a></li>
 	% endfor
 	</ul>
-	
-	
+</div>

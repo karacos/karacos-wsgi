@@ -1,12 +1,18 @@
 [submodule "apps/menestrel"]
 	path = apps/menestrel
-	url = http://git.gitorious.org/karacos2-wsgi-web-applications-engine/menestrel-app.git
+	url = http://github.com/karacos/menestrel.git
 [submodule "apps/store"]
 	path = apps/store
-	url = http://git.gitorious.org/karacos2-wsgi-web-applications-engine/store-app.git
+	url = http://github.com/karacos/store.git
 [submodule "resources/static/aloha-nka-fork"]
 	path = resources/static/aloha-nka-fork
-	url = http://github.com/nka11/Aloha-Editor.git
+	url = http://github.com/karacos/Aloha-Editor.git
 [submodule "resources/static/js/VIE"]
 	path = resources/static/js/VIE
-	url = ssh://git@github.com/bergie/VIE.git
+	url = http://github.com/karacos/VIE.git
+[submodule "resources/static/js/jquery-treeview"]
+	path = resources/static/js/jquery-treeview
+	url = http://github.com/karacos/jquery-treeview.git
+[submodule "resources/static/karacos-ui"]
+	path = resources/static/karacos-ui
+	url = http://github.com/karacos/KaraCos-js-UI.git

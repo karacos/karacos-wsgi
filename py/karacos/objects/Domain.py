@@ -201,9 +201,9 @@ class Domain(karacos.db['Parent']):
                    'creator_id': username, 
                    'owner_id': username,
                    'mail_register_from_addr': 'system@karacos.org',
-                   'ACL': {'group.registered@%s' % data['name']:['logout','get_user_actions_forms','w_browse','get_content_langs'],
-                           'group.confirmed@%s' % data['name']:['logout','get_user_actions_forms','w_browse','get_content_langs'],
-                           'user.anonymous@%s'%data['name']: ['login','get_user_actions_forms','w_browse','get_content_langs']
+                   'ACL': {'group.registered@%s' % data['name']:['logout','get_user_actions_forms','w_browse','get_content_langs','fragment'],
+                           'group.confirmed@%s' % data['name']:['logout','get_user_actions_forms','w_browse','get_content_langs','fragment'],
+                           'user.anonymous@%s'%data['name']: ['login','get_user_actions_forms','w_browse','get_content_langs','fragment']
                            }
                  }
         
@@ -295,7 +295,7 @@ class Domain(karacos.db['Parent']):
     
     @karacos._db.isaction
     def get_user_actions_forms(self):
-        return self._get_user_actions_forms()
+        return {'status':'success', 'message':_("get_user_actions_forms succeeded"),'data':self._get_user_actions_forms(), 'success': True}
     
     def _get_users_node(self):
         self._update_item()
@@ -429,6 +429,14 @@ class Domain(karacos.db['Parent']):
           emit(doc._id, doc);
         }
         """
+    @karacos._db.ViewsProcessor.isview('self','javascript')
+    def _get_user_by_name_(self,*args,**kw):
+        """ // %s
+        function(doc) {
+         if (doc.type == "User")
+          emit(doc.name, doc);
+        }
+        """
     
     def user_exist(self,username):
         """
@@ -448,13 +456,13 @@ class Domain(karacos.db['Parent']):
         assert isinstance(username,basestring), "Parameter name must be string"
         result = None
         try:
-            users = self._get_user_by_name(username)
+            users = self._get_user_by_name_(*(), **{'keys':[username]})
             assert users.__len__() <= 1, "Domain.get_user_by_name : More than one User with that name in system DB"
             if users.__len__() == 1:
                 for user in users:
                     self.log.debug("Domain.get_user_by_name : user.name = %s" % user.value['name'])
                     #base = KaraCos.Db.BaseObject.get_by_id(domain.value['base_id'])
-                    result = self.db[user.key]
+                    result = self.db[user.value['_id']]
         except Exception, e:
             self.log.log_exc(sys.exc_info(),'error')
             raise karacos._db.Exception, e
@@ -542,7 +550,7 @@ class Domain(karacos.db['Parent']):
         user = {'name':username,
                 'password': pwdValue,
                 'type': 'User',
-                'groups': [],
+                'groups': ['group.everyone@%s' % self['name'] ],
                 }
         users_node = self._get_users_node()
         assert users_node != None 
@@ -600,7 +608,7 @@ class Domain(karacos.db['Parent']):
         """
         """
         karacos.serving.get_session().invalidate()
-        return {'status':'success', 'message':_("D&eacute;connexion r&eacute;ussie")}
+        return {'status':'success', 'message':_("D&eacute;connexion r&eacute;ussie"), 'success': True}
     logout.label = _('Se d&eacute;connecter')
     
     def _get_user_base_settings_form(self):
@@ -786,7 +794,7 @@ class Domain(karacos.db['Parent']):
             return {'status':'failure', 'message':_('Adresse email invalide'),
                     'errors':{'email':_('This is not a valid mail address')}}
             
-        return {'status':'success', 'message':_("Authentification r&eacute;ussie"),'data':user, 'success': True}
+        return {'status':'success', 'message':_("Authentification r&eacute;ussie"),'data':self._get_user_actions_forms(), 'success': True}
     login.label = _("S'authentifier")
     login.form = {'title': _("Connexion au site"),
          'submit': _('Se connecter'),

@@ -152,6 +152,9 @@ class Session(dict):
         self['username'] = 'anonymous'
         self['backlinks'] = []
     
+    def _set_user_auth_(self, user):
+        self.set_user(user)
+    
     def authenticate(self,username,password):
         assert self['username'] == 'anonymous'
         try:

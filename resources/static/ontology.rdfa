@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE rdf [
+   <!ENTITY rdfs     "http://www.w3.org/2000/01/rdf-schema">
+    ]>
+<rdf:RDF 
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+ xmlns="http://www.w3.org/2000/01/rdf-schema#"
+ xml:base="http://karacos.org/schemas/model">
+ 
+ 	<Class rdf:ID="Node">
+		<label xml:lang="en">node</label>
+	  	<comment xml:lang="en"></comment>
+	</rdf:Description>
+	
+	<rdf:Description rdf:ID="Domain">
+	 <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+	</rdf:Description>
+
+	<rdf:Description rdf:ID="Base">
+	 <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+	</rdf:Description>
+	
+	<rdf:Description rdf:ID="WebNode">
+	 <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+	 <rdfs:subClassOf rdf:resource="#Node"/>
+	</rdf:Description>
+	
+	<rdf:Description rdf:ID="User">
+	 <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+	 <rdfs:subClassOf rdf:resource="#Node"/>
+	</rdf:Description>
+	
+	<rdf:Description rdf:ID="Group">
+	 <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+	 <rdfs:subClassOf rdf:resource="#Node"/>
+	</rdf:Description>
+</rdf:RDF>

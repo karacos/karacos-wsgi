@@ -3,13 +3,9 @@
 <% import karacos %>
 <% session = karacos.serving.get_session() %>
 <div class="main-content"  lang="${session.get_session_lang()}" typeof="karacos:Domain" about="urn:uuid:http://${instance.__domain__['fqdn']}${instance._get_action_url()}">
-		<h1 class="block" id="domain_title" property="title">
-        	${instance.__get_title__()}
-		</h1>
+		<h1 class="block" property="title">${instance.__get_title__()}</h1>
         <div class="column1-unit">
-        <div id="domain_content" property="content">
-        ${instance.__get_content__()}
-        </div> 
+        <div id="domain_content" property="content"> ${instance.__get_content__()}</div> 
         </div>
 	</div>
 	

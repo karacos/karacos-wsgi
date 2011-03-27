@@ -1,0 +1,50 @@
+{.section form}
+        <div id="karacos_login_accordion">
+	        <h3 style="margin:0;padding:2px"><a href='#'>Vous identifier</a></h3>
+	        <div style="margin:0;padding:2px; font-size:0.8em">
+	        	Pour vous identifier à ce site, vous avez le choix entre :
+	        	<ul>
+		        	<li>Vous connecter directement au site si vous avez un compte</li>
+		        	<li>Vous enregistrer pour créer un compte si vous n'en avez pas encore</li>
+		        	<li>Utiliser votre compte facebook pour vous connecter</li>
+	        	</ul>
+	        </div>
+    {.repeated section @}
+        	
+            <h3 style="margin:0;padding:2px"><a href='#'>{title}</a></h3>
+            <div style="margin:0;padding:2px">
+	            <form method="POST" action="{acturl}">
+	                <input type="hidden" name="method" value="{action}"/>
+	                {.section fields}
+	                    <table>
+	                    {.repeated section @}
+	                        <tr><td>{title}</td><td><input type="{dataType}" name="{name}" {.section fields}value="{value}"{.end}/></td></tr>
+	                    {.end}
+	                    <tr><td colspan="2"><div class="form_{action}_button">{submit}</div></td></tr>
+	                    </table>
+	                {.end}
+	            </form>
+	        </div>
+    {.or}
+        <h3 style="margin:0;padding:2px"><a href='#'>{title}</a></h3>
+            <div style="margin:0;padding:2px">
+	            <form method="POST" action="{acturl}">
+	                <input type="hidden" name="method" value="{action}"/>
+	                {.section fields}
+	                    <table>
+	                    {.repeated section @}
+	                        <tr><td>{title}</td><td><input type="{dataType}" name="{name}" {.section fields}value="{value}"{.end}/></td></tr>
+	                    {.end}
+	                    <tr><td colspan="2"><div class="form_{action}_button">{submit}</div></td></tr>
+	                    </table>
+	                {.end}
+	            </form>
+	        </div>
+    {.end}
+    	<h3 style="margin:0;padding:2px" class="kc_fb_title"><a href='#'>Utiliser votre compte facebook</a></h3>
+    		<div style="margin:0;padding:2px" class="kc_fb_box">
+    		<fb:registration fields="name,birthday,gender,email" redirect-uri="http://local.nka.me:61080/"	width="560px" onvalidate="validateAndSave"></fb:registration>
+    		</div>
+    </div>
+{.or}
+{.end}
