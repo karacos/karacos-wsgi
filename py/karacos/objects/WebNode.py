@@ -198,8 +198,24 @@ class WebNode(karacos.db['Node']):
         Make this node public for everyone
         """
         self._publish_node()
-        return {'status': 'success', 'message': _('WebNode is public now')}
+        return {'status': 'success', 'message': _('WebNode is public now'), 'success': True}
     
+    def _unpublish_node(self):
+        """
+        
+        """
+        if 'group.everyone@%s' % self.__domain__['name'] in self['ACL']:
+            del self['ACL']['group.everyone@%s' % self.__domain__['name']]
+        self['is_node_published'] = False
+        self.save()
+    
+    @karacos._db.isaction
+    def unpublish_node(self):
+        """
+        """
+        self._unpublish_node()
+        return {'status': 'success', 'message': _('WebNode is hidden now'), 'success': True}
+        
     
     @karacos._db.isaction
     def add_attachment(self, *args, **kwds):

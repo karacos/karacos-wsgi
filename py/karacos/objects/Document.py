@@ -191,7 +191,8 @@ class Document(couchdb.client.Document):
             user = self.__domain__.get_user_auth()
         actions = self.get_user_actions(user)
         result = {'actions':[],
-                  'user':user['name']
+                  'user':user['name'],
+                  'id': self.id
                   }
         if 'pseudo' in user:
             result['pseudo'] = user['pseudo']
