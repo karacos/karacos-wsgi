@@ -1,0 +1,31 @@
+<% import karacos %>
+<link rel="stylesheet" type="text/css" href="/_browser/karacos-ui/css/reset.css" media="screen" />
+<script type="text/javascript" src="/_browser/karacos-ui/deps/jquery-1.5.1.min.js"></script>
+## % if karacos.config.get('system','mode').strip().lower() != 'dev':
+
+
+## % else :
+<link rel="stylesheet" href="/_browser/karacos-ui/css/jquery.ui.menu.css">
+<script type="text/javascript" src="/_browser/karacos-ui/deps/jquery.json-2.2.min.js"></script>
+<script type="text/javascript" src="/_browser/js/VIE/underscore-min.js"></script>
+<script type="text/javascript" src="/_browser/js/VIE/backbone-min.js"></script>
+<script type="text/javascript" src="/_browser/js/VIE/vie.js"></script>
+<script type="text/javascript" src="/_browser/js/VIE/vie-containermanager.js"></script>
+<script type="text/javascript" src="/_browser/js/VIE/vie-collectionmanager.js"></script>
+<script type="text/javascript" src="/_browser/js/VIE/vie-aloha.js"></script>
+
+## The core of KaraCos...
+<script type="text/javascript" src="/_browser/karacos-ui/deps/jquery-ui-1.8.11.custom.min.js"></script>
+<script type="text/javascript" src="/_browser/karacos-ui/deps/json-template.js"></script>
+<script type="text/javascript" src="/_browser/karacos-ui/deps/ui.menu.js"></script>
+<script type="text/javascript" src="/_browser/karacos-ui/deps/ui.panel.js"></script>
+<script type="text/javascript" src="/_browser/karacos-ui/deps/ui.toolbar.js"></script>
+<script>if ( typeof window.JSON === 'undefined' ) { document.write('<script src="/_browser/karacos-ui/deps/history/scripts/compressed/json2.js"><\/script>'); }</script>
+<script type="text/javascript" src="/_browser/karacos-ui/deps/history/scripts/compressed/amplify.store.js"></script>
+<script src="/_browser/karacos-ui/deps/history/scripts/compressed/history.adapter.jquery.js"></script>
+<script src="/_browser/karacos-ui/deps/history/scripts/compressed/history.js"></script>
+<script src="/_browser/karacos-ui/deps/history/scripts/compressed/history.html4.js"></script>
+<script type="text/javascript" src="/_browser/karacos-ui/core/karacos.js"></script>
+<script type="text/javascript" src="/_browser/karacos-ui/core/karacos.auth.js"></script>
+## % endif
+<link rel="stylesheet" type="text/css" href="/_browser/karacos-ui/css/karacos_widgets.css" media="screen" />

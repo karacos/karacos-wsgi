@@ -254,19 +254,7 @@ class Domain(karacos.db['Parent']):
                     self._self = self
         if 'lookup' not in self.__dict__:
             self.log.info("Creating template lookup for %s" % self['name'])
-            default_template_dir = os.path.join(karacos.homedir,'resources','templates')
-            module_dir = os.path.join(karacos._srvdir,'temp','pytemplates')
-            if not os.path.exists(module_dir):
-                os.makedirs(module_dir)
-            templatesdirs = [default_template_dir, os.path.join(karacos._srvresources,'templates')]
-            
-            if 'templatesdirs' in self:
-                for templatedir in self['templatesdirs']:
-                    templatesdirs.append(templatedir)
-            self.lookup =  TemplateLookup(directories=templatesdirs,
-                #default_filters=['decode.utf8'], 
-                module_directory=module_dir,filesystem_checks=False,
-                input_encoding='utf-8',output_encoding='utf-8')
+            self.init_lookup()
         if 'staticdirs' not in self.__dict__:
             atts_dir = os.path.join(karacos._srvdir,'_atts')
             if not os.path.exists(atts_dir):
@@ -292,6 +280,20 @@ class Domain(karacos.db['Parent']):
             self.save()
             self.staticdirs = self['staticdirs'] 
         self.log.debug("END Domain __init__")
+    
+    def init_lookup(self):
+        default_template_dir = os.path.join(karacos.homedir,'resources','templates')
+        module_dir = os.path.join(karacos._srvdir,'temp','pytemplates')
+        if not os.path.exists(module_dir):
+            os.makedirs(module_dir)
+        templatesdirs = [default_template_dir, os.path.join(karacos._srvresources,'templates')]
+        if 'templatesdirs' in self:
+            for templatedir in self['templatesdirs']:
+                templatesdirs.append(templatedir)
+        self.lookup =  TemplateLookup(directories=templatesdirs,
+            #default_filters=['decode.utf8'], 
+            module_directory=module_dir,filesystem_checks=False,
+            input_encoding='utf-8',output_encoding='utf-8')
     
     @karacos._db.isaction
     def get_user_actions_forms(self):

@@ -7,31 +7,20 @@
   <meta http-equiv="expires" content="3600" />
   <meta name="revisit-after" content="2 days" />
   <meta name="robots" content="index,follow" />
-  <meta name="publisher" content="Your publisher infos here ..." />
+  <meta name="publisher" content="KaraCos.org" />
   <meta name="copyright" content="Your copyright infos here ..." />
   <meta name="author" content="Design: Wolfgang (www.1-2-3-4.info) / Modified: Nicolas Karageuzian" />
   <meta name="distribution" content="global" />
+  <link rel="canonical" href="http://${instance.__domain__['fqdn']}${instance._get_action_url()}"/>
+  
   <meta name="description" content="Your page description here ..." />
   <meta name="keywords" content="Your keywords, keywords, keywords, here ..." />
   <link rel="stylesheet" type="text/css" media="screen,projection,print" href="/_browser/themes/multiflex37/css/menestrel.css" />
   <link rel="stylesheet" type="text/css" media="screen,projection,print" href="/_browser/themes/multiflex37/css/layout4_text.css" />
   <link rel="stylesheet" type="text/css" media="screen,projection,print" href="/_browser/jquery-ui/themes/base/jquery.ui.all.css" />
   <link rel="icon" type="image/x-icon" href="/multiflex37/img/favicon.ico" />
-% if isstaff:
-  	<%include file="/includes/karacos_full_js"/>
-  		<script language="javascript">
-			<%include file="${instance.get_aloha_template_uri()}"/>
-		</script>
-  	% else:
-	  	<%include file="/includes/karacos_min_js"/>
-  	% endif
-<title>
-  % if 'title' in instance:
-        ${instance['title']}
-		% else:
-			Bienvenue
-		% endif
-</title>
+  	<%include file="/includes/karacos_system_header"/>
+<title>${instance.__get_title__()}</title>
 
 	% if 'head_bloc' in instance.__domain__:
 		${instance.__domain__['head_bloc']}

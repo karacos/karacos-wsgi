@@ -1,0 +1,61 @@
+article, aside, audio, canvas, command, datalist, details, embed, figcaption, figure, footer, header, hgroup, keygen, meter, nav, output, progress, section, source, video{ display: block; }
+mark, rp, rt, ruby, summary, time{ display: inline }
+
+@font-face {
+	font-family: 'Lobster1.1Regular';
+	src: url('/_browser/fonts/lobster/Lobster_1.1_-webfont.eot');
+	src: local('☺'), url('/_browser/fonts/lobster/Lobster_1.1_-webfont.woff') format('woff'), url('/_browser/fonts/lobster/Lobster_1.1_-webfont.ttf') format('truetype'), url('/_browser/fonts/lobster/Lobster_1.1_-webfont.svg#webfont30G9S4nm') format('svg');
+	font-weight: normal;
+	font-style: normal; }
+    
+@font-face {
+	font-family: 'RalewayThin';
+	src: url('/_browser/fonts/raleway/raleway_thin-webfont.eot');
+	src: local('☺'), url('/_browser/fonts/raleway/raleway_thin-webfont.woff') format('woff'), url('/_browser/fonts/raleway/raleway_thin-webfont.ttf') format('truetype'), url('/_browser/fonts/raleway/raleway_thin-webfont.svg#webfont') format('svg');
+	font-weight: normal;
+	font-style: normal; }
+/* Site-wide properties ======================================================== */
+body{
+    font: normal normal 12px/12px Tahoma, Arial, Helvetica, Verdana, sans-serif; }
+    
+    /* Fibonacci based heading scale ratio */
+    h1.kc_property { font-size: 4.4em; letter-spacing: -4px;line-height: 1em; }
+    h2.kc_property { font-size: 2.8em; font-weight: bold;line-height: 1em; }
+    h3.kc_property { font-size: 1.6em; font-weight: bold;line-height: 1em; }
+    h4.kc_property { font-size: 1.2em; font-weight: bold;line-height: 1em; }
+/* Reusable classes ============================================================ */
+
+/* Left & Right alignment */
+.left{ float: left; }
+.right{ float: right; }
+
+/* The inside class provides consistent padding. To be used often! */
+.inside{ padding: 20px; }
+
+/* Basic Structure ============================================================= */
+#wrap{
+    margin: 0 auto;
+    position: relative;
+    width: 960px; }
+
+    /* Header */
+    header{
+        float: left;
+        width: 100%; }
+    
+    /* Content */
+    article{
+        float: left;
+        width: 66.7%; }
+    
+    /* Sidebar */
+    aside{
+        float: left;
+        width: 33.3%; }
+        
+    /* Footer */
+    footer{
+        float: left;
+        width: 100%; }
+
+header p.header{ font: 88px RalewayThin, Arial, sans-serif; letter-spacing: -4px }

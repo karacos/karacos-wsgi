@@ -1,0 +1,118 @@
+<%inherit file="/default/parent/actions_menu" />
+<% import karacos %>
+<% import sys, traceback %>
+% try:
+<% request = karacos.serving.get_request() %>
+<% session = karacos.serving.get_session() %>
+% if 'instance_id' in request.str_params and 'base_id' in request.str_params:
+<% instance = karacos.base.db[request.str_params['base_id']].db[request.str_params['instance_id']] %>
+<% node_actions = instance._get_actions() %>
+<% domain_actions = instance.__domain__._get_actions() %>
+<% isdomain = False %>
+% if instance == instance.__domain__ :
+	<% isdomain = True %>
+% endif
+% if session.is_authenticated():
+	<button id="kc_node_menu_button" style="display:none" >${instance._get_type()} menu</button>
+	<span>Bienvenue ${session['username']}</span>
+	<button id="kc_tb_logout">Se déconnecter</button>
+	<button id="kc_domain_menu_button" >Domain menu</button>
+	<ul class="kc_menu" id="kc_domain_menu" style="display:none">
+	</ul>
+	<ul class="kc_menu" id="kc_node_menu" style="display:none">
+	</ul>
+	<script>
+	(function(window, document){
+		var 
+			KaraCos = window.KaraCos,
+			auth = KaraCos.authManager,
+			toolbar = KaraCos('#karacos_actions_toolbar');
+		KaraCos.$(document).click(function(){
+			KaraCos('ul.kc_menu').hide();
+		});
+		if (typeof KaraCos.action_menu === "undefined") {
+			KaraCos.actionMenu = {};
+			KaraCos.actionMenu.actionWindow = KaraCos('<div/>');
+			KaraCos('body').append(KaraCos.actionMenu.actionWindow);
+		}
+		KaraCos("#kc_tb_logout").button().click(function(){
+			auth.logout();
+		});
+		(function(submenu){
+			<%include file="${instance.__domain__.get_menu_template_uri()}"/>
+		})(KaraCos('#kc_domain_menu'));
+		KaraCos('#kc_domain_menu').menu().hide();
+		KaraCos('#kc_domain_menu_button').addClass('menu').button({
+		    icon: 'ui-icon-triangle-1-s',
+		    orientation: 'r',
+		    checkButtonset: true
+		  }).click(function() { 
+			  KaraCos('ul.kc_menu').hide();
+			  event.stopImmediatePropagation();
+			  event.preventDefault();
+			  KaraCos('#kc_domain_menu').css('position','absolute');
+			  KaraCos("#kc_domain_menu").css('left',KaraCos('#kc_domain_menu_button').offset().left);
+			  KaraCos("#kc_domain_menu").animate({"height": "toggle"});
+		  });
+		
+		% if not isdomain:
+			KaraCos('#kc_node_menu_button').show();
+			(function(submenu){
+				<%include file="${instance.get_menu_template_uri()}"/>
+			})(KaraCos('#kc_node_menu'));
+			KaraCos('#kc_node_menu').menu().hide();
+			KaraCos('#kc_node_menu_button').addClass('menu').button({
+			    icon: 'ui-icon-triangle-1-s',
+			    orientation: 'r',
+			    checkButtonset: true
+			  }).click(function() { 
+				  KaraCos('ul.kc_menu').hide();
+				  event.stopImmediatePropagation();
+				  event.preventDefault();
+				  KaraCos('#kc_node_menu').css('position','absolute');
+				  KaraCos("#kc_node_menu").css('left',KaraCos('#kc_node_menu_button').offset().left);
+				  KaraCos("#kc_node_menu").animate({"height": "toggle"});
+			  });
+		% endif
+		
+		
+		% if '_update' in node_actions:
+			var editbutton = KaraCos('<button>Editer</button>').button(),
+				savebutton = KaraCos('<button>Sauvegarder</button>').button();
+			toolbar.prepend(editbutton);
+			toolbar.prepend(savebutton);
+			editbutton.click(
+					function(event) {
+						event.stopImmediatePropagation();
+						event.preventDefault();
+						KaraCos.activate_aloha();
+						//var button = KaraCos.$(this),
+						savebutton.show();
+						editbutton.hide();
+						${self.aloha.activate_editor(instance)}
+					});
+			savebutton.click(
+					function(event) {
+						event.stopImmediatePropagation();
+						event.preventDefault();
+						savebutton.hide();
+						editbutton.show();
+						${self.aloha.save_instance(instance)}
+					}).hide();
+		% endif
+	})(window, document);
+	</script>
+% else:
+
+% endif
+% endif
+% except:
+	some errors :
+	<pre>
+		${sys.exc_info()}
+		---
+		%for line in traceback.format_exc().splitlines():
+			${line}
+		%endfor
+	</pre>
+% endtry

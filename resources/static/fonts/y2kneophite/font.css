@@ -1,0 +1,14 @@
+@font-face {
+	font-family: 'Y2Kneophyte';
+	src: url('http://fontsforweb.com/public/fonts/486/Y2Kneophyte.eot');
+	src: local('Y2Kneophyte'), url('http://fontsforweb.com/public/fonts/486/Y2Kneophyte.ttf') format('truetype');
+}
+body.cke_show_borders p {
+	font-family: 'Y2Kneophyte';
+    font-size: 30px;
+}
+.fontsforweb_fontid_486 {
+	font-family: 'Y2Kneophyte';
+}
+
+/* Font downloaded from FontsForWeb.com */

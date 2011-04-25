@@ -16,3 +16,6 @@
 [submodule "resources/static/aloha-nka-fork"]
 	path = resources/static/aloha-nka-fork
 	url = https://github.com/karacos/Aloha-Editor
+[submodule "resources/static/aloha"]
+	path = resources/static/aloha
+	url = https://github.com/karacos/Aloha-Editor.git

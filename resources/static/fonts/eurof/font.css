@@ -1,0 +1,14 @@
+@font-face {
+	font-family: 'eurof55';
+	src: url('http://fontsforweb.com/public/fonts/470/eurof55.eot');
+	src: local('eurof55'), url('http://fontsforweb.com/public/fonts/470/eurof55.ttf') format('truetype');
+}
+body.cke_show_borders p {
+	font-family: 'eurof55';
+    font-size: 30px;
+}
+.fontsforweb_fontid_470 {
+	font-family: 'eurof55';
+}
+
+/* Font downloaded from FontsForWeb.com */

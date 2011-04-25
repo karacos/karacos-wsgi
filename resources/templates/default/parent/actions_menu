@@ -1,0 +1,2 @@
+<%namespace name="aloha" file="/default/namespace/aloha.ns.js" inheritable="True"/>
+${next.body()}

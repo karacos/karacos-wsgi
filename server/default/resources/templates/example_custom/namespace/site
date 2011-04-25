@@ -37,14 +37,10 @@
 
 <%def name="head(instance)">
 	<head>
+	<link rel="canonical" href="http://${instance.__domain__['fqdn']}${instance._get_action_url()}"/>
+	
 	<meta name="robots" content="index,follow" />
-	<title>
-	% if 'title' in instance:
-		${instance['title']}
-	% else:
-		${instance['name']}
-	% endif
-	</title>
+	<title>${instance.__get_title__()}</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="author" content="" />
 	% if 'description' in instance:
@@ -57,20 +53,7 @@
   % else:
     <meta name="keywords" content="${instance['name']}" />
   % endif
-	<% user_auth = instance.__domain__.get_user_auth() %>
-	<% isstaff = 'group.staff@%s' % instance.__domain__['name'] in user_auth['groups'] %>
-	% if isstaff:
-	  	<%include file="/includes/karacos_full_js"/>
-		<script language="javascript">
-			<%include file="${instance.get_aloha_template_uri()}"/>
-		</script>
-  	% else:
-  		<%include file="/includes/karacos_min_js"/>
-  	% endif
-	% if 'head_bloc' in instance.__domain__:
-		${instance.__domain__['head_bloc']}
-	% endif
-	<link rel="stylesheet" href="/m_design/themes/fashionistas_revenge/style.css" type="text/css" />
+	
 	
 	</head>
 

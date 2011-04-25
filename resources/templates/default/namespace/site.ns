@@ -1,0 +1,40 @@
+<%namespace name="form" file="/default/namespace/form.ns"/>
+
+<%def name="show_content(action,instance,result)">
+	% if action:
+		
+		<div class="action">
+		 ${form.show_action(action)}
+		 </div>
+	% else:
+		<%include file="${instance.get_instance_template_uri()}"/>
+	% endif
+</%def>
+
+<%def name="head(instance)">
+	<head>
+	<meta name="robots" content="index,follow" />
+	<title>${instance.__get_title__()}</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="author" content="" />
+	 % if 'description' in instance:
+		<meta name="description" content="${instance['description']}" />
+	  % else:
+		<meta name="description" content="${instance['name']}" />
+	  % endif
+	  % if 'keywords' in instance:
+		<meta name="keywords" content="${instance['keywords']}" />
+	  % else:
+	    <meta name="keywords" content="${instance['name']}" />
+	  % endif
+	% if 'head_bloc' in instance.__domain__:
+		${instance.__domain__['head_bloc']}
+	% endif
+	<%include file="/includes/karacos_system_header"/>
+	<link rel="stylesheet" href="/_browser/themes/default/css/style.css">
+	<link rel="stylesheet" href="/_browser/jquery-ui/themes/base/jquery.ui.all.css">
+	<!--[if IE 7]><link rel="stylesheet" href="/_browser/themes/default/css/ie/ie7.css" type="text/css" media="screen"><![endif]-->
+    <!--[if lt IE 7]><link rel="stylesheet" href="/_browser/themes/default/css/ie/ie6.css" type="text/css" media="screen"><![endif]-->
+	</head>
+
+</%def>

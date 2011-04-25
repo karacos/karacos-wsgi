@@ -143,7 +143,10 @@ class Document(couchdb.client.Document):
         """
         return 
     
-    
+    def _get_type(self):
+        if 'WebType' in self:
+            return self['WebType']
+        return self['type']
     
     def get_aloha_template_uri(self):
         uri = ""
@@ -153,6 +156,17 @@ class Document(couchdb.client.Document):
         except:
             self.log.log_exc(sys.exc_info(),'info')
             uri = "/includes/alohaconf/%s.js" % self['type']
+            template = self.__domain__.lookup.get_template(uri)
+        return uri
+    
+    def get_menu_template_uri(self):
+        uri = ""
+        try:
+            uri = "/includes/actionmenu/%s.js" % self['WebType']
+            template = self.__domain__.lookup.get_template(uri)
+        except:
+            self.log.log_exc(sys.exc_info(),'info')
+            uri = "/includes/actionmenu/%s.js" % self['type']
             template = self.__domain__.lookup.get_template(uri)
         return uri
     
