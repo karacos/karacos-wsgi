@@ -70,7 +70,7 @@ class KcDocMeta(type):
                 if attrname not in karacos.webdb.actions[self]:
                     karacos.webdb.actions[self].append(attrname)
         except:
-            log.log_exc(sys.exc_inuserfo(),'error')
+            log.log_exc(sys.exc_info(),'error')
         
         
 karacos.db['KcDocMeta'] = KcDocMeta

@@ -231,11 +231,11 @@ class Parent(KcDocument):
         return self._get_childrens_of_type(type)
     
     @karacos._db.ViewsProcessor.isview('self', 'javascript')
-    def _get_child_by_name(self, name):
+    def _get_child_by_name(self, *args, **kw):
         """
         function(doc) {
-         if (doc.parent_id == "%s" && doc.name == "%s" && !("_deleted" in doc && doc._deleted == true))
-          emit(doc._id, doc);
+         if (doc.parent_id == "%s" && !("_deleted" in doc && doc._deleted == true))
+          emit(doc.name, doc);
         }
         """
     def get_child_by_name(self, name):
@@ -244,12 +244,12 @@ class Parent(KcDocument):
         assert isinstance(name, basestring), "Parameter name must be string"
         result = None
         try:
-            childs = self._get_child_by_name(name)
+            childs = self._get_child_by_name(*(),**{'key': name})
             assert childs.__len__() <= 1, "get_child_by_name : More than one child with that name in DB"
             if childs.__len__() == 1:
                 for child in childs:
                     self.log.info("get_child_by_name : db : %s db.key = %s" % (self.db, child.key))
-                    result = self.db[child.key]
+                    result = self.db[child.id]
         except Exception, e:
             self.log.log_exc(sys.exc_info(), 'warn')
             #raise karacos._db.DbException, e
@@ -323,28 +323,19 @@ class Parent(KcDocument):
 
     
     @karacos._db.ViewsProcessor.isview('self', 'javascript')
-    def _get_web_childrens_for_id(self, userid, groups):
+    def _get_web_childrens_for_id(self, *args,**kw):
         """
         function(doc) {
-         parent = "%s";
-         userid = "%s";
-         groups = %s;
-         if (doc.parent_id == parent && doc.WebType && !("_deleted" in doc && doc._deleted == true)) {
-            emitdoc = false ;
-            for(var i = 0; i <= groups.length; i++)
-                if (doc.ACL[groups[i]])
-                    if (doc.ACL[groups[i]].join().search(/w_browse/) != -1)
-                        emitdoc = true;
-            if (doc.ACL[userid])
-                if (doc.ACL[userid].join().search(/w_browse/) != -1)
-                    emitdoc = true;
-            if (emitdoc) {
-                var doclabel = ""
-                if (doc.label)
-                    doclabel = doc.label
-                else
-                    doclabel = doc.name
-                emit(doc.name,doclabel);
+            if (doc.parent_id == "%s" && !("_deleted" in doc && doc._deleted == true)) {
+                for (var auth in doc.ACL) {
+                    if (doc.ACL[auth].join().search(/w_browse/) != -1) {
+                        var doclabel = ""
+                        if (doc.label)
+                            doclabel = doc.label
+                        else
+                            doclabel = doc.name
+                        emit(auth,doclabel);
+                    }
                 }
             }
         }
@@ -391,11 +382,16 @@ class Parent(KcDocument):
     def get_web_childrens_for_id(self):
         """
         """
-        userid = self.__domain__.get_user_auth()
-        results = self._get_web_childrens_for_id(userid.get_auth_id(), json.dumps(userid.get_groups()))
+        user = self.__domain__.get_user_auth()
+        keys = [] + user['groups']
+        keys.append("user.%s" % user['name'])
+        #self.log.warn(keys)
+        results = self._get_web_childrens_for_id(*(), **{'keys':keys})
         result = {}
         for item in results:
-            result[item.key] = item.value
+            if item.value not in result:
+                result[item.value] = item.key
+        
         return result
     @karacos._db.isaction
     def w_browse(self):

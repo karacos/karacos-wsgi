@@ -128,7 +128,7 @@ class Node(karacos.db['Child']):
         admin = self.__domain__.get_user_by_name(username='admin@%s' % self.__domain__['name'])
         self['ACL'][admin.get_auth_id()] = self.get_actions()
         self.save()
-        return {'status':'success', 'message':_("adm actions reset"),'data':''}
+        return {'status':'success', 'message':_("adm actions reset"),'data':'', 'success': True}
     
     def _delete(self):
         """

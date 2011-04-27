@@ -10,6 +10,26 @@
 	var 
 		item,
 		actionwindow = KaraCos.actionMenu.actionWindow;
+	% if 'reset_admin_ACL' in node_actions:
+	item = KaraCos('<li><a href="#">Reinitialiser les droits</a></li>');
+	item.click(function(){
+		actionwindow.empty().dialog({width: '600px', modal:true}).show();
+		KaraCos.action({ url: "${instance._get_action_url()}",
+			method: 'reset_admin_ACL',
+			async: true,
+			params: {},
+			callback: function(data) {
+				if (data.success) {
+					actionwindow.append(data.message);
+				}
+			},
+			error: function(data) {
+				actionwindow.append(data.message);
+			}
+		}); // POST login form
+	});  // click
+	submenu.append(item);
+	% endif
 	% if 'create_child_node' in node_actions:
 		item = KaraCos('<li><a href="#">Créer un noeud</a></li>');
 		item.click(function(){
