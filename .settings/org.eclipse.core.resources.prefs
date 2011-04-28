@@ -1,5 +1,6 @@
-#Tue Jan 18 18:22:20 CET 2011
+#Fri Apr 15 18:47:05 CEST 2011
 eclipse.preferences.version=1
+encoding//apps/store/resources/templates/default/fragments/add_cart_billing.jst=UTF-8
 encoding//lib/couchdb/__init__.py=utf-8
 encoding//lib/couchdb/client.py=utf-8
 encoding//lib/couchdb/http.py=utf-8
