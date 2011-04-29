@@ -77,7 +77,8 @@ class DataBase(couchdb.client.Database):
         aaa,resp, data = self.resource.head(id)
         self.log.info("COUCHDB COMMAND 'DELETE' [%s]" % id)
         self.resource.delete(id, rev=resp['etag'].strip('"'))
-        del self.cache[id]
+        if id in self.cache:
+            del self.cache[id]
     
     def reset_cache(self,id):
         if id in self.cache:
