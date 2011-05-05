@@ -867,6 +867,7 @@ class Domain(karacos.db['Parent']):
             try:
                 template = self.lookup.get_template('/default/fragments/%s' % fragment)
             except:
+                self.log.log_exc(sys.exc_info(),'error')
                 raise karacos.http.NotFound(message=_("Fragment n'existe pas"))
         response = karacos.serving.get_response()
         response.body = template.render(instance=self, kw=kw)
