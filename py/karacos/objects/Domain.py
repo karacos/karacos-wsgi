@@ -248,6 +248,8 @@ class Domain(karacos.db['Parent']):
             self['childrens'] = {}
         self.save()
         self.log.debug("END : domain.__init__ : %s" % self)
+        if self.get_user_by_name("admin@%s" % self['name']) == None:
+            self._create_user("admin@%s" % self['name'], "demo", False)
         if karacos.config.has_section('system'):
             if karacos.config.has_option('system', 'mode'):
                 if karacos.config.get('system','mode') == 'dev':
