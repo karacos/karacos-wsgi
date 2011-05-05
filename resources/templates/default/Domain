@@ -1,7 +1,10 @@
 <%
 user_auth = instance.__domain__.get_user_auth()
 isstaff = 'anonymous@%s' % instance.__domain__['name'] != user_auth['name']
-import karacossession = karacos.serving.get_session() %>
+import karacos
+request = karacos.serving.get_request()
+session = karacos.serving.get_session()
+%>
 <article  lang="${session.get_session_lang()}" typeof="karacos:${instance._get_type()}" about="urn:uuid:${instance.id}">
 	<div style="display:none" property="url">${instance._get_action_url()}</div>
 		<section property="title">${instance.__get_title__()}</section>
