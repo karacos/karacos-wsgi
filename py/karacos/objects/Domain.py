@@ -306,7 +306,7 @@ class Domain(karacos.db['Parent']):
             self.log.debug("__users_node__ not found")
             if 'KC_usersNode' not in self.__childrens__:
                 self.log.debug("KC_usersNode not found")
-                if len(self._get_child_by_name('KC_usersNode')) == 0:
+                if len(self._get_child_by_name(*(),**{'key':'KC_usersNode'})) == 0:
                     self.log.debug("creating user_node")
                     karacos.db['Node'].create(base=None, parent=self,data={'name':'KC_usersNode'})
                     self.save()
