@@ -17,5 +17,6 @@ session = karacos.serving.get_session()
 	KaraCos.config.page_base_id = '${instance['parent_db']}';
 	KaraCos.authManager.authenticationHeader();
 </script>
+
 %endif
 	

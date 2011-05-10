@@ -1,6 +1,6 @@
 <% import karacos %>
 <link rel="stylesheet" type="text/css" href="/_browser/karacos-ui/css/reset.css" media="screen" />
-<script type="text/javascript" src="/_browser/karacos-ui/deps/jquery-1.5.1.min.js"></script>
+<script type="text/javascript" src="/_browser/karacos-ui/deps/jquery-1.5.1.js"></script>
 ## % if karacos.config.get('system','mode').strip().lower() != 'dev':
 
 

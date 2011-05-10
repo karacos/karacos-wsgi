@@ -220,7 +220,7 @@ class Domain(karacos.db['Parent']):
         anonymous = result._create_user(username='anonymous@%s' % result['name'])
         result._update_item()
         result['ACL'][admin.get_auth_id()] = result._get_adm_actions()
-        result['ACL'][anonymous.get_auth_id()] = ['get_user_actions','login','set_lang_session']
+        result['ACL'][anonymous.get_auth_id()] = ['get_user_actions','login','set_lang_session','fragment','get_user_actions_forms']
         result.save()
         result.log.info("END Domain.create : result type : %s", type(result) )
         return result
@@ -243,13 +243,14 @@ class Domain(karacos.db['Parent']):
         if 'get_user_actions_forms' not in self['ACL']['user.anonymous@%s' % self['name']]:
             self['ACL']['user.anonymous@%s' % self['name']].append('get_user_actions_forms')
             self.save()
+        if 'fragment' not in self['ACL']['user.anonymous@%s' % self['name']]:
+            self['ACL']['user.anonymous@%s' % self['name']].append('fragment')
+            self.save()
         self['ACL']['user.admin@%s' % self['name']] = self._get_adm_actions()
         if 'childrens' not in self:
             self['childrens'] = {}
         self.save()
         self.log.debug("END : domain.__init__ : %s" % self)
-        if self.get_user_by_name("admin@%s" % self['name']) == None:
-            self._create_user("admin@%s" % self['name'], "demo", False)
         if karacos.config.has_section('system'):
             if karacos.config.has_option('system', 'mode'):
                 if karacos.config.get('system','mode') == 'dev':
@@ -308,7 +309,7 @@ class Domain(karacos.db['Parent']):
             self.log.debug("__users_node__ not found")
             if 'KC_usersNode' not in self.__childrens__:
                 self.log.debug("KC_usersNode not found")
-                if len(self._get_child_by_name(*(),**{'key':'KC_usersNode'})) == 0:
+                if self.get_child_by_name('KC_usersNode') == None:
                     self.log.debug("creating user_node")
                     karacos.db['Node'].create(base=None, parent=self,data={'name':'KC_usersNode'})
                     self.save()
@@ -786,6 +787,8 @@ class Domain(karacos.db['Parent']):
         """
         """
         self._update_item()
+        if self.get_user_by_name("admin@%s" % self['name']) == None:
+            self._create_user("admin@%s" % self['name'], "demo", False)
         user = None
         if karacos.core.mail.valid_email(email):
             try:
