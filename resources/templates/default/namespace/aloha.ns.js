@@ -2,7 +2,11 @@
 	<%include file="${instance.get_aloha_template_uri()}"/>
 	KaraCos('body').bind('aloha',function(){
 		KaraCos('[about="urn:uuid:${instance.id}"]').each(function(){
-			KaraCos.$(this).vieSemanticAloha();
+			var semantic_entity = this;
+//			Aloha.bind('alohaI18nPluginsLoaded',
+//				function(){
+				KaraCos.$(semantic_entity).vieSemanticAloha();
+//				});
 		});
 	});
 </%def>

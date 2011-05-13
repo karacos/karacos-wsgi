@@ -1,0 +1,22 @@
+<%
+user_auth = instance.__domain__.get_user_auth()
+isstaff = 'anonymous@%s' % instance.__domain__['name'] != user_auth['name']
+import karacos
+request = karacos.serving.get_request()
+session = karacos.serving.get_session()
+%>
+<article  lang="${session.get_session_lang()}" typeof="karacos:${instance._get_type()}" about="urn:uuid:${instance.id}">
+	<div style="display:none" property="url">${instance._get_action_url()}</div>
+		<section property="title">${instance.__get_title__()}</section>
+        <div class="inside" id="domain_content" property="content">${instance.__get_content__()}</div>
+        
+</article>
+% if 'karacos-fragment' in request.headers or 'Karacos-Fragment' in request.headers:
+<script language="javascript">
+	KaraCos.config.page_id = '${instance.id}';
+	KaraCos.config.page_base_id = '${instance['parent_db']}';
+	KaraCos.authManager.authenticationHeader();
+</script>
+
+%endif
+	

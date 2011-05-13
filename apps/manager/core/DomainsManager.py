@@ -88,6 +88,7 @@ class DomainsManager(karacos.db['WebNode']):
         try:
             domain = karacos.db[type].create(base=base,data=domainvalue)
             self.log.info("MANAGER domain creation OK")
+            return {'success': True}
         except:
             self.log.log_exc(sys.exc_info())
             self.log.error("MANAGER domain creation exception")
@@ -97,7 +98,7 @@ class DomainsManager(karacos.db['WebNode']):
         """
         """
 
-        self._create_domain(name, fqdn,type)
+        return self._create_domain(name, fqdn,type)
         
     create_domain.form = {'title': _("Creer un domaine"),
          'submit': _('Creer'),

@@ -770,7 +770,7 @@ class Domain(karacos.db['Parent']):
             assert issubclass(karacos.db[type],karacos.db['WebNode']),_("Type incorrect")
             data = {'name':name}
             node = self._create_child_node(data=data, type=type, base=base)
-            return {'status':'success', 'message': _("Node cree avec succes"), 'data':node}
+            return {'status':'success','success': True, 'message': _("Node cree avec succes"), 'data':node}
         except Exception, e:
             return {'status':'failure', 'message' : '%s' % e,
                         'trace': traceback.format_exc().splitlines() }
