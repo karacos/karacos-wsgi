@@ -121,14 +121,4 @@
 						}
 				};
 
-//			// Bind to Aloha Ready Event
-//			$body.bind('aloha',function(){
-//				$('#typo3').aloha();
-//				$('#typo3span').aloha();
-//				$('#title').aloha();
-//				$('#teaser').aloha();
-//				$('#content').aloha();
-//
-//			});
-
 		})(window);

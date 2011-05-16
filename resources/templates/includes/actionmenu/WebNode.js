@@ -30,6 +30,50 @@
 	});  // click
 	submenu.append(item);
 	% endif
+	% if 'add_attachment' in node_actions:
+		item = KaraCos('<li><a href="#">Ajouter un ficher</a></li>');
+	item.click(function(){
+				KaraCos.getForm({
+					url: "${instance._get_action_url()}",
+					form: "add_attachment",
+					callback: function(data, form) {
+						var add_attachment_template = jsontemplate.Template(form, KaraCos.jst_options);
+						actionwindow.empty().append(add_attachment_template.expand(data));
+//						actionwindow.find('.form_add_attachment_button').button()
+//						.click(function() {
+//							var params = {},
+//								method = 'add_attachment';
+//							// rought coding for upload
+//							$(this).closest('form').submit();
+////							$.each($(this).closest('form').serializeArray(), function(i, field) {
+////								if (field.name === "method") {
+////									method = field.value;
+////								} else {
+////									params[field.name] = field.value;
+////								}
+////							}); // each
+////							KaraCos.action({ url: "${instance._get_action_url()}",
+////								method: method,
+////								async: false,
+////								params: params,
+////								callback: function(data) {
+////									if (data.success) {
+////										
+////										actionwindow.dialog('close');
+////										
+////									}
+////								},
+////								error: function(data) {
+////									actionwindow.empty().append(data.message);
+////								}
+////							}); // POST login form
+//						});  // click
+						actionwindow.dialog({width: '600px', modal:true}).show();
+					}
+				});
+			});
+	submenu.append(item);
+	% endif
 	% if 'create_child_node' in node_actions:
 		item = KaraCos('<li><a href="#">Créer un noeud</a></li>');
 		item.click(function(){

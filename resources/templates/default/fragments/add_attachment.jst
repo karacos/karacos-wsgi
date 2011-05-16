@@ -1,0 +1,19 @@
+{.section form}	
+	<div id="karacos_add_attachment_form">
+    	<h3 style="margin:0;padding:2px"><a href='#'>{title}</a></h3>
+    	<div style="margin:0;padding:2px">
+	        <form method="POST" action="{acturl}" enctype="multipart/form-data">
+	            <input type="hidden" name="method" value="{action}"/>
+	            {.section fields}
+	                <table>
+	                {.repeated section @}
+	                    <tr><td>{title}</td><td><input type="{dataType}" name="{name}"/></td></tr>
+	                {.end}
+	                <tr><td colspan="2"><input type="submit" text="{submit}"/></td></tr>
+	                </table>
+	            {.end}
+	        </form>
+	    </div>
+   </div>
+{.or}
+{.end}
