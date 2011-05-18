@@ -5,6 +5,7 @@ import karacos
 request = karacos.serving.get_request()
 session = karacos.serving.get_session()
 %>
+<div id="MainContent">
 <article  lang="${session.get_session_lang()}" typeof="karacos:${instance._get_type()}" about="urn:uuid:${instance.id}">
 	<div style="display:none" property="url">${instance._get_action_url()}</div>
 		<section property="title">${instance.__get_title__()}</section>
@@ -19,4 +20,4 @@ session = karacos.serving.get_session()
 </script>
 
 %endif
-	
+</div>	
