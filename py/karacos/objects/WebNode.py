@@ -155,6 +155,16 @@ class WebNode(karacos.db['Node']):
         raise karacos.http.NotFound(message=_("Ressource introuvable '%s'") % name)
     
     @karacos._db.isaction
+    def get_atts(self):
+        return {'status':'success','success':True, 'data':{'id': self.id, 'items':self._get_atts()}}
+                
+    def _get_atts(self):
+        res=[]
+        for file in os.listdir(self.get_att_dir()):
+            res.append({'label': file , 'value': '%s/_att/%s' % (self._get_action_url(), file)})
+        return res
+    
+    @karacos._db.isaction
     def _att(self,*args,**kw):
         response = karacos.serving.get_response()
         if len(args) == 0:

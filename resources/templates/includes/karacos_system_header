@@ -27,5 +27,6 @@
 <script src="/_browser/karacos-ui/deps/history/scripts/compressed/history.html4.js"></script>
 <script type="text/javascript" src="/_browser/karacos-ui/core/karacos.js"></script>
 <script type="text/javascript" src="/_browser/karacos-ui/core/karacos.auth.js"></script>
+<script type="text/javascript" src="/_browser/karacos-ui/core/karacos.browser.js"></script>
 ## % endif
 <link rel="stylesheet" type="text/css" href="/_browser/karacos-ui/css/karacos_widgets.css" media="screen" />
