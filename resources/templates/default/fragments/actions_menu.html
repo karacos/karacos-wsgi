@@ -14,7 +14,7 @@
 % endif
 % if session.is_authenticated():
 	<button id="kc_node_menu_button" style="display:none" >${instance._get_type()} menu</button>
-	<span>Bienvenue ${session['username']}</span>
+	<span>Bienvenue <strong><span id="kc_user_name_menu">${session['username']}</span></strong></span>
 	<button id="kc_tb_logout">Se déconnecter</button>
 	<button id="kc_domain_menu_button" >Domain menu</button>
 	<ul class="kc_menu" id="kc_domain_menu" style="display:none">
@@ -100,6 +100,20 @@
 						${self.aloha.save_instance(instance)}
 					}).hide();
 		% endif
+		// user_menu
+		$('#kc_user_name_menu').click(function(event){
+			var
+				$this = $(this),
+				$win = $('#kc_user_name_win');
+			if ($win.length === 0) {
+				$win = $('<div id="kc_user_name_win"/>');
+				$('body').append($win);
+				$win.dialog({width: '800px',modal: true});
+				$win.dialog('hide');
+			}
+			
+			$win.dialog('show');
+		});
 	})(window, document);
 	</script>
 % else:
