@@ -1,0 +1,44 @@
+<%
+import karacos
+import sys, traceback
+session = karacos.serving.get_session()
+user = session.get_user_auth()
+userdata = session.get_karacos_domain()._get_person_data()
+if 'firstname' not in userdata:
+	userdata['firstname'] = ''
+if 'lastname' not in userdata:
+	userdata['lastname'] = ''
+if 'birthday' not in userdata:
+	userdata['birthday'] = ''
+if 'gender' not in userdata:
+	userdata['gender'] = ''
+%>
+% try:
+<form>
+<table>
+	<tr><td>Email</td><td>${user['name']}</td></tr>
+	<tr><td>Prenom</td><td><input type="text" name="firstname" value="${userdata['firstname']}"/></td></tr>
+	<tr><td>Nom</td><td><input type="text" name="lastname" value="${userdata['lastname']}"/></td></tr>
+	<tr><td>Date de naissance</td><td><input type="text" name="birthday" value="${userdata['birthday']}"/></td></tr>
+	<tr><td colspan="2">- <input type="radio" name="gender" value="H"
+	% if userdata['gender'] == 'H':
+		checked="checked"
+	% endif
+	/> Homme - <input type="radio" name="gender" value="F"
+	% if userdata['gender'] == 'F':
+		checked="checked"
+	% endif
+	/> Femme </td></tr>
+</table>
+</form>
+
+% except:
+	some errors :
+	<pre>
+		${sys.exc_info()}
+		---
+		%for line in traceback.format_exc().splitlines():
+			${line}
+		%endfor
+	</pre>
+% endtry

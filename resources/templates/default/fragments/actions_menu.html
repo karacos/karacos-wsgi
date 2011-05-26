@@ -104,15 +104,51 @@
 		$('#kc_user_name_menu').click(function(event){
 			var
 				$this = $(this),
-				$win = $('#kc_user_name_win');
+				$win = $('#kc_user_profile_win');
 			if ($win.length === 0) {
-				$win = $('<div id="kc_user_name_win"/>');
+				$win = $('<div id="kc_user_profile_win" title="User profile"/>');
 				$('body').append($win);
-				$win.dialog({width: '800px',modal: true});
-				$win.dialog('hide');
+				
 			}
 			
-			$win.dialog('show');
+			$.ajax({url:'/fragment/user_profile.html',
+				context: document.body,
+				type: "GET",
+				async: false,
+				success: function(form) {
+					$win.empty().append(form);
+					$win.dialog({width: '500px',modal: true,
+								buttons: { "Ok": function() {
+									var
+										method = "modify_person_data",
+										params = {};
+									$.each($win.find('form').serializeArray(), function(i, field) {
+										if (field.name === "method") {
+											method = field.value;
+										} else {
+											params[field.name] = field.value;
+										}
+									}); // each
+									KaraCos.action({ url: "/",
+										method: method,
+										async: false,
+										params: params,
+										callback: function(data) {
+											if (data.success) {
+												$win.dialog('close');
+											}
+										},
+										error: function(data) {
+
+										}
+									}); // POST profile form
+								} // button OK
+								
+							} // buttons
+						}); // $win.dialog()
+					$win.dialog('show');
+				}
+			});
 		});
 	})(window, document);
 	</script>

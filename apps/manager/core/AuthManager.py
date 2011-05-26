@@ -50,17 +50,17 @@ class AuthManager(karacos.db['WebNode']):
     def _list_users(self):
         """
         """
-        result = {}
+        result = []
         users = self.__list_users__()
         for user in users:
-            result[user.key] = user.value
+            result.append(user.value)
         return result
         
     @karacos._db.isaction
     def list_users(self):
         """
         """
-        result = {'status':'success', 'message':_("User list OK"),'data':self._list_users(),'datatype':'UsersList'}
+        result = {'status':'success', 'message':_("User list OK"),'data':self._list_users(),'datatype':'UsersList', 'success':True}
         return result
     
     
@@ -77,17 +77,17 @@ class AuthManager(karacos.db['WebNode']):
     def _list_groups(self):
         """
         """
-        result = {}
+        result = []
         groups = self.__list_groups__()
         for group in groups:
-            result[group.key] = group.value
+            result.append(group.value)
         return result
         
     @karacos._db.isaction
     def list_groups(self):
         """
         """
-        result = {'status':'success', 'message':_("Group list OK"),'data':self._list_groups(),'datatype':'GroupsList'}
+        result = {'status':'success', 'message':_("Group list OK"),'data':self._list_groups(),'datatype':'GroupsList', 'success':True}
         return result
         
     @karacos._db.isaction
