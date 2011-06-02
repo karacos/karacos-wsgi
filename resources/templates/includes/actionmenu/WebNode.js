@@ -3,8 +3,18 @@
 % try:
 <% request = karacos.serving.get_request() %>
 <% session = karacos.serving.get_session() %>
+<% response = karacos.serving.get_response() %>
+<% instance = None %>
+%try:
+	<% instance = response.__instance__ %>
+%except:
+	
+%endtry
 % if 'instance_id' in request.str_params and 'base_id' in request.str_params:
 <% instance = karacos.base.db[request.str_params['base_id']].db[request.str_params['instance_id']] %>
+% endif
+
+% if instance != None:
 <% node_actions = instance._get_actions() %>
 (function(submenu){
 	var 
