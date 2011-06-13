@@ -39,8 +39,8 @@ else
 fi
 
 . $(pwd)/server/$instance/conf/uwsgi.env
-
-/usr/local/sbin/uwsgi -w karacos.wsgi --env KC_SERVER_NAME=$instance \
+export KC_SERVER_NAME=$instance
+/usr/local/sbin/uwsgi -w karacos.wsgi \
  $UWSGI_PARAMS \
  -d $(pwd)/server/$instance/log/sysout.log
 #--master true --processes 4\
