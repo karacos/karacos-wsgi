@@ -39,9 +39,9 @@
 								// no formatting allowed for title
 								'[property*="title"]'	: [ ],
 								// formatting for all editable DIVs
-								'div'		: [ 'b', 'i', 'del', 'sub', 'sup'  ],
+								'div'		: [ 'b', 'i', 'del', 'sub', 'sup','h2', 'h3', 'h4','h5', 'h6', 'pre', 'removeFormat'  ],
 								// content is a DIV and has class .article so it gets both buttons
-								'.article'	: [ 'b', 'i', 'p', 'title', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'removeFormat']
+								'[property*="content"]'	: [ 'b', 'i', 'p', 'title', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'removeFormat']
 								}
 						},
 						"link": {
@@ -80,7 +80,36 @@
 								'[property*="price"]'	: {}
 								
 						  	}
-						}
+						},
+						"dragndropfiles": { 'drop' : {    'max_file_size': 300000,
+				            'max_file_count': 2,
+				            'upload': {
+				                    'uploader_instance':'Aloha.Repositories.Uploader',
+				                    'config': {
+										'callback': function(resp) { 
+											var json_res = jQuery.parseJSON(resp);
+											if (json_res.success) {
+												return json_res.data;
+											} else {
+												throw 'File upload error';
+											}
+										},
+										'image': {
+											'max_width': 800,
+											'max_height': 800
+										},
+				                        'method':'POST',
+				                        'url': "/content",
+				                        'file_name_param':"filename",
+				                        'file_name_header':'X-File-Name',
+				                        'extra_headers':{}, //Extra parameters
+				                        'extra_post_data': {}, //Extra parameters
+				                        'send_multipart_form': false, //true for html4 TODO: make browser check
+				                        //'additional_params': {"location":""},
+				                        'www_encoded': false }
+				                    }
+				            }
+				        }
 						/*
 						,"com.gentics.aloha.plugins.List": {
 							// all elements with no specific configuration get an UL, just for fun :)

@@ -1,0 +1,8 @@
+{.section data}
+	<table>
+	<tr><td>Name</td><td>Actions</td></tr>
+ 	{.repeated section @}
+		<tr typeof="karacos:User" about="urn:uuid:{_id}"><td property="name">{name}</td><td><a href="#view">View</a></td></tr>
+	{.end}
+	</table>
+{.end}

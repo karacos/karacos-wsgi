@@ -179,7 +179,11 @@ class Dispatcher(object):
             content_type = request.headers['Content-Type'].split(';')[0]
         file_param = karacos.container()
         file_param.filename = request.headers['X-File-Name']
-        file_param.file_body = request.body
+        if base64 and request.body.startswith('data'):
+            file_param.file_body = request.body[len("data:%s;base64," % content_type): ]
+        else:
+            file_param.file_body = request.body
+        #self.log.warn("%s" % file_param.file_body)
         request.__kwds__ = {'att_file':file_param,
                             'base64':base64,
                             'content_type': content_type

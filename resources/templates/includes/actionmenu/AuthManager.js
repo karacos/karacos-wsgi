@@ -151,6 +151,43 @@
 		});
 		submenu.append(item);
 	%endif
+	% if 'list_users' in node_actions:
+		item = KaraCos('<li id="create_group_action_button"><a href="#">List users</a></li>');
+		item.click(function(event) {
+			$.ajax({ url: "/fragment/list_users.jst",
+				context: document.body,
+				type: "GET",
+				async: false,
+				success: function(form) {
+					var list_users_template = jsontemplate.Template(form, KaraCos.jst_options);
+					KaraCos.action({ url: "${instance._get_action_url()}",
+						method: 'list_users',
+						async: false,
+						params: {},
+						callback: function(data) {
+							if (data.success) {
+								actionwindow.empty().append(list_users_template.expand(data));
+								actionwindow.dialog({width: '600px', modal:true}).show();
+								$.each(data.data, function(pos, user) {
+									var $user = $('[about*="urn:uuid:' + user._id + '"]');
+									$user.data(user);
+									$user.find('a[href*="#view"]').click(function(event){
+										event.stopPropagation();
+										event.preventDefault();
+										//TODO: do the show/modify user 
+									})
+								});
+							}
+						},
+						error: function(data) {
+							
+						}
+					});
+				}
+			});
+		});
+		submenu.append(item);
+	% endif
 % if 'create_group' in node_actions:
 		
 		item = KaraCos('<li id="create_group_action_button"><a href="#">Create group</a></li>');
