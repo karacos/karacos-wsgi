@@ -53,4 +53,15 @@ def send_mail(destmail, msg):
         import sys
         print sys.exc_info()
         raise e
-        
+def send_domain_mail(domain, destmail, msg):
+        server = smtplib.SMTP(domain['site_email_service_host'],
+                              domain['site_email_service_port'])
+        server.ehlo()
+        if 'site_email_service_secure' in domain:
+            if domain['site_email_service_secure'] or domain['site_email_service_secure'] == True:
+                server.starttls()
+                server.ehlo()
+        if 'site_email_service_password' in domain:
+            server.login(domain['site_email_service_username'], domain['site_email_service_password']) 
+        server.sendmail(domain['site_email_from'], destmail, msg)
+        server.close()

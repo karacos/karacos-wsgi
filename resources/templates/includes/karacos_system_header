@@ -15,7 +15,7 @@
 <script type="text/javascript" src="/_browser/js/VIE/vie-aloha.js"></script>
 
 ## The core of KaraCos...
-<script type="text/javascript" src="/_browser/karacos-ui/deps/jquery-ui-1.8.11.custom.js"></script>
+<script type="text/javascript" src="/_browser/karacos-ui/deps/jquery-ui-1.8.14.custom.js"></script>
 <script type="text/javascript" src="/_browser/karacos-ui/deps/json-template.js"></script>
 <script type="text/javascript" src="/_browser/karacos-ui/deps/ui.menu.js"></script>
 <script type="text/javascript" src="/_browser/karacos-ui/deps/ui.panel.js"></script>
