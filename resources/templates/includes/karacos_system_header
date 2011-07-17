@@ -1,4 +1,21 @@
 <% import karacos %>
+% if 'fb_appId' in instance.__domain__:
+	<meta property="fb:app_id" content="${instance.__domain__['fb_appId']}" />
+% endif
+% if 'description' in instance:
+  	<meta name="description" content="${instance['description']}" />
+% else:
+  	<meta name="description" content="${instance['name']}" />
+% endif
+% if 'keywords' in instance:
+  	<meta name="keywords" content="${instance['keywords']}" />
+% else:
+    <meta name="keywords" content="${instance['name']}" />
+% endif
+
+% if 'head_bloc' in instance.__domain__:
+		${instance.__domain__['head_bloc']}
+% endif
 <link rel="stylesheet" type="text/css" href="/_browser/karacos-ui/css/reset.css" media="screen" />
 <script type="text/javascript" src="/_browser/karacos-ui/deps/jquery-1.5.1.js"></script>
 ## % if karacos.config.get('system','mode').strip().lower() != 'dev':
