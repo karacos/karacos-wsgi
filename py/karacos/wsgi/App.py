@@ -328,9 +328,12 @@ class Dispatcher(object):
         if response.__result__ == None and response.__action__ != None :
             body = karacos.json.dumps(response.__action__)
         if response.__result__ != None and response.__action__ == None :
-            body = karacos.json.dumps(response.__result__)
+            try:
+                body = karacos.json.dumps(response.__result__)
+            except:
+                body = karacos.json.dumps({'success': False, 'error': 'Error serializing json Response', 'errorData':traceback.format_exc().splitlines(), 'errorMessage': str(response.__result__)})
         if body == None:
-            body = karacos.json.dumps({"status": "success", "message":"Empty method result"})
+            body = karacos.json.dumps({"status": "success",'success': True, "message":"Empty method result"})
         response.body = body
         if not response.__headers_type_set__:
             response.headers['Content-Type'] = 'application/json'
