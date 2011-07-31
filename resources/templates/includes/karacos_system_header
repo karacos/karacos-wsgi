@@ -1,4 +1,5 @@
 <% import karacos %>
+<title>${instance.__get_title__()}</title>
 % if 'fb_appId' in instance.__domain__:
 	<meta property="fb:app_id" content="${instance.__domain__['fb_appId']}" />
 % endif
@@ -18,10 +19,10 @@
 % endif
 <link rel="stylesheet" type="text/css" href="/_browser/karacos-ui/css/reset.css" media="screen" />
 <script type="text/javascript" src="/_browser/karacos-ui/deps/jquery-1.5.1.js"></script>
-## % if karacos.config.get('system','mode').strip().lower() != 'dev':
 
-
-## % else :
+<script type="text/javascript" src="https://apis.google.com/js/plusone.js">
+{"parsetags": "explicit", "lang": "fr"}
+</script>
 <link rel="stylesheet" href="/_browser/karacos-ui/css/jquery.ui.menu.css">
 <script type="text/javascript" src="/_browser/karacos-ui/deps/jquery.json-2.2.min.js"></script>
 <script type="text/javascript" src="/_browser/js/VIE/underscore-min.js"></script>
@@ -37,6 +38,8 @@
 <script type="text/javascript" src="/_browser/karacos-ui/deps/ui.menu.js"></script>
 <script type="text/javascript" src="/_browser/karacos-ui/deps/ui.panel.js"></script>
 <script type="text/javascript" src="/_browser/karacos-ui/deps/ui.toolbar.js"></script>
+<script type="text/javascript" src="/_browser/karacos-ui/modernizr-1.6.min.js"></script>
+
 <script>if ( typeof window.JSON === 'undefined' ) { document.write('<script src="/_browser/karacos-ui/deps/history/scripts/compressed/json2.js"><\/script>'); }</script>
 <script type="text/javascript" src="/_browser/karacos-ui/deps/history/scripts/compressed/amplify.store.js"></script>
 <script src="/_browser/karacos-ui/deps/history/scripts/compressed/history.adapter.jquery.js"></script>
