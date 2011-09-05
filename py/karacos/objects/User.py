@@ -53,7 +53,24 @@ class User(karacos.db['Node']):
         assert 'parent' in kw
         parent = kw['parent']
         karacos.db['Node'].__init__(self,*args, **kw)
-        
+    
+    def _get_email(self):
+        if 'email' in self:
+            return self['email']
+        else:
+            if karacos.core.mail.valid_email(self['name']):
+                self['email'] = self['name']
+            else:
+                self['email'] = None
+            self.save()
+            return self['email']
+    
+    def _set_email(self, email):
+        assert karacos.core.mail.valid_email(email)
+        self['email'] = email
+        self.save()
+        return {'success': True, 'message': "Email is now registered"}
+    
     def get_auth_id(self):
         """
         """

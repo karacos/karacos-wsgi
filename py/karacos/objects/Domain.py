@@ -544,7 +544,7 @@ class Domain(karacos.db['Parent']):
         """
         self._update_item()
         self.log.info("BEGIN %s.create_user" % self['name'])
-        assert len(self._get_user_by_name(username)) == 0, "User exist with that name"
+        assert len(self._get_user_by_name(username)) == 0, "Name is empty, please enter a valid username"
         assert username != None
         pwdValue = None
         if password != None:

@@ -38,7 +38,7 @@
 <script type="text/javascript" src="/_browser/karacos-ui/deps/ui.menu.js"></script>
 <script type="text/javascript" src="/_browser/karacos-ui/deps/ui.panel.js"></script>
 <script type="text/javascript" src="/_browser/karacos-ui/deps/ui.toolbar.js"></script>
-<script type="text/javascript" src="/_browser/karacos-ui/modernizr-1.6.min.js"></script>
+<script type="text/javascript" src="/_browser/karacos-ui/deps/modernizr-1.6.min.js"></script>
 
 <script>if ( typeof window.JSON === 'undefined' ) { document.write('<script src="/_browser/karacos-ui/deps/history/scripts/compressed/json2.js"><\/script>'); }</script>
 <script type="text/javascript" src="/_browser/karacos-ui/deps/history/scripts/compressed/amplify.store.js"></script>

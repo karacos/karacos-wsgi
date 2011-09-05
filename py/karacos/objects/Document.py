@@ -204,9 +204,12 @@ class Document(couchdb.client.Document):
         if karacos.serving.get_session() != None:
             user = self.__domain__.get_user_auth()
         actions = self.get_user_actions(user)
+        user['name']
+        
         result = {'actions':[],
                   'user':user['name'],
-                  'id': self.id
+                  'id': self.id,
+                  'email': user._get_email()
                   }
         if 'pseudo' in user:
             result['pseudo'] = user['pseudo']
