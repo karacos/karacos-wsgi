@@ -268,6 +268,7 @@ class Document(couchdb.client.Document):
     def _update_item(self):
         db = self.__parent__.db
         db.refresh_item(self)
+        return self
     
     def basic_validations(self):
         """
