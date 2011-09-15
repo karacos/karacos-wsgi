@@ -206,6 +206,8 @@ class Dispatcher(object):
                 method = "%s" % request.__kwds__['method']
                 request.__method__ = response.__instance__.get_action(method)
                 del request.__kwds__['method']
+        if '_' in request.__kwds__:
+            del request.__kwds__['_']
         else:
             if request.__method__ == None:
                 if not (len(request.__kwds__) == 0 and len(request.__args__) == 0):

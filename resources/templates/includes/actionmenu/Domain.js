@@ -64,7 +64,7 @@ function getActionButtonHandler(action) {
 		});			
 	}
 }
-(function(submenu){
+(function domainSubMenu(submenu){
 	var 
 		item,
 		actionwindow = KaraCos.actionMenu.actionWindow;

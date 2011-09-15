@@ -22,12 +22,12 @@
 	<ul class="kc_menu" id="kc_node_menu" style="display:none">
 	</ul>
 	<script>
-	(function(window, document){
+	(function mainActionMenu(window, document){
 		var 
 			KaraCos = window.KaraCos,
 			auth = KaraCos.authManager,
 			toolbar = KaraCos('#karacos_actions_toolbar');
-		KaraCos.$(document).click(function(){
+		KaraCos.$(document).click(function hideMenuAtDocumentClickHandler(event){
 			KaraCos('ul.kc_menu').hide();
 		});
 		if (typeof KaraCos.actionMenu === "undefined") {
@@ -38,7 +38,7 @@
 		KaraCos("#kc_tb_logout").button().click(function(){
 			auth.logout();
 		});
-		(function(submenu){
+		(function includeDomainMenu(submenu){
 			<%include file="${instance.__domain__.get_menu_template_uri()}"/>
 		})(KaraCos('#kc_domain_menu'));
 		KaraCos('#kc_domain_menu').menu().hide();
@@ -46,7 +46,7 @@
 		    icon: 'ui-icon-triangle-1-s',
 		    orientation: 'r',
 		    checkButtonset: true
-		  }).click(function() { 
+		  }).click(function menuClickHandler(event) { 
 			  KaraCos('ul.kc_menu').hide();
 			  event.stopImmediatePropagation();
 			  event.preventDefault();
@@ -57,7 +57,7 @@
 		
 		% if not isdomain:
 			KaraCos('#kc_node_menu_button').show();
-			(function(submenu){
+			(function includeInstanceMenu(submenu){
 				<%include file="${instance.get_menu_template_uri()}"/>
 			})(KaraCos('#kc_node_menu'));
 			KaraCos('#kc_node_menu').menu().hide();
