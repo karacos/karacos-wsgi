@@ -742,7 +742,7 @@ class Domain(karacos.db['Parent']):
             if user['password'] == old_passwordhash:
                 user['password'] = passwordhash
                 user.save()
-                result = {'status':'success', 'message':_("Mot de passe modifi&eacute;"),'data':{}}
+                result = {'success': True, 'status':'success', 'message':_("Mot de passe modifi&eacute;"),'data':{}}
         except Exception, e:
             self.log.log_exc(sys.exc_info(),'error')
             raise karacos._db.Exception, e

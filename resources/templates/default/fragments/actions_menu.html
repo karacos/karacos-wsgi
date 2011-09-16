@@ -14,7 +14,7 @@
 % endif
 % if session.is_authenticated():
 	<button id="kc_node_menu_button" style="display:none" >${instance._get_type()} menu</button>
-	<span>Bienvenue <strong><span id="kc_user_name_menu">${session['username']}</span></strong></span>
+	<button id="kc_user_name_menu">${session['username']}</button>
 	<button id="kc_tb_logout">Se déconnecter</button>
 	<button id="kc_domain_menu_button" >Domain menu</button>
 	<ul class="kc_menu" id="kc_domain_menu" style="display:none">
@@ -101,7 +101,7 @@
 					}).hide();
 		% endif
 		// user_menu
-		$('#kc_user_name_menu').click(function(event){
+		$('#kc_user_name_menu').button().click(function(event){
 			var
 				$this = $(this),
 				$win = $('#kc_user_profile_win');
@@ -110,7 +110,8 @@
 				$('body').append($win);
 				
 			}
-			
+			event.stopImmediatePropagation();
+			event.preventDefault();
 			$.ajax({url:'/fragment/user_profile.html',
 				context: document.body,
 				type: "GET",

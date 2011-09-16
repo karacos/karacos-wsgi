@@ -14,9 +14,10 @@ if 'gender' not in userdata:
 	userdata['gender'] = ''
 %>
 % try:
-<form>
-<table>
+<form id="userDataForm">
+<table >
 	<tr><td>Email</td><td>${user['name']}</td></tr>
+	<tr><td>Mot de passe</td><td><button class="kc_action"><a href="/" action="change_password">Modifier</a></button></td></tr>
 	<tr><td>Prenom</td><td><input type="text" name="firstname" value="${userdata['firstname']}"/></td></tr>
 	<tr><td>Nom</td><td><input type="text" name="lastname" value="${userdata['lastname']}"/></td></tr>
 	<tr><td>Date de naissance</td><td><input type="text" name="birthday" value="${userdata['birthday']}"/></td></tr>
@@ -31,6 +32,14 @@ if 'gender' not in userdata:
 	/> Femme </td></tr>
 </table>
 </form>
+<script language="javascript">
+	try {
+		KaraCos.log("trying KaraCos.activate_kc_buttons($('#userDataForm'))");
+		KaraCos.activate_kc_buttons($('#userDataForm'));
+	} catch (e) {
+		KaraCos.log("KaraCos.activate_kc_buttons($('#userDataForm')); failed");
+	}
+</script>
 
 % except:
 	some errors :
