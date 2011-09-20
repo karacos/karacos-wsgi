@@ -32,8 +32,8 @@
 		});
 		if (typeof KaraCos.actionMenu === "undefined") {
 			KaraCos.actionMenu = {};
-			KaraCos.actionMenu.actionWindow = KaraCos('<div/>');
-			KaraCos('body').append(KaraCos.actionMenu.actionWindow);
+			KaraCos.actionWindow = KaraCos('<div id="kc_action_menu"/>');
+			KaraCos('body').append(KaraCos.actionWindow);
 		}
 		KaraCos("#kc_tb_logout").button().click(function(){
 			auth.logout();

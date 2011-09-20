@@ -317,6 +317,7 @@ class Dispatcher(object):
         session = karacos.serving.get_session()
         domain = session.get_karacos_domain()
         template = domain.lookup.get_template('system')
+        response.headers['Content-Type'] = 'text/html'
         response.body = template.render(instance = response.__instance__,
                                         result = response.__result__,
                                         action = response.__action__)

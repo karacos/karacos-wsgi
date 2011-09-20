@@ -22,9 +22,10 @@ function getActionButtonHandler(action) {
 			url: "${instance.__domain__._get_action_url()}",
 			form: action,
 			callback: function(data, form) {
-				var create_child_node_template = jsontemplate.Template(form, KaraCos.jst_options);
-				actionwindow.empty().append(create_child_node_template.expand(data));
-				actionwindow.find('.form_' + action + '_button').button()
+				var create_child_node_template = jsontemplate.Template(form, KaraCos.jst_options),
+					actionWindow = KaraCos.actionWindow;
+				actionWindow.empty().append(create_child_node_template.expand(data));
+				actionWindow.find('.form_' + action + '_button').button()
 				.click(function() {
 					var params = {},
 						method = action;
@@ -42,24 +43,24 @@ function getActionButtonHandler(action) {
 						callback: function(data) {
 							if (data.success) {
 								if (data.message !== undefined) {
-									actionwindow.empty().append(data.message);	
+									actionWindow.empty().append(data.message);	
 								} else {
-									actionwindow.dialog('destroy');
+									actionWindow.dialog('destroy');
 								}
 								} else {
 									if (data.message !== undefined) {
-									actionwindow.empty().append(data.message);	
+										actionWindow.empty().append(data.message);	
 								} else {
-									actionwindow.dialog('destroy');
+									actionWindow.dialog('destroy');
 								}
 							}
 						},
 						error: function(data) {
-							actionwindow.empty().append("error");
+							actionWindow.empty().append("error");
 						}
 					}); // POST login form
 				});  // click
-				actionwindow.dialog({width: '600px', modal:true}).show();
+				actionWindow.dialog({width: '600px', modal:true}).show();
 			}
 		});			
 	}
@@ -67,7 +68,7 @@ function getActionButtonHandler(action) {
 (function domainSubMenu(submenu){
 	var 
 		item,
-		actionwindow = KaraCos.actionMenu.actionWindow;
+		actionwindow = KaraCos.actionWindow;
 	% if 'create_child_node' in node_actions:
 		item = KaraCos('<li><a href="#">Créer un noeud</a></li>');
 		item.click(getActionButtonHandler('create_child_node'));

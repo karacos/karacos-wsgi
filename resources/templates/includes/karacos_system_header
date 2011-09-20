@@ -18,7 +18,7 @@
 		${instance.__domain__['head_bloc']}
 % endif
 <link rel="stylesheet" type="text/css" href="/_browser/karacos-ui/css/reset.css" media="screen" />
-<script type="text/javascript" src="/_browser/karacos-ui/deps/jquery-1.5.1.js"></script>
+<script type="text/javascript" src="/_browser/karacos-ui/deps/jquery-1.6.1.js"></script>
 
 <script type="text/javascript" src="https://apis.google.com/js/plusone.js">
 {"parsetags": "explicit", "lang": "fr"}
@@ -45,6 +45,7 @@
 <script src="/_browser/karacos-ui/deps/history/scripts/compressed/history.adapter.jquery.js"></script>
 <script src="/_browser/karacos-ui/deps/history/scripts/compressed/history.js"></script>
 <script src="/_browser/karacos-ui/deps/history/scripts/compressed/history.html4.js"></script>
+<script type="text/javascript" src="/_browser/karacos-ui/core/jquery.promise.js"></script>
 <script type="text/javascript" src="/_browser/karacos-ui/core/karacos.js"></script>
 <script type="text/javascript" src="/_browser/karacos-ui/core/karacos.auth.js"></script>
 <script type="text/javascript" src="/_browser/karacos-ui/core/karacos.browser.js"></script>
