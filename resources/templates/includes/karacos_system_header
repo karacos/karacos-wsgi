@@ -18,36 +18,27 @@
 		${instance.__domain__['head_bloc']}
 % endif
 <link rel="stylesheet" type="text/css" href="/_browser/karacos-ui/css/reset.css" media="screen" />
-<script type="text/javascript" src="/_browser/karacos-ui/deps/jquery-1.6.1.js"></script>
-
 <script type="text/javascript" src="https://apis.google.com/js/plusone.js">
 {"parsetags": "explicit", "lang": "fr"}
 </script>
 <link rel="stylesheet" href="/_browser/karacos-ui/css/jquery.ui.menu.css">
-<script type="text/javascript" src="/_browser/karacos-ui/deps/jquery.json-2.2.min.js"></script>
-<script type="text/javascript" src="/_browser/js/VIE/underscore-min.js"></script>
-<script type="text/javascript" src="/_browser/js/VIE/backbone-min.js"></script>
-<script type="text/javascript" src="/_browser/js/VIE/vie.js"></script>
-<script type="text/javascript" src="/_browser/js/VIE/vie-containermanager.js"></script>
-<script type="text/javascript" src="/_browser/js/VIE/vie-collectionmanager.js"></script>
-<script type="text/javascript" src="/_browser/js/VIE/vie-aloha.js"></script>
+
+<script src="/_browser/karacos-ui/deps/require.js"></script>
+        <script type="text/javascript">
+  require.config({
+    baseUrl: "/_browser/aloha/src/lib",
+    paths: {
+        "karacos": "/_browser/karacos-ui"
+    },
+    waitSeconds: 15,
+    locale: "fr-fr"
+  });
+  require(["karacos/main"],function(){
+	  
+  });
+  </script>
+
 
 ## The core of KaraCos...
-<script type="text/javascript" src="/_browser/karacos-ui/deps/jquery-ui-1.8.14.custom.js"></script>
-<script type="text/javascript" src="/_browser/karacos-ui/deps/json-template.js"></script>
-<script type="text/javascript" src="/_browser/karacos-ui/deps/ui.menu.js"></script>
-<script type="text/javascript" src="/_browser/karacos-ui/deps/ui.panel.js"></script>
-<script type="text/javascript" src="/_browser/karacos-ui/deps/ui.toolbar.js"></script>
-<script type="text/javascript" src="/_browser/karacos-ui/deps/modernizr-1.6.min.js"></script>
-
-<script>if ( typeof window.JSON === 'undefined' ) { document.write('<script src="/_browser/karacos-ui/deps/history/scripts/compressed/json2.js"><\/script>'); }</script>
-<script type="text/javascript" src="/_browser/karacos-ui/deps/history/scripts/compressed/amplify.store.js"></script>
-<script src="/_browser/karacos-ui/deps/history/scripts/compressed/history.adapter.jquery.js"></script>
-<script src="/_browser/karacos-ui/deps/history/scripts/compressed/history.js"></script>
-<script src="/_browser/karacos-ui/deps/history/scripts/compressed/history.html4.js"></script>
-<script type="text/javascript" src="/_browser/karacos-ui/core/jquery.promise.js"></script>
-<script type="text/javascript" src="/_browser/karacos-ui/core/karacos.js"></script>
-<script type="text/javascript" src="/_browser/karacos-ui/core/karacos.auth.js"></script>
-<script type="text/javascript" src="/_browser/karacos-ui/core/karacos.browser.js"></script>
 ## % endif
 <link rel="stylesheet" type="text/css" href="/_browser/karacos-ui/css/karacos_widgets.css" media="screen" />
