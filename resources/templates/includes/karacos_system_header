@@ -22,10 +22,11 @@
 {"parsetags": "explicit", "lang": "fr"}
 </script>
 <link rel="stylesheet" href="/_browser/karacos-ui/css/jquery.ui.menu.css">
-
+<script src="/_browser/karacos-ui/vendor/jquery-1.6.1.js"></script>
 <script src="/_browser/karacos-ui/deps/require.js"></script>
         <script type="text/javascript">
-  require.config({
+        var jQuery = window.jQuery.noConflict( true );
+        require.config({
     baseUrl: "/_browser/aloha/src/lib",
     paths: {
         "karacos": "/_browser/karacos-ui"
@@ -33,8 +34,17 @@
     waitSeconds: 15,
     locale: "fr-fr"
   });
+  window.Aloha = window.Aloha || {};
+  
+window.kcQuery = window.jQuery = jQuery;
+Aloha.settings = {	baseUrl: "/_browser/aloha/src/lib",
+					locale: "fr-fr",
+					jQuery: jQuery
+				}
   require(["karacos/main"],function(){
-	  
+	  if (window.console && console.log) {
+					console.log("loaded karacos/main");
+				}
   });
   </script>
 

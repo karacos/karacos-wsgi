@@ -379,13 +379,17 @@ class Document(couchdb.client.Document):
         
         return form
     
-    @karacos._db.isaction
-    def _update(self, *args, **kw):
+    
+    def _update_(self, *args, **kw):
         for k in kw:
             if k in self:
                 self[k] = kw[k]
         self.save()
         return {'success': True, 'message': 'Node updated', 'status': 'success'}
+    
+    @karacos._db.isaction
+    def _update(self, *args, **kw):
+        return self._update_(*args, **kw)
     
     @karacos._db.isaction
     def edit_content(self,content=None, title=None, lang=None):

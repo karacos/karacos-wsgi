@@ -22,8 +22,8 @@
 	<ul class="kc_menu" id="kc_node_menu" style="display:none">
 	</ul>
 	<script>
-	require(["karacos/jquery"],function(){
-		$('body').bind('karacosReady', function(){
+		(function($){
+		$('body').bind('kcready', function(){
 			var 
 				KaraCos = window.KaraCos,
 				$ = window.$,
@@ -155,7 +155,7 @@
 				});
 			});
 		});
-	});
+		})(window.kcQuery);
 	</script>
 % else:
 
