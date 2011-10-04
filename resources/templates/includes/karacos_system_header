@@ -17,7 +17,7 @@
 % if 'head_bloc' in instance.__domain__:
 		${instance.__domain__['head_bloc']}
 % endif
-<link rel="stylesheet" type="text/css" href="/_browser/karacos-ui/css/reset.css" media="screen" />
+<!-- link rel="stylesheet" type="text/css" href="/_browser/karacos-ui/css/reset.css" media="screen" / -->
 <script type="text/javascript" src="https://apis.google.com/js/plusone.js">
 {"parsetags": "explicit", "lang": "fr"}
 </script>

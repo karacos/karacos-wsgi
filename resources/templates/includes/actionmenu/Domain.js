@@ -16,69 +16,21 @@
 
 % if instance != None:
 <% node_actions = instance.__domain__._get_actions() %>
-function getActionButtonHandler(action) {
-	return function(event) {
-		KaraCos.getForm({
-			url: "${instance.__domain__._get_action_url()}",
-			form: action,
-			callback: function(data, form) {
-				var create_child_node_template = jsontemplate.Template(form, KaraCos.jst_options),
-					actionWindow = KaraCos.actionWindow;
-				actionWindow.empty().append(create_child_node_template.expand(data));
-				actionWindow.find('.form_' + action + '_button').button()
-				.click(function() {
-					var params = {},
-						method = action;
-					$.each($(this).closest('form').serializeArray(), function(i, field) {
-						if (field.name === "method") {
-							method = field.value;
-						} else {
-							params[field.name] = field.value;
-						}
-					}); // each
-					KaraCos.action({ url: "${instance.__domain__._get_action_url()}",
-						method: method,
-						async: false,
-						params: params,
-						callback: function(data) {
-							if (data.success) {
-								if (data.message !== undefined) {
-									actionWindow.empty().append(data.message);	
-								} else {
-									actionWindow.dialog('destroy');
-								}
-								} else {
-									if (data.message !== undefined) {
-										actionWindow.empty().append(data.message);	
-								} else {
-									actionWindow.dialog('destroy');
-								}
-							}
-						},
-						error: function(data) {
-							actionWindow.empty().append("error");
-						}
-					}); // POST login form
-				});  // click
-				actionWindow.dialog({width: '600px', modal:true}).show();
-			}
-		});			
-	}
-}
+
 (function domainSubMenu(submenu){
 	var 
 		item,
 		actionwindow = KaraCos.actionWindow;
-	% if 'create_child_node' in node_actions:
+	if (auth.hasAction('create_child_node')) {
 		item = KaraCos('<li><a href="#">Créer un noeud</a></li>');
-		item.click(getActionButtonHandler('create_child_node'));
+		item.click(actionsMenu.getActionFormButtonHandler("${instance.__domain__._get_action_url()}",'create_child_node'));
 		submenu.append(item);
-	%endif
-	% if 'add_fqdn_alias' in node_actions:
+	}
+	if (auth.hasAction('add_fqdn_alias')) {
 		item = KaraCos('<li><a href="#">Ajouter un alias</a></li>');
-		item.click(getActionButtonHandler('add_fqdn_alias'));
+		item.click(actionsMenu.getActionFormButtonHandler("${instance.__domain__._get_action_url()}",'add_fqdn_alias'));
 		submenu.append(item);
-	% endif
+	}
 })(submenu);
 % endif
 % except:

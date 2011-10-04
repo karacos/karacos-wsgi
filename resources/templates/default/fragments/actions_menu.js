@@ -15,19 +15,137 @@
 define([], function() {
 	
 	return {
+		/**
+		 * Handles click for action requiring no parameters in menu
+		 * --> handles send action invocation
+		 * --> display result
+		 * 
+		 * @param url: node url
+		 * @param action: action to request
+		 */
+		getActionButtonHandler: function (url, action) {
+			return function(event) {
+				actionwindow.empty().dialog({width: '600px', modal:true}).show();
+				KaraCos.action({ url: url,
+					method: action,
+					async: true,
+					params: {},
+					callback: function(data) {
+						if (data.success) {
+							actionwindow.append(data.message);
+						}
+					},
+					error: function(data) {
+						actionwindow.append(data.message);
+					}
+				}); // POST login form
+			}
+		},
+		/**
+		 * Handles click for action requiring parameters in menu :
+		 * --> Display action form
+		 * --> handles send data
+		 * --> display result
+		 * 
+		 * @param url: node url
+		 * @param action: action to request
+		 */
+		getActionFormButtonHandler: function (url, action) {
+			return function(event) {
+				KaraCos.getForm({
+					url: url,
+					form: action,
+					callback: function(data, form) {
+						var create_child_node_template = jsontemplate.Template(form, KaraCos.jst_options),
+							actionWindow = KaraCos.actionWindow;
+						actionWindow.empty().append(create_child_node_template.expand(data));
+						actionWindow.find('.form_' + action + '_button').button()
+						.click(function() {
+							var params = {},
+								method = action;
+							$.each($(this).closest('form').serializeArray(), function(i, field) {
+								if (field.name === "method") {
+									method = field.value;
+								} else {
+									params[field.name] = field.value;
+								}
+							}); // each
+							KaraCos.action({ url: url,
+								method: method,
+								async: false,
+								params: params,
+								callback: function(data) {
+									if (data.success) {
+										if (data.message !== undefined) {
+											actionWindow.empty().append(data.message);	
+										} else {
+											actionWindow.dialog('destroy');
+										}
+										} else {
+											if (data.message !== undefined) {
+												actionWindow.empty().append(data.message);	
+										} else {
+											actionWindow.dialog('destroy');
+										}
+									}
+								},
+								error: function(data) {
+									actionWindow.empty().append("error");
+								}
+							}); // POST login form
+						});  // click
+						actionWindow.dialog({width: '600px', modal:true}).show();
+					}
+				});			
+			}
+		},
 		drawMenu: function(container) 
 		{	
 			var 
+				actionsMenu = this,
 				KaraCos = window.KaraCos,
 				$ = window.kcQuery,
-				auth = KaraCos.authManager;
+				auth = KaraCos.authManager,
+				username = auth.user_actions_forms.user;
 			$('body').bind('kcready', function(){
-				var logout = $('<button id="kc_tb_logout">Se déconnecter</button>'),
-					domainMenuButton = $('<button id="kc_domain_menu_button" >Domain menu</button>'),
-					domainMenu = $('<ul class="kc_menu" id="kc_domain_menu" style="display:none"></ul>'),
-					nodeMenuButton = $('<button id="kc_node_menu_button" style="display:none" >${instance._get_type()} menu</button>'),
-					nodeMenu = $('<ul class="kc_menu" id="kc_node_menu" style="display:none"></ul>'),
-					userNameButton = $('<button id="kc_user_name_menu">${session['username']}</button>');
+				var login = $('<button class="kc_button" id="kc_tb_login">Se connecter</button>'),fblogin,
+					logout = $('<button class="kc_button" id="kc_tb_logout">Se déconnecter</button>'),
+					domainMenuButton = $('<button class="kc_button" id="kc_domain_menu_button" >Domain menu</button>'),
+					domainMenu = $('<ul class="kc_button kc_menu" id="kc_domain_menu" style="display:none"></ul>'),
+					nodeMenuButton = $('<button class="kc_button" id="kc_node_menu_button" style="display:none" >${instance._get_type()} menu</button>'),
+					nodeMenu = $('<ul class="kc_button kc_menu" id="kc_node_menu" style="display:none"></ul>'),
+					userNameButton = $('<button class="kc_button" id="kc_user_name_menu">' + username + '</button>');
+				if (!auth.isUserConnected()) {
+					// User is not connected
+					container.append(login);
+					if (typeof FB !== 'undefined') {
+						// Facebook button
+						fblogin = $('<button>Se connecter avec facebook</button>');
+						fblogin.button().click(function(){
+							FB.login(function(response) {
+								  if (response.authResponse) {
+								    // user successfully logged in
+								  } else {
+								    // user cancelled login
+								  }
+								});
+							}, {scope:'email'});
+						container.append(fblogin);
+					
+					}
+					// standard site registration login
+					login.button().click(function(){
+						auth.provideLoginUI(function(){
+							auth.authenticationHeader(elem);
+						});
+					});
+					//TODO : Google+ Login
+					
+					// break method...
+					return;
+				}
+				
+				// User is connected...
 				
 				container
 					.append(nodeMenuButton)
@@ -36,7 +154,9 @@ define([], function() {
 					.append(domainMenuButton)
 					.append(domainMenu)
 					.append(nodeMenu);
-			
+				logout.button().click(function(){
+					auth.logout();
+				});
 				toolbar = $('#karacos_actions_toolbar');
 				$(document).click(function hideMenuAtDocumentClickHandler(event){
 					container.find('ul.kc_menu').hide();
@@ -84,31 +204,35 @@ define([], function() {
 				% endif
 				
 				
-				% if '_update' in node_actions:
-					var editbutton = $('<button>Editer</button>').button(),
-					savebutton = $('<button>Sauvegarder</button>').button();
-				toolbar.prepend(editbutton);
-				toolbar.prepend(savebutton);
-				savebutton.hide();
-				editbutton.click(
-						function(event) {
-							event.stopImmediatePropagation();
-							event.preventDefault();
-							KaraCos.activate_aloha();
-							//var button = KaraCos.$(this),
-							savebutton.show();
-							editbutton.hide();
-							${self.aloha.activate_editor(instance)}
-						});
-				savebutton.click(
-						function(event) {
-							event.stopImmediatePropagation();
-							event.preventDefault();
-							savebutton.hide();
-							editbutton.show();
-							${self.aloha.save_instance(instance)}
-						}).hide();
-				% endif
+				if (auth.hasAction('_update')) {
+					var editbutton = $('<button class="kc_button">Editer</button>').button(),
+						savebutton = $('<button class="kc_button">Sauvegarder</button>').button();
+					toolbar.prepend(editbutton);
+					toolbar.prepend(savebutton);
+					savebutton.hide();
+					editbutton.click(
+							function(event) {
+								event.stopImmediatePropagation();
+								event.preventDefault();
+								KaraCos.activate_aloha(
+									function() {
+										savebutton.show();
+										editbutton.hide();
+										${self.aloha.activate_editor(instance)}
+									}
+								);
+								//var button = KaraCos.$(this),
+							});
+					savebutton.click(
+							function(event) {
+								event.stopImmediatePropagation();
+								event.preventDefault();
+								savebutton.hide();
+								editbutton.show();
+								${self.aloha.save_instance(instance)}
+							}).hide();
+					
+				}
 				// user_menu
 				userNameButton.button().click(function(event){
 					var
