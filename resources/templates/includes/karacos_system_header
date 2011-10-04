@@ -1,4 +1,5 @@
 <% import karacos %>
+<link rel="stylesheet" type="text/css" href="/_browser/karacos-ui/css/reset.css" media="screen" />
 <title>${instance.__get_title__()}</title>
 % if 'fb_appId' in instance.__domain__:
 	<meta property="fb:app_id" content="${instance.__domain__['fb_appId']}" />
@@ -17,7 +18,6 @@
 % if 'head_bloc' in instance.__domain__:
 		${instance.__domain__['head_bloc']}
 % endif
-<!-- link rel="stylesheet" type="text/css" href="/_browser/karacos-ui/css/reset.css" media="screen" / -->
 <script type="text/javascript" src="https://apis.google.com/js/plusone.js">
 {"parsetags": "explicit", "lang": "fr"}
 </script>
