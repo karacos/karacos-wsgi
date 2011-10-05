@@ -21,33 +21,15 @@
 		item,
 		actionwindow = KaraCos.actionMenu.actionWindow;
 	if (auth.hasAction('reset_admin_ACL')){
-		item = $('<li><a href="#">Reinitialiser les droits</a></li>');
-		item.click(actionsMenu.getActionButtonHandler("${instance._get_action_url()}",'reset_admin_ACL'));
-				
-//				function(){
-//			// TODO: generic handler for action requiring no parameters
-//			actionwindow.empty().dialog({width: '600px', modal:true}).show();
-//			KaraCos.action({ url: "${instance._get_action_url()}",
-//				method: 'reset_admin_ACL',
-//				async: true,
-//				params: {},
-//				callback: function(data) {
-//					if (data.success) {
-//						actionwindow.append(data.message);
-//					}
-//				},
-//				error: function(data) {
-//					actionwindow.append(data.message);
-//				}
-//			}); // POST login form
-//		});  // click
+		item = $('<li><button>Reinitialiser les droits</button></li>');
+		item.find('button').button().click(actionsMenu.getActionButtonHandler("${instance._get_action_url()}",'reset_admin_ACL'));
 		submenu.append(item);
 	}
 	if (auth.hasAction('add_attachment')){
-		item = KaraCos('<li><a href="#">Ajouter un ficher</a></li>');
+		item = KaraCos('<li><button>Ajouter un ficher</button></li>');
 		// add_attachment needs to use different handler, let it use default behavior for now
 		// TODO: use html5 post as binary/base64 (see aloha DragnDrop plugin)
-		item.click(function(){
+		item.find('button').button().click(function(){
 			KaraCos.getForm({
 				url: "${instance._get_action_url()}",
 				form: "add_attachment",
@@ -90,49 +72,10 @@
 		submenu.append(item);
 	}
 	if (auth.hasAction('create_child_node')) {
-		item = $('<li><a href="#">Créer un noeud</a></li>');
-		item.click(actionsMenu.getActionFormButtonHandler("${instance._get_action_url()}",'create_child_node'));
+		item = $('<li><button>Créer un noeud</button></li>');
+		item.find('button').button().click(actionsMenu.getActionFormButtonHandler("${instance._get_action_url()}",'create_child_node'));
 		submenu.append(item);
 	}
-//				function(){
-//					KaraCos.getForm({
-//						url: "${instance._get_action_url()}",
-//						form: "create_child_node",
-//						callback: function(data, form) {
-//							var create_child_node_template = jsontemplate.Template(form, KaraCos.jst_options);
-//							actionwindow.empty().append(create_child_node_template.expand(data));
-//							actionwindow.find('.form_create_child_node_button').button()
-//							.click(function() {
-//								var params = {},
-//									method = 'create_child_node';
-//								$.each($(this).closest('form').serializeArray(), function(i, field) {
-//									if (field.name === "method") {
-//										method = field.value;
-//									} else {
-//										params[field.name] = field.value;
-//									}
-//								}); // each
-//								KaraCos.action({ url: "${instance._get_action_url()}",
-//									method: method,
-//									async: false,
-//									params: params,
-//									callback: function(data) {
-//										if (data.success) {
-//											
-//											actionwindow.dialog('close');
-//											
-//										}
-//									},
-//									error: function(data) {
-//										
-//									}
-//								}); // POST login form
-//							});  // click
-//							actionwindow.dialog({width: '600px', modal:true}).show();
-//						}
-//					});
-//				});
-
 })(submenu);
 % endif
 % except:

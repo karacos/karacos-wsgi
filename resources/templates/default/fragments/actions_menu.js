@@ -12,7 +12,7 @@
 % if instance == instance.__domain__ :
 	<% isdomain = True %>
 % endif
-define([], function() {
+define(['jquery'], function($) {
 	
 	return {
 		/**
@@ -180,7 +180,8 @@ define([], function() {
 					event.preventDefault();
 					domainMenu.css('position','absolute');
 					domainMenu.css('left',domainMenuButton.offset().left);
-					domainMenu.animate({"height": "toggle"});
+					domainMenu.css('top',domainMenuButton.offset().top);
+					domainMenu.animate({"width": "toggle"});
 				});
 				
 				% if not isdomain:
@@ -199,7 +200,8 @@ define([], function() {
 					event.preventDefault();
 					nodeMenu.css('position','absolute');
 					nodeMenu.css('left',nodeMenuButton.offset().left);
-					nodeMenu.animate({"height": "toggle"});
+					nodeMenu.css('top',nodeMenuButton.offset().top);
+					nodeMenu.animate({"width": "toggle"});
 				});
 				% endif
 				

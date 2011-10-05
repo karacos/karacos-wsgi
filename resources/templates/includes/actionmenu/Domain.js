@@ -22,13 +22,13 @@
 		item,
 		actionwindow = KaraCos.actionWindow;
 	if (auth.hasAction('create_child_node')) {
-		item = KaraCos('<li><a href="#">Créer un noeud</a></li>');
-		item.click(actionsMenu.getActionFormButtonHandler("${instance.__domain__._get_action_url()}",'create_child_node'));
+		item = KaraCos('<li><button>Créer un noeud</button></li>');
+		item.find('button').button().click(actionsMenu.getActionFormButtonHandler("${instance.__domain__._get_action_url()}",'create_child_node'));
 		submenu.append(item);
 	}
 	if (auth.hasAction('add_fqdn_alias')) {
-		item = KaraCos('<li><a href="#">Ajouter un alias</a></li>');
-		item.click(actionsMenu.getActionFormButtonHandler("${instance.__domain__._get_action_url()}",'add_fqdn_alias'));
+		item = KaraCos('<li><button>Ajouter un alias</button></li>');
+		item.find('button').button().click(actionsMenu.getActionFormButtonHandler("${instance.__domain__._get_action_url()}",'add_fqdn_alias'));
 		submenu.append(item);
 	}
 })(submenu);
