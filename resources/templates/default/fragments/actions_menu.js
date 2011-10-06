@@ -179,7 +179,7 @@ define(['jquery'], function($) {
 					event.stopImmediatePropagation();
 					event.preventDefault();
 					domainMenu.css('position','absolute');
-					domainMenu.css('left',domainMenuButton.offset().left);
+					domainMenu.css('left',domainMenuButton.offset().left + Number(domainMenuButton.css("width").match(/([0-9]*).*/)[1]));
 					domainMenu.css('top',domainMenuButton.offset().top);
 					domainMenu.animate({"width": "toggle"});
 				});
@@ -199,7 +199,7 @@ define(['jquery'], function($) {
 					event.stopImmediatePropagation();
 					event.preventDefault();
 					nodeMenu.css('position','absolute');
-					nodeMenu.css('left',nodeMenuButton.offset().left);
+					nodeMenu.css('left',nodeMenuButton.offset().left + Number(nodeMenuButton.css("width").match(/([0-9]*).*/)[1]));
 					nodeMenu.css('top',nodeMenuButton.offset().top);
 					nodeMenu.animate({"width": "toggle"});
 				});
