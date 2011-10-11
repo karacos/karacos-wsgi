@@ -14,7 +14,7 @@
 % else:
     <meta name="keywords" content="${instance['name']}" />
 % endif
-
+<link rel="canonical" href="http://${instance.__domain__['fqdn']}${instance._get_action_url()}" />
 % if 'head_bloc' in instance.__domain__:
 		${instance.__domain__['head_bloc']}
 % endif
