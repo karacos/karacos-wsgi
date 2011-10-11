@@ -103,7 +103,9 @@ class Dispatcher(object):
             response.status = e.status
             response.body = template.render(instance = domain,
                                             result = {'status': 'failure',
-                                                      'message': e.get_message()})
+                                                      'message': e.get_message()},
+                                            attributes={}) # extra context dictionary for global var propagation
+                                            # see http://www.makotemplates.org/docs/runtime.html#context-variables
             if isinstance(e, Redirect):
                 response.headers['Location'] = '%s' % e.location
                 for k in response.headers.keys():
@@ -111,7 +113,8 @@ class Dispatcher(object):
             if isinstance(e,DataRequired):
                 response.body = template.render(instance = e.instance,
                                                 result = None,
-                                                action = e.method.get_action(e.instance))
+                                                action = e.method.get_action(e.instance),
+                                                attributes={}) # extra context dictionary
                 if e.backlink != None:
                     backlinks = session['backlinks']
                     backlink = (e.backlink,e.instance.id,e.method.func.func_name)
@@ -124,7 +127,8 @@ class Dispatcher(object):
                     response.body = template.render(instance = domain,
                                             result = {'status': 'failure',
                                                       'message': exceptionValue,
-                                                      'data' : "%s,%s,%s" % (exceptionType, exceptionValue,traceback.format_tb(exceptionTraceback))})
+                                                      'data' : "%s,%s,%s" % (exceptionType, exceptionValue,traceback.format_tb(exceptionTraceback))},
+                                            attributes={}) # extra context dictionary
             elif request.headers['Accept'].find('application/json') >= 0 :
                 response.body = karacos.json.dumps({'status': 'failure',
                                                       'message': "%s" % exceptionValue,
@@ -135,7 +139,8 @@ class Dispatcher(object):
                 response.body = template.render(instance = domain,
                                             result = {'status': 'failure',
                                                       'message': "%s" % exceptionValue,
-                                                      'data' : "%s,%s,%s" % (exceptionType, exceptionValue,traceback.format_tb(exceptionTraceback))})
+                                                      'data' : "%s,%s,%s" % (exceptionType, exceptionValue,traceback.format_tb(exceptionTraceback))},
+                                            attributes={}) # extra context dictionary
     
     def process_request(self,request,response):
         """
@@ -320,7 +325,8 @@ class Dispatcher(object):
         response.headers['Content-Type'] = 'text/html'
         response.body = template.render(instance = response.__instance__,
                                         result = response.__result__,
-                                        action = response.__action__)
+                                        action = response.__action__,
+                                        attributes={})
     
     
     def render_json(self, response):
