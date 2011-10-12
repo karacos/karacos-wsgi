@@ -1,14 +1,16 @@
+{.section message}
+<div>{message}</div>
+{.end}
 {.section form}
         <div id="karacos_login_accordion">
 	        <h3 style="margin:0;padding:2px"><a href='#'>Vous identifier</a></h3>
 	        <div style="margin:0;padding:2px; font-size:0.8em">
 	        	Pour vous identifier à ce site, vous avez le choix entre :
-	        	<ul>
-		        	<li>Vous connecter directement au site si vous avez un compte</li>
-		        	<li>Vous enregistrer pour créer un compte si vous n'en avez pas encore</li>
-		        	<li>Utiliser votre compte facebook pour vous connecter</li>
-	        	</ul>
 	        </div>
+	        <h3 style="margin:0;padding:2px" class="kc_fb_title"><a href='#'>Utiliser votre compte Facebook</a></h3>
+    		<div style="margin:0;padding:2px" class="kc_fb_box">
+    		<fb:registration fields="name,birthday,gender,email" redirect-uri="{redirect_uri}"	width="560px" onvalidate="validateAndSave"></fb:registration>
+    		</div>
     {.repeated section @}
         	
             <h3 style="margin:0;padding:2px"><a href='#'>{title}</a></h3>
@@ -41,10 +43,7 @@
 	            </form>
 	        </div>
     {.end}
-    	<h3 style="margin:0;padding:2px" class="kc_fb_title"><a href='#'>Utiliser votre compte facebook</a></h3>
-    		<div style="margin:0;padding:2px" class="kc_fb_box">
-    		<fb:registration fields="name,birthday,gender,email" redirect-uri="{redirect_uri}"	width="560px" onvalidate="validateAndSave"></fb:registration>
-    		</div>
+    	
     </div>
 {.or}
 {.end}
