@@ -15,15 +15,9 @@
     <meta name="keywords" content="${instance['name']}" />
 % endif
 <link rel="canonical" href="http://${instance.__domain__['fqdn']}${instance._get_action_url()}" />
-% if 'head_bloc' in instance.__domain__:
-		${instance.__domain__['head_bloc']}
-% endif
 <script type="text/javascript" src="https://apis.google.com/js/plusone.js">
 {"parsetags": "explicit", "lang": "fr"}
 </script>
-<link rel="stylesheet" href="/_browser/karacos-ui/css/jquery.ui.menu.css">
-<script src="/_browser/karacos-ui/vendor/jquery-1.6.1.js"></script>
-<script src="/_browser/karacos-ui/deps/require.js"></script>
 <script type="text/javascript">
 // prevent no console...
 if (window.console === undefined || window.console === null) {
@@ -36,18 +30,23 @@ if (console.log === undefined || console.log === null) {
 if (window.kc_requireConf === undefined || window.kc_requireConf === null) {
 	window.kc_requireConf = {}
 } 
+kc_requireConf.baseUrl = "/_browser/aloha/src/lib";
+kc_requireConf.waitSeconds = 15;
+kc_requireConf.locale = "fr-fr";
+if (kc_requireConf.paths === undefined || kc_requireConf.paths === null) {
+	window.kc_requireConf.paths = {}
+}
+kc_requireConf.paths.karacos = "/_browser/karacos-ui"; 
+kc_requireConf.paths.fragment = "/fragment";
+
+</script>
+<link rel="stylesheet" href="/_browser/karacos-ui/css/jquery.ui.menu.css">
+<script src="/_browser/karacos-ui/vendor/jquery-1.6.1.js"></script>
+<script src="/_browser/karacos-ui/deps/require.js"></script>
+<script type="text/javascript">
 var jQuery = window.jQuery.noConflict( true );
+require.config(kc_requireConf);
 jQuery(function() {
-	jQuery.extend(true, kc_requireConf,	{
-		    baseUrl: "/_browser/aloha/src/lib",
-		    paths: {
-		        "karacos": "/_browser/karacos-ui",
-		        "fragment": "/fragment"
-		    },
-		    waitSeconds: 15,
-		    locale: "fr-fr"
-		});
-	require.config(kc_requireConf);
   	window.Aloha = window.Aloha || {};
   
 	window.kcQuery = window.jQuery = jQuery;
@@ -61,8 +60,7 @@ jQuery(function() {
 
 });
   </script>
-
-
-## The core of KaraCos...
-## % endif
 <link rel="stylesheet" type="text/css" href="/_browser/karacos-ui/css/karacos_widgets.css" media="screen" />
+% if 'head_bloc' in instance.__domain__:
+		${instance.__domain__['head_bloc']}
+% endif
