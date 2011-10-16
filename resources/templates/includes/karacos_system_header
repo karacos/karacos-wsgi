@@ -19,6 +19,10 @@
 {"parsetags": "explicit", "lang": "fr"}
 </script>
 <script type="text/javascript">
+window.kc_method_result = false;
+% if result:
+kc_method_result = ${karacos.json.dumps(result)};
+%endif
 // prevent no console...
 if (window.console === undefined || window.console === null) {
 	window.console = {};
