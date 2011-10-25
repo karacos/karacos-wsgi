@@ -12,12 +12,24 @@ session = karacos.serving.get_session()
         <div class="inside" id="domain_content" property="content">${instance.__get_content__()}</div>
         
 </article>
-% if 'karacos-fragment' in request.headers or 'Karacos-Fragment' in request.headers:
 <script language="javascript">
-	KaraCos.config.page_id = '${instance.id}';
-	KaraCos.config.page_base_id = '${instance['parent_db']}';
+% if 'karacos-fragment' in request.headers or 'Karacos-Fragment' in request.headers:
+	KaraCos.change_page({
+		id : '${instance.id}',
+		base_id : '${instance['parent_db']}',
+		url : 'http://${instance['fqdn']}/',
+		page_url: '/',
+		type: 'activity',
+		title: '${instance.__get_title__()}'
+		% if 'description' in instance:
+			,description: "${instance['description']}"
+		% endif
+		% if 'keywords' in instance:
+			,keywords: "${instance['keywords']}"
+		% endif
+	});
 	KaraCos.authManager.authenticationHeader();
+%endif
 </script>
 
-%endif
 </div>	

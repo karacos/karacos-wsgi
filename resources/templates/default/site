@@ -16,24 +16,33 @@ ${self.site.head(instance)}
                 <div class="inside" id="header_auth_button"></div> <!-- placeholder four authentication menu -->
             </header>
 <script>
-$(function() {
-	new KaraCos({
-		fqdn: '${instance.__domain__['fqdn']}',
-		page_url: '${instance._get_action_url()}',
-		page_id: '${instance.id}',
-		page_base_id: '${instance['parent_db']}',
-		auth: {
-		% if 'fb_appId' in instance.__domain__:
-			facebook: { appId:"${instance.__domain__['fb_appId']}",
-					cookie:true, 
-					status:true,
-					xfbml:true 
-				}
-		% endif
+require(['jquery'], function($) {
+  $(function() {
+	$('body').bind('kccore', function(){
+		KaraCos({
+			fqdn: '${instance.__domain__['fqdn']}',
+			page_url: '${instance._get_action_url()}',
+			page_id: '${instance.id}',
+			page_base_id: '${instance['parent_db']}',
+			main_content: "#MainContent",
+			auth: {
+			% if 'fb_appId' in instance.__domain__:
+				facebook: { appId:"${instance.__domain__['fb_appId']}",
+						cookie:true, 
+						status:true,
+						xfbml:true 
+					}
+			% endif
 			}
 		});
+		$('body').bind('kcauth',function(){
+			$('header_auth_button').hide();
+			
+			KaraCos.authManager.authenticationHeader();
+		}); 
 	});
-</script>
+  });
+ });</script>
 		${self.site.show_content(action,instance,result)}
 	    <aside>
                 <div class="inside">
