@@ -92,7 +92,7 @@ define(['jquery'], function($) {
 								error: function(data) {
 									actionWindow.empty().append("error");
 								}
-							}); // POST login form
+							}); // POST form
 						});  // click
 						actionWindow.dialog({width: '600px', modal:true}).show();
 					}
