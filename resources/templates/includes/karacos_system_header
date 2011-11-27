@@ -1,5 +1,11 @@
-<% import karacos %>
-<link rel="stylesheet" type="text/css" href="/_browser/karacos-ui/css/reset.css" media="screen" />
+<% 
+import sys, traceback
+import karacos
+request = karacos.serving.get_request()
+session = karacos.serving.get_session()
+%>
+<script src="/_browser/karacos-ui/vendor/jquery-1.6.1.js"></script>
+<!-- <link rel="stylesheet" type="text/css" href="/_browser/karacos-ui/css/reset.css" media="screen" /> -->
 <title>${instance.__get_title__()}</title>
 % if 'fb_appId' in instance.__domain__:
 	<meta property="fb:app_id" content="${instance.__domain__['fb_appId']}" />
@@ -21,7 +27,17 @@
 <script type="text/javascript">
 window.kc_method_result = false;
 % if result:
-kc_method_result = ${karacos.json.dumps(result)};
+	%try:
+		kc_method_result = ${karacos.json.dumps(result)};
+	%except:
+	/* Exception while serializing result
+		${sys.exc_info()}
+		---
+		%for line in traceback.format_exc().splitlines():
+			${line}
+		%endfor
+	*/
+	%endtry
 %endif
 // prevent no console...
 if (window.console === undefined || window.console === null) {
@@ -45,71 +61,76 @@ kc_requireConf.paths.fragment = "/fragment";
 
 </script>
 <link rel="stylesheet" href="/_browser/karacos-ui/css/jquery.ui.menu.css">
-<script src="/_browser/karacos-ui/vendor/jquery-1.6.1.js"></script>
+
+<script>
+(function(jQuery){
+	var kQuery = jQuery.noConflict( true );
+	window.jQuery = window.$ = kQuery;
+	jQuery(function() {
+	  	window.Aloha = window.Aloha || {};
+	  
+		window.kcQuery = window.kQuery = jQuery;
+		Aloha.settings = {	baseUrl: "/_browser/aloha/src/lib",
+						locale: "fr-fr",
+						jQuery: jQuery,
+						floatingmenu: {
+							width: 430
+						},
+						plugins: {
+							
+							format: {
+								editables: {
+									'[property*="title"]': [],
+									'[property*="description"]': []
+								}
+							},
+							link: {
+								editables: {
+									'[property*="title"]': [],
+									'[property*="description"]': []
+								}
+							},
+							 image: {
+								'max_width': '50px',
+								'max_height': '50px',
+								editables: {
+									'[property*="title"]':undefined,
+									'[property*="description"]': undefined
+								}
+							},
+							draganddropfiles: {
+								upload : { config: { callback: function dropFileCallback(responseString,fileItem) {
+											try {
+												var result = jQuery.parseJSON(responseString);
+												if (result.success)
+													return result.data;
+											} catch(e) {
+												return false;
+											}
+										} // function callback
+									} // config
+								}, // upload
+								
+								editables: {
+									'[property*="description"]': {},
+									'[property*="title"]': {},
+									'[typeof*="Domain"] [property*="content"]': {}
+									
+								}
+							} // draganddropfiles
+						} //plugins
+					};
+	  	require(["karacos/main"],function(){
+			console.log("loaded karacos/main");
+	  	});
+	
+	});
+})(window.jQuery);
+</script>
 <script src="/_browser/karacos-ui/deps/require.js"></script>
 <script type="text/javascript">
-var jQuery = window.jQuery.noConflict( true );
-require.config(kc_requireConf);
-jQuery(function() {
-  	window.Aloha = window.Aloha || {};
-  
-	window.kcQuery = window.jQuery = jQuery;
-	Aloha.settings = {	baseUrl: "/_browser/aloha/src/lib",
-					locale: "fr-fr",
-					jQuery: jQuery,
-					floatingmenu: {
-						width: 430
-					},
-					plugins: {
-						
-						format: {
-							editables: {
-								'[property*="title"]': [],
-								'[property*="description"]': []
-							}
-						},
-						link: {
-							editables: {
-								'[property*="title"]': [],
-								'[property*="description"]': []
-							}
-						},
-						 image: {
-							'max_width': '50px',
-							'max_height': '50px',
-							editables: {
-								'[property*="title"]':undefined,
-								'[property*="description"]': undefined
-							}
-						},
-						draganddropfiles: {
-							upload : { config: { callback: function dropFileCallback(responseString,fileItem) {
-										try {
-											var result = jQuery.parseJSON(responseString);
-											if (result.success)
-												return result.data;
-										} catch(e) {
-											return false;
-										}
-									} // function callback
-								} // config
-							}, // upload
-							
-							editables: {
-								'[property*="description"]': {},
-								'[property*="title"]': {},
-								'[typeof*="Domain"] [property*="content"]': {}
-								
-							}
-						} // draganddropfiles
-					} //plugins
-				};
-  	require(["karacos/main"],function(){
-		console.log("loaded karacos/main");
-  	});
-
-});
-  </script>
+	require.config(kc_requireConf);
+</script>
 <link rel="stylesheet" type="text/css" href="/_browser/karacos-ui/css/karacos_widgets.css" media="screen" />
 % if 'head_bloc' in instance.__domain__:
 		${instance.__domain__['head_bloc']}
