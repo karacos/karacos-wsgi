@@ -106,9 +106,8 @@ define(['jquery'], function($) {
 				KaraCos = window.KaraCos,
 				$ = window.kcQuery,
 				auth = KaraCos.authManager,
-				username = auth.user_actions_forms.user;
-			$('body').bind('kcready', function(){
-				var login = $('<button class="kc_button" id="kc_tb_login">Se connecter</button>'),fblogin,
+				username = auth.user_actions_forms.user,
+				 login = $('<button class="kc_button" id="kc_tb_login">Se connecter</button>'),fblogin,
 					logout = $('<button class="kc_button" id="kc_tb_logout">Se déconnecter</button>'),
 					domainMenuButton = $('<button class="kc_button" id="kc_domain_menu_button" >Domain menu</button>'),
 					domainMenu = $('<ul class="kc_button kc_menu" id="kc_domain_menu" style="display:none"></ul>'),
@@ -169,7 +168,9 @@ define(['jquery'], function($) {
 				(function includeDomainMenu(submenu){
 					<%include file="${instance.__domain__.get_menu_template_uri()}"/>
 				})(domainMenu);
-				domainMenu.menu().hide();
+				if (typeof domainMenu.menu === "function") {
+					domainMenu.menu().hide();
+				}
 				domainMenuButton.addClass('menu').button({
 					icon: 'ui-icon-triangle-1-s',
 					orientation: 'r',
@@ -189,7 +190,9 @@ define(['jquery'], function($) {
 				(function includeInstanceMenu(submenu){
 					<%include file="${instance.get_menu_template_uri()}"/>
 				})(nodeMenu);
-				nodeMenu.menu().hide();
+				if (typeof nodeMenu.menu === "function") {
+					nodeMenu.menu().hide();
+				}
 				nodeMenuButton.addClass('menu').button({
 					icon: 'ui-icon-triangle-1-s',
 					orientation: 'r',
@@ -286,7 +289,7 @@ define(['jquery'], function($) {
 						}
 					});
 				});
-			});
+			
 		} // function drawmenu
 	} // returned object
 }); // define

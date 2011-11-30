@@ -30,6 +30,7 @@ window.kc_method_result = false;
 	%try:
 		kc_method_result = ${karacos.json.dumps(result)};
 	%except:
+		kc_method_result = {"success": false, "error": "Serialization error"};
 	/* Exception while serializing result
 		${sys.exc_info()}
 		---
