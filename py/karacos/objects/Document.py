@@ -143,6 +143,12 @@ class Document(couchdb.client.Document):
         """
         return 
     
+    def GET(self):
+        return {"success": True, "data": {
+                        "id": self.id,
+                        "base_id":self['base_id']
+                    }}
+    
     def _get_type(self):
         if 'WebType' in self:
             return self['WebType']

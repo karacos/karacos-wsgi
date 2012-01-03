@@ -364,10 +364,7 @@ class Dispatcher(object):
             # Nothing to process, result already exist
             return
         if request.__method__ == None:
-            response.__result__ = {"success": True, "data": {
-                        "id": response.__instance__.id,
-                        "base_id":response.__instance__['base_id']
-                    }}
+            response.__result__ = response.__instance__.GET()
         else:
             given = len(request.__args__) + len(request.__kwds__)
             
