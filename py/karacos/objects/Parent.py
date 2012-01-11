@@ -44,10 +44,10 @@ class ParentMeta(karacos.db['KcDocMeta']):
         log.debug("begin __call__")
         instance = karacos.db['KcDocMeta'].__call__(self, *args, **kw)
         log.debug("__call__ dir(instance):'%s'" % dir(instance))
-        assert "db" in dir(instance), "'db' attribute not found"
-        assert isinstance(instance.db, couchdb.Database), "db is not a couchdb Database object"
-        assert 'base' in dir(instance), "'base' attribute not found"
-        assert isinstance(instance.base, karacos.db['Base']), "'db' attribute is not Base"
+        assert "db" in dir(instance), "ParentMeta: 'db' attribute not found"
+        assert isinstance(instance.db, couchdb.Database), "ParentMeta: db is not a couchdb Database object"
+        assert 'base' in dir(instance), "ParentMeta: 'base' attribute not found"
+        assert isinstance(instance.base, karacos.db['Base']), "ParentMeta: 'db' attribute is not Base"
         assert 'base_id' in instance
         if 'childrens' not in instance:
             instance['childrens'] = dict()
@@ -69,8 +69,8 @@ class Childrens(dict):
         self.__parent__ = parent
     
     def __delitem__(self, name):
-        assert isinstance(name, basestring)
-        assert name in self.__parent__['childrens'], "%s" % name
+        assert isinstance(name, basestring), 'Childrens: name is not a String'
+        assert name in self.__parent__['childrens'], "Childrens: %s is not a child" % name
         del self.__parent__['childrens']['name']
         self.__parent__.save()
     
@@ -112,9 +112,9 @@ class Parent(KcDocument):
     __childrens__ = None
 
     def __init__(self, *args, **kw):
-        assert isinstance(self, karacos.db['Parent']), "Icompatible type, instance is : %s, should be karacos.db['Parent']" % type(self)
-        assert type(self) != Parent, "This type cannot be instanciated directly"
-        assert 'data' in kw
+        assert isinstance(self, karacos.db['Parent']), "Parent: Icompatible type, instance is : %s, should be karacos.db['Parent']" % type(self)
+        assert type(self) != Parent, "Parent: This type cannot be instanciated directly"
+        assert 'data' in kw, "Parent: data not found"
         data = kw['data']
         #localvars = locals()
         base = None

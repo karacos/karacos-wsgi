@@ -78,11 +78,11 @@ class Node(karacos.db['Child']):
         data = None
         if 'data' in kw:
             data = kw['data']
-        assert isinstance(data,dict), "Incompatible data type : %s is not a KcDocument" % type(data)
-        assert isinstance(data['name'],basestring)
+        assert isinstance(data,dict), "Node: Incompatible data type : %s is not a KcDocument" % type(data)
+        assert isinstance(str(data['name']),basestring), "Node: Name is not a string : %s"
         
-        assert isinstance(data['parent_id'],basestring)
-        assert isinstance(data['base_id'],basestring)
+        assert isinstance(data['parent_id'],basestring), "parent_id is not a string"
+        assert isinstance(data['base_id'],basestring), "base_id is not a string"
         
         karacos.db['Child'].__init__(self,*args, **kw)
         self.log.debug("Node.__init__ ")

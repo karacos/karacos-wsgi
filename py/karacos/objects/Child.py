@@ -41,9 +41,9 @@ class ChildMeta(karacos.db['ParentMeta']):
         A l'appel du constructeur
         """
         log.debug("BEGIN ChildMeta.__call__ ")
-        assert 'data' in kw
-        assert 'parent_id' in kw['data']
-        assert 'parent_db' in kw['data']
+        assert 'data' in kw, "not found parameter data"
+        assert 'parent_id' in kw['data'], "ChildMeta: not found attribute parent_id"
+        assert 'parent_db' in kw['data'], "ChildMeta: not found attribute parent_id"
         if 'parent' not in kw:
             parentbase = karacos.db.sysdb[kw['data']['parent_db']]
             log.debug("ChildMeta.__call__ parentbase = %s",parentbase)
@@ -69,7 +69,7 @@ class Child(karacos.db['Parent']):
         assert isinstance(self,karacos.db['Child']), "Icompatible type, instance is : %s, should be karacos.db['Child']" % type(self)
         assert type(self) != Child, "This type cannot be instanciated directly"
         self.__parent__ = None
-        assert 'parent' in kw
+        assert 'parent' in kw, "Child: not found attribute parent_id"
         self.__parent__ = kw['parent']
         assert isinstance(self.__parent__,karacos.db['Parent']), "Child MUST have a parent"
         if 'base' not in self.__dict__ or self.base == None:
