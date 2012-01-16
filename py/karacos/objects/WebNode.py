@@ -243,6 +243,8 @@ class WebNode(karacos.db['Node']):
             else:
                 base64=True
         filename = None
+        if 'fileName' in kwds:
+            kwds['att_file'].filename = kwds['fileName']
         result = self._add_attachment(kwds['att_file'],base64) #request.POST.get('att_file'))
         #size = 0
         #while True:
