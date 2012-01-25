@@ -64,69 +64,76 @@ kc_requireConf.paths.fragment = "/fragment";
 <link rel="stylesheet" href="/_browser/karacos-ui/css/jquery.ui.menu.css">
 
 <script>
-(function(jQuery){
-	var kQuery = jQuery.noConflict( true );
-	window.jQuery = window.$ = kQuery;
-	jQuery(function() {
-	  	window.Aloha = window.Aloha || {};
-	  
-		window.kcQuery = window.kQuery = jQuery;
-		Aloha.settings = {	baseUrl: "/_browser/aloha/src/lib",
-						locale: "fr-fr",
-						jQuery: jQuery,
-						floatingmenu: {
-							width: 430
-						},
-						plugins: {
-							
-							format: {
-								editables: {
-									'[property*="title"]': [],
-									'[property*="description"]': []
-								}
+function startKaraCos() {
+	(function(jQuery){
+		var kQuery = jQuery.noConflict( true );
+		window.jQuery = window.$ = kQuery;
+		jQuery(function() {
+		  	window.Aloha = window.Aloha || {};
+		  
+			window.kcQuery = window.kQuery = jQuery;
+			Aloha.settings = {	baseUrl: "/_browser/aloha/src/lib",
+							locale: "fr-fr",
+							jQuery: jQuery,
+							floatingmenu: {
+								width: 430
 							},
-							link: {
-								editables: {
-									'[property*="title"]': [],
-									'[property*="description"]': []
-								}
-							},
-							 image: {
-								'max_width': '50px',
-								'max_height': '50px',
-								editables: {
-									'[property*="title"]':undefined,
-									'[property*="description"]': undefined
-								}
-							},
-							draganddropfiles: {
-								upload : { config: { callback: function dropFileCallback(responseString,fileItem) {
-											try {
-												var result = jQuery.parseJSON(responseString);
-												if (result.success)
-													return result.data;
-											} catch(e) {
-												return false;
-											}
-										} // function callback
-									} // config
-								}, // upload
+							plugins: {
 								
-								editables: {
-									'[property*="description"]': {},
-									'[property*="title"]': {},
-									'[typeof*="Domain"] [property*="content"]': {}
+								format: {
+									editables: {
+										'[property*="title"]': [],
+										'[property*="description"]': []
+									}
+								},
+								link: {
+									editables: {
+										'[property*="title"]': [],
+										'[property*="description"]': []
+									}
+								},
+								 image: {
+									'max_width': '50px',
+									'max_height': '50px',
+									editables: {
+										'[property*="title"]':undefined,
+										'[property*="description"]': undefined
+									}
+								},
+								draganddropfiles: {
+									upload : { config: { callback: function dropFileCallback(responseString,fileItem) {
+												try {
+													var result = jQuery.parseJSON(responseString);
+													if (result.success)
+														return result.data;
+												} catch(e) {
+													return false;
+												}
+											} // function callback
+										} // config
+									}, // upload
 									
-								}
-							} // draganddropfiles
-						} //plugins
-					};
-	  	require(["karacos/main"],function(){
-			console.log("loaded karacos/main");
-	  	});
-	
-	});
-})(window.jQuery);
+									editables: {
+										'[property*="description"]': {},
+										'[property*="title"]': {},
+										'[typeof*="Domain"] [property*="content"]': {}
+									}
+								} // draganddropfiles
+							} //plugins
+						};
+		  	require(["karacos/main"],function(){
+				console.log("loaded karacos/main");
+		  	});
+		
+		});
+	})(window.jQuery);
+}
+if (window.onload === null) {
+	window.onload = startKaraCos;
+} else {
+	startKaraCos();
+}
+
 </script>
 <script src="/_browser/karacos-ui/deps/require.js"></script>
 <script type="text/javascript">
