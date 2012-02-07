@@ -3,11 +3,11 @@ KaraCos API
 
 API de base KaraCos Core:
 
-![](../uml/DbObjects.png)
+![](../uml/DbObjects.png?raw=true)
 
 Vue générale :
 
-![](../uml/SemanticWebEngine.png)
+![](../uml/SemanticWebEngine.png?raw=true)
 
 exposition HTTP (sur l'url d'un objet) :
 
@@ -29,13 +29,13 @@ POST	|	Accept: 'application/json'	|
 sur chaque objet exposé, on peut appeler en POST get_user_actions_forms :
 {"method":"get_user_actions_forms","params":{},"id":1}
 
-Ca retourne la liste des methodes 'autoris�es' sur l'objet pour l'utilisateur courant, ainsi que les
+Ca retourne la liste des methodes 'autorisées' sur l'objet pour l'utilisateur courant, ainsi que les
 parametres attendus, un contrat d'appel qui devra respecter la structure du POST d�crite ci-dessus
 
 
 Exemple
 
-Requ�te:
+Requête:
 --------
 
     POST /
@@ -47,7 +47,7 @@ Requ�te:
 	"params": {}
     }
 
-R�ponse:
+Réponse:
 --------
 
     { "success": true", "message": "get_user_actions_forms succeeded", 
