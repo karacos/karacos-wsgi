@@ -2,14 +2,16 @@ KaraCos API
 ===========
 
 API de base KaraCos Core:
-../uml/DbObjects.png
 
-Vue générale :
-../uml/SemanticwebEngine.png
+![](../uml/DbObjects.png)
+
+Vue gÃ©nÃ©rale :
+
+![](../uml/SemanticWebEngine.png)
 
 exposition HTTP (sur l'url d'un objet) :
 
-Type	|   	Data        			|    Réponse
+Type	|   	Data        			|    Rï¿½ponse
 --------|---------------------------------------|----------------------------------------
 GET 	|   	Accept: 'text/html'		|    rendu template (voir TEMPLATES)
 --------|---------------------------------------|----------------------------------------
@@ -20,20 +22,20 @@ POST	|	Accept: 'application/json'	|
 	|     data: {				|     methodName de l'objet
 	|		"method": "methodName",	|    params doit contenir les parametres
 	|		"id": 1			|    attendus par la methode
-	|		"params": {}		|    id = 1 (pas encore utilisé)
+	|		"params": {}		|    id = 1 (pas encore utilisï¿½)
 	|	}				|
 --------|---------------------------------------|----------------------------------------
 
-sur chaque objet exposé, on peut appeler en POST get_user_actions_forms :
+sur chaque objet exposÃ©, on peut appeler en POST get_user_actions_forms :
 {"method":"get_user_actions_forms","params":{},"id":1}
 
-Ca retourne la liste des methodes 'autorisées' sur l'objet pour l'utilisateur courant, ainsi que les
-parametres attendus, un contrat d'appel qui devra respecter la structure du POST décrite ci-dessus
+Ca retourne la liste des methodes 'autorisï¿½es' sur l'objet pour l'utilisateur courant, ainsi que les
+parametres attendus, un contrat d'appel qui devra respecter la structure du POST dï¿½crite ci-dessus
 
 
 Exemple
 
-Requête:
+Requï¿½te:
 --------
 
     POST /
@@ -45,7 +47,7 @@ Requête:
 	"params": {}
     }
 
-Réponse:
+Rï¿½ponse:
 --------
 
     { "success": true", "message": "get_user_actions_forms succeeded", 
