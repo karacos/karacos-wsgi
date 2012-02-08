@@ -13,8 +13,8 @@ $KARACOS_HOME/server/$INSTANCE/deploy/$APP/resources/templates
 
 Chaque répertoire dans un de ces dossiers est un theme pour KaraCos pour peu qu'il contienne un fichier site.
 Pour changer le theme, utiliser les url d'administration suivants (une fois connecté au site) :
-http://KaraCosDomain/set_user_theme
-http://KaraCosDomain/set_theme
+http://KaraCosDomain/set_user_theme?theme=nom_du_theme
+http://KaraCosDomain/set_theme?theme=nom_du_theme
 *TODO* imlémenter un chooser
 
 1. Mappage des url's
@@ -43,21 +43,23 @@ de là, tout est possible, instance étant un objet du type WebNode ou un de ses e
 
 Methodes et données courantes :
 ${instance._get_action_url()} : url de l'instance
-${instance['name']} : nom de l'instance (unique dans un parent)
-${instance['title']}: Le titre de l'instance rendu dans la balise <title> (default: no title, utiliser /edit_content pour modifier)
+${instance['name']} : nom de l'instance (unique dans un parent), safe car 'name' est un attribut obligatoire d'un noeud KaraCos.
+${instance.__get_title__()}: Le titre de l'instance rendu dans la balise <title> (default: no title, utiliser /edit_content pour modifier)
 En général, ${instance['dataName']} renvoie la donnée qui correspond a l'attribut du même nom ('dataName') dans le document couchdb porté par l'instance.
 ${instance.get_web_childrens_for_id()}: List of browseable childNodes authorized for current user (ls like...)
 ${instance.__parent__} Le noeud parent de l'instance en cours, self si instance = domain
 ${instance.__domain__} Le domaine (racine) du noeud courant, self si instance = domain
 
-exemple : afficher les enfants d'un noeud :
+exemple : afficher les noms enfants d'un noeud :
 
-    <% childrens = instance.__domain__.get_web_childrens_for_id() %>
+    <% childrens = instance.get_web_childrens_for_id() %>
     <ul>
     % for child in childrens.keys():
 	 <li><a href="${instance._get_action_url()}${childrens[child]}">${childrens[child]}</a></li>
     % endfor
     </ul>
+
+complément : obtenir plus d'infos sur les noeuds
 
 Autre exemples, tests et expressions :
 
