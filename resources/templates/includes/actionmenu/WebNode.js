@@ -16,7 +16,7 @@
 
 % if instance != None:
 <% node_actions = instance._get_actions() %>
-(function(submenu){
+(function WebNodeSubMenu(submenu){
 	var 
 		item,
 		actionwindow = KaraCos.actionMenu.actionWindow;
@@ -30,44 +30,7 @@
 		// add_attachment needs to use different handler, let it use default behavior for now
 		// TODO: use html5 post as binary/base64 (see aloha DragnDrop plugin)
 		item.find('button').button().click(function(){
-			KaraCos.getForm({
-				url: "${instance._get_action_url()}",
-				form: "add_attachment",
-				callback: function(data, form) {
-					var add_attachment_template = jsontemplate.Template(form, KaraCos.jst_options);
-					actionwindow.empty().append(add_attachment_template.expand(data));
-//						actionwindow.find('.form_add_attachment_button').button()
-//						.click(function() {
-//							var params = {},
-//								method = 'add_attachment';
-//							// rought coding for upload
-//							$(this).closest('form').submit();
-////							$.each($(this).closest('form').serializeArray(), function(i, field) {
-////								if (field.name === "method") {
-////									method = field.value;
-////								} else {
-////									params[field.name] = field.value;
-////								}
-////							}); // each
-////							KaraCos.action({ url: "${instance._get_action_url()}",
-////								method: method,
-////								async: false,
-////								params: params,
-////								callback: function(data) {
-////									if (data.success) {
-////										
-////										actionwindow.dialog('close');
-////										
-////									}
-////								},
-////								error: function(data) {
-////									actionwindow.empty().append(data.message);
-////								}
-////							}); // POST login form
-//						});  // click
-					actionwindow.dialog({width: '600px', modal:true}).show();
-				}
-			});
+			document.location = "${instance._get_action_url()}" + "/add_attachment";
 		});
 		submenu.append(item);
 	}
