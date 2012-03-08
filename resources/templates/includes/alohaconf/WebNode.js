@@ -80,45 +80,39 @@
 								'[property*="price"]'	: {}
 								
 						  	}
-						}
-						/*
-						,"com.gentics.aloha.plugins.List": {
-							// all elements with no specific configuration get an UL, just for fun :)
-							config : [ 'ul' ],
-								editables : {
-								// Even if this is configured it is not set because OL and UL are not allowed in H1.
-								'#title'	: [ 'ol' ],
-								// all divs get OL
-								'div'		: [ 'ol' ],
-								// content is a DIV. It would get only OL but with class .article it also gets UL.
-								'.article'	: [ 'ul' ]
-								}
 						},
-						
-						"com.gentics.aloha.plugins.Table": {
-							// all elements with no specific configuration are not allowed to insert tables
-							config : [ ],
-								editables : {
-								// Allow insert tables only into .article
-								'.article'	: [ 'table' ]
-								},
-								// [{name:'green', text:'Green', tooltip:'Green is cool', iconClass:'GENTICS_table GENTICS_button_green', cssClass:'green'}]
-							tableConfig : [
-												{name:'hor-minimalist-a'},
-												{name:'box-table-a'},
-												{name:'hor-zebra'},
-								],
-								columnConfig : [
-												{name:'bigbold', iconClass:'GENTICS_button_col_bigbold'},
-												{name:'redwhite', iconClass:'GENTICS_button_col_redwhite'}
-								],
-							rowConfig : [
-											{name:'bigbold', iconClass:'GENTICS_button_row_bigbold'},
-											{name:'redwhite', iconClass:'GENTICS_button_row_redwhite'}
-								]
-
-						} */
-						}
+						"draganddropfiles":  { 
+							config: {'drop' : {    'max_file_size': 300000,
+								'max_file_count': 2,
+								'upload': {
+				                    'uploader_instance':'Aloha.Repositories.Uploader',
+				                    'config': {
+										'callback': function(resp) { 
+											var json_res = jQuery.parseJSON(resp);
+											if (json_res.success) {
+												return json_res.data;
+											} else {
+												throw 'File upload error';
+											}
+										},
+										'image': {
+											'max_width': 800,
+											'max_height': 800
+										},
+				                        'method':'POST',
+				                        'url': "/content",
+				                        'file_name_param':"filename",
+				                        'file_name_header':'X-File-Name',
+				                        'extra_headers':{}, //Extra parameters
+				                        'extra_post_data': {}, //Extra parameters
+				                        'send_multipart_form': false, //true for html4 TODO: make browser check
+				                        //'additional_params': {"location":""},
+				                        'www_encoded': false }
+				                    }
+				            	}
+							}
+				        }
+					}
 				};
 
 

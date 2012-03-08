@@ -185,7 +185,7 @@ class Parent(KcDocument):
             result.update(child_obj._search_get_childs())
         if 'k_atts' in self:
             for name in self['k_atts'].keys():
-                obj_id = "%s/%s" % (self._get_action_url(),name)
+                obj_id = "%s/_att/%s" % (self._get_action_url(),name)
                 result[obj_id] = { "url": "http://%s%s" % (self.__domain__['fqdn'],obj_id),
                                                   'type':'file',
                                                   'objectType':'file',
@@ -395,11 +395,11 @@ class Parent(KcDocument):
         return result
     @karacos._db.isaction
     def w_browse(self):
-        return self.get_web_childrens_for_id()
+        return {"success": True, "data": self.get_web_childrens_for_id()}
         
     @karacos._db.isaction
     def w_browse_types(self):
-        return self.get_web_childrens_data_for_id()
+        return {"success": True, "data": self.get_web_childrens_data_for_id()}
     
     def _create_child_node(self, *args, **kw): #data=None,type=None,base=False):
         assert 'data' in kw

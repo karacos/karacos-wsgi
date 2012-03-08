@@ -22,7 +22,7 @@
 Created on 12 dec. 2009
 @author: nico
 '''
-import os
+import os, mimetypes
 from karacos.lib import static
 import re
 __author__="Nicolas Karageuzian"
@@ -156,12 +156,16 @@ class WebNode(karacos.db['Node']):
     
     @karacos._db.isaction
     def get_atts(self):
-        return {'status':'success','success':True, 'data':{'id': self.id, 'items':self._get_atts()}}
+        return {'success':True, 'data':{'id': self.id, 'items':self._get_atts()}}
                 
     def _get_atts(self):
         res=[]
-        for file in os.listdir(self.get_att_dir()):
-            res.append({'label': file , 'value': '%s/_att/%s' % (self._get_action_url(), file)})
+        for filename in os.listdir(self.get_att_dir()):
+            #file = open(os.path.join(self.get_att_dir(), filename))
+            mimeType, o = mimetypes.guess_type(filename)
+            res.append({'label': filename ,
+                        'value': '%s/_att/%s' % (self._get_action_url(), filename),
+                        'mimeType': mimeType})
         return res
     
     @karacos._db.isaction

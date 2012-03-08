@@ -365,9 +365,9 @@ class Domain(karacos.db['Parent']):
         return self.__everyone_group__
     
     @karacos._db.isaction
-    def _search_by_name(self,name=None):
-        result = self.base._search_name(name) 
-        return {'status':'success', 'data':result }
+    def _search_by_name(self,name=None,typeFilter=[]):
+        result = self.base._search_name(name,typeFilter) 
+        return {'success': True, 'data':result }
     _search_by_name.form = {'title':'Search by name',
                 'submit':'Rechercher',
                 'fields':[

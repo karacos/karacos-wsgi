@@ -207,7 +207,7 @@ class Base(KcDocument):
         }
         """
     
-    def _search_name(self,name=None):
+    def _search_name(self,name=None,typeFilter=[]):
         found = self.__search_name__(*(),**{'startkey':name, 'endkey': u'%s\uefff' % name})
         result = {}
         resultobjs = []
@@ -216,16 +216,19 @@ class Base(KcDocument):
                 resultobjs.append(item.value['_id'])
                 item_obj = self.db[item.value['_id']]
                 if 'type' in item.value:
-                    result[item_obj._get_action_url()] = { "url": "http://%s%s" % (item_obj.__domain__['fqdn'],item_obj._get_action_url()),
-                                                      'type':'folder',
-                                                      'objectType':'folder',
-                                                      'name': item_obj['name']}
+                    result[item_obj._get_action_url()] = {
+                                                      'parent': item_obj.__parent__._get_action_url(),
+                                                      "url": "http://%s%s" % (item_obj.__domain__['fqdn'],item_obj._get_action_url()),
+                                                  'type':'folder',
+                                                  'objectType':'folder',
+                                                  'name': item_obj['name']}
                     result.update(item_obj._search_get_childs())
                 else:
-                    obj_id = "%s/%s" % (item_obj._get_action_url(),item.value['file_name'])
+                    obj_id = "%s/_att/%s" % (item_obj._get_action_url(),item.value['file_name'])
                     result[obj_id]= { "url": "http://%s%s" % (item_obj.__domain__['fqdn'],obj_id),
-                                                      'type':'file',
-                                                      'objectType':'file',
+                                                       'parent': item_obj.__parent__._get_action_url(),
+                                                      'type':'document',
+                                                      'objectType':'document',
                                                       'fileType':item_obj['stats']['type'],
                                                       'fileSize':item_obj['stats']['size'],
                                                       'name': item_obj['name']}
