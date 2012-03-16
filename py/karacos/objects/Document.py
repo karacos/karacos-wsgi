@@ -304,6 +304,9 @@ class Document(couchdb.client.Document):
         codlang = session.get_session_lang()
         if 'title' not in self:
             return 'No title.'
+        if self['title'] == "":
+            self['title'] = 'Title is empty.'
+            self.save()
         if codlang == self.__domain__.get_default_site_language():
             return self['title']
         else:
@@ -317,6 +320,9 @@ class Document(couchdb.client.Document):
         codlang = session.get_session_lang()
         if 'content' not in self:
             return '<p>No content found.</p>'
+        if self['content'] == "":
+            self['content'] = '<p>Content is empty.'
+            self.save()
         if codlang == 'default':
             return self['content']
         else:
