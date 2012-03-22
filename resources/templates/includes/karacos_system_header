@@ -49,6 +49,7 @@ window.kc_method_result = false;
 	require.config(kc_requireConf);
 </script>
 <link rel="stylesheet" type="text/css" href="/_browser/karacos-ui/css/karacos_widgets.css" media="screen" />
+<link id="aloha-style-include" rel="stylesheet" type="text/css" href="/_browser/aloha/src/css/aloha.css" media="screen" />
 % if 'head_bloc' in instance.__domain__:
 		${instance.__domain__['head_bloc']}
 % endif
