@@ -790,16 +790,16 @@ class Domain(karacos.db['Parent']):
         if self.get_user_by_name("admin@%s" % self['name']) == None:
             self._create_user("admin@%s" % self['name'], "demo", False)
         user = None
-        if karacos.core.mail.valid_email(email):
-            try:
-                user = self.authenticate(email,password)
-            except karacos._db.Exception, e:
-                
-                return {'status':'failure', 'message' : '%s' % e.parameter,
-                        'errors': None }
-        else:
-            return {'status':'failure', 'message':_('Adresse email invalide'),
-                    'errors':{'email':_('This is not a valid mail address')}}
+        #if karacos.core.mail.valid_email(email):
+        try:
+            user = self.authenticate(email,password)
+        except karacos._db.Exception, e:
+            
+            return {'status':'failure', 'message' : '%s' % e.parameter,
+                    'errors': None }
+        #else:
+        #    return {'status':'failure', 'message':_('Adresse email invalide'),
+        #            'errors':{'email':_('This is not a valid mail address')}}
             
         return {'status':'success', 'message':_("Authentification r&eacute;ussie"),'data':self._get_user_actions_forms(), 'success': True}
     login.label = _("S'authentifier")

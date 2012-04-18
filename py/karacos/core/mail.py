@@ -27,7 +27,7 @@ from email.MIMEText import MIMEText
 
 def valid_email(email):
     import re
-    reg = re.compile('([\w\.\-]+@[\w][\w\.\-]+)')
+    reg = re.compile("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$")
     return reg.match(email)
 
 def send_mail(destmail, msg):
