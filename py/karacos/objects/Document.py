@@ -220,15 +220,17 @@ class Document(couchdb.client.Document):
         if 'pseudo' in user:
             result['pseudo'] = user['pseudo']
         for action in actions:
-            actresult = {'action' : action,
-                         'acturl': self._get_action_url()}
-            if 'form' in dir(self.get_action(action)):
-                actresult['form'] = self.get_action(action).form
-            elif 'get_form' in dir(self.get_action(action)):
-                actresult['form'] = self.get_action(action).get_form(self)
-            if 'label' in dir(self.get_action(action)):
-                actresult['label'] = self.get_action(action).label
-            result['actions'].append(actresult)
+            actionmethod = self.get_action(action)
+            if actionmethod != None:
+                actresult = {'action' : action,
+                             'acturl': self._get_action_url()}
+                if 'form' in dir(actionmethod):
+                    actresult['form'] = actionmethod.form
+                elif 'get_form' in dir(actionmethod):
+                    actresult['form'] = actionmethod.get_form(self)
+                if 'label' in dir(actionmethod):
+                    actresult['label'] = actionmethod.label
+                result['actions'].append(actresult)
         return result
         
     def _get_actions(self):
@@ -260,7 +262,10 @@ class Document(couchdb.client.Document):
         return result
         
     def get_action(self,action):
-        return eval("self.%s" % action)
+        try:
+            return eval("self.%s" % action)
+        except:
+            return None
     
     
     def save(self):

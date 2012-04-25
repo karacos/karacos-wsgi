@@ -56,6 +56,11 @@ class User(karacos.db['Node']):
     
     def _get_email(self):
         if 'email' in self:
+            if self['email'] == None:
+                return self['email']
+            if not karacos.core.mail.valid_email(self['email']):
+                self['email'] = None
+                self.save()
             return self['email']
         else:
             if karacos.core.mail.valid_email(self['name']):
