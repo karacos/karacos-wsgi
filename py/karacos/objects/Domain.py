@@ -1173,6 +1173,16 @@ class Domain(karacos.db['Parent']):
         
         del KaraCos.Db.sysdb[self['_id']]
         del self
+    def _get_item_path(self, item_id):
+        """
+        """
+        if 'path_index' not in self:
+            self['path_index'] = {}
+        if item_id not in self['path_index']:
+            item = self.db[item_id]
+            self['path_index'][item_id] = item._get_action_url()
+            self.save()
+        return self['path_index'][item_id]
     
     def lookup_resource(self,urlpath):
         """
